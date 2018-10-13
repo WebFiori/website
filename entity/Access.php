@@ -127,7 +127,7 @@ class Access {
      * will be created from.
      * @return string A string of privileges. The format of the string will 
      * follow the following format: 'PRIVILEGE_1-0;PRIVILEGE_2-1;' where 
-     * 'PRIVILEGE_1' and 'PRIVILEGE_2' are I of privileges and the number 
+     * 'PRIVILEGE_1' and 'PRIVILEGE_2' are names of privileges and the number 
      * that comes after the dash is the status of the privilege. If 0, then the 
      * user will not have the given privilege. If 1, the user will have the 
      * privilege. In the given example, The user will have only 'PRIVILEGE_2'. Each 
@@ -189,6 +189,26 @@ class Access {
             }
             return $prArr;
         }
+    }
+    /**
+     * Adds new group with new ID.
+     * @param string $groupId The ID of the group. If a group with the given 
+     * ID already exist, The function will not add it.
+     * @return boolean The function will return TRUE if a new group with the 
+     * given ID is created. FALSE if not.
+     * @since 1.0
+     */
+    public function addGroup($groupId) {
+        foreach ($this->userGroups as $group){
+            if($groupId == $group->getID()){
+                return FALSE;
+            }
+            $g = new UsersGroup();
+            $g->setID($groupId);
+            $this->userGroups[] = $g;
+            return TRUE;
+        }
+        return FALSE;
     }
     /**
      * Returns an array which contains all user groups.
