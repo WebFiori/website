@@ -12,7 +12,7 @@ and open the template in the editor.
 .class-name, .class-name *
 .interface-name, .interface-name *,
 .class-attribute, .class-attribute *
-func-param,.code,.mono{
+span.func-param,.code,.mono{
     font-family: monospace !important;
 }
 .summary-box-title{
