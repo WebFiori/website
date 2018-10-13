@@ -49,8 +49,9 @@ class ViewRoutes {
         $routesArr = array();
         $dirsStack = new Stack();
         $root = array(
-                'long-name'=>ROOT_DIR.'/pages/api-docs/1.0',
-                'parent'=>''
+            'long-name'=>ROOT_DIR.'/pages/api-docs/1.0',
+            'parent'=>'',
+            'package'=>'webfiori'
         );
         $dirsStack->push($root);
         while($root = $dirsStack->pop()){
@@ -62,13 +63,15 @@ class ViewRoutes {
                         if(strlen($root['parent']) > 0){
                             $toPush = array(
                                 'long-name'=>$dirLongName,
-                                'parent'=>$root['parent'].'/'.$subDir
+                                'parent'=>$root['parent'].'/'.$subDir,
+                                'package'=>'webfiori/'.$root['parent'].'/'.$subDir
                             );
                         }
                         else{
                             $toPush = array(
                                 'long-name'=>$dirLongName,
-                                'parent'=>$subDir
+                                'parent'=>$subDir,
+                                'package'=>'webfiori/'.$subDir
                             );
                         }
                         $dirsStack->push($toPush);
@@ -77,13 +80,15 @@ class ViewRoutes {
                         if(strlen($root['parent']) > 0){
                             $routesArr[] = array(
                                 'file'=>'/api-docs/1.0/'.$root['parent'].'/'.$subDir,
-                                'requested-url'=>$base.'/'.$root['parent'].'/'.str_replace('APIs.php','',$subDir)
+                                'requested-url'=>$base.'/'.$root['parent'].'/'.str_replace('APIs.php','',$subDir),
+                                'package'=>$root['package']
                             );
                         }
                         else{
                             $routesArr[] = array(
                                 'file'=>'/api-docs/1.0/'.$subDir,
-                                'requested-url'=>$base.'/'.str_replace('APIs.php','',$subDir)
+                                'requested-url'=>$base.'/'.str_replace('APIs.php','',$subDir),
+                                'package'=>$root['package']
                             );
                         }
                     }

@@ -117,14 +117,6 @@ class Config{
         return self::$cfg;
     }
     /**
-     * Returns user registration status.
-     * @return User registration status.
-     * @since 1.3
-     */
-    public function getUserRegStatus(){
-        return $this->userRegStats;
-    }
-    /**
      * Returns the version number of configuration file.
      * @return string The version number of configuration file.
      * @since 1.2

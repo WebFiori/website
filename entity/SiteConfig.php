@@ -90,7 +90,7 @@ class SiteConfig{
     private function __construct() {
         $this->configVision = '1.1';
         $this->webSiteNames = array('EN'=>'WebFiori',);
-        $this->baseUrl = 'http://localhost/webfiori-site/';
+        $this->baseUrl = 'http://localhost/webfiori-website/';
         $this->titleSep = ' | ';
         $this->primaryLang = 'EN';
         $this->baseThemeName = 'Greeny By Ibrahim Ali';

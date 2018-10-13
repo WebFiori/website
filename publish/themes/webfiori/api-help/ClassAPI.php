@@ -12,6 +12,7 @@
  * @author Ibrahim
  */
 class ClassAPI {
+    private $version;
     private $cName;
     private $desc;
     private $longCName;
@@ -39,6 +40,12 @@ class ClassAPI {
      */
     public function setClassType($mod) {
         $this->classType = $mod;
+    }
+    public function getVersion() {
+        return $this->version;
+    }
+    public function setVersion($vNum) {
+        $this->version = $vNum;
     }
     /**
      * Returns The type of the class.

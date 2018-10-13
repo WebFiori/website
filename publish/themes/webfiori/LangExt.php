@@ -20,9 +20,9 @@ class LangExt {
         }
         else{
             $trans->setMultiple('menus/main-menu', array(
-                'menu-item-1'=>'Menu Item 1',
-                'menu-item-2'=>'Menu Item 2',
-                'menu-item-3'=>'Menu Item 3',
+                'menu-item-1'=>'Download',
+                'menu-item-2'=>'Getting Started',
+                'menu-item-3'=>'API Docs',
                 'menu-item-4'=>'Menu Item 4'
             ));
         }
