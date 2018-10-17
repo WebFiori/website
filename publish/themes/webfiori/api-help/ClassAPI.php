@@ -61,8 +61,8 @@ class ClassAPI {
     public function implementsInterface($interfaceName) {
         $this->implements[] = $interfaceName;
     }
-    public function extendClass($className) {
-        $this->extends = $className;
+    public function extendClass($className,$package='') {
+        $this->extends = '<a href="'.$package.'/'.$className.'">'.$className.'</a>';
     }
     public function setPackage($package) {
         $this->package = $package;

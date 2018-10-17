@@ -35,6 +35,11 @@ abstract class APIView {
         $this->defineClassFunctions();
         $this->defineClassAttributes();
     }
+    
+    /**
+     * Creates aside navigation menu which contains 
+     * all system classes along packages.
+     */
     private function _createAsideNav(){
         $asideLinks = ViewRoutes::getAPIViewsRoutes();
         $aside = &Page::document()->getChildByID('side-content-area');
@@ -73,25 +78,50 @@ abstract class APIView {
             }
         }
     }
+    /**
+     * Returns a link to the same API view.
+     * @return string
+     */
     public function getLink() {
         return $this->getBaseURL().$this->getClassAPIObj()->getName();
     }
+    /**
+     * Returns the base URL for fetching all API views.
+     * @return string
+     */
     public function getBaseURL() {
         return $this->apiBase;
     }
     /**
-     * 
+     * Returns the linked ClassAPI object.
      * @return ClassAPI
      */
     public function &getClassAPIObj() {
         return $this->class;
     }
+    /**
+     * Constructs a link to class API page using monospace font face.
+     * @param string $package The package that the class belongs to.
+     * @param string $name The name of the class.
+     * @return string A link to class API view.
+     */
     public function monoCL($package,$name) {
         return $this->monoLink($this->getBaseURL().$package.'/'.$name, $name);
     }
+    /**
+     * Constructs a link using monospace font face.
+     * @param type $href The link.
+     * @param type $label A label for the link.
+     * @return type 
+     */
     public function monoLink($href,$label) {
         return '<a class="mono" href="'.$href.'">'.$label.'</a>';
     }
+    /**
+     * Constructs a string using monospace as font face.
+     * @param type $str
+     * @return type
+     */
     public function monoStr($str) {
         return '<span class="mono">'.$str.'</span>';
     }
