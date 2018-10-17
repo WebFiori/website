@@ -37,8 +37,9 @@ class ClosureRoutes {
      */
     public static function create() {
         $arrayOfParams = array('WebFiori Framework');
-        Router::closure('/closure', function(){
-            ViewRoutes::getAPIViewsRoutes();
+        Router::closure('/closure', function($params){
+            echo 'This is a closure route.';
+            Util::print_r($params);
         }, $arrayOfParams);
     }
 }
