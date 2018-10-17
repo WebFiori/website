@@ -22,6 +22,7 @@ class DBConnFactoryAPIs extends APIView{
                     'description'=>'An associative array that contains database '
                     . 'connection parameters. The indices are: '
                     . '<ul><li><b>'.$this->monoStr('host').'</b>: Database host address.'
+                    . '</li><li><b>'.$this->monoStr('port').'</b>: Port number.</li>'
                     . '</li><li><b>'.$this->monoStr('user').'</b>: Database username.</li>'
                     . '<li><b>'.$this->monoStr('pass').'</b>: Database user\'s password.</li>'
                     . '<li><b>'.$this->monoStr('db-name').'</b>: The name of the database (Schema name).</li>'
@@ -36,8 +37,9 @@ class DBConnFactoryAPIs extends APIView{
             . 'associative array is returned which contains error details. '
             . 'The array has two indices: '
             . '<ul>'
-            . '<li><b>'.$this->monoStr('error-code').'</b>: Error code. It can be MySQL error code.</li>'
-            . '<li><b>'.$this->monoStr('error-code').'</b>: A message that tels more information about '
+            . '<li><b>'.$this->monoStr('error-code').'</b>: Error code. It can be MySQL error code or '
+            . 'one of class constants.</li>'
+            . '<li><b>'.$this->monoStr('error-message').'</b>: A message that tels more information about '
             . 'the error.</li></ul>'
         ));
     }
@@ -72,6 +74,12 @@ class DBConnFactoryAPIs extends APIView{
             'access-modifier'=>'const',
             'short-desc'=>'A constant that indicates the username that is used to access the database is missing.',
             'long-desc'=>'A constant that indicates the username that is used to access the database is missing.'
+        ));
+        $this->addAttributeDef(array(
+            'name'=>'MISSING_PORT',
+            'access-modifier'=>'const',
+            'short-desc'=>'A constant that indicates the port number is missing.',
+            'long-desc'=>'A constant that indicates the port number is missing.'
         ));
     }
 }

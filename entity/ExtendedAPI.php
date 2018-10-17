@@ -139,8 +139,7 @@ abstract class ExtendedAPI extends API{
     }
     /**
      * Sets multiple language variables.
-     * @param string $dir A string that looks like a 
-     * directory. 
+     * @param string $dir A string that looks like a directory. 
      * @param array $arr An associative array. The key will act as the variable 
      * and the value of the key will act as the variable value.
      * @since 1.0

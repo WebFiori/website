@@ -81,7 +81,7 @@ class ExtAPIAPIs extends APIView{
             . "<pre style=\"font-family:monospace\">{\n    \"message\":\"a_message\",\n    \"type\":\"error\"\n    \"request-content-type\":\"c_type\"\n}</pre>"
             . '<p>Where the value of \''.$this->monoStr('a_message').'\' will depended on the value that will be returned '
             . 'by the call '.$this->monoCL('webfiori/entity', 'ExtendedAPI').$this->monoStr('::').$this->monoLink($this->getBaseURL().'entity/ExtendedAPI#get','get(\'general/content-not-supported\')').' '
-            . 'and the value of \''.$this->monoStr('a_message').'\' will be the value of request header \''.$this->monoStr('content-type').'\'. '
+            . 'and the value of \''.$this->monoStr('request-content-type').'\' will be the value of request header \''.$this->monoStr('content-type').'\'. '
             . 'The response code will be \''.$this->monoStr('404 Not Found').'\'.',
             'access-modifier'=>'public',
         ));
@@ -157,64 +157,55 @@ class ExtAPIAPIs extends APIView{
         $this->addFunctionDef(array(
             'name'=>'invParams',
             'short-desc'=>'Sends a response message to indicate that a request parameter(s) have invalid values.',
-            'long-desc'=>'Sends a response message to indicate that a request parameter(s) have invalid values.',
+            'long-desc'=>'Sends a response message to indicate that a request parameter(s) have invalid values. ',
             'access-modifier'=>'public',
         ));
         $this->addFunctionDef(array(
             'name'=>'missingParams',
-            'short-desc'=>'',
-            'long-desc'=>'',
+            'short-desc'=>'Sends a response message to indicate that a request parameter or parameters are missing.',
+            'long-desc'=>'Sends a response message to indicate that a request parameter or parameters are missing.',
             'access-modifier'=>'public',
-            'params'=>array(
-                array(
-                    'name'=>'',
-                    'type'=>'',
-                    'description'=>'',
-                )
-            ),
-            'return-types'=>'',
-            'return-desc'=>''
         ));
         $this->addFunctionDef(array(
             'name'=>'notAuth',
-            'short-desc'=>'',
-            'long-desc'=>'',
-            'access-modifier'=>'public',
-            'params'=>array(
-                array(
-                    'name'=>'',
-                    'type'=>'',
-                    'description'=>'',
-                )
-            ),
-            'return-types'=>'',
-            'return-desc'=>''
+            'short-desc'=>'Sends a response message to indicate that a user is not authorized to do an API call.',
+            'long-desc'=>'Sends a response message to indicate that a user is not authorized to do an API call. '
+            . 'the response that will be send will have the following JSON format:'
+            . "<pre style=\"font-family:monospace\">{\n    \"message\":\"a_message\",\n    \"type\":\"error\"\n}</pre>"
+            . '<p>Where the value of \''.$this->monoStr('a_message').'\' will depended on the value that will be returned '
+            . 'by the call '.$this->monoCL('webfiori/entity', 'ExtendedAPI').$this->monoStr('::').$this->monoLink($this->getBaseURL().'entity/ExtendedAPI#get','get(\'general/http-codes/401/message\')').' '
+            . '. '
+            . 'The response code will be \''.$this->monoStr('401 Not Authorized').'\'.',
+            'access-modifier'=>'public'
         ));
         $this->addFunctionDef(array(
             'name'=>'requMethNotAllowed',
-            'short-desc'=>'',
-            'long-desc'=>'',
+            'short-desc'=>'Sends a response message to indicate that request method is not supported.',
+            'long-desc'=>'Sends a response message to indicate that request method is not supported. '
+            . 'the response that will be send will have the following JSON format:'
+            . "<pre style=\"font-family:monospace\">{\n    \"message\":\"a_message\",\n    \"type\":\"error\"\n}</pre>"
+            . '<p>Where the value of \''.$this->monoStr('a_message').'\' will depended on the value that will be returned '
+            . 'by the call '.$this->monoCL('webfiori/entity', 'ExtendedAPI').$this->monoStr('::').$this->monoLink($this->getBaseURL().'entity/ExtendedAPI#get','get(\'general/http-codes/405/message\')').' '
+            . '. '
+            . 'The response code will be \''.$this->monoStr('405 Method Not Allowed').'\'.',
             'access-modifier'=>'public',
-            'params'=>array(
-                array(
-                    'name'=>'',
-                    'type'=>'',
-                    'description'=>'',
-                )
-            ),
-            'return-types'=>'',
-            'return-desc'=>''
         ));
         $this->addFunctionDef(array(
             'name'=>'setLangVars',
-            'short-desc'=>'',
-            'long-desc'=>'',
+            'short-desc'=>'Sets multiple language variables.',
+            'long-desc'=>'Sets multiple language variables.',
             'access-modifier'=>'public',
             'params'=>array(
                 array(
-                    'name'=>'',
-                    'type'=>'',
-                    'description'=>'',
+                    'name'=>'$dir',
+                    'type'=>'string',
+                    'description'=>'A string that looks like a directory (e.g. \'general/apis/messages\'). ',
+                ),
+                array(
+                    'name'=>'$arr',
+                    'type'=>'array',
+                    'description'=>'An associative array. The key will act as the variable '
+                    . 'and the value of the key will act as the variable value.'
                 )
             ),
             'return-types'=>'',
