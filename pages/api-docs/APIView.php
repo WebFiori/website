@@ -35,7 +35,11 @@ abstract class APIView {
         $this->defineClassFunctions();
         $this->defineClassAttributes();
     }
-    
+    public function funcCall($cName,$cPackage,$fName) {
+        $cLink = $this->monoCL($cPackage, $cName);
+        $fLink = $this->monoLink($this->getBaseURL().$cPackage.'/'.$cName.'#'.$fName, $fName.'()');
+        return $cLink.$this->monoStr('::').$fLink;
+    }
     /**
      * Creates aside navigation menu which contains 
      * all system classes along packages.
@@ -125,6 +129,15 @@ abstract class APIView {
     public function monoStr($str) {
         return '<span class="mono">'.$str.'</span>';
     }
+    public function n() {
+        return $this->monoStr('NULL');
+    }
+    public function t() {
+        return $this->monoStr('TRUE');
+    }
+    public function f() {
+        return $this->monoStr('FALSE');
+    }
     /**
      * 
      * @param array $array
@@ -183,8 +196,8 @@ abstract class APIView {
         $attrDef = new AttributeDef();
         $attrDef->setName($attrName);
         $attrDef->setAccessModifier($accessModifyer);
-        $attrDef->setLongDescription($shortDesc);
-        $attrDef->setShortDescription($longDesc);
+        $attrDef->setLongDescription($longDesc);
+        $attrDef->setShortDescription($shortDesc);
         $this->getClassAPIObj()->addAttribute($attrDef);
     }
     public abstract function defineClassFunctions();

@@ -57,7 +57,6 @@ class File implements JsonI{
         'mp4'=>'video/mp4',
         'mov'=>'video/quicktime',
         'wmv'=>'video/x-ms-wmv',
-        'mov'=>'video/quicktime',
         'flv'=>'video/x-flv',
         'midi'=>'audio/midi',
         //images 
@@ -66,9 +65,9 @@ class File implements JsonI{
         'png'=>'image/png',
         'bmp'=>'image/bmp',
         'ico'=>'image/x-icon',
-        //pdf 
+        
+        //documents
         'pdf'=>'application/pdf',
-        //MS office documents
         'doc'=>'application/msword',
         'docx'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'xls'=>'application/vnd.ms-excel',
@@ -210,7 +209,7 @@ class File implements JsonI{
         throw new Exception('File absolute path is invalid.');
     }
     /**
-     * Write raw binary data into a file.
+     * Write raw binary data into a file. If the file does not exist, create it.
      * @param string $path [Optional] An optional file path. If not provided, 
      * the path that is returned by File::getPath() will be used.
      * @return boolean If the file is stored the function will return TRUE. 
@@ -258,7 +257,7 @@ class File implements JsonI{
     }
     /**
      * Display the file. If the raw data of the file is NULL, the function will 
-     * try to read the file that was specified by the name and its path. If 
+     * try to read the file that was specified by its name and its path. If 
      * the function is unable to read the file, an exception is thrown. Also, 
      * an exception will be thrown in case of unknown file MIME type.
      * @param boolean $asAttachment [Optional] If this parameter is set to 
