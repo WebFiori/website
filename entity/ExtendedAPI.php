@@ -122,7 +122,7 @@ abstract class ExtendedAPI extends API{
      * @since 1.0
      */
     public function get($dir) {
-        return $this->getTranslation()->get('api-messages/'.$dir);
+        return $this->getTranslation()->get($dir);
     }
     /**
      * Creates a sub array to define language variables.
@@ -135,17 +135,18 @@ abstract class ExtendedAPI extends API{
      * @since 1.0
      */
     public function createLangDir($dir) {
-        $this->getTranslation()->createDirectory('api-messages/'.$dir);
+        $this->getTranslation()->createDirectory($dir);
     }
     /**
      * Sets multiple language variables.
-     * @param string $dir A string that looks like a directory. 
+     * @param string $dir A string that looks like a 
+     * directory. 
      * @param array $arr An associative array. The key will act as the variable 
      * and the value of the key will act as the variable value.
      * @since 1.0
      */
     public function setLangVars($dir,$arr=array()) {
-        $this->getTranslation()->setMultiple('api-messages/'.$dir, $arr);
+        $this->getTranslation()->setMultiple($dir, $arr);
     }
     /**
      * Sends a response message to indicate that a database error has occur.
