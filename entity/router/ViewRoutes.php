@@ -51,7 +51,7 @@ class ViewRoutes {
         $root = array(
             'long-name'=>ROOT_DIR.'/pages/api-docs/1.0',
             'parent'=>'',
-            'package'=>'webfiori'
+            'package'=>''
         );
         $dirsStack->push($root);
         while($root = $dirsStack->pop()){
@@ -64,14 +64,14 @@ class ViewRoutes {
                             $toPush = array(
                                 'long-name'=>$dirLongName,
                                 'parent'=>$root['parent'].'/'.$subDir,
-                                'package'=>'webfiori/'.$root['parent'].'/'.$subDir
+                                'package'=>$root['parent'].'/'.$subDir
                             );
                         }
                         else{
                             $toPush = array(
                                 'long-name'=>$dirLongName,
                                 'parent'=>$subDir,
-                                'package'=>'webfiori/'.$subDir
+                                'package'=>$subDir
                             );
                         }
                         $dirsStack->push($toPush);

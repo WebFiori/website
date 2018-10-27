@@ -4,7 +4,7 @@ class LanguageAPIs extends APIView{
    public function __construct() {
         parent::__construct('Language','webfiori/entity');
         $this->getClassAPIObj()->setVersion('1.2');
-        $this->getClassAPIObj()->setDescription('A class that is used to define language variables. '
+        $this->getClassAPIObj()->setLongDescription('A class that is used to define language variables. '
                 . 'The developer can use this class to create his own custom '
                 . 'language variables. It is usefule in case of multi-language '
                 . 'websites. A language file can be defined in the directory '

@@ -3,7 +3,10 @@ require_once ROOT_DIR.'/pages/api-docs/APIView.php';
 
 class UserAPIs extends APIView{
     public function __construct() {
-        parent::__construct('User','webfiori/entity');
+        parent::__construct('User','entity');
+        $this->setClassShortDesc('');
+        $this->setClassLongDesc('');
+        $this->setVNum('');
         new APIPage($this->getClassAPIObj());
     }
 
@@ -26,7 +29,12 @@ class UserAPIs extends APIView{
     }
 
     public function defineClassAttributes() {
-
+        $this->addAttributeDef(array(
+            'name'=>'',
+            'short-desc'=>'',
+            'long-desc'=>'',
+            'access-modifier'=>'public',
+        ));
     }
 }
 new UserAPIs();

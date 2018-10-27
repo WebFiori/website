@@ -9,7 +9,7 @@
 Page::theme('WebFiori Theme');
 $class = new ClassAPI();
 $class->setName('SessionManager');
-$class->setDescription('A class that is used to manage system sessions.');
+$class->setLongDescription('A class that is used to manage system sessions.');
 $class->setPackage('webfiori/entity/'.$class->getName());
 $func1 = new FunctionDef();
 $func1->setName('func1');

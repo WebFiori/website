@@ -3,7 +3,10 @@ require_once ROOT_DIR.'/pages/api-docs/APIView.php';
 
 class ThemeAPIs extends APIView{
     public function __construct() {
-        parent::__construct('Theme','webfiori/entity');
+        parent::__construct('Theme','entity');
+        $this->setClassShortDesc('');
+        $this->setClassLongDesc('');
+        $this->setVNum('');
         new APIPage($this->getClassAPIObj());
     }
 
@@ -26,7 +29,12 @@ class ThemeAPIs extends APIView{
     }
 
     public function defineClassAttributes() {
-
+        $this->addAttributeDef(array(
+            'name'=>'',
+            'short-desc'=>'',
+            'long-desc'=>'',
+            'access-modifier'=>'public',
+        ));
     }
 }
 new ThemeAPIs();

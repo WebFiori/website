@@ -5,7 +5,7 @@ class FileAPIs extends APIView{
     public function __construct() {
         parent::__construct('File','webfiori/entity');
         $this->getClassAPIObj()->setVersion('1.1.1');
-        $this->getClassAPIObj()->setDescription(''
+        $this->getClassAPIObj()->setLongDescription(''
                 . 'A class that can be used to open, store and view files. '
                 . 'Also it can be used to view any type of raw binary data. For '
                 . 'example, if you fetch a blob from a database, this class can '
@@ -256,7 +256,7 @@ class FileAPIs extends APIView{
                     'name'=>'$path',
                     'type'=>'string',
                     'description'=>'An optional file path. If not provided, '
-                    . 'the path that is returned by '.$this->funcCall('File', 'entity', 'getPath').' will be used.',
+                    . 'the path that is returned by '.$this->classFuncCall('File', 'entity', 'getPath').' will be used.',
                     'is-optional'=>TRUE
                 )
             ),

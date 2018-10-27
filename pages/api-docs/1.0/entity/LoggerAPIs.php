@@ -1,9 +1,11 @@
 <?php
 require_once ROOT_DIR.'/pages/api-docs/APIView.php';
-
 class LoggerAPIs extends APIView{
     public function __construct() {
-        parent::__construct('Logger','webfiori/entity');
+        parent::__construct('Logger','entity');
+        $this->setClassShortDesc('');
+        $this->setClassLongDesc('');
+        $this->setVNum('');
         new APIPage($this->getClassAPIObj());
     }
 

@@ -35,7 +35,16 @@ abstract class APIView {
         $this->defineClassFunctions();
         $this->defineClassAttributes();
     }
-    public function funcCall($cName,$cPackage,$fName) {
+    public function setClassShortDesc($desc) {
+        $this->getClassAPIObj()->setShortDescription($desc);
+    }
+    public function setClassLongDesc($desc){
+        $this->getClassAPIObj()->setLongDescription($desc);
+    }
+    public function setVNum($vNum) {
+        $this->getClassAPIObj()->setVersion($vNum);
+    }
+    public function classFuncCall($cName,$cPackage,$fName) {
         $cLink = $this->monoCL($cPackage, $cName);
         $fLink = $this->monoLink($this->getBaseURL().$cPackage.'/'.$cName.'#'.$fName, $fName.'()');
         return $cLink.$this->monoStr('::').$fLink;

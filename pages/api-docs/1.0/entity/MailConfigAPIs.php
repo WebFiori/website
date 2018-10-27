@@ -1,9 +1,11 @@
 <?php
 require_once ROOT_DIR.'/pages/api-docs/APIView.php';
-
 class MailConfigAPIs extends APIView{
     public function __construct() {
-        parent::__construct('MailConfig','webfiori/entity');
+        parent::__construct('MailConfig','entity');
+        $this->setClassShortDesc('');
+        $this->setClassLongDesc('');
+        $this->setVNum('');
         new APIPage($this->getClassAPIObj());
     }
 
@@ -26,7 +28,12 @@ class MailConfigAPIs extends APIView{
     }
 
     public function defineClassAttributes() {
-
+        $this->addAttributeDef(array(
+            'name'=>'',
+            'short-desc'=>'',
+            'long-desc'=>'',
+            'access-modifier'=>'public',
+        ));
     }
 }
 new MailConfigAPIs();

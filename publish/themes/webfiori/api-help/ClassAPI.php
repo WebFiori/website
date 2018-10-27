@@ -12,16 +12,60 @@
  * @author Ibrahim
  */
 class ClassAPI {
+    /**
+     * Class version number.
+     * @var type 
+     */
     private $version;
+    /**
+     * The name of the class.
+     * @var type 
+     */
     private $cName;
+    /**
+     * Long description of the class.
+     * @var type 
+     */
     private $desc;
-    private $longCName;
+    /**
+     * Short description of the class.
+     * @var type 
+     */
+    private $shortDesc;
+    /**
+     * An array that contains an objects of type 'AttributeDef'
+     * @var type 
+     */
     private $classAttributes;
+    /**
+     * An array that contains an objects of type 'FunctionDef'
+     * @var type 
+     */
     private $classMethods;
+    /**
+     * A link to currently requested page.
+     * @var type 
+     */
     private $pageUrl;
+    /**
+     * The package (or folder) that the class belongs to.
+     * @var type 
+     */
     private $package;
+    /**
+     * A name of a class that this class is extending.
+     * @var type 
+     */
     private $extends;
+    /**
+     * An array that contains all implemented interfaces.
+     * @var type 
+     */
     private $implements;
+    /**
+     *
+     * @var type 
+     */
     private $classType;
     /**
      * Sets the name of the class.
@@ -192,14 +236,28 @@ class ClassAPI {
      * Sets the description of the class.
      * @param string $desc The description of the class.
      */
-    public function setDescription($desc) {
+    public function setShortDescription($desc) {
+        $this->shortDesc = $desc;
+    }
+    /**
+     * Returns the description of the class.
+     * @return string The description of the class.
+     */
+    public function getShortDescription() {
+        return $this->shortDesc;
+    }
+    /**
+     * Sets the description of the class.
+     * @param string $desc The description of the class.
+     */
+    public function setLongDescription($desc) {
         $this->desc = $desc;
     }
     /**
      * Returns the description of the class.
      * @return string The description of the class.
      */
-    public function getDescription() {
+    public function getLongDescription() {
         return $this->desc;
     }
 }

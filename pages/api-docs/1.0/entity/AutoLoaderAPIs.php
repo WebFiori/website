@@ -4,7 +4,7 @@ require_once ROOT_DIR.'/pages/api-docs/APIView.php';
 class AutoLoaderAPIs extends APIView{
     public function __construct() {
         parent::__construct('AutoLoader','webfiori/entity','1.1.1');
-        $this->getClassAPIObj()->setDescription('An autoloader class to load classes as needed during runtime.');
+        $this->getClassAPIObj()->setLongDescription('An autoloader class to load classes as needed during runtime.');
         new APIPage($this->getClassAPIObj());
     }
 

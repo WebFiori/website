@@ -5,7 +5,7 @@ class FHandlerAPIs extends APIView{
     public function __construct() {
         parent::__construct('FileHandler','webfiori/entity');
         $this->getClassAPIObj()->setVersion('1.0');
-        $this->getClassAPIObj()->setDescription('This class is used to write HTML or PHP files. It '
+        $this->getClassAPIObj()->setLongDescription('This class is used to write HTML or PHP files. It '
                 . 'can be also used to write other text based files. '
                 . 'The main aim of this class is to make the written files well formatted '
                 . 'by adding tabs to them and new lines.');
@@ -66,7 +66,7 @@ class FHandlerAPIs extends APIView{
             'name'=>'getTabCount',
             'short-desc'=>'Returns the current size of the tab.',
             'long-desc'=>'Returns the current size of the tab. Initially, tab size will be 0. '
-            . 'A call to the function '.$this->funcCall('FileHandler', 'entity', 'addTab').' '
+            . 'A call to the function '.$this->classFuncCall('FileHandler', 'entity', 'addTab').' '
             . 'will increase the size of tab by 1. One tab will have 4 spaces.',
             'access-modifier'=>'public'
         ));

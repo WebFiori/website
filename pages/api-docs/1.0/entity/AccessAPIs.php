@@ -4,7 +4,7 @@ require_once ROOT_DIR.'/pages/api-docs/APIView.php';
 class AccessAPIs extends APIView{
     public function __construct() {
         parent::__construct('Access','webfiori/entity','1.0');
-        $this->getClassAPIObj()->setDescription('This class is used to '
+        $this->getClassAPIObj()->setLongDescription('This class is used to '
                 . 'manage privileges and user groups. The '
                 . 'developer can create groups and add privileges to '
                 . 'each different group. Used to manage which '

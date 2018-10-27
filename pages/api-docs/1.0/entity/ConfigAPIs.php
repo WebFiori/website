@@ -5,7 +5,7 @@ class ConfigAPIs extends APIView{
    public function __construct() {
         parent::__construct('Config','webfiori/entity');
         $this->getClassAPIObj()->setVersion('1.4');
-        $this->getClassAPIObj()->setDescription('Global configuration class. Used by the server part and the presentation part. '
+        $this->getClassAPIObj()->setLongDescription('Global configuration class. Used by the server part and the presentation part. '
                 . 'The most important thing about this class is that it contains '
                 . 'the main database connection information if the system will '
                 . 'use one. Also, it contains framework version information including '
