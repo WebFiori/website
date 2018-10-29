@@ -1,9 +1,9 @@
 <?php
 require_once ROOT_DIR.'/pages/api-docs/APIView.php';
 
-class LabelAPIs extends APIView{
+class ComparableAPIs extends APIView{
     public function __construct() {
-        parent::__construct('Label','entity/html-php-structs/html');
+        parent::__construct('Comparable','entity/html-php-structs/structs');
         $this->setClassShortDesc('');
         $this->setClassLongDesc('');
         $this->setVNum('');
@@ -37,4 +37,4 @@ class LabelAPIs extends APIView{
         ));
     }
 }
-new LabelAPIs();
+new ComparableAPIs();
