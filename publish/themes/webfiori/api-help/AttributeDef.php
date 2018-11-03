@@ -127,8 +127,9 @@ class AttributeDef {
         $nodeText = $this->getAccessModofier().' '.$this->getName();
         $attrNameNode->addTextNode($nodeText);
         $node->addChild($attrNameNode);
-        $descNode = new PNode();
-        $descNode->addText($this->getLongDescription());
+        $descNode = new HTMLNode();
+        $descNode->addTextNode($this->getLongDescription());
+        $descNode->setClassName('details-box');
         $node->addChild($descNode);
         return $node;
     }

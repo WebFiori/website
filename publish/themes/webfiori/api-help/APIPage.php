@@ -21,7 +21,7 @@ class APIPage {
         Page::dir('ltr');
         Page::title($class->getName());
         Page::document()->getBody()->setClassName('api-page');
-        Page::description($class->getLongDescription());
+        Page::description($class->getShortDescription());
         Page::document()->getHeadNode()->addCSS(Page::cssDir().'/api-page.css');
         $packageNode = new PNode();
         $packageNode->addText('<b class="mono">'.$class->getPackage().'</b>');

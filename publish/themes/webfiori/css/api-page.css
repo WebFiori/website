@@ -28,7 +28,7 @@ span.func-param,.code,.mono{
 ul.side-ul{
     padding: 10px;
 }
-.api-page p, .api-page ul,.api-page li{
+.api-page p, .api-page ul,.api-page li,.details-box{
     font-size: 10pt;
 }
 .function-summary,.attribute-summary{

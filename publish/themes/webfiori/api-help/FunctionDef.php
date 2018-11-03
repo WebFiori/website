@@ -179,8 +179,9 @@ class FunctionDef {
         $nodeText .= ')';
         $methNameNode->addTextNode($nodeText);
         $node->addChild($methNameNode);
-        $descNode = new PNode();
-        $descNode->addText($this->getLongDescription());
+        $descNode = new HTMLNode();
+        $descNode->addTextNode($this->getLongDescription());
+        $descNode->setClassName('details-box');
         $node->addChild($descNode);
         if($count != 0){
             $node->addChild($this->createParametersBox());
@@ -194,8 +195,9 @@ class FunctionDef {
             $textNode = new PNode();
             $textNode->addText('Returns: <span style="font-family:monospace">'.$this->funcReturns['return-types'].'</span>');
             $node->addChild($textNode);
-            $descNode = new PNode();
-            $descNode->addText($this->funcReturns['description']);
+            $descNode = new HTMLNode();
+            $descNode->addTextNode($this->funcReturns['description']);
+            $descNode->setClassName('details-box');
             $node->addChild($descNode);
             return $node;
         }
