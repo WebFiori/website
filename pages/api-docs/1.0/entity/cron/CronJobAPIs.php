@@ -4,9 +4,9 @@ require_once ROOT_DIR.'/pages/api-docs/APIView.php';
 class CronJobAPIs extends APIView{
     public function __construct() {
         parent::__construct('CronJob','entity/cron');
-        $this->setClassShortDesc('');
-        $this->setClassLongDesc('');
-        $this->setVNum('');
+        $this->setClassShortDesc('A class thar represents a cron job.');
+        $this->setClassLongDesc('A class thar represents a cron job.');
+        $this->setVNum('1.0.2');
         new APIPage($this->getClassAPIObj());
     }
 

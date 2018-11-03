@@ -9,7 +9,7 @@ class CronAPIs extends APIView{
                 . 'It is used to create jobs, schedule them and execute them. '
                 . 'In order to run the jobs automatically, the developer must '
                 . 'add an entry in the following formate in crontab: '
-                . '<p>'.$this->monoStr('* * * * *  /usr/bin/curl {BASE_URL}/cron-jobs/execute/{password}').'</p> '
+                . '<br/>'.$this->monoStr('* * * * *  /usr/bin/curl {BASE_URL}/cron-jobs/execute/{password}').'<br/> '
                 . 'Where '.$this->monoStr('{BASE_URL}').' is the web site\'s '
                 . 'base URL and '.$this->monoStr('{password}').' is the '
                 . 'password that was set by the developer to protect the '
