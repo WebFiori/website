@@ -12,7 +12,7 @@ $theme->addComponents(array(
     'head.php', 'header.php', 'footer.php',
     'aside.php','WebFioriGUI.php','LangExt.php','api-help/APIPage.php',
     'api-help/ClassAPI.php','api-help/AttributeDef.php',
-    'api-help/FunctionDef.php'
+    'api-help/FunctionDef.php','api-help/FunctionDef.php'
 ));
 $theme->setBeforeLoaded(function(){
     $lang = WebFiori::getWebsiteFunctions()->getSessionLang(TRUE);

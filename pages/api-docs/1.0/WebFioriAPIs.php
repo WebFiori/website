@@ -1,7 +1,7 @@
 <?php
 require_once ROOT_DIR.'/pages/api-docs/APIView.php';
 
-class WebFioriAPIs extends APIView{
+class WebFioriAPIs extends ClassAPIView{
     private $class;
     public function __construct() {
         parent::__construct();
