@@ -4,14 +4,14 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f
 RewriteRule ^(.*)$ $1.php
 RewriteCond %{REQUEST_FILENAME} !-f
-ReWriteRule ^(.*)$ index.php [L,QSA]
+ReWriteRule ^(.*)$ WebFiori.php [L,QSA]
 #append authorization header 
 RewriteCond %{HTTP:Authorization} ^(.*)
 RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 RedirectMatch 403 ^/.+\.(tkns)$
-DirectoryIndex index.php
+DirectoryIndex WebFiori.php
 #disable opcache
-php_flag opcache.enable Off
+#php_flag opcache.enable Off
 
 #used for ssl redirect
 #RewriteCond %{SERVER_PORT} 80
