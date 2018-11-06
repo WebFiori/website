@@ -130,7 +130,8 @@ class WebFiori{
         //uncomment next line to show runtime errors and warnings
         //also enable logging for info, warnings and errors 
         Logger::logName('initialization-log');
-        Logger::section();
+        Logger::clear();
+        Logger::enabled(TRUE);
         
         //display PHP warnings and errors
         Util::displayErrors();
@@ -444,9 +445,11 @@ class WebFiori{
         WebFiori::getAndStart()->needConfigration();
     }
 }
-
 //start the system
 WebFiori::getAndStart();
+Router::closure('/test', function(){
+    Util::print_r(ViewRoutes::getAPIViewsRoutes());
+});
 define('INITIAL_SYS_STATUS',WebFiori::sysStatus());
 Logger::log('INITIAL_SYS_STATUS = '.INITIAL_SYS_STATUS, 'debug');
 if(INITIAL_SYS_STATUS === TRUE){

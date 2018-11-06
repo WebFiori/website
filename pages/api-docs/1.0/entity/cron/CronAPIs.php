@@ -1,7 +1,8 @@
 <?php
 require_once ROOT_DIR.'/pages/api-docs/APIView.php';
+require_once ROOT_DIR.'/pages/api-docs/ClassAPIView.php';
 
-class CronAPIs extends APIView{
+class CronAPIs extends ClassAPIView{
     public function __construct() {
         parent::__construct('Cron','entity/cron');
         $this->setClassShortDesc('A class that is used to manage cron jobs.');
@@ -178,4 +179,3 @@ class CronAPIs extends APIView{
         
     }
 }
-new CronAPIs();

@@ -40,13 +40,19 @@ class ViewRoutes {
         Router::view('/example', '/example-page.php');
         Router::view('/api', '/api.php');
         $apiHelpRoutes = self::getAPIViewsRoutes();
-        foreach ($apiHelpRoutes as $routes){
-            Router::view($routes['requested-url'], $routes['file']);
+        foreach ($apiHelpRoutes['class'] as $route){
+            Router::closure($route['requested-url'], function ($route){
+                require ROOT_DIR.'/pages'.$route['file'];
+                new $route['class-name']();
+            },$route);
         }
     }
     public static function getAPIViewsRoutes() {
         $base = '/docs/1.0';
-        $routesArr = array();
+        $routesArr = array(
+            'package-index'=>array(),
+            'class'=>array()
+        );
         $dirsStack = new Stack();
         $root = array(
             'long-name'=>ROOT_DIR.'/pages/api-docs/1.0',
@@ -78,18 +84,42 @@ class ViewRoutes {
                     }
                     else{
                         if(strlen($root['parent']) > 0){
-                            $routesArr[] = array(
-                                'file'=>'/api-docs/1.0/'.$root['parent'].'/'.$subDir,
-                                'requested-url'=>$base.'/'.$root['parent'].'/'.str_replace('APIs.php','',$subDir),
-                                'package'=>$root['package']
-                            );
+                            $cName = str_replace('.php','',$subDir);
+                            if($cName == 'pIndex'){
+                                $routesArr['package-index'][] = array(
+                                    'file'=>'/api-docs/1.0/'.$root['parent'].'/'.$subDir,
+                                    'requested-url'=>$base.'/'.$root['parent'],
+                                    'package'=>$root['package'],
+                                    'class-name'=>$cName
+                                );
+                            }
+                            else{
+                                $routesArr['class'][] = array(
+                                    'file'=>'/api-docs/1.0/'.$root['parent'].'/'.$subDir,
+                                    'requested-url'=>$base.'/'.$root['parent'].'/'.str_replace('APIs.php','',$subDir),
+                                    'package'=>$root['package'],
+                                    'class-name'=>$cName
+                                );
+                            }
                         }
                         else{
-                            $routesArr[] = array(
-                                'file'=>'/api-docs/1.0/'.$subDir,
-                                'requested-url'=>$base.'/'.str_replace('APIs.php','',$subDir),
-                                'package'=>$root['package']
-                            );
+                            $cName = str_replace('.php','',$subDir);
+                            if($cName == 'pIndex'){
+                                $routesArr['package-index'][] = array(
+                                    'file'=>'/api-docs/1.0/'.$subDir,
+                                    'requested-url'=>$base,
+                                    'package'=>$root['package'],
+                                    'class-name'=>$cName
+                                );
+                            }
+                            else{
+                                $routesArr['class'][] = array(
+                                    'file'=>'/api-docs/1.0/'.$subDir,
+                                    'requested-url'=>$base.'/'.str_replace('APIs.php','',$subDir),
+                                    'package'=>$root['package'],
+                                    'class-name'=>$cName
+                                );
+                            }
                         }
                     }
                 }
