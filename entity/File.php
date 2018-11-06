@@ -57,6 +57,7 @@ class File implements JsonI{
         'mp4'=>'video/mp4',
         'mov'=>'video/quicktime',
         'wmv'=>'video/x-ms-wmv',
+        'mov'=>'video/quicktime',
         'flv'=>'video/x-flv',
         'midi'=>'audio/midi',
         //images 
@@ -65,9 +66,9 @@ class File implements JsonI{
         'png'=>'image/png',
         'bmp'=>'image/bmp',
         'ico'=>'image/x-icon',
-        
-        //documents
+        //pdf 
         'pdf'=>'application/pdf',
+        //MS office documents
         'doc'=>'application/msword',
         'docx'=>'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'xls'=>'application/vnd.ms-excel',
@@ -132,7 +133,25 @@ class File implements JsonI{
      * @since 1.0
      */
     public function setPath($path){
-        $this->path = $path;
+        $retVal = FALSE;
+        $len = strlen($path);
+        if($len > 0){
+            while($path[$len - 1] == '/' || $path[$len - 1] == '\\'){
+                $tmpDir = trim($path,'/');
+                $path = trim($tmpDir,'\\');
+                $len = strlen($path);
+            }
+            while($path[0] == '/' || $path[0] == '\\'){
+                $tmpDir = trim($path,'/');
+                $path = trim($tmpDir,'\\');
+            }
+            if(strlen($path) > 0){
+                $path = str_replace('/', '\\', $path);
+                $this->path = !Util::isDirectory($path) ? '\\'.$path : $path;
+                $retVal = TRUE;
+            }
+        }
+        return $retVal;
     }
     /**
      * Returns the full path to the file.
@@ -187,29 +206,43 @@ class File implements JsonI{
     public function read() {
         $path = $this->getAbsolutePath();
         if($path != ''){
-            if(file_exists($path)){
-                $this->_setSize(filesize($path));
-                set_error_handler(function(){});
-                $h = fopen($path, 'rb');
-                if(is_resource($h)){
-                    $this->rawData = fread($h, $this->getSize());
-                    fclose($h);
-                    $ext = pathinfo($this->getName(), PATHINFO_EXTENSION);
-                    $mime = self::getMIMEType($ext);
-                    $mimeSet = $mime === NULL ? 'application/octet-stream' : $mime;
-                    $this->setMIMEType($mimeSet);
-                    restore_error_handler();
-                    return TRUE;
+            if(!$this->_readHelper($path)){
+                $path = str_replace('\\', '/', $this->getAbsolutePath());
+                if(!$this->_readHelper($path)){
+                    throw new Exception('File not found: \''.$path.'\'.');
                 }
-                restore_error_handler();
-                throw new Exception('Unable to open the file \''.$path.'\'.');
+                else{
+                    return;
+                }
             }
-            throw new Exception('File not found: \''.$path.'\'.');
+            else{
+                return;
+            }
         }
         throw new Exception('File absolute path is invalid.');
     }
+    private function _readHelper($path){
+        if(file_exists($path)){
+            $this->_setSize(filesize($path));
+            set_error_handler(function(){});
+            $h = fopen($path, 'rb');
+            if(is_resource($h)){
+                $this->rawData = fread($h, $this->getSize());
+                fclose($h);
+                $ext = pathinfo($this->getName(), PATHINFO_EXTENSION);
+                $mime = self::getMIMEType($ext);
+                $mimeSet = $mime === NULL ? 'application/octet-stream' : $mime;
+                $this->setMIMEType($mimeSet);
+                restore_error_handler();
+                return TRUE;
+            }
+            restore_error_handler();
+            throw new Exception('Unable to open the file \''.$path.'\'.');
+        }
+        return FALSE;
+    }
     /**
-     * Write raw binary data into a file. If the file does not exist, create it.
+     * Write raw binary data into a file.
      * @param string $path [Optional] An optional file path. If not provided, 
      * the path that is returned by File::getPath() will be used.
      * @return boolean If the file is stored the function will return TRUE. 
@@ -257,7 +290,7 @@ class File implements JsonI{
     }
     /**
      * Display the file. If the raw data of the file is NULL, the function will 
-     * try to read the file that was specified by its name and its path. If 
+     * try to read the file that was specified by the name and its path. If 
      * the function is unable to read the file, an exception is thrown. Also, 
      * an exception will be thrown in case of unknown file MIME type.
      * @param boolean $asAttachment [Optional] If this parameter is set to 
@@ -289,6 +322,15 @@ class File implements JsonI{
         }
         else{
             throw new Exception('MIME type of raw data is not set.');
+        }
+    }
+    /**
+     * @deprecated since version 1.1.1 Will be removed in future.
+     * @param int $size
+     */
+    public function setSize($size){
+        if($size >= 0){
+            $this->fSize = $size;
         }
     }
     private function _setSize($size){

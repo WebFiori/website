@@ -48,7 +48,7 @@ if(!defined('ROOT_DIR')){
 }
 //load UI template components (JS, CSS and others)
 //it is optional. to use a theme but recomended
-Page::theme($themeName='Template');
+Page::theme($themeName='WebFiori Theme');
 
 //sets the title of the page
 $lang = Page::lang();
