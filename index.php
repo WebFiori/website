@@ -447,13 +447,13 @@ class WebFiori{
 }
 //start the system
 WebFiori::getAndStart();
-Router::closure('/test', function(){
+Router::closure('/testo', function(){
     Util::print_r(ViewRoutes::getAPIViewsRoutes());
 });
 define('INITIAL_SYS_STATUS',WebFiori::sysStatus());
 Logger::log('INITIAL_SYS_STATUS = '.INITIAL_SYS_STATUS, 'debug');
 if(INITIAL_SYS_STATUS === TRUE){
-    Router::route(Util::getRequestedURL());
+    new APIReader(ROOT_DIR.'/Test.php');
 }
 else if(INITIAL_SYS_STATUS == Util::DB_NEED_CONF){
     Logger::log('Unable to connect to database.', 'warning');
