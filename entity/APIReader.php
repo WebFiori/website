@@ -164,6 +164,32 @@ class APIReader {
         Logger::logFuncReturn(__METHOD__);
         echo Util::print_r($parsed);
     }
+    private function _extractSinceTag(&$charIndex){
+        $retVal = array();
+        Logger::logFuncCall(__METHOD__);
+        Logger::log('@Since tag. Extracting return type and description...');
+        $vNum = '';
+        while ($charIndex < $this->getFileSize()){
+            $charIndex++;
+            $char = $this->getFileText()[$charIndex];
+            if($char == '@'){
+                $charIndex--;
+                break;
+            }
+            else if($char == '*'){
+                $char2 = $this->getFileText()[$charIndex+1];
+                if($char2 == '/'){
+                    break;
+                }
+            }
+            $vNum .= $char;
+        }
+        Logger::log('Since: \''.$vNum.'\'', 'debug');
+        $retVal['version-number'] = $vNum;
+        Logger::logReturnValue($retVal);
+        Logger::logFuncReturn(__METHOD__);
+        return $retVal;
+    }
     private function _extractReturnTag(&$charIndex){
         $retVal = array();
         Logger::logFuncCall(__METHOD__);
@@ -262,6 +288,9 @@ class APIReader {
         }
         else if($tag == '@param'){
             $retVal = $this->_extractParamTag($charIndex);
+        }
+        else if($tag == '@since'){
+            $retVal = $this->_extractSinceTag($charIndex);
         }
         Logger::logReturnValue($retVal);
         Logger::logFuncReturn(__METHOD__);
