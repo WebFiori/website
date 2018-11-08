@@ -450,6 +450,9 @@ WebFiori::getAndStart();
 define('INITIAL_SYS_STATUS',WebFiori::sysStatus());
 Logger::log('INITIAL_SYS_STATUS = '.INITIAL_SYS_STATUS, 'debug');
 if(INITIAL_SYS_STATUS === TRUE){
+    Router::closure('/testx', function(){
+        new APIReader(ROOT_DIR.'/Test.php');
+    });
     Router::route(Util::getRequestedURL());
 }
 else if(INITIAL_SYS_STATUS == Util::DB_NEED_CONF){
