@@ -150,7 +150,12 @@ class APIReader {
                 }
                 Logger::log('Extracted tag = \''.$tag.'\'.','debug');
                 $extracted = $this->extractTagInfo($tag, $startCharIndex);
-                $parsed[$tag][] = $extracted;
+                if($tag == '@since' || $tag == '@version'){
+                    $parsed[$tag] = $extracted;
+                }
+                else{
+                    $parsed[$tag][] = $extracted;
+                }
                 $str = '';
             }
             else{
@@ -164,8 +169,7 @@ class APIReader {
         Logger::logFuncReturn(__METHOD__);
         echo Util::print_r($parsed);
     }
-    private function _extractSinceTag(&$charIndex){
-        $retVal = array();
+    private function _extractSinceOrVersionTag(&$charIndex){
         Logger::logFuncCall(__METHOD__);
         Logger::log('@Since tag. Extracting return type and description...');
         $vNum = '';
@@ -182,15 +186,15 @@ class APIReader {
                     break;
                 }
             }
-            $vNum .= $char;
+            if($char != "\n" && $char != "\r" && $char != '*'){
+                $vNum .= $char;
+            }
         }
-        Logger::log('Since: \''.$vNum.'\'', 'debug');
-        $retVal['version-number'] = $vNum;
-        Logger::logReturnValue($retVal);
+        Logger::logReturnValue($vNum);
         Logger::logFuncReturn(__METHOD__);
-        return $retVal;
+        return $vNum;
     }
-    private function _extractReturnTag(&$charIndex){
+    private function _extractReturnOrThrowsTag($tag,&$charIndex){
         $retVal = array();
         Logger::logFuncCall(__METHOD__);
         Logger::log('Return tag. Extracting return type and description...');
@@ -224,8 +228,14 @@ class APIReader {
         }
         Logger::log('Return type: \''.$returnType.'\'', 'debug');
         Logger::log('Return description: \''.$returnDesc.'\'', 'debug');
-        $retVal['return-type'] = $returnType;
-        $retVal['description'] = trim($returnDesc);
+        if($tag == '@throws'){
+            $retVal['exception-type'] = $returnType;
+            $retVal['description'] = trim($returnDesc);
+        }
+        else if($tag == '@return'){
+            $retVal['return-type'] = $returnType;
+            $retVal['description'] = trim($returnDesc);
+        }
         Logger::logReturnValue($retVal);
         Logger::logFuncReturn(__METHOD__);
         return $retVal;
@@ -283,14 +293,14 @@ class APIReader {
         Logger::logFuncCall(__METHOD__);
         $retVal = array();
         Logger::log('Checking tag type...');
-        if($tag == '@return'){
-            $retVal = $this->_extractReturnTag($charIndex);
+        if($tag == '@return' || $tag == '@throws'){
+            $retVal = $this->_extractReturnOrThrowsTag($tag,$charIndex);
         }
         else if($tag == '@param'){
             $retVal = $this->_extractParamTag($charIndex);
         }
-        else if($tag == '@since'){
-            $retVal = $this->_extractSinceTag($charIndex);
+        else if($tag == '@since' || $tag == '@version'){
+            $retVal = $this->_extractSinceOrVersionTag($charIndex);
         }
         Logger::logReturnValue($retVal);
         Logger::logFuncReturn(__METHOD__);
