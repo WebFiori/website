@@ -24,7 +24,10 @@ class APIReader {
         '@see'
     );
     public function __construct($pathToClassFile) {
-        $this->parsedClassInfo = array();
+        $this->parsedClassInfo = array(
+            'attributes'=>array(),
+            'functions'=>array()
+        );
         Logger::logName('api-extractor-log');
         Logger::enabled(TRUE);
         Logger::clear();
@@ -51,6 +54,7 @@ class APIReader {
                     Logger::log('Character: '.$char, 'debug');
                     Logger::log('Constructed string = \''.$str.'\'.', 'debug');
                     Logger::log('Checking character type...');
+                    $str = trim($str);
                     if($char == "\n"){
                         Logger::log('New line character detected.');
                         Logger::log('Checking if constructed string is the start of a DocBlock...');
@@ -76,29 +80,30 @@ class APIReader {
                         }
                         $str = '';
                     }
-                    else if($str == 'public abstract function' || 
-                            $str == 'abstract public function' || 
-                            $str == 'private function' ||
-                            $str == 'private final function' || 
-                            $str == 'final private function' || 
-                            $str == 'public function' ||
-                            $str == 'public final function' || 
-                            $str == 'final public function' || 
-                            $str == 'protected function' ||
-                            $str == 'protected final function' || 
-                            $str == 'final protected function' ||
-                            $str == 'static function' ||
-                            $str == 'static final function' || 
-                            $str == 'final static function' || 
-                            $str == 'public static function' ||
-                            $str == 'public static final function' || 
-                            $str == 'public final static function' ||
-                            $str == 'static public final function' ){
-                        //function declareation
+                    else if($str == 'public' || 
+                            $str == 'private' || 
+                            $str == 'protected' || 
+                            $str == 'abstract' || 
+                            $str == 'static'){
+                        //function or attribute
                         
                     }
                     else if($str == 'const'){
                         //a constant
+                        $constName = $this->extractConstName($charIndex);
+                        if($this->lastParsedDocBlock != NULL){
+                            $this->lastParsedDocBlock['name'] = $constName;
+                            $this->lastParsedDocBlock['access-modifier'] = 'const';
+                            $this->parsedClassInfo['attributes'] = $this->lastParsedDocBlock;
+                            $this->lastParsedDocBlock = NULL;
+                        }
+                        else{
+                            $this->parsedClassInfo['attributes'][] = array(
+                                'access-modifier'=>'const',
+                                'name'=>$constName
+                            );
+                        }
+                        $str = '';
                     }
                     else{
                         if($char != "\r" && $char != "\n"){
@@ -117,6 +122,27 @@ class APIReader {
         }
         Util::print_r($this->parsedClassInfo);
     }
+    private function extractConstName(&$charIndex){
+        Logger::logFuncCall(__METHOD__);
+        $name = '';
+        while ($charIndex < $this->getFileSize()){
+            $char = $this->getFileText()[$charIndex];
+            Logger::log('Checking character if its equal sign...');
+            Logger::log('Character = '.$char,'debug');
+            if($char == '='){
+                Logger::log('It is equal sign. Breaking the loop.');
+                break;
+            }
+            Logger::log('Not equal sign. Moving to next character.');
+            $name.=$char;
+            $charIndex++;
+        }
+        $toReturn = trim($name);
+        Logger::logReturnValue($toReturn);
+        Logger::logFuncReturn(__METHOD__);
+        return $toReturn;
+    }
+    
     /**
      * Extract class information.
      * This function will extract 
@@ -240,6 +266,69 @@ class APIReader {
         while ($charIndex < $this->getFileSize() && $this->getFileText()[$charIndex] == ' '){
             $charIndex++;
             Logger::log('Index = '.$charIndex, 'debug');
+        }
+        $charIndex--;
+        Logger::logReturnValue($charIndex);
+        Logger::logFuncReturn(__METHOD__);
+        return $charIndex;
+    }
+    private function skipFunctionBlock(&$charIndex){
+        Logger::logFuncCall(__METHOD__);
+        $currentBlockNum = 0;
+        while ($charIndex < $this->getFileSize()){
+            $char = $this->getFileText()[$charIndex];
+            Logger::log('Character index = '.$charIndex, 'debug');
+            Logger::log('Character = '.$char, 'debug');
+            Logger::log('Checking character type...');
+            if($char == '\'' || $char == '"'){
+                Logger::log('String detected. Skipping it.');
+                $this->skipString($charIndex, $char);
+            }
+            else if($char == '{'){
+                Logger::log('Code block start detected. Incrementing block number.');
+                $currentBlockNum++;
+                Logger::log('New block number: '.$currentBlockNum, 'debug');
+            }
+            else if($char == '}'){
+                Logger::log('Code block start detected. Incrementing block number.');
+                Logger::log('Checking current block number...');
+                Logger::log('Block number: '.$currentBlockNum, 'debug');
+                if($currentBlockNum == 0){
+                    Logger::log('It is zero. End of function block.');
+                    break;
+                }
+                else{
+                    Logger::log('It is not zero. Reducing it by 1.');
+                    $currentBlockNum--;
+                }
+            }
+            $charIndex++;
+        }
+        Logger::logFuncReturn(__METHOD__);
+    }
+    private function skipString(&$charIndex,$stringChar) {
+        Logger::logFuncCall(__METHOD__);
+        $isEsc = FALSE;
+        while ($charIndex < $this->getFileSize()){
+            $charIndex++;
+            Logger::log('Index = '.$charIndex, 'debug');
+            Logger::log('Checking if it is end of string...');
+            if($this->getFileText()[$charIndex] != $stringChar && !$isEsc){
+                Logger::log('End of string.');
+                break;
+            }
+            $char = $this->getFileText()[$charIndex];
+            Logger::log('Character = '.$char,'debug');
+            Logger::log('Char index = '.$charIndex,'debug');
+            Logger::log('Checking if escape character is found...');
+            if($char == '\\'){
+                Logger::log('It is escape character.');
+                $isEsc = TRUE;
+            }
+            else{
+                Logger::log('It is not escape character.');
+                $isEsc = FALSE;
+            }
         }
         $charIndex--;
         Logger::logReturnValue($charIndex);
