@@ -83,10 +83,92 @@ class APIReader {
                     else if($str == 'public' || 
                             $str == 'private' || 
                             $str == 'protected' || 
-                            $str == 'abstract' || 
-                            $str == 'static'){
+                            $str == 'static' || 
+                            $str == 'abstract'){
+                        Logger::log('Attribute or function definition detected.');
+                        $this->skipSpaces($charIndex);
                         //function or attribute
-                        
+                        while ($charIndex < $this->getFileSize()){
+                            $charX = $this->getFileText()[$charIndex];
+                            Logger::log('Character index = '.$charIndex, 'debug');
+                            Logger::log('Checking if character is $...');
+                            Logger::log('Character = \''.$charX.'\'', 'debug');
+                            if($charX == '$'){
+                                Logger::log('It is $. Attribute definition detected.');
+                                //it is an attribute
+                                $attrNm = $this->extractAttrName($charIndex);
+                                if($this->lastParsedDocBlock != NULL){
+                                    $this->lastParsedDocBlock['name'] = $attrNm;
+                                    $this->lastParsedDocBlock['access-modifier'] = $str;
+                                    $this->parsedClassInfo['attributes'][] = $this->lastParsedDocBlock;
+                                    $this->lastParsedDocBlock = NULL;
+                                }
+                                else{
+                                    $this->parsedClassInfo['attributes'][] = array(
+                                        'access-modifier'=>$str,
+                                        'name'=>$attrNm
+                                    );
+                                }
+                                $str = '';
+                                break;
+                            }
+                            else{
+                                //might be a function
+                                Logger::log('It is no $.');
+                                Logger::log('Constructed string = \''.$charX.'\'.', 'debug');
+                                Logger::log('Checking if detected char is a space...');
+                                if($charX == ' '){
+                                    Logger::log('It is a space.');
+                                    $expl = explode(' ', $str);
+                                    if($expl[count($expl) - 1] == 'function'){
+                                        //it is a function.
+                                        Logger::log('Function definition detected.');
+                                        $retVal = $this->extractFunctionAttrs($charIndex);
+                                        $retVal['access-modifier'] = $str;
+                                        if($this->lastParsedDocBlock != NULL){
+                                            $this->lastParsedDocBlock['name'] = $retVal['name'];
+                                            foreach ($this->lastParsedDocBlock['@param'] as $k => $arr){
+                                                $docBlockAttNm = $arr['name'];
+                                                foreach ($retVal['parameters'] as $param){
+                                                    $attrNm = $param['name'];
+                                                    if($docBlockAttNm == $attrNm){
+                                                        if(isset($param['is-optional'])){
+                                                            $arr['is-optional'] = $param['is-optional'];
+                                                        }
+                                                    }
+                                                }
+                                                $this->lastParsedDocBlock['@param'][$k] = $arr;
+                                            }
+                                            $this->parsedClassInfo['functions'][] = $this->lastParsedDocBlock;
+                                            $this->lastParsedDocBlock = NULL;
+                                        }
+                                        else{
+                                            $this->parsedClassInfo['functions'][] = $retVal;
+                                        }
+                                        $str = '';
+                                    }
+                                    else{
+                                        Logger::log('It is not a function defenition 1. Checking constructed string length...');
+                                        if(strlen($str) > 0){
+                                            Logger::log('Greater than 0.');
+                                            Logger::log('Appending character \''.$charX.'\' to the string.');
+                                            $str .= $charX;
+                                        }
+                                    }
+                                    $this->skipSpaces($charIndex);
+                                }
+                                else{
+                                    Logger::log('It is not a space. Checking character...');
+                                    if($charX != "\n" && $charX != "\r"){
+                                        if(strlen($str) > 0 || $charX != ' '){
+                                            Logger::log('Appending character \''.$charX.'\' to the string.');
+                                            $str .= $charX;
+                                        }
+                                    }
+                                }
+                            }
+                            $charIndex++;
+                        }
                     }
                     else if($str == 'const'){
                         //a constant
@@ -94,7 +176,7 @@ class APIReader {
                         if($this->lastParsedDocBlock != NULL){
                             $this->lastParsedDocBlock['name'] = $constName;
                             $this->lastParsedDocBlock['access-modifier'] = 'const';
-                            $this->parsedClassInfo['attributes'] = $this->lastParsedDocBlock;
+                            $this->parsedClassInfo['attributes'][] = $this->lastParsedDocBlock;
                             $this->lastParsedDocBlock = NULL;
                         }
                         else{
@@ -122,6 +204,82 @@ class APIReader {
         }
         Util::print_r($this->parsedClassInfo);
     }
+    private function extractFunctionAttrs(&$charIndex){
+        Logger::logFuncCall(__METHOD__);
+        $retVal = array(
+            'name'=>'',
+            'parameters'=>array()
+        );
+        $fName = '';
+        $char = $this->getFileText()[$charIndex];
+        Logger::log('Extracting function name...');
+        while ($charIndex < $this->getFileSize()){
+            $char = $this->getFileText()[$charIndex];
+            if($char != '('){
+                $fName .= $char;
+            }
+            else{
+                break;
+            }
+            $charIndex++;
+        }
+        $retVal['name'] = $fName;
+        Logger::log('Extracted name = \''.$fName.'\'.', 'debug');
+        Logger::log('Extracting attributes...');
+        $charIndex++;
+        $attrNm = '';
+        while ($charIndex < $this->getFileSize()){
+            $char = $this->getFileText()[$charIndex];
+            if($char == ')'){
+                if(strlen(trim($attrNm)) > 0){
+                    $retVal['parameters'][] = array(
+                        'name'=>$attrNm
+                    );
+                }
+                break;
+            }
+            else if($char == ','){
+                if(strlen(trim($attrNm)) > 0){
+                    $retVal['parameters'][] = array(
+                        'name'=>$attrNm
+                    );
+                }
+                $attrNm = '';
+            }
+            else if($char == '='){
+                if(strlen(trim($attrNm)) > 0){
+                    $retVal['parameters'][] = array(
+                        'name'=>$attrNm,
+                        'is-optional'=>TRUE
+                    );
+                }
+                $attrNm = '';
+                while ($charIndex < $this->getFileSize()){
+                    $char = $char = $this->getFileText()[$charIndex];
+                    if($char == '\'' || $char == '"'){
+                        $this->skipString($charIndex, $char);
+                    }
+                    if($char == ','){
+                        break;
+                    }
+                    $charIndex++;
+                }
+            }
+            else{
+                $attrNm .= $char;
+            }
+            $charIndex++;
+        }
+        while ($charIndex < $this->getFileSize() && $char != '{'){
+            $char = $this->getFileText()[$charIndex];
+            $charIndex++;
+        }
+        $this->skipFunctionBlock($charIndex);
+        Logger::logReturnValue($retVal);
+        Logger::logFuncReturn(__METHOD__);
+        return $retVal;
+    }
+
     private function extractConstName(&$charIndex){
         Logger::logFuncCall(__METHOD__);
         $name = '';
@@ -131,6 +289,14 @@ class APIReader {
             Logger::log('Character = '.$char,'debug');
             if($char == '='){
                 Logger::log('It is equal sign. Breaking the loop.');
+                Logger::log('Skipping to the end of the statement...');
+                while ($charIndex < $this->getFileSize() && $char != ';'){
+                    $charIndex++;
+                    $char = $this->getFileText()[$charIndex];
+                    if($char == '\'' || $char == '"'){
+                        $this->skipString($charIndex, $char);
+                    }
+                }
                 break;
             }
             Logger::log('Not equal sign. Moving to next character.');
@@ -142,7 +308,37 @@ class APIReader {
         Logger::logFuncReturn(__METHOD__);
         return $toReturn;
     }
-    
+    private function extractAttrName(&$charIndex){
+        Logger::logFuncCall(__METHOD__);
+        $name = '';
+        while ($charIndex < $this->getFileSize()){
+            $char = $this->getFileText()[$charIndex];
+            Logger::log('Checking character if its space...');
+            Logger::log('Character = '.$char,'debug');
+            if($char == ' '){
+                Logger::log('It is space. Breaking the loop.');
+                Logger::log('Skipping to the end of the statement...');
+                while ($charIndex < $this->getFileSize() && $char != ';'){
+                    $charIndex++;
+                    $char = $this->getFileText()[$charIndex];
+                    if($char == '\'' || $char == '"'){
+                        $this->skipString($charIndex, $char);
+                    }
+                }
+                break;
+            }
+            else if($char == ';'){
+                break;
+            }
+            Logger::log('Not space. Moving to next character.');
+            $name.=$char;
+            $charIndex++;
+        }
+        $toReturn = trim($name);
+        Logger::logReturnValue($toReturn);
+        Logger::logFuncReturn(__METHOD__);
+        return $toReturn;
+    }
     /**
      * Extract class information.
      * This function will extract 
@@ -263,11 +459,19 @@ class APIReader {
      */
     private function skipSpaces(&$charIndex) {
         Logger::logFuncCall(__METHOD__);
-        while ($charIndex < $this->getFileSize() && $this->getFileText()[$charIndex] == ' '){
-            $charIndex++;
-            Logger::log('Index = '.$charIndex, 'debug');
+        if(isset($this->getFileText()[$charIndex])){
+            $char = $this->getFileText()[$charIndex];
         }
-        $charIndex--;
+        else{
+            $char = '';
+        }
+        if($char == ' '){
+            while ($charIndex < $this->getFileSize() && $this->getFileText()[$charIndex] == ' '){
+                $charIndex++;
+                Logger::log('Index = '.$charIndex, 'debug');
+            }
+            $charIndex--;
+        }
         Logger::logReturnValue($charIndex);
         Logger::logFuncReturn(__METHOD__);
         return $charIndex;
@@ -306,6 +510,14 @@ class APIReader {
         }
         Logger::logFuncReturn(__METHOD__);
     }
+    /**
+     * Skip string.
+     * The index at the end of escaping will point to the 
+     * character that represents the end of the string (" or ').
+     * @param type $charIndex
+     * @param type $stringChar
+     * @return type
+     */
     private function skipString(&$charIndex,$stringChar) {
         Logger::logFuncCall(__METHOD__);
         $isEsc = FALSE;
@@ -313,7 +525,7 @@ class APIReader {
             $charIndex++;
             Logger::log('Index = '.$charIndex, 'debug');
             Logger::log('Checking if it is end of string...');
-            if($this->getFileText()[$charIndex] != $stringChar && !$isEsc){
+            if($this->getFileText()[$charIndex] == $stringChar && !$isEsc){
                 Logger::log('End of string.');
                 break;
             }
@@ -330,7 +542,6 @@ class APIReader {
                 $isEsc = FALSE;
             }
         }
-        $charIndex--;
         Logger::logReturnValue($charIndex);
         Logger::logFuncReturn(__METHOD__);
         return $charIndex;
@@ -529,12 +740,14 @@ class APIReader {
         }
         $charIndex++;
         while ($charIndex < $this->getFileSize()){
-            $charIndex++;
             $char = $this->getFileText()[$charIndex];
             if($char == ' '){
                 break;
             }
-            $name .= $char;
+            if($char != "\n" && $char != "\r"){
+                $name .= $char;
+            }
+            $charIndex++;
         }
         $charIndex++;
         while ($charIndex < $this->getFileSize()){
