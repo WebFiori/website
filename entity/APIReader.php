@@ -76,7 +76,11 @@ class APIReader {
     }
     public function __construct($pathToClassFile) {
         $this->parsedClassInfo = array(
-            'attributes'=>array(),
+            'attributes'=>array(
+                'class-constants'=>array(),
+                'global-constants'=>array(),
+                'class-attributes'=>array()
+            ),
             'functions'=>array(),
             'class-def'=>array()
         );
@@ -157,16 +161,67 @@ class APIReader {
                                 if($this->lastParsedDocBlock != NULL){
                                     $this->lastParsedDocBlock['name'] = $constNm;
                                     $this->lastParsedDocBlock['access-modifier'] = $stmType['statement'];
-                                    $this->parsedClassInfo['attributes'][] = $this->lastParsedDocBlock;
+                                    $this->parsedClassInfo['attributes']['class-constants'][] = $this->lastParsedDocBlock;
                                     $this->lastParsedDocBlock = NULL;
                                 }
                                 else{
-                                    $this->parsedClassInfo['attributes'][] = array(
+                                    $this->parsedClassInfo['attributes']['class-constants'][] = array(
                                         'name'=>$constNm,
                                         'access-modifier'=>$stmType['statement']
                                     );
                                 }
+                                
                                 $str = '';
+                                break;
+                            }
+                            case 'class-attribute':{
+                                Logger::log('It is class attribute.');
+                                $name = $this->extractAttrName($charIndex);
+                                if($this->lastParsedDocBlock != NULL){
+                                    $this->lastParsedDocBlock['name'] = $name;
+                                    $this->lastParsedDocBlock['access-modifier'] = substr($stmType['statement'], 0, strlen($stmType['statement']) - 1);
+                                    $this->parsedClassInfo['attributes']['class-attributes'][] = $this->lastParsedDocBlock;
+                                    $this->lastParsedDocBlock = NULL;
+                                }
+                                else{
+                                    $this->parsedClassInfo['attributes']['class-attributes'][] = array(
+                                        'name'=>$name,
+                                        'access-modifier'=>substr($stmType['statement'], 0, strlen($stmType['statement']) - 1)
+                                    );
+                                }
+                                $str = '';
+                                break;
+                            }
+                            case 'function':{
+                                Logger::log('It is a function.');
+                                $fAttrs = $this->extractFunctionAttrs($charIndex);
+                                $fAttrs['access-modifier'] = $stmType['statement'];
+                                if($this->lastParsedDocBlock !== NULL){
+                                    $this->lastParsedDocBlock['name'] = $fAttrs['name'];
+                                    if(isset($this->lastParsedDocBlock['@param'])){
+                                        foreach ($fAttrs['@param'] as $param){
+                                            for($x = 0 ; $x < count($this->lastParsedDocBlock['@param']); $x++){
+                                                $param2 = $this->lastParsedDocBlock['@param'][$x];
+                                                if($param['name'] == $param2['name']){
+                                                    if(isset($param['is-optional'])){
+                                                        $param2['is-optional'] = $param['is-optional'];
+                                                    }
+                                                    $this->lastParsedDocBlock['@param'][$x] = $param2;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        $this->lastParsedDocBlock['@param'] = $fAttrs['@param'];
+                                    }
+                                    $this->parsedClassInfo['functions'][] = $this->lastParsedDocBlock;
+                                    $this->lastParsedDocBlock = NULL;
+                                }
+                                else{
+                                    $this->parsedClassInfo['functions'][] = $fAttrs;
+                                }
+                                $str = '';
+                                break;
                             }
                         }
                     }
@@ -186,7 +241,7 @@ class APIReader {
         Logger::logFuncCall(__METHOD__);
         $retVal = array(
             'name'=>'',
-            'parameters'=>array()
+            '@param'=>array()
         );
         $fName = '';
         $char = $this->getFileText()[$charIndex];
@@ -210,7 +265,7 @@ class APIReader {
             $char = $this->getFileText()[$charIndex];
             if($char == ')'){
                 if(strlen(trim($attrNm)) > 0){
-                    $retVal['parameters'][] = array(
+                    $retVal['@param'][] = array(
                         'name'=>$attrNm
                     );
                 }
@@ -218,7 +273,7 @@ class APIReader {
             }
             else if($char == ','){
                 if(strlen(trim($attrNm)) > 0){
-                    $retVal['parameters'][] = array(
+                    $retVal['@param'][] = array(
                         'name'=>$attrNm
                     );
                 }
@@ -226,7 +281,7 @@ class APIReader {
             }
             else if($char == '='){
                 if(strlen(trim($attrNm)) > 0){
-                    $retVal['parameters'][] = array(
+                    $retVal['@param'][] = array(
                         'name'=>$attrNm,
                         'is-optional'=>TRUE
                     );
