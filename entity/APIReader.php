@@ -679,7 +679,7 @@ class APIReader {
                 }
                 Logger::log('Extracted tag = \''.$tag.'\'.','debug');
                 $extracted = $this->extractTagInfo($tag, $startCharIndex);
-                if($tag == '@since' || $tag == '@version' || $tag == '@package'){
+                if($tag == '@since' || $tag == '@version' || $tag == '@package' || $tag == '@var'){
                     $parsed[$tag] = $extracted;
                 }
                 else{
@@ -858,11 +858,101 @@ class APIReader {
         else if($tag == '@param'){
             $retVal = $this->_extractParamTag($charIndex);
         }
+        else if($tag == '@var'){
+            $retVal = $this->_extractVarTagInfo($charIndex);
+        }
         else if($tag == '@package' || $tag == '@since' || $tag == '@version' || $tag == '@author'){
             $retVal = $this->_extractSingleInfoTag($charIndex);
         }
         else{
-            Logger::log('Unknown tag type.');
+            Logger::log('Cannot extract tag info. Unknown tag type.','warning');
+        }
+        Logger::logReturnValue($retVal);
+        Logger::logFuncReturn(__METHOD__);
+        return $retVal;
+    }
+    /**
+     * Extract the information from @var tag.
+     * @param type $charIndex
+     * @return type
+     */
+    private function _extractVarTagInfo(&$charIndex){
+        $retVal = array();
+        Logger::logFuncCall(__METHOD__);
+        Logger::log('@var tag. Extracting type, name and description.');
+        $type = '';
+        $nameOrDesc = '';
+        $description = '';
+        while ($charIndex < $this->getFileSize()){
+            $charIndex++;
+            $char = $this->getFileText()[$charIndex];
+            if($char == ' '){
+                break;
+            }
+            $type .= $char;
+        }
+        $charIndex++;
+        $this->skipSpaces($charIndex);
+        $isName = FALSE;
+        $firstLoopRun = TRUE;
+        while ($charIndex < $this->getFileSize()){
+            $char = $this->getFileText()[$charIndex];
+            if($isName || $firstLoopRun){
+                if($char == ' '){
+                    break;
+                }
+                if($char != "\n" && $char != "\r"){
+                    $nameOrDesc .= $char;
+                }
+                if($char == '$' && $firstLoopRun){
+                    $isName = TRUE;
+                }
+                $firstLoopRun = FALSE;
+            }
+            else{
+                $char = $this->getFileText()[$charIndex];
+                if($char == '@'){
+                    break;
+                }
+                else if($char == '*'){
+                    $char2 = $this->getFileText()[$charIndex+1];
+                    if($char2 == '/'){
+                        break;
+                    }
+                }
+                if($char != "\n" && $char != "\r" && $char != '*'){
+                    $nameOrDesc .= $char;
+                }
+            }
+            $charIndex++;
+        }
+        if($isName){
+            $charIndex++;
+            while ($charIndex < $this->getFileSize()){
+                $char = $this->getFileText()[$charIndex];
+                if($char == '@'){
+                    break;
+                }
+                else if($char == '*'){
+                    $char2 = $this->getFileText()[$charIndex+1];
+                    if($char2 == '/'){
+                        break;
+                    }
+                }
+                if($char != "\n" && $char != "\r" && $char != '*'){
+                    $description .= $char;
+                }
+                $charIndex++;
+            }
+        }
+        $charIndex--;
+        $retVal['type'] = $type;
+        if($isName){
+            $retVal['name'] = $nameOrDesc;
+            $retVal['description'] = trim($description);
+        }
+        else{
+            $retVal['description'] = trim($nameOrDesc);
         }
         Logger::logReturnValue($retVal);
         Logger::logFuncReturn(__METHOD__);
