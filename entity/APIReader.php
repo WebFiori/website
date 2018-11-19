@@ -20,17 +20,24 @@ class APIReader {
             'function',
             'public function',
             'private function',
-            'protected function'
+            'protected function',
+            'public static function',
+            'protected static function',
+            'private static function'
         ),
         'class-attribute'=>array(
             'public $',
             'private $',
-            'protected $'
+            'protected $',
+            'public static $',
+            'private static $',
+            'protected static $'
         ),
         'class-dec'=>array(
             'class',
             'abstract class',
-            'final class'
+            'final class',
+            'interface'
         ),
         'constant'=>array(
             'const'
@@ -38,14 +45,6 @@ class APIReader {
         'global-constant'=>array(
             'define'
         )
-    );
-    
-    const ACCESS_MODIFERS = array(
-        'public','protected','private'
-    );
-    const TAGS = array(
-        '@return','@param','@author','@since','@version','@throws','@depricated', 
-        '@see'
     );
     /**
      * Returns the type of a statement (e.g. function, constant or class declaration).
@@ -223,6 +222,22 @@ class APIReader {
                                 $str = '';
                                 break;
                             }
+                            case 'global-constant':{
+                                Logger::log('Global Constan.');
+                                $constNm = $this->_extractGlobalConstant($charIndex);
+                                if($this->lastParsedDocBlock !== NULL){
+                                    $this->lastParsedDocBlock['name'] = $constNm;
+                                    $this->parsedClassInfo['global-constants'][] = $this->lastParsedDocBlock;
+                                    $this->lastParsedDocBlock = NULL;
+                                }
+                                else{
+                                    $this->parsedClassInfo['global-constants'][] = array(
+                                        'name'=>$constNm
+                                    );
+                                }
+                                $str = '';
+                                break;
+                            }
                         }
                     }
                     $charIndex++;
@@ -236,6 +251,46 @@ class APIReader {
             echo 'File not found: '.$pathToClassFile.'<br/>';
         }
         Util::print_r($this->parsedClassInfo);
+    }
+    private function _extractGlobalConstant(&$charIndex){
+        Logger::logFuncCall(__METHOD__);
+        $constName = '';
+        $startedParsingName = FALSE;
+        $nameExtracted = FALSE;
+        while($charIndex < $this->getFileSize()){
+            $char = $this->getFileText()[$charIndex];
+            if($startedParsingName){
+                if($char == '\'' || $char == '"'){
+                    Logger::log('Extracted name = \''.$constName.'\'.');
+                    $nameExtracted = TRUE;
+                    $charIndex++;
+                    while($charIndex < $this->getFileSize()){
+                        $char = $this->getFileText()[$charIndex];
+                        if($char == '"' || $char == '\''){
+                            $this->skipString($charIndex, $char);
+                        }
+                        else if($char == ';'){
+                            break;
+                        }
+                    }
+                }
+                else{
+                    $constName .= $char;
+                }
+            }
+            else{
+                if(($char == '"' || $char == '\'') && !$startedParsingName){
+                    $startedParsingName = TRUE;
+                }
+            }
+            if($nameExtracted){
+                break;
+            }
+            $charIndex++;
+        }
+        Logger::logReturnValue($constName);
+        Logger::logFuncReturn(__METHOD__);
+        return $constName;
     }
     private function extractFunctionAttrs(&$charIndex){
         Logger::logFuncCall(__METHOD__);
