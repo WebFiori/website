@@ -272,6 +272,7 @@ class APIReader {
                 break;
             }
             else if($char == ','){
+                Logger::log('Parameter found.');
                 if(strlen(trim($attrNm)) > 0){
                     $retVal['@param'][] = array(
                         'name'=>$attrNm
@@ -280,6 +281,7 @@ class APIReader {
                 $attrNm = '';
             }
             else if($char == '='){
+                Logger::log('Optional parameter found.');
                 if(strlen(trim($attrNm)) > 0){
                     $retVal['@param'][] = array(
                         'name'=>$attrNm,
@@ -287,27 +289,44 @@ class APIReader {
                     );
                 }
                 $attrNm = '';
+                Logger::log('Skipping default value...');
                 while ($charIndex < $this->getFileSize()){
-                    $char = $char = $this->getFileText()[$charIndex];
+                    $char = $this->getFileText()[$charIndex];
+                    Logger::log('Character = \''.$char.'\'.','debug');
                     if($char == '\'' || $char == '"'){
                         $this->skipString($charIndex, $char);
                     }
-                    if($char == ','){
+                    if($char == ',' || $char == ')'){
                         break;
                     }
                     $charIndex++;
                 }
+                Logger::log('Skipped.');
             }
             else{
+                Logger::log('Appending character to parameter name...');
                 $attrNm .= $char;
+                Logger::log('Constructed attribute name = \''.$attrNm.'\'.','debug');
+            }
+            if($char == ')'){
+                Logger::log('Stopping the loop.');
+                break;
             }
             $charIndex++;
         }
+        Logger::log('Skipping till character \'{\'...');
+        $string = '';
         while ($charIndex < $this->getFileSize() && $char != '{'){
             $char = $this->getFileText()[$charIndex];
+            Logger::log('Character = \''.$char.'\'.','debug');
+            $string .= $char;
+            Logger::log($string);
             $charIndex++;
         }
+        Logger::log('Done.');
+        Logger::log('Skipping function code block...');
         $this->skipFunctionBlock($charIndex);
+        Logger::log('Done.');
         Logger::logReturnValue($retVal);
         Logger::logFuncReturn(__METHOD__);
         return $retVal;
