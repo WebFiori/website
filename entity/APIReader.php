@@ -84,7 +84,7 @@ class APIReader {
             'class-def'=>array()
         );
         Logger::logName('api-extractor-log');
-        Logger::enabled(TRUE);
+        Logger::enabled(FALSE);
         Logger::clear();
         Logger::log('Starting API procesing of the file \''.$pathToClassFile.'\'.');
         Logger::log('Checking if file exist...');
