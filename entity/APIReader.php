@@ -222,22 +222,22 @@ class APIReader {
                                 $str = '';
                                 break;
                             }
-                            case 'global-constant':{
-                                Logger::log('Global Constan.');
-                                $constNm = $this->_extractGlobalConstant($charIndex);
-                                if($this->lastParsedDocBlock !== NULL){
-                                    $this->lastParsedDocBlock['name'] = $constNm;
-                                    $this->parsedClassInfo['global-constants'][] = $this->lastParsedDocBlock;
-                                    $this->lastParsedDocBlock = NULL;
-                                }
-                                else{
-                                    $this->parsedClassInfo['global-constants'][] = array(
-                                        'name'=>$constNm
-                                    );
-                                }
-                                $str = '';
-                                break;
-                            }
+//                            case 'global-constant':{
+//                                Logger::log('Global Constan.');
+//                                $constNm = $this->_extractGlobalConstant($charIndex);
+//                                if($this->lastParsedDocBlock !== NULL){
+//                                    $this->lastParsedDocBlock['name'] = $constNm;
+//                                    $this->parsedClassInfo['global-constants'][] = $this->lastParsedDocBlock;
+//                                    $this->lastParsedDocBlock = NULL;
+//                                }
+//                                else{
+//                                    $this->parsedClassInfo['global-constants'][] = array(
+//                                        'name'=>$constNm
+//                                    );
+//                                }
+//                                $str = '';
+//                                break;
+//                            }
                         }
                     }
                     $charIndex++;
@@ -250,7 +250,6 @@ class APIReader {
         else{
             echo 'File not found: '.$pathToClassFile.'<br/>';
         }
-        Util::print_r($this->parsedClassInfo);
     }
     private function _extractGlobalConstant(&$charIndex){
         Logger::logFuncCall(__METHOD__);
@@ -291,6 +290,27 @@ class APIReader {
         Logger::logReturnValue($constName);
         Logger::logFuncReturn(__METHOD__);
         return $constName;
+    }
+    public function getAttributesNames(){
+        $retVal = array();
+        foreach ($this->parsedClassInfo['attributes']['class-attributes'] as $attr){
+            $retVal[] = $attr['name'];
+        }
+        return $retVal;
+    }
+    public function getConstantsNames(){
+        $retVal = array();
+        foreach ($this->parsedClassInfo['attributes']['class-constants'] as $attr){
+            $retVal[] = $attr['name'];
+        }
+        return $retVal;
+    }
+    public function getFunctionsNames(){
+        $retVal = array();
+        foreach ($this->parsedClassInfo['functions'] as $func){
+            $retVal[] = $func['name'];
+        }
+        return $retVal;
     }
     private function extractFunctionAttrs(&$charIndex){
         Logger::logFuncCall(__METHOD__);
