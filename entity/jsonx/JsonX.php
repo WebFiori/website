@@ -4,6 +4,7 @@
  * The class follows the specifications found at https://www.json.org/index.html.
  * @author Ibrahim <ibinshikh@hotmail.com>
  * @version 1.2
+ * @package webfiori/entity/jsonx
  */
 class JsonX {
     /**

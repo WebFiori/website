@@ -142,10 +142,12 @@ class APIReader {
                                     foreach ($r as $k => $v){
                                         $this->lastParsedDocBlock[$k] = $v;
                                     }
+                                    $this->lastParsedDocBlock['access-modifier'] = $str;
                                     $this->parsedClassInfo['class-def'] = $this->lastParsedDocBlock;
                                     $this->lastParsedDocBlock = NULL;
                                 }
                                 else{
+                                    $r['access-modifier'] = $str;
                                     $this->parsedClassInfo['class-def'] = $r;
                                 }
                                 $str = '';
@@ -248,6 +250,34 @@ class APIReader {
             echo 'File not found: '.$pathToClassFile.'<br/>';
         }
     }
+    /**
+     * 
+     * @return type
+     */
+    public function getClassAccessModifier() {
+        return $this->parsedClassInfo['class-def']['access-modifier'];
+    }
+    /**
+     * 
+     * @return type
+     */
+    public function getClassName() {
+        return $this->parsedClassInfo['class-def']['class-name'];
+    }
+    /**
+     * Returns the package that the class belongs to.
+     * The return value of the function will depend on the tag @package which 
+     * can be set for each class. If the tag is not set, the function will 
+     * return empty string.
+     * @return string The name of the package that the class belongs to.
+     * @since 1.0
+     */
+    public function getPackage() {
+        if(isset($this->parsedClassInfo['class-def']['@package'])){
+            return $this->parsedClassInfo['class-def']['@package'];
+        }
+        return '';
+    }
     private function _extractGlobalConstant(&$charIndex){
         Logger::logFuncCall(__METHOD__);
         $constName = '';
@@ -298,7 +328,7 @@ class APIReader {
     public function getAttributesNames(){
         $retVal = array();
         foreach ($this->parsedClassInfo['attributes']['class-attributes'] as $attr){
-            $retVal[] = $attr['name'];
+            $retVal[] = trim($attr['name']);
         }
         sort($retVal );
         return $retVal;
@@ -313,7 +343,7 @@ class APIReader {
     public function getConstantsNames(){
         $retVal = array();
         foreach ($this->parsedClassInfo['attributes']['class-constants'] as $attr){
-            $retVal[] = $attr['name'];
+            $retVal[] = trim($attr['name']);
         }
         sort($retVal);
         return $retVal;
@@ -328,7 +358,7 @@ class APIReader {
     public function getFunctionsNames(){
         $retVal = array();
         foreach ($this->parsedClassInfo['functions'] as $func){
-            $retVal[] = $func['name'];
+            $retVal[] = trim($func['name']);
         }
         sort($retVal);
         return $retVal;

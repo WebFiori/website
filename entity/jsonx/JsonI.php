@@ -4,7 +4,7 @@
  * @author Ibrahim <ibinshikh@hotmail.com>
  * @version 1.0
  * @see JsonX
- * 
+ * @package webfiori/entity/jsonx
  */
 interface JsonI {
     /**

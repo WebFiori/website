@@ -12,19 +12,23 @@
  * @author Ibrahim
  */
 class DocGenerator {
+    private $linksArr;
+    private $apiReadersArr;
+    private $baseUrl;
     public function __construct($options=array()) {
         if(isset($options['path'])){
             $options['path'] = str_replace('/', '\\', $options['path']);
+            $this->baseUrl = isset($options['base-url']) ? $options['base-url']:'';
             if(Util::isDirectory($options['path'])){
                 $classes = $this->_scanPathForFiles($options['path']);
-                $apiReaders = array();
+                $this->linksArr = array();
+                $this->apiReadersArr = array();
                 foreach ($classes as $classPath){
                     Util::print_r($classPath);
-                    $apiReaders[] = new APIReader($classPath);
+                    $this->apiReadersArr[] = new APIReader($classPath);
                 }
-                foreach ($apiReaders as $reader){
-                    Util::print_r($reader->getFunctionsNames());
-                }
+                $this->_buildLinks();
+                Util::print_r($this->linksArr);
             }
             else{
                 throw new Exception('Given path is invalid.');
@@ -32,6 +36,26 @@ class DocGenerator {
         }
         else{
             throw new Exception('Classes path is not set.');
+        }
+    }
+    private function _buildLinks() {
+        foreach ($this->apiReadersArr as $apiReader){
+            $packageLink = $apiReader->getPackage();
+            $packageLink2 = str_replace('.', '/', $packageLink);
+            $cName = $apiReader->getClassName();
+            if($packageLink2 === ''){
+                $classLink = $this->baseUrl.'/'.$cName;
+            }
+            else{
+                $classLink = $this->baseUrl.'/'.$packageLink2.'/'.$cName;
+            }
+            $this->linksArr[$cName] = '<a href="'.$classLink.'" target="_blank">'.$cName.'</a>';
+            foreach ($apiReader->getConstantsNames() as $name){
+                $this->linksArr[$cName.'::'.$name] = '<a href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'</a>';
+            }
+            foreach ($apiReader->getFunctionsNames() as $name){
+                $this->linksArr[$cName.'::'.$name.'()'] = '<a href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'()</a>';
+            }
         }
     }
     private function _scanPathForFiles($root){
