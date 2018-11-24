@@ -68,15 +68,36 @@ class ClassAPI {
      */
     private $classType;
     /**
+     * 
+     * @param APIReader $classAPIReader
+     */
+    public function __construct($classAPIReader) {
+        $this->classMethods = array();
+        $this->implements = array();
+        $this->cName = $classAPIReader->getClassName();
+        $this->pageUrl = Util::getRequestedURL();
+        foreach ($classAPIReader->getConstantsNames() as $name){
+            $docBlock = $classAPIReader->getConstDocBlock($name);
+            $api = new AttributeDef();
+            $api->setName($name);
+            $api->setAccessModifier($docBlock['access-modifier']);
+            $this->addAttribute($api);
+        }
+        foreach ($classAPIReader->getFunctionsNames() as $name){
+            $docBlock = $classAPIReader->getFunctionDocBlock($name);
+            $api = new FunctionDef();
+            $api->setName($name);
+            $api->setAccessModifier($docBlock['access-modifier']);
+            $this->addFunction($api);
+        }
+        Util::print_r($classAPIReader->getParsedInfo());
+    }
+    /**
      * Sets the name of the class.
      * @param string $className The name of the class (e.g. 'SessionManager').
      */
     public function setName($className) {
         $this->cName = $className;
-        $this->classMethods = array();
-        $this->implements = array();
-        $this->pageUrl = Util::getRequestedURL();
-        $this->classType = 'class';
     }
      /**
      * Sets the type of the class.

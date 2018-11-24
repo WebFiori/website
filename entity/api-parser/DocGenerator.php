@@ -28,6 +28,12 @@ class DocGenerator {
                     $this->apiReadersArr[] = new APIReader($classPath);
                 }
                 $this->_buildLinks();
+                Theme::usingTheme($options['theme']);
+                foreach ($this->apiReadersArr as $reader){
+                    $classAPI = new ClassAPI($reader);
+                    $page = new APIPage($classAPI);
+                    $page->createHTMLFile(ROOT_DIR);
+                }
                 Util::print_r($this->linksArr);
             }
             else{

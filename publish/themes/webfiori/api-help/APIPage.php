@@ -13,10 +13,16 @@
  */
 class APIPage {
     /**
+     *
+     * @var ClassAPI 
+     */
+    private $class;
+    /**
      * 
      * @param ClassAPI $class
      */
     public function __construct($class) {
+        $this->class = $class;
         Page::lang('en');
         Page::dir('ltr');
         Page::title($class->getName());
@@ -32,7 +38,17 @@ class APIPage {
         Page::insert($class->getFunctionsSummaryNode());
         Page::insert($class->getAttributesDetailsNode());
         Page::insert($class->getFunctionsDetailsNode());
-        Page::render();
+    }
+    public function createHTMLFile($path) {
+        if(Util::isDirectory($path, TRUE)){
+            $file = new File();
+            $file->setName($this->class->getName().'.html');
+            $file->setPath($path);
+            $file->setRawData(Page::document()->toHTML());
+            $file->write();
+            return TRUE;
+        }
+        return FALSE;
     }
     /**
      * 

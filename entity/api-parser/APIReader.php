@@ -333,6 +333,9 @@ class APIReader {
         sort($retVal );
         return $retVal;
     }
+    public function getParsedInfo() {
+        return $this->parsedClassInfo;
+    }
     /**
      * Returns an array that contains the names of class constants.
      * The Items in the array will be sorted according to the name. If 
