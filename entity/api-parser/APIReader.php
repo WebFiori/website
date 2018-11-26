@@ -196,6 +196,7 @@ class APIReader {
                                 $fAttrs['access-modifier'] = $stmType['statement'];
                                 if($this->lastParsedDocBlock !== NULL){
                                     $this->lastParsedDocBlock['name'] = $fAttrs['name'];
+                                    $this->lastParsedDocBlock['access-modifier'] = $fAttrs['access-modifier'];
                                     if(isset($this->lastParsedDocBlock['@param'])){
                                         foreach ($fAttrs['@param'] as $param){
                                             for($x = 0 ; $x < count($this->lastParsedDocBlock['@param']); $x++){
@@ -249,6 +250,20 @@ class APIReader {
         else{
             echo 'File not found: '.$pathToClassFile.'<br/>';
         }
+    }
+    public function getClassSummary() {
+        $summary = '';
+        if(isset($this->parsedClassInfo['class-def']['summary'])){
+            $summary = $this->parsedClassInfo['class-def']['summary'];
+        }
+        return $summary;
+    }
+    public function getClassDescription() {
+        $desc = '';
+        if(isset($this->parsedClassInfo['class-def']['description'])){
+            $desc = $this->parsedClassInfo['class-def']['description'];
+        }
+        return $desc;
     }
     /**
      * 
@@ -411,7 +426,7 @@ class APIReader {
      */
     public function getFunctionDocBlock($name) {
         foreach ($this->parsedClassInfo['functions'] as $docBlock){
-            if($docBlock['name'] == $name){
+            if(trim($docBlock['name']) == $name){
                 return $docBlock;
             }
         }

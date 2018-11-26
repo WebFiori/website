@@ -46,7 +46,7 @@ class ClassAPI {
      * A link to currently requested page.
      * @var type 
      */
-    private $pageUrl;
+    private $baseUrl;
     /**
      * The package (or folder) that the class belongs to.
      * @var type 
@@ -71,26 +71,101 @@ class ClassAPI {
      * 
      * @param APIReader $classAPIReader
      */
-    public function __construct($classAPIReader) {
+    public function __construct($classAPIReader,$linksArr=array()) {
         $this->classMethods = array();
         $this->implements = array();
         $this->cName = $classAPIReader->getClassName();
-        $this->pageUrl = Util::getRequestedURL();
+        $this->baseUrl = Util::getRequestedURL();
+        $this->setSummary($classAPIReader->getClassSummary());
+        $this->setLongDescription($classAPIReader->getClassDescription());
         foreach ($classAPIReader->getConstantsNames() as $name){
             $docBlock = $classAPIReader->getConstDocBlock($name);
             $api = new AttributeDef();
             $api->setName($name);
             $api->setAccessModifier($docBlock['access-modifier']);
+            if(isset($docBlock['summary'])){
+                $summary = $docBlock['summary'];
+            }
+            else{
+                $summary = '';
+            }
+            $api->setShortDescription($summary);
+            if(isset($docBlock['description'])){
+                $desc = $docBlock['description'];
+            }
+            else{
+                $desc = '';
+            }
+            $api->setLongDescription($summary.' '.$desc);
             $this->addAttribute($api);
         }
         foreach ($classAPIReader->getFunctionsNames() as $name){
             $docBlock = $classAPIReader->getFunctionDocBlock($name);
+            Util::print_r($docBlock);
             $api = new FunctionDef();
             $api->setName($name);
             $api->setAccessModifier($docBlock['access-modifier']);
+            if(isset($docBlock['summary'])){
+                $summary = $docBlock['summary'];
+            }
+            else{
+                $summary = '';
+            }
+            $api->setShortDescription($summary);
+            if(isset($docBlock['description'])){
+                $desc = $docBlock['description'];
+            }
+            else{
+                $desc = '';
+            }
+            if(isset($docBlock['@param'])){
+                foreach ($docBlock['@param'] as $param){
+                    Util::print_r($param);
+                    $isOptional = isset($param['is-optional']) ? $param['is-optional'] : FALSE;
+                    if(isset($param['type'])){
+                        $paramTypes = explode('|', $param['type']);
+                        $typesStr = '';
+                        $index = 0;
+                        $count = count($paramTypes);
+                        foreach ($paramTypes as $t){
+                            if(isset($linksArr[$t])){
+                                $tp = $linksArr[$t];
+                            }
+                            else{
+                                $tp = $t;
+                            }
+                            if($index + 1 == $count){
+                                $typesStr .= $tp;
+                            }
+                            else{
+                                $typesStr .= $tp.'|';
+                            }
+                            $index++;
+                        }
+                    }
+                    else{
+                        $typesStr = 'unkown_type';
+                    }
+                    $description = isset($param['description']) ? $param['description'] : '';
+                    $api->addFuncParam($param['name'], $typesStr, $description, $isOptional);
+                }
+            }
+            $api->setLongDescription($summary.' '.$desc);
             $this->addFunction($api);
         }
-        Util::print_r($classAPIReader->getParsedInfo());
+        $this->setSummary($classAPIReader->getClassSummary());
+    }
+    public function setBaseURL($url) {
+        if(strlen($url) > 0){
+            $this->baseUrl = $url;
+        }
+    }
+    public function getLink() {
+        $retVal = trim($this->baseUrl,'/').'/'.$this->cName;
+        if(strlen($this->package) > 0){
+            $retVal = trim($this->baseUrl,'/').'/'.$this->package.'/'.$this->cName;
+        }
+        return $retVal;
     }
     /**
      * Sets the name of the class.
@@ -148,7 +223,7 @@ class ClassAPI {
      */
     public function addFunction($func) {
         if($func instanceof FunctionDef){
-            $func->setPageURL($this->pageUrl);
+            $func->setPageURL($this->baseUrl);
             $this->classMethods[] = $func;
         }
     }
@@ -158,7 +233,7 @@ class ClassAPI {
      */
     public function addAttribute($attr) {
         if($attr instanceof AttributeDef){
-            $attr->setPageURL($this->pageUrl);
+            $attr->setPageURL($this->baseUrl);
             $this->classAttributes[] = $attr;
         }
     }
@@ -257,7 +332,7 @@ class ClassAPI {
      * Sets the description of the class.
      * @param string $desc The description of the class.
      */
-    public function setShortDescription($desc) {
+    public function setSummary($desc) {
         $this->shortDesc = $desc;
     }
     /**

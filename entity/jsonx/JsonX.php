@@ -4,11 +4,20 @@
  * The class follows the specifications found at https://www.json.org/index.html.
  * @author Ibrahim <ibinshikh@hotmail.com>
  * @version 1.2
- * @package webfiori/entity/jsonx
  */
 class JsonX {
     /**
      * An array of supported types.
+     * This array contains the following strings:
+     * <ul>
+     * <li>integer</li>
+     * <li>string</li>
+     * <li>double</li>
+     * <li>boolean</li>
+     * <li>array</li>
+     * <li>NULL</li>
+     * <li>Object</li>
+     * </ul>
      * @var array An array of supported types.
      * @since 1.0
      */
@@ -35,7 +44,9 @@ class JsonX {
         "\\\\","\/",'\"',"\\t","\\r","\\n","\\f"
     );
     /**
-     * An array that contains JSON data.
+     * An associative array that contains JSON data.
+     * The key will represents the attribute in JSON string and the value of 
+     * the index will represents the value of that attribute.
      * @var array 
      * @since 1.0
      */
@@ -95,7 +106,7 @@ class JsonX {
     /**
      * Adds an object to the JSON string.
      * @param string $key The key value.
-     * @param JsonI|Object|JSonX $val The object that will be added.
+     * @param JsonI|Object|JsonX $val The object that will be added.
      * @return boolean <p>TRUE</b> if the object is added. If the given 
      * value is an object that does not implement the interface <b>JsonI</b>, 
      * The function will try to extract object information based on its public 

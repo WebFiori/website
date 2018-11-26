@@ -320,7 +320,7 @@ class WebFiori{
      * @since 1.2.1
      */
     private function setAutoloadDirectories(){
-        //$this->AU->addSearchDirectory('my-system/entities');
+        $this->AU->addSearchDirectory('entity/api-parser');
         //$this->AU->addSearchDirectory('my-system/logic');
         //$this->AU->addSearchDirectory('my-system/apis');
     }
@@ -451,7 +451,13 @@ define('INITIAL_SYS_STATUS',WebFiori::sysStatus());
 Logger::log('INITIAL_SYS_STATUS = '.INITIAL_SYS_STATUS, 'debug');
 if(INITIAL_SYS_STATUS === TRUE){
     Router::closure('/testx', function(){
-        new APIReader(ROOT_DIR.'/Test.php');
+        Logger::enabled(FALSE);
+        new DocGenerator(array(
+            'path'=>ROOT_DIR.'/entity/jsonx',
+            'base-url'=>'http://localhost/webfiori-website',
+            'theme'=>'WebFiori Theme',
+            'site-name'=>'WebFiori API Docs'
+            ));
     });
     Router::route(Util::getRequestedURL());
 }

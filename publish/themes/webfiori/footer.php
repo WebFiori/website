@@ -55,7 +55,7 @@ function getFooterNode(){
     $div = new HTMLNode('div');
     $div->setAttribute('class', 'pa-ltr-col-twelve');
     $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
-            . 'target="_blank">WebFiori Framework</a> v'.Config::get()->getVersion().' ('.Config::get()->getVersionType().')');
+            . 'target="_blank">WebFiori Framework</a> v'.Config::get()->getVersion().' ('.Config::get()->getVersionType().')</b>');
     $node->addChild($div);
     return $node;
 }

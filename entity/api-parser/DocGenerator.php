@@ -28,13 +28,18 @@ class DocGenerator {
                     $this->apiReadersArr[] = new APIReader($classPath);
                 }
                 $this->_buildLinks();
-                Theme::usingTheme($options['theme']);
+                $siteName = isset($options['site-name']) && strlen($options['site-name']) > 0 ?
+                        $options['site-name'] : 'Docs';
+                
                 foreach ($this->apiReadersArr as $reader){
-                    $classAPI = new ClassAPI($reader);
+                    Page::theme($options['theme']);
+                    Page::siteName($siteName);
+                    $classAPI = new ClassAPI($reader,$this->linksArr);
+                    $classAPI->setBaseURL($this->baseUrl);
                     $page = new APIPage($classAPI);
                     $page->createHTMLFile(ROOT_DIR);
+                    Page::reset();
                 }
-                Util::print_r($this->linksArr);
             }
             else{
                 throw new Exception('Given path is invalid.');
@@ -55,12 +60,12 @@ class DocGenerator {
             else{
                 $classLink = $this->baseUrl.'/'.$packageLink2.'/'.$cName;
             }
-            $this->linksArr[$cName] = '<a href="'.$classLink.'" target="_blank">'.$cName.'</a>';
+            $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
             foreach ($apiReader->getConstantsNames() as $name){
-                $this->linksArr[$cName.'::'.$name] = '<a href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'</a>';
+                $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'</a>';
             }
             foreach ($apiReader->getFunctionsNames() as $name){
-                $this->linksArr[$cName.'::'.$name.'()'] = '<a href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'()</a>';
+                $this->linksArr[$cName.'::'.$name.'()'] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'()</a>';
             }
         }
     }

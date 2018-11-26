@@ -28,6 +28,7 @@ class APIPage {
         Page::title($class->getName());
         Page::document()->getBody()->setClassName('api-page');
         Page::description($class->getShortDescription());
+        Page::canonical($class->getLink());
         Page::document()->getHeadNode()->addCSS(Page::cssDir().'/api-page.css');
         $packageNode = new PNode();
         $packageNode->addText('<b class="mono">'.$class->getPackage().'</b>');
@@ -57,10 +58,9 @@ class APIPage {
     private function createClassDescriptionNode($class) {
         $node = WebFioriGUI::createRowNode(FALSE, FALSE);
         $descNode = new PNode();
-        $descNode->addText($class->getLongDescription());
+        $descNode->addText($class->getShortDescription().' '.$class->getLongDescription());
         $node->addChild($descNode);
         Page::insert($node);
-        
         $classV = $class->getVersion();
         if($classV !== NULL){
             $vNode = new PNode();

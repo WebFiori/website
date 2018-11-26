@@ -25,7 +25,7 @@ class APIView {
         $this->_createAsideNav();
     }
     public function setClassShortDesc($desc) {
-        $this->getClassAPIObj()->setShortDescription($desc);
+        $this->getClassAPIObj()->setSummary($desc);
     }
     public function setClassLongDesc($desc){
         $this->getClassAPIObj()->setLongDescription($desc);
