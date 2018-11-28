@@ -1,4 +1,5 @@
 <?php
+
 /**
  * The instance of this class is used to control basic settings of 
  * the framework. Also, it is the entry point of any request.
@@ -453,7 +454,7 @@ if(INITIAL_SYS_STATUS === TRUE){
     Router::closure('/testx', function(){
         Logger::enabled(FALSE);
         new DocGenerator(array(
-            'path'=>ROOT_DIR.'/entity/jsonx',
+            'path'=>ROOT_DIR.'/entity/ph-mysql',
             'base-url'=>'http://localhost/webfiori-website',
             'theme'=>'WebFiori Theme',
             'site-name'=>'WebFiori API Docs'

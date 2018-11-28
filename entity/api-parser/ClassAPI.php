@@ -101,7 +101,6 @@ class ClassAPI {
         }
         foreach ($classAPIReader->getFunctionsNames() as $name){
             $docBlock = $classAPIReader->getFunctionDocBlock($name);
-            Util::print_r($docBlock);
             $api = new FunctionDef();
             $api->setName($name);
             $api->setAccessModifier($docBlock['access-modifier']);
@@ -120,7 +119,6 @@ class ClassAPI {
             }
             if(isset($docBlock['@param'])){
                 foreach ($docBlock['@param'] as $param){
-                    Util::print_r($param);
                     $isOptional = isset($param['is-optional']) ? $param['is-optional'] : FALSE;
                     if(isset($param['type'])){
                         $paramTypes = explode('|', $param['type']);

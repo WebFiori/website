@@ -13,6 +13,7 @@
  */
 class DocGenerator {
     private $linksArr;
+    private $classesLinksByPackage;
     private $apiReadersArr;
     private $baseUrl;
     public function __construct($options=array()) {
@@ -22,9 +23,9 @@ class DocGenerator {
             if(Util::isDirectory($options['path'])){
                 $classes = $this->_scanPathForFiles($options['path']);
                 $this->linksArr = array();
+                $this->classesLinksByPackage = array();
                 $this->apiReadersArr = array();
                 foreach ($classes as $classPath){
-                    Util::print_r($classPath);
                     $this->apiReadersArr[] = new APIReader($classPath);
                 }
                 $this->_buildLinks();
@@ -37,6 +38,7 @@ class DocGenerator {
                     $classAPI = new ClassAPI($reader,$this->linksArr);
                     $classAPI->setBaseURL($this->baseUrl);
                     $page = new APIPage($classAPI);
+                    $this->_createAsideNav();
                     $page->createHTMLFile(ROOT_DIR);
                     Page::reset();
                 }
@@ -60,13 +62,41 @@ class DocGenerator {
             else{
                 $classLink = $this->baseUrl.'/'.$packageLink2.'/'.$cName;
             }
+            $packageName = strlen($apiReader->getPackage()) > 0 ? $apiReader->getPackage() : 'default';
             $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
+            $this->classesLinksByPackage[$packageName][] = $this->linksArr[$cName];
             foreach ($apiReader->getConstantsNames() as $name){
                 $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'</a>';
             }
             foreach ($apiReader->getFunctionsNames() as $name){
                 $this->linksArr[$cName.'::'.$name.'()'] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'()</a>';
             }
+        }
+    }
+    /**
+     * Creates aside navigation menu which contains 
+     * all system classes along packages.
+     */
+    private function _createAsideNav(){
+        $aside = &Page::document()->getChildByID('side-content-area');
+        $aside->addTextNode('<p>All Classes:</p>');
+        $nav = new HTMLNode('nav');
+        $aside->setAttribute('style', 'border: 1px solid;');
+        $ul = new UnorderedList();
+        $ul->setClassName('side-ul');
+        $nav->addChild($ul);
+        $aside->addChild($nav);
+        foreach ($this->classesLinksByPackage as $packageName => $packageClasses){
+            $packageLi = new ListItem();
+            $packageLi->setText($packageName);
+            $packageUl = new UnorderedList();
+            $packageLi->addChild($packageUl);
+            foreach ($packageClasses as $classLink){
+                $li = new ListItem();
+                $li->addTextNode($classLink);
+                $packageUl->addChild($li);
+            }
+            $ul->addChild($packageLi);
         }
     }
     private function _scanPathForFiles($root){
