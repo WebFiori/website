@@ -46,6 +46,9 @@ if(!defined('ROOT_DIR')){
         . '</body>'
         . '</html>');
 }
+use webfiori\entity\Page;
+use phpStructs\html\PNode;
+use phpStructs\html\HTMLNode;
 //load UI template components (JS, CSS and others)
 //it is optional. to use a theme but recomended
 Page::theme($themeName='WebFiori Theme');
