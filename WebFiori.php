@@ -1,9 +1,23 @@
 <?php
-
+namespace webfiori;
+ini_set('display_startup_errors', 1);
+        ini_set('display_errors', 1);
+        error_reporting(-1);
+use webfiori\entity\AutoLoader;
+use webfiori\entity\Logger;
+use webfiori\entity\Util;
+use functions\SystemFunctions;
+use functions\WebsiteFunctions;
+use functions\BasicMailFunctions;
+use webfiori\entity\router\APIRoutes;
+use webfiori\entity\router\ViewRoutes;
+use webfiori\entity\router\ClosureRoutes;
+use webfiori\entity\cron\Cron;
+use webfiori\entity\router\Router;
 /**
  * The instance of this class is used to control basic settings of 
  * the framework. Also, it is the entry point of any request.
- * @author Ibrahim Ali <ibinshikh@hotmail.com>
+ * @author Ibrahim
  * @version 1.3.2
  */
 class WebFiori{
@@ -321,7 +335,7 @@ class WebFiori{
      * @since 1.2.1
      */
     private function setAutoloadDirectories(){
-        $this->AU->addSearchDirectory('entity/api-parser');
+        //$this->AU->addSearchDirectory('my-system/entities');
         //$this->AU->addSearchDirectory('my-system/logic');
         //$this->AU->addSearchDirectory('my-system/apis');
     }
@@ -450,16 +464,11 @@ class WebFiori{
 WebFiori::getAndStart();
 define('INITIAL_SYS_STATUS',WebFiori::sysStatus());
 Logger::log('INITIAL_SYS_STATUS = '.INITIAL_SYS_STATUS, 'debug');
+Router::closure('/test', function(){
+    $availabelTh = entity\Theme::getAvailableThemes();
+    Util::print_r($availabelTh);
+});
 if(INITIAL_SYS_STATUS === TRUE){
-    Router::closure('/testx', function(){
-        Logger::enabled(FALSE);
-        new DocGenerator(array(
-            'path'=>ROOT_DIR.'/entity/ph-mysql',
-            'base-url'=>'http://localhost/webfiori-website',
-            'theme'=>'WebFiori Theme',
-            'site-name'=>'WebFiori API Docs'
-            ));
-    });
     Router::route(Util::getRequestedURL());
 }
 else if(INITIAL_SYS_STATUS == Util::DB_NEED_CONF){

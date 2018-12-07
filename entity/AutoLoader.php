@@ -1,9 +1,10 @@
 <?php
+namespace webfiori\entity;
 /**
  * An autoloader class to load classes as needed during runtime.
  *
- * @author Ibrahim <ibinshikh@hotmail.com>
- * @version 1.1.1
+ * @author Ibrahim
+ * @version 1.1.2
  */
 class AutoLoader{
     /**
@@ -25,14 +26,8 @@ class AutoLoader{
      */
     private static $loader;
     /**
-     *
-     * @var Logger 
-     * @ssince 1.1
-     */
-    private static $logger;
-    /**
      * Returns a single instance of the class 'AutoLoader'.
-     * @param $options [Optional] An associative array of options that is used to initialize 
+     * @param $options An associative array of options that is used to initialize 
      * the autoloader. The available options are:
      * <ul>
      * <li><b>root</b>: A directory that can be used as a base search folder. 
@@ -56,17 +51,7 @@ class AutoLoader{
             $frameworkSearchFoldres = array(
                 '',
                 '/entity',
-                '/entity/cron',
-                '/entity/queries',
-                '/entity/rest-easy',
-                '/entity/jsonx',
-                '/entity/ph-mysql',
-                '/entity/html-php-structs/structs',
-                '/entity/html-php-structs/html',
-                '/entity/router',
-                '/entity/mail',
-                '/publish',
-                '/publish/themes',
+                '/themes',
                 '/functions',
                 '/apis',
                 '/pages',
@@ -126,7 +111,9 @@ class AutoLoader{
         }
         //Logger::log('Root search folder was set to \''.$this->rootDir.'\'.', 'debug');
         if(gettype($searchFolders) == 'array'){
-            $this->searchFolders = $searchFolders;
+            foreach ($searchFolders as $folder){
+                $this->addSearchDirectory($folder);
+            }
         }
         spl_autoload_register(function($className){
             AutoLoader::get()->loadClass($className);
@@ -137,30 +124,59 @@ class AutoLoader{
      * folders.
      * @param string $dir A new directory (such as '/entity/html-php-structs-1.6/html').
      * @since 1.0
+     * @deprecated since version 1.1.2
      */
-    public function addSearchDirectory($dir) {
+    public function addSearchDirectory($dir,$incSubFolders=true) {
         //Logger::logFuncCall(__METHOD__);
         //Logger::log('Passed value = \''.$dir.'\'', 'debug');
         if(strlen($dir) != 0){
-            array_push($this->searchFolders, '/'. trim($dir, '/'));
             //Logger::log('Folder added.');
+            $cleanDir = '/'. trim($dir, '/');
+            if($incSubFolders){
+                $dirsStack = array();
+                $dirsStack[] = $cleanDir;
+                while($xDir = array_pop($dirsStack)){
+                    $fullPath = str_replace('/', '\\', $this->getRoot().$xDir);
+                    if(is_dir($fullPath)){
+                        $subDirs = scandir($fullPath);
+                        foreach ($subDirs as $subDir){
+                            if($subDir != '.' && $subDir != '..'){
+                                $dirsStack[] = $xDir.'/'.$subDir;
+                            }
+                        }
+                        $this->searchFolders[] = $xDir;
+                    }
+                }
+            }
+            else{
+                $this->searchFolders[] = $cleanDir;
+            }
         }
         //Logger::logFuncReturn(__METHOD__);
     }
     /**
+     * 
+     * @param type $dir
+     * @param type $incSubFolders
+     * @since 1.1.2
+     */
+    public static function newSearchFolder($dir,$incSubFolders=true){
+        self::get()->addSearchDirectory($dir,$incSubFolders);
+    }
+    /**
      * Tries to load a class given its name.
-     * @param string $className The name of the class.
+     * @param string $classPath The name of the class.
      * @since 1.0
      */
-    private function loadClass($className){
-        //Logger::logFuncCall(__METHOD__);
-        //Logger::log('Trying to load the class \''.$className.'\'.');
+    private function loadClass($classPath){
+        $cArr = explode('\\', $classPath);
+        $className = $cArr[count($cArr) - 1];
         foreach ($this->searchFolders as $value) {
             $f = $this->getRoot().$value.'/'.$className.'.php';
             //Logger::log('Checking if file \''.$f.'\' exist...', 'debug');
             if(file_exists($f)){
                 //Logger::log('Class \''.$className.'\' found. Loading the class...');
-                require $f;
+                require_once $f;
                 //Logger::log('Class \''.$className.'\' loaded.');
                 //Logger::logFuncReturn(__METHOD__);
                 return;

@@ -89,13 +89,13 @@ class SiteConfig{
     }
     private function __construct() {
         $this->configVision = '1.2';
-        $this->webSiteNames = array('EN'=>'WebFiori',);
-        $this->baseUrl = 'http://localhost/webfiori-website/';
+        $this->webSiteNames = array('AR'=>'أكاديميا البرمجة','EN'=>'Programming Academia',);
+        $this->baseUrl = 'http://localhost/liskscode/';
         $this->titleSep = ' | ';
         $this->primaryLang = 'EN';
-        $this->baseThemeName = 'WebFiori Theme';
+        $this->baseThemeName = 'Greeny By Ibrahim Ali';
         $this->adminThemeName = 'Greeny By Ibrahim Ali';
-        $this->homePage = 'http://localhost/webfiori-website/welcome';
+        $this->homePage = 'index';
         $this->descriptions = array('AR'=>'','EN'=>'',);
     }
     

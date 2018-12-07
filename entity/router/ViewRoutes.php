@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
+namespace webfiori\entity\router;
 /**
  * A class that only has a function to create views routes.
  *
@@ -38,94 +38,6 @@ class ViewRoutes {
     public static function create(){
         Router::view('/', '/default.html');
         Router::view('/example', '/example-page.php');
-        Router::view('/api', '/api.php');
-        $apiHelpRoutes = self::getAPIViewsRoutes();
-        foreach ($apiHelpRoutes['class'] as $route){
-            Router::closure($route['requested-url'], function ($route){
-                require ROOT_DIR.'/pages'.$route['file'];
-                new $route['class-name']();
-            },$route);
-        }
-    }
-    public static function getAPIViewsRoutes() {
-        $base = '/docs/1.0';
-        $routesArr = array(
-            'package-index'=>array(),
-            'class'=>array()
-        );
-        $dirsStack = new Stack();
-        $root = array(
-            'long-name'=>ROOT_DIR.'/pages/api-docs/1.0',
-            'parent'=>'',
-            'package'=>''
-        );
-        $dirsStack->push($root);
-        while($root = $dirsStack->pop()){
-            $subDirs = scandir($root['long-name']);
-            foreach ($subDirs as $subDir){
-                if($subDir != '.' && $subDir != '..'){
-                    $dirLongName = $root['long-name'].'/'.$subDir;
-                    if(Util::isDirectory($dirLongName)){
-                        if(strlen($root['parent']) > 0){
-                            $toPush = array(
-                                'long-name'=>$dirLongName,
-                                'parent'=>$root['parent'].'/'.$subDir,
-                                'package'=>$root['parent'].'/'.$subDir
-                            );
-                        }
-                        else{
-                            $toPush = array(
-                                'long-name'=>$dirLongName,
-                                'parent'=>$subDir,
-                                'package'=>$subDir
-                            );
-                        }
-                        $dirsStack->push($toPush);
-                    }
-                    else{
-                        if(strlen($root['parent']) > 0){
-                            $cName = str_replace('.php','',$subDir);
-                            if($cName == 'pIndex'){
-                                $routesArr['package-index'][] = array(
-                                    'file'=>'/api-docs/1.0/'.$root['parent'].'/'.$subDir,
-                                    'requested-url'=>$base.'/'.$root['parent'],
-                                    'package'=>$root['package'],
-                                    'class-name'=>$cName
-                                );
-                            }
-                            else{
-                                $routesArr['class'][] = array(
-                                    'file'=>'/api-docs/1.0/'.$root['parent'].'/'.$subDir,
-                                    'requested-url'=>$base.'/'.$root['parent'].'/'.str_replace('APIs.php','',$subDir),
-                                    'package'=>$root['package'],
-                                    'class-name'=>$cName
-                                );
-                            }
-                        }
-                        else{
-                            $cName = str_replace('.php','',$subDir);
-                            if($cName == 'pIndex'){
-                                $routesArr['package-index'][] = array(
-                                    'file'=>'/api-docs/1.0/'.$subDir,
-                                    'requested-url'=>$base,
-                                    'package'=>$root['package'],
-                                    'class-name'=>$cName
-                                );
-                            }
-                            else{
-                                $routesArr['class'][] = array(
-                                    'file'=>'/api-docs/1.0/'.$subDir,
-                                    'requested-url'=>$base.'/'.str_replace('APIs.php','',$subDir),
-                                    'package'=>$root['package'],
-                                    'class-name'=>$cName
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $routesArr;
     }
     /**
      * A test for creating a site map from views URIs
