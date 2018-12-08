@@ -5,6 +5,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+namespace webfiori\apiParser;
+use webfiori\entity\Logger;
 /**
  * Description of APIReader
  *
@@ -44,6 +46,9 @@ class APIReader {
         ),
         'global-constant'=>array(
             'define'
+        ),
+        'namespace'=>array(
+            'namespace'
         )
     );
     /**
@@ -72,6 +77,18 @@ class APIReader {
             'type'=>'NONE',
             'statement'=>$stm
         );
+    }
+    private function _extractNameSpace(&$charIndex){
+        $ns = '';
+        while ($charIndex < $this->getFileSize()){
+            $charIndex++;
+            $char = $this->getFileText()[$charIndex];
+            if($char == ";"){
+                break;
+            }
+            $ns = $ns.$char;
+        }
+        return $ns;
     }
     public function __construct($pathToClassFile) {
         $this->parsedClassInfo = array(
@@ -125,6 +142,12 @@ class APIReader {
                         Logger::log('Checking constructed string type...');
                         $stmType = self::getStatementType($str);
                         switch ($stmType['type']){
+                            case 'namespace':{
+                                $namespace = $this->_extractNameSpace($charIndex);
+                                $this->parsedClassInfo['class-def']['namespace'] = $namespace;
+                                $str = '';
+                                break;
+                            }
                             case 'NONE':{
                                 Logger::log('It does not mean any thing.');
                                 if($char != "\r" && $char != "\n"){
@@ -693,6 +716,9 @@ class APIReader {
             }
         }
         $charIndex--;
+        if(isset($this->parsedClassInfo['class-def']['namespace'])){
+            $infoArr['namespace'] = $this->parsedClassInfo['class-def']['namespace'];
+        }
         Logger::logReturnValue($infoArr);
         Logger::logFuncReturn(__METHOD__);
         return $infoArr;

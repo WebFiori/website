@@ -5,7 +5,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+namespace webfiori\apiParser;
+use webfiori\entity\Util;
+use webfiori\entity\Page;
+use phpStructs\Stack;
+use Exception;
+use webfiori\apiParser\ClassAPI;
 /**
  * Description of DocGenerator
  *

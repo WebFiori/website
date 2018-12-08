@@ -5,7 +5,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+namespace webfiori\apiParser;
 /**
  * A class that is used to construct a GUI to view class API.
  *
