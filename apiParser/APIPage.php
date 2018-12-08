@@ -5,7 +5,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+namespace webfiori\apiParser;
+use webfiori\entity\Page;
+use phpStructs\html\PNode;
+use WebFioriGUI;
+use webfiori\entity\Util;
+use webfiori\entity\File;
 /**
  * A class that is used to display a class API object.
  *

@@ -6,6 +6,9 @@
  * and open the template in the editor.
  */
 namespace webfiori\apiParser;
+use webfiori\entity\Util;
+use WebFioriGUI;
+use phpStructs\html\PNode;
 /**
  * A class that is used to construct a GUI to view class API.
  *

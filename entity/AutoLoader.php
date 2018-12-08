@@ -51,10 +51,10 @@ class AutoLoader{
             $frameworkSearchFoldres = array(
                 '',
                 '/entity',
-                '/themes',
                 '/functions',
                 '/apis',
                 '/pages',
+                '/themes',
             );
             if(isset($options['search-folders'])){
                 foreach ($options['search-folders'] as $folder){

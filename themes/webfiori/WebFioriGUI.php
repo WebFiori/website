@@ -5,7 +5,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+use phpStructs\html\HTMLNode;
+use phpStructs\html\UnorderedList;
+use phpStructs\html\ListItem;
+use webfiori\entity\Page;
 class WebFioriGUI{
     public static function createTitleNode($title=null) {
         $titleRow = self::createRowNode(FALSE,FALSE);

@@ -735,7 +735,8 @@ class Page{
     public function getThemeCSSDir() {
         if($this->isThemeLoaded()){
             $theme = $this->getTheme();
-            return Theme::THEMES_DIR.'/'.$theme->getDirectoryName().'/'.$theme->getCssDirName();
+            $rootExpl = explode('\\', ROOT_DIR);
+            return $rootExpl[count($rootExpl) - 1].'/'.Theme::THEMES_DIR.'/'.$theme->getDirectoryName().'/'.$theme->getCssDirName();
         }
         return '';
     }
@@ -759,7 +760,8 @@ class Page{
     public function getThemeImagesDir() {
         if($this->isThemeLoaded()){
             $theme = $this->getTheme();
-            return Theme::THEMES_DIR.'/'.$theme->getDirectoryName().'/'.$theme->getImagesDirName();
+            $rootExpl = explode('\\', ROOT_DIR);
+            return $rootExpl[count($rootExpl) - 1].'/'. Theme::THEMES_DIR.'/'.$theme->getDirectoryName().'/'.$theme->getImagesDirName();
         }
         return '';
     }
@@ -783,7 +785,8 @@ class Page{
     public function getThemeJSDir() {
         if($this->isThemeLoaded()){
             $theme = $this->getTheme();
-            return Theme::THEMES_DIR.'/'.$theme->getDirectoryName().'/'.$theme->getJsDirName();
+            $rootExpl = explode('\\', ROOT_DIR);
+            return $rootExpl[count($rootExpl) - 1].'/'.Theme::THEMES_DIR.'/'.$theme->getDirectoryName().'/'.$theme->getJsDirName();
         }
         return '';
     }

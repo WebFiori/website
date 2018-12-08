@@ -5,7 +5,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+namespace webfiori\apiParser;
+use WebFioriGUI;
+use phpStructs\html\PNode;
+use phpStructs\html\HTMLNode;
+use phpStructs\html\UnorderedList;
+use phpStructs\html\ListItem;
 /**
  * Definition of class attribute
  *

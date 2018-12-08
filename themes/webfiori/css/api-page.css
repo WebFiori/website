@@ -25,7 +25,10 @@ span.func-param{
 .api-page p{
 
 }
-.api-page p, .api-page ul,.api-page li{
+.api-page p, 
+.api-page ul,
+.api-page li,
+.details-box{
     font-size: 90%;
 }
 .function-summary,.attribute-summary{

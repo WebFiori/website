@@ -6,11 +6,14 @@
  * and open the template in the editor.
  */
 namespace webfiori\apiParser;
+use webfiori\apiParser\ClassAPI;
 use webfiori\entity\Util;
 use webfiori\entity\Page;
 use phpStructs\Stack;
+use phpStructs\html\HTMLNode;
+use phpStructs\html\UnorderedList;
+use phpStructs\html\ListItem;
 use Exception;
-use webfiori\apiParser\ClassAPI;
 /**
  * Description of DocGenerator
  *

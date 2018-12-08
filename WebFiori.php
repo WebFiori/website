@@ -11,6 +11,7 @@ use webfiori\entity\router\ViewRoutes;
 use webfiori\entity\router\ClosureRoutes;
 use webfiori\entity\cron\Cron;
 use webfiori\entity\router\Router;
+use webfiori\apiParser\DocGenerator;
 /**
  * The instance of this class is used to control basic settings of 
  * the framework. Also, it is the entry point of any request.
@@ -463,13 +464,14 @@ WebFiori::getAndStart();
 define('INITIAL_SYS_STATUS',WebFiori::sysStatus());
 Logger::log('INITIAL_SYS_STATUS = '.INITIAL_SYS_STATUS, 'debug');
 Router::closure('/testx', function(){
-    $r = new apiParser\APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
-    Util::print_r($r->getParsedInfo());
-//    $reader = new DocGenerator(array(
-//        'path'=>ROOT_DIR.'\\entity\\jsonx',
-//        'base-url'=> \SiteConfig::getBaseURL(),
-//        'theme'=>'WebFiori Theme'
-//    ));
+//    $r = new APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
+//    Util::print_r($r->getParsedInfo());
+    Logger::enabled(FALSE);
+    $reader = new DocGenerator(array(
+        'path'=>ROOT_DIR.'\\entity\\jsonx',
+        'base-url'=> \SiteConfig::getBaseURL(),
+        'theme'=>'WebFiori Theme'
+    ));
 });
 if(INITIAL_SYS_STATUS === TRUE){
     Router::route(Util::getRequestedURL());
