@@ -1,8 +1,5 @@
 <?php
 namespace webfiori;
-ini_set('display_startup_errors', 1);
-        ini_set('display_errors', 1);
-        error_reporting(-1);
 use webfiori\entity\AutoLoader;
 use webfiori\entity\Logger;
 use webfiori\entity\Util;
@@ -335,6 +332,7 @@ class WebFiori{
      * @since 1.2.1
      */
     private function setAutoloadDirectories(){
+        $this->AU->addSearchDirectory('apiParser');
         //$this->AU->addSearchDirectory('my-system/entities');
         //$this->AU->addSearchDirectory('my-system/logic');
         //$this->AU->addSearchDirectory('my-system/apis');
@@ -464,9 +462,14 @@ class WebFiori{
 WebFiori::getAndStart();
 define('INITIAL_SYS_STATUS',WebFiori::sysStatus());
 Logger::log('INITIAL_SYS_STATUS = '.INITIAL_SYS_STATUS, 'debug');
-Router::closure('/test', function(){
-    $availabelTh = entity\Theme::getAvailableThemes();
-    Util::print_r($availabelTh);
+Router::closure('/testx', function(){
+    $r = new apiParser\APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
+    Util::print_r($r->getParsedInfo());
+//    $reader = new DocGenerator(array(
+//        'path'=>ROOT_DIR.'\\entity\\jsonx',
+//        'base-url'=> \SiteConfig::getBaseURL(),
+//        'theme'=>'WebFiori Theme'
+//    ));
 });
 if(INITIAL_SYS_STATUS === TRUE){
     Router::route(Util::getRequestedURL());
