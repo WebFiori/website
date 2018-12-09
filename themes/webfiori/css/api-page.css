@@ -12,7 +12,7 @@ and open the template in the editor.
 .class-name, .class-name *
 .interface-name, .interface-name *,
 .class-attribute, .class-attribute *
-span.func-param{
+span.func-param, .mono{
     font-family: monospace !important;
 }
 .summary-box-title{
@@ -29,7 +29,7 @@ span.func-param{
 .api-page ul,
 .api-page li,
 .details-box{
-    font-size: 90%;
+    font-size: 11pt;
 }
 .function-summary,.attribute-summary{
     border: 1px solid;

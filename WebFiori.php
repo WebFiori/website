@@ -468,9 +468,10 @@ Router::closure('/testx', function(){
 //    Util::print_r($r->getParsedInfo());
     Logger::enabled(FALSE);
     $reader = new DocGenerator(array(
-        'path'=>ROOT_DIR.'\\entity\\jsonx',
+        'path'=>ROOT_DIR.'\\entity',
         'base-url'=> \SiteConfig::getBaseURL(),
-        'theme'=>'WebFiori Theme'
+        'theme'=>'WebFiori Theme',
+        'output-to'=>'C:\\Server\\apache2\\htdocs\\webfiori-website\\publish'
     ));
 });
 if(INITIAL_SYS_STATUS === TRUE){
