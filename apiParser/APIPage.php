@@ -36,7 +36,7 @@ class APIPage {
         Page::canonical($class->getLink());
         Page::document()->getHeadNode()->addCSS(Page::cssDir().'/api-page.css');
         $packageNode = new PNode();
-        $packageNode->addText('<b class="mono">'.$class->getPackage().'</b>');
+        $packageNode->addText('<b class="mono">namespace '.$class->getNameSpace().'</b>');
         Page::insert($packageNode);
         WebFioriGUI::createTitleNode($class->getLongName());
         $this->createClassDescriptionNode($class);
@@ -46,10 +46,11 @@ class APIPage {
         Page::insert($class->getFunctionsDetailsNode());
     }
     public function createHTMLFile($path) {
-        if(Util::isDirectory($path, TRUE)){
+        $savePath = $path.$this->class->getNameSpace();
+        if(Util::isDirectory($savePath, TRUE)){
             $file = new File();
             $file->setName($this->class->getName().'.html');
-            $file->setPath($path);
+            $file->setPath($savePath);
             $file->setRawData(Page::document()->toHTML());
             $file->write();
             return TRUE;

@@ -300,7 +300,10 @@ class APIReader {
      * @return type
      */
     public function getClassName() {
-        return $this->parsedClassInfo['class-def']['class-name'];
+        if(isset($this->parsedClassInfo['class-def']['class-name'])){
+            return $this->parsedClassInfo['class-def']['class-name'];
+        }
+        return 'CLASS_NAME';
     }
     /**
      * Returns the package that the class belongs to.
@@ -315,6 +318,12 @@ class APIReader {
             return $this->parsedClassInfo['class-def']['@package'];
         }
         return '';
+    }
+    public function getNamespace() {
+        if(isset($this->parsedClassInfo['class-def']['namespace'])){
+            return '\\'.$this->parsedClassInfo['class-def']['namespace'];
+        }
+        return '\\';
     }
     private function _extractGlobalConstant(&$charIndex){
         Logger::logFuncCall(__METHOD__);
@@ -629,7 +638,7 @@ class APIReader {
         $charIndex++;
         while ($charIndex < $this->getFileSize()){
             $char = $this->getFileText()[$charIndex];
-            if($char == ' '){
+            if($char == ' ' || $char == '{'){
                 break;
             }
             $classNm .= $char;

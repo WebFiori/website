@@ -58,14 +58,12 @@ class ListItem extends HTMLNode{
      * @since 1.1
      */
     public function setText($text) {
-        if($this->isTextOnly()){
             if($this->children()->get(0) != NULL){
                 $this->children()->get(0)->setText($text);
             }
             else{
                 parent::addChild(self::createTextNode($text));
             }
-        }
     }
     /**
      * Checks if the node only accepts text or not.

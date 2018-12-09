@@ -21,38 +21,61 @@ use Exception;
  */
 class DocGenerator {
     private $linksArr;
-    private $classesLinksByPackage;
+    private $classesLinksByNS;
     private $apiReadersArr;
     private $baseUrl;
+    /**
+     * 
+     * @param type $options An array of options. The available options are:
+     * <ul>
+     * <li>path: The location at which the classes are exist.</li>
+     * <li>output-to: The location at which the generated HTML files will 
+     * be stored to.</li>
+     * <li>base-url: A URL that will be used for the tag 'base' in the generated 
+     * HTML File.</li>
+     * <li>site-name: A name that will be used in the tag 'title'.</li>
+     * <li>theme: A theme that can be used to customize the UI of generated 
+     * HTML file.</li>
+     * <li></li>
+     * <li></li>
+     * <li></li>
+     * </ul>
+     * @throws Exception
+     */
     public function __construct($options=array()) {
         if(isset($options['path'])){
             $options['path'] = str_replace('/', '\\', $options['path']);
             $this->baseUrl = isset($options['base-url']) ? $options['base-url']:'';
             if(Util::isDirectory($options['path'])){
-                $classes = $this->_scanPathForFiles($options['path']);
-                $this->linksArr = array();
-                $this->classesLinksByPackage = array();
-                $this->apiReadersArr = array();
-                foreach ($classes as $classPath){
-                    $this->apiReadersArr[] = new APIReader($classPath);
+                if(Util::isDirectory($options['output-to'])){
+                    $classes = $this->_scanPathForFiles($options['path']);
+                    $this->linksArr = array();
+                    $this->classesLinksByNS = array();
+                    $this->apiReadersArr = array();
+                    foreach ($classes as $classPath){
+                        $this->apiReadersArr[] = new APIReader($classPath);
+                    }
+                    $this->_buildLinks();
+                    $siteName = isset($options['site-name']) && strlen($options['site-name']) > 0 ?
+                            $options['site-name'] : 'Docs';
+
+                    foreach ($this->apiReadersArr as $reader){
+                        Page::theme($options['theme']);
+                        Page::siteName($siteName);
+                        $classAPI = new ClassAPI($reader,$this->linksArr);
+                        $classAPI->setBaseURL($this->baseUrl);
+                        $page = new APIPage($classAPI);
+                        $this->_createAsideNav();
+                        $page->createHTMLFile($options['output-to']);
+                        Page::reset();
+                    }
                 }
-                $this->_buildLinks();
-                $siteName = isset($options['site-name']) && strlen($options['site-name']) > 0 ?
-                        $options['site-name'] : 'Docs';
-                
-                foreach ($this->apiReadersArr as $reader){
-                    Page::theme($options['theme']);
-                    Page::siteName($siteName);
-                    $classAPI = new ClassAPI($reader,$this->linksArr);
-                    $classAPI->setBaseURL($this->baseUrl);
-                    $page = new APIPage($classAPI);
-                    $this->_createAsideNav();
-                    $page->createHTMLFile(ROOT_DIR);
-                    Page::reset();
+                else{
+                    throw new Exception('Given output path is invalid.');
                 }
             }
             else{
-                throw new Exception('Given path is invalid.');
+                throw new Exception('Given classes path is invalid.');
             }
         }
         else{
@@ -61,18 +84,18 @@ class DocGenerator {
     }
     private function _buildLinks() {
         foreach ($this->apiReadersArr as $apiReader){
-            $packageLink = $apiReader->getPackage();
-            $packageLink2 = str_replace('.', '/', $packageLink);
+            $namespaceLink = $apiReader->getNamespace();
+            $packageLink2 = str_replace('.', '/', $namespaceLink);
             $cName = $apiReader->getClassName();
             if($packageLink2 === ''){
                 $classLink = $this->baseUrl.'/'.$cName;
             }
             else{
-                $classLink = $this->baseUrl.'/'.$packageLink2.'/'.$cName;
+                $classLink = $this->baseUrl.$packageLink2.'/'.$cName;
             }
-            $packageName = strlen($apiReader->getPackage()) > 0 ? $apiReader->getPackage() : 'default';
+            $nsName = $apiReader->getNamespace();
             $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
-            $this->classesLinksByPackage[$packageName][] = $this->linksArr[$cName];
+            $this->classesLinksByNS[$nsName][] = $this->linksArr[$cName];
             foreach ($apiReader->getConstantsNames() as $name){
                 $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'</a>';
             }
@@ -94,12 +117,12 @@ class DocGenerator {
         $ul->setClassName('side-ul');
         $nav->addChild($ul);
         $aside->addChild($nav);
-        foreach ($this->classesLinksByPackage as $packageName => $packageClasses){
+        foreach ($this->classesLinksByNS as $nsName => $nsClasses){
             $packageLi = new ListItem();
-            $packageLi->setText($packageName);
+            $packageLi->setText($nsName);
             $packageUl = new UnorderedList();
             $packageLi->addChild($packageUl);
-            foreach ($packageClasses as $classLink){
+            foreach ($nsClasses as $classLink){
                 $li = new ListItem();
                 $li->addTextNode($classLink);
                 $packageUl->addChild($li);

@@ -15,6 +15,7 @@ use phpStructs\html\PNode;
  * @author Ibrahim
  */
 class ClassAPI {
+    private $ns;
     /**
      * Class version number.
      * @var type 
@@ -154,6 +155,7 @@ class ClassAPI {
             $api->setLongDescription($summary.' '.$desc);
             $this->addFunction($api);
         }
+        $this->ns = $classAPIReader->getNamespace();
         $this->setSummary($classAPIReader->getClassSummary());
     }
     public function setBaseURL($url) {
@@ -204,6 +206,12 @@ class ClassAPI {
     }
     public function extendClass($className,$package='') {
         $this->extends = '<a href="'.$package.'/'.$className.'">'.$className.'</a>';
+    }
+    public function setNameSpace($ns) {
+        $this->ns = $ns;
+    }
+    public function getNameSpace() {
+        return $this->ns;
     }
     public function setPackage($package) {
         $this->package = $package;
