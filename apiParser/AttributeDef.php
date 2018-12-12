@@ -9,8 +9,6 @@ namespace webfiori\apiParser;
 use WebFioriGUI;
 use phpStructs\html\PNode;
 use phpStructs\html\HTMLNode;
-use phpStructs\html\UnorderedList;
-use phpStructs\html\ListItem;
 /**
  * Definition of class attribute
  *

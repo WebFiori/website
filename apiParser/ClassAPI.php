@@ -75,11 +75,17 @@ class ClassAPI {
      * 
      * @param APIReader $classAPIReader
      */
-    public function __construct($classAPIReader,$linksArr=array()) {
+    public function __construct($classAPIReader,$linksArr=array(),$options=array(
+        'inc-private-attrs'=>false,
+        'inc-protected-attrs'=>true,
+        'inc-private-funcs'=>false,
+        'inc-protected-funcs'=>true,
+        'base-url'=>''
+    )) {
         $this->classMethods = array();
         $this->implements = array();
         $this->cName = $classAPIReader->getClassName();
-        $this->baseUrl = Util::getRequestedURL();
+        $this->baseUrl = $options['base-url'];
         $this->setSummary($classAPIReader->getClassSummary());
         $this->setLongDescription($classAPIReader->getClassDescription());
         foreach ($classAPIReader->getConstantsNames() as $name){
@@ -87,73 +93,101 @@ class ClassAPI {
             $api = new AttributeDef();
             $api->setName($name);
             $api->setAccessModifier($docBlock['access-modifier']);
-            if(isset($docBlock['summary'])){
-                $summary = $docBlock['summary'];
+            $accMod = $docBlock['access-modifier'];
+            $accModSplit = explode(' ', $accMod);
+            $attrType = 'public';
+            foreach ($accModSplit as $subString){
+                if($subString == 'private' || $subString == 'protected'){
+                    $attrType = $subString;
+                    break;
+                }
             }
-            else{
-                $summary = '';
+            if($attrType == 'public' || 
+                    ($attrType == 'private' && isset($options['inc-private-attrs']) && $options['inc-private-attrs'] === TRUE) ||
+                    ($attrType == 'protected' && isset($options['inc-protected-attrs']) && $options['inc-protected-attrs'] === TRUE)){
+                if(isset($docBlock['summary'])){
+                    $summary = $docBlock['summary'];
+                }
+                else{
+                    $summary = '';
+                }
+                $api->setShortDescription($summary);
+                if(isset($docBlock['description'])){
+                    $desc = $docBlock['description'];
+                }
+                else{
+                    $desc = '';
+                }
+                $api->setLongDescription($summary.' '.$desc);
+                $this->addAttribute($api);
             }
-            $api->setShortDescription($summary);
-            if(isset($docBlock['description'])){
-                $desc = $docBlock['description'];
-            }
-            else{
-                $desc = '';
-            }
-            $api->setLongDescription($summary.' '.$desc);
-            $this->addAttribute($api);
+            
         }
         foreach ($classAPIReader->getFunctionsNames() as $name){
             $docBlock = $classAPIReader->getFunctionDocBlock($name);
             $api = new FunctionDef();
             $api->setName($name);
             $api->setAccessModifier($docBlock['access-modifier']);
-            if(isset($docBlock['summary'])){
-                $summary = $docBlock['summary'];
-            }
-            else{
-                $summary = '';
-            }
-            $api->setShortDescription($summary);
-            if(isset($docBlock['description'])){
-                $desc = $docBlock['description'];
-            }
-            else{
-                $desc = '';
-            }
-            if(isset($docBlock['@param'])){
-                foreach ($docBlock['@param'] as $param){
-                    $isOptional = isset($param['is-optional']) ? $param['is-optional'] : FALSE;
-                    if(isset($param['type'])){
-                        $paramTypes = explode('|', $param['type']);
-                        $typesStr = '';
-                        $index = 0;
-                        $count = count($paramTypes);
-                        foreach ($paramTypes as $t){
-                            if(isset($linksArr[$t])){
-                                $tp = $linksArr[$t];
-                            }
-                            else{
-                                $tp = $t;
-                            }
-                            if($index + 1 == $count){
-                                $typesStr .= $tp;
-                            }
-                            else{
-                                $typesStr .= $tp.'|';
-                            }
-                            $index++;
-                        }
-                    }
-                    else{
-                        $typesStr = 'unkown_type';
-                    }
-                    $description = isset($param['description']) ? $param['description'] : '';
-                    $api->addFuncParam($param['name'], $typesStr, $description, $isOptional);
+            $accMod = $docBlock['access-modifier'];
+            $accModSplit = explode(' ', $accMod);
+            $funcType = 'public';
+            foreach ($accModSplit as $subString){
+                if($subString == 'private' || $subString == 'protected'){
+                    $funcType = $subString;
+                    break;
                 }
             }
-            $api->setLongDescription($summary.' '.$desc);
-            $this->addFunction($api);
+            if($funcType == 'public' || 
+                    ($funcType == 'private' && isset($options['inc-private-funcs']) && $options['inc-private-funcs'] === TRUE) ||
+                    ($funcType == 'protected' && isset($options['inc-protected-funcs']) && $options['inc-protected-funcs'] === TRUE)){
+                $api->setAccessModifier($docBlock['access-modifier']);
+                if(isset($docBlock['summary'])){
+                    $summary = $docBlock['summary'];
+                }
+                else{
+                    $summary = '';
+                }
+                $api->setShortDescription($summary);
+                if(isset($docBlock['description'])){
+                    $desc = $docBlock['description'];
+                }
+                else{
+                    $desc = '';
+                }
+                if(isset($docBlock['@param'])){
+                    foreach ($docBlock['@param'] as $param){
+                        $isOptional = isset($param['is-optional']) ? $param['is-optional'] : FALSE;
+                        if(isset($param['type'])){
+                            $paramTypes = explode('|', $param['type']);
+                            $typesStr = '';
+                            $index = 0;
+                            $count = count($paramTypes);
+                            foreach ($paramTypes as $t){
+                                if(isset($linksArr[$t])){
+                                    $tp = $linksArr[$t];
+                                }
+                                else{
+                                    $tp = $t;
+                                }
+                                if($index + 1 == $count){
+                                    $typesStr .= $tp;
+                                }
+                                else{
+                                    $typesStr .= $tp.'|';
+                                }
+                                $index++;
+                            }
+                        }
+                        else{
+                            $typesStr = 'unkown_type';
+                        }
+                        $description = isset($param['description']) ? $param['description'] : '';
+                        $api->addFuncParam($param['name'], $typesStr, $description, $isOptional);
+                    }
+                }
+                $api->setLongDescription($summary.' '.$desc);
+                $this->addFunction($api);
+            }
         }
         $this->ns = $classAPIReader->getNamespace();
         $this->setSummary($classAPIReader->getClassSummary());

@@ -35,8 +35,15 @@ class DocGenerator {
      * HTML File.</li>
      * <li>site-name: A name that will be used in the tag 'title'.</li>
      * <li>theme: A theme that can be used to customize the UI of generated 
-     * HTML file.</li>
-     * <li></li>
+     * HTML files.</li>
+     * <li>inc-private-attrs: A boolean variable. Set to TRUE in order to include 
+     * private attributes. Default is FALSE.</li>
+     * <li>inc-private-funcs: A boolean variable. Set to TRUE in order to include 
+     * private functions. Default is FALSE.</li>
+     * * <li>inc-protected-attrs: A boolean variable. Set to TRUE in order to include 
+     * protected attributes. Default is TRUE.</li>
+     * <li>inc-private-funcs: A boolean variable. Set to TRUE in order to include 
+     * protected functions. Default is TRUE.</li>
      * <li></li>
      * <li></li>
      * </ul>
@@ -62,7 +69,7 @@ class DocGenerator {
                     foreach ($this->apiReadersArr as $reader){
                         Page::theme($options['theme']);
                         Page::siteName($siteName);
-                        $classAPI = new ClassAPI($reader,$this->linksArr);
+                        $classAPI = new ClassAPI($reader,$this->linksArr,$options);
                         $classAPI->setBaseURL($this->baseUrl);
                         $page = new APIPage($classAPI);
                         $this->_createAsideNav();
@@ -95,7 +102,7 @@ class DocGenerator {
             }
             $nsName = $apiReader->getNamespace();
             $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
-            $this->classesLinksByNS[$nsName][] = $this->linksArr[$cName];
+            $this->classesLinksByNS[$nsName][] = '<a class="side-link" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
             foreach ($apiReader->getConstantsNames() as $name){
                 $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'</a>';
             }
@@ -110,9 +117,8 @@ class DocGenerator {
      */
     private function _createAsideNav(){
         $aside = &Page::document()->getChildByID('side-content-area');
-        $aside->addTextNode('<p>All Classes:</p>');
+        $aside->addTextNode('<p class="all-classes-label">All Classes:</p>');
         $nav = new HTMLNode('nav');
-        $aside->setAttribute('style', 'border: 1px solid;');
         $ul = new UnorderedList();
         $ul->setClassName('side-ul');
         $nav->addChild($ul);

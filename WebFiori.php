@@ -468,9 +468,10 @@ Router::closure('/testx', function(){
 //    Util::print_r($r->getParsedInfo());
     Logger::enabled(FALSE);
     $reader = new DocGenerator(array(
-        'path'=>ROOT_DIR.'\\entity',
-        'base-url'=> \SiteConfig::getBaseURL(),
+        'path'=>'C:\Server\apache2\htdocs\liskscode',
+        'base-url'=> 'https://programingacademia.com/webfiori/docs',
         'theme'=>'WebFiori Theme',
+        'site-name'=>'WebFiori API Docs',
         'output-to'=>'C:\\Server\\apache2\\htdocs\\webfiori-website\\publish'
     ));
 });

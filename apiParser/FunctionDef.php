@@ -111,7 +111,7 @@ class FunctionDef {
     public function addFuncParam($varName,$varType,$description, $isOptional=false) {
         $paramNum = count($this->funcParams);
         $this->funcParams['param-'.$paramNum] = array(
-            'var-name'=>$varName,
+            'var-name'=> str_replace('&', '&amp;', $varName),
             'var-type'=>$varType,
             'var-desc'=>$description,
             'is-optional'=>$isOptional
@@ -139,7 +139,7 @@ class FunctionDef {
         $node->setClassName($node->getAttributeValue('class').' function-summary');
         $methNameNode = WebFioriGUI::createColNode(12, FALSE, FALSE);
         $methNameNode->setClassName('function-name');
-        $nodeText = $this->getAccessModofier().' function <a class="function-name" href="'.$this->getPageURL().'#'.$this->getName().'">'.$this->getName().'</a>(';
+        $nodeText = $this->getAccessModofier().' function <a class="function-name" href="'.$this->getPageURL().'#'.str_replace('&', '', $this->getName()).'">'. str_replace('&', '&amp;', $this->getName()).'</a>(';
         $count = count($this->funcParams);
         for($x = 0 ; $x < $count ; $x++){
             $param = $this->funcParams['param-'.$x];
@@ -165,20 +165,19 @@ class FunctionDef {
      */
     public function asHTMLNode() {
         $node = WebFioriGUI::createRowNode(TRUE, FALSE);
-        $node->setAttribute('style', 'border: 1px solid;');
-        $node->setClassName($node->getAttributeValue('class').' function-summary');
+        $node->setClassName($node->getAttributeValue('class').' function-details');
         $methNameNode = WebFioriGUI::createColNode(12, FALSE, FALSE);
-        $methNameNode->setID($this->getName());
+        $methNameNode->setID(str_replace('&', '', $this->getName()));
         $methNameNode->setClassName($methNameNode->getAttributeValue('class').' function-name');
-        $nodeText = $this->getAccessModofier().' function '.$this->getName().'(';
+        $nodeText = $this->getAccessModofier().' function '. str_replace('&', '&amp;', $this->getName()).'(';
         $count = count($this->funcParams);
         for($x = 0 ; $x < $count ; $x++){
             $param = $this->funcParams['param-'.$x];
             if($x + 1 == $count){
-                $nodeText .= $param['var-type'].' '.$param['var-name'];
+                $nodeText .= $param['var-type'].' '. str_replace('&', '&amp', $param['var-name']);
             }
             else{
-                $nodeText .= $param['var-type'].' '.$param['var-name'].', ';
+                $nodeText .= $param['var-type'].' '.str_replace('&', '&amp', $param['var-name']).', ';
             }
         }
         $nodeText .= ')';
@@ -186,7 +185,7 @@ class FunctionDef {
         $node->addChild($methNameNode);
         $descNode = new HTMLNode();
         $descNode->addTextNode($this->getLongDescription());
-        $descNode->setClassName('details-box');
+        $descNode->setClassName('description-box');
         $node->addChild($descNode);
         if($count != 0){
             $node->addChild($this->createParametersBox());
@@ -198,7 +197,7 @@ class FunctionDef {
         if(strlen($this->funcReturns['return-types']) != 0){
             $node = WebFioriGUI::createRowNode(FALSE,FALSE);
             $textNode = new PNode();
-            $textNode->addText('Returns: <span style="font-family:monospace">'.$this->funcReturns['return-types'].'</span>');
+            $textNode->addText('Returns: <span class="mono">'.$this->funcReturns['return-types'].'</span>');
             $node->addChild($textNode);
             $descNode = new HTMLNode();
             $descNode->addTextNode($this->funcReturns['description']);

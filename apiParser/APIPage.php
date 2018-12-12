@@ -11,6 +11,7 @@ use phpStructs\html\PNode;
 use WebFioriGUI;
 use webfiori\entity\Util;
 use webfiori\entity\File;
+use phpStructs\html\HTMLNode;
 /**
  * A class that is used to display a class API object.
  *
@@ -38,7 +39,7 @@ class APIPage {
         $packageNode = new PNode();
         $packageNode->addText('<b class="mono">namespace '.$class->getNameSpace().'</b>');
         Page::insert($packageNode);
-        WebFioriGUI::createTitleNode($class->getLongName());
+        WebFioriGUI::createTitleNode($class->getClassType().' '.$class->getName());
         $this->createClassDescriptionNode($class);
         Page::insert($class->getAttributesSummaryNode());
         Page::insert($class->getFunctionsSummaryNode());
@@ -63,8 +64,9 @@ class APIPage {
      */
     private function createClassDescriptionNode($class) {
         $node = WebFioriGUI::createRowNode(FALSE, FALSE);
-        $descNode = new PNode();
-        $descNode->addText($class->getShortDescription().' '.$class->getLongDescription());
+        $descNode = new HTMLNode();
+        $descNode->setAttribute('class', 'description-box');
+        $descNode->addTextNode($class->getShortDescription().' '.$class->getLongDescription());
         $node->addChild($descNode);
         Page::insert($node);
         $classV = $class->getVersion();
