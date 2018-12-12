@@ -1,3 +1,5 @@
 /nbproject
 test.*
 /tmp
+/publish
+logs/api-extractor-log.txt
