@@ -3,9 +3,9 @@ namespace webfiori;
 use webfiori\entity\AutoLoader;
 use webfiori\entity\Logger;
 use webfiori\entity\Util;
-use functions\SystemFunctions;
-use functions\WebsiteFunctions;
-use functions\BasicMailFunctions;
+use webfiori\functions\SystemFunctions;
+use webfiori\functions\WebsiteFunctions;
+use webfiori\functions\BasicMailFunctions;
 use webfiori\entity\router\APIRoutes;
 use webfiori\entity\router\ViewRoutes;
 use webfiori\entity\router\ClosureRoutes;
@@ -468,7 +468,7 @@ Router::closure('/testx', function(){
 //    Util::print_r($r->getParsedInfo());
     Logger::enabled(FALSE);
     $reader = new DocGenerator(array(
-        'path'=>'C:\Server\apache2\htdocs\liskscode',
+        'path'=>'C:\Server\apache2\htdocs\webfiori',
         'base-url'=> 'https://programingacademia.com/webfiori/docs',
         'theme'=>'WebFiori Theme',
         'site-name'=>'WebFiori API Docs',

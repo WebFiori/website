@@ -139,6 +139,7 @@ class FunctionDef {
         $node->setClassName($node->getAttributeValue('class').' function-summary');
         $methNameNode = WebFioriGUI::createColNode(12, FALSE, FALSE);
         $methNameNode->setClassName('function-name');
+        var_dump($this->getPageURL());
         $nodeText = $this->getAccessModofier().' function <a class="function-name" href="'.$this->getPageURL().'#'.str_replace('&', '', $this->getName()).'">'. str_replace('&', '&amp;', $this->getName()).'</a>(';
         $count = count($this->funcParams);
         for($x = 0 ; $x < $count ; $x++){

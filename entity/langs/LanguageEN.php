@@ -1,5 +1,5 @@
 <?php
-namespace webfiori\langs;
+namespace webfiori\entity\langs;
 if(!defined('ROOT_DIR')){
     header("HTTP/1.1 403 Forbidden");
     die(''
@@ -17,7 +17,6 @@ if(!defined('ROOT_DIR')){
         . '</body>'
         . '</html>');
 }
-use webfiori\entity\Language;
 /**
  * A class that contain some of the common language labels in Arabic.
  * So far, the class has the following variables:
@@ -98,10 +97,11 @@ use webfiori\entity\Language;
  * </li>
  * <ul>
  * @version 1.0
+ * @author Ibrahim
  */
-class LanguageAR extends Language{
+class LanguageEN extends Language{
     public function __construct() {
-        parent::__construct('rtl', 'AR', array(
+        parent::__construct('rtl', 'EN', array(
             'general/week-day',
             'general/g-month',
             'general/i-month',
@@ -182,88 +182,88 @@ class LanguageAR extends Language{
             'message'=>'The HTTP version used in the request is not supported by the server.'
         ));
         
-        $this->set('general/action', 'cancel', 'إلغاء');
-        $this->set('general/action', 'back', 'رجوع');
+        $this->set('general/action', 'cancel', 'Cancel');
+        $this->set('general/action', 'back', 'Back');
         
-        $this->set('general/error', 'db-error', 'خطأ في قاعدة البيانات.');
-        $this->set('general/error', 'db-connect-err', 'غير قادر على الإتصال بقاعدة البيانات.');
+        $this->set('general/error', 'db-error', 'Database Error.');
+        $this->set('general/error', 'db-connect-err', 'Unable to connect to database.');
         
-        $this->set('general/status', 'wait', 'الرجاء الإنتظار للحظة...');
-        $this->set('general/status', 'loading', 'جاري التحميل...');
-        $this->set('general/status', 'checking', 'جاري التحقق...');
-        $this->set('general/status', 'validating', 'جاري التحقق من الصحة...');
-        $this->set('general/status', 'loaded', 'تم التحميل.');
+        $this->set('general/status', 'wait', 'Please wait a moment...');
+        $this->set('general/status', 'loading', 'Loading...');
+        $this->set('general/status', 'checking', 'Checking...');
+        $this->set('general/status', 'validating', 'Validating...');
+        $this->set('general/status', 'loaded', 'Loaded.');
 
-        $this->set('general/action', 'save', 'حفظ');
-        $this->set('general/status', 'saving', 'جاري الحفظ...');
-        $this->set('general/status', 'saved', 'تم الحفظ.');
-        $this->set('general/error', 'save', 'غير قادر على الحفظ!');
+        $this->set('general/action', 'save', 'Save');
+        $this->set('general/status', 'saving', 'Saving...');
+        $this->set('general/status', 'saved', 'Saved');
+        $this->set('general/error', 'save', 'Unable to save.');
 
-        $this->set('general/action', 'remove', 'إزالة');
-        $this->set('general/status', 'removing', 'جاري الإزالة...');
-        $this->set('general/status', 'removed', 'تمت الإزالة.');
-        $this->set('general/error', 'remove', 'غير قادر على الإزالة!');
+        $this->set('general/action', 'remove', 'Remove');
+        $this->set('general/status', 'removing', 'Removing...');
+        $this->set('general/status', 'removed', 'Removed');
+        $this->set('general/error', 'remove', 'Unable to remove.');
 
-        $this->set('general/action', 'delete', 'حذف');
-        $this->set('general/status', 'deleting', 'جاري الحذف...');
-        $this->set('general/status', 'deleted', 'تم الحذف.');
-        $this->set('general/error', 'delete', 'غير قادر على الحذف!');
+        $this->set('general/action', 'delete', 'Delete');
+        $this->set('general/status', 'deleting', 'Deleting...');
+        $this->set('general/status', 'deleted', 'Deleted');
+        $this->set('general/error', 'delete', 'Unabel to delete.');
 
-        $this->set('general/action', 'print', 'طباعة');
-        $this->set('general/status', 'printing', 'جاري الطباعة...');
-        $this->set('general/status', 'printed', 'تمت الطباعة.');
-        $this->set('general/error', 'print', 'غير قادر على الطباعة !');
+        $this->set('general/action', 'print', 'Print');
+        $this->set('general/status', 'printing', 'Printing...');
+        $this->set('general/status', 'printed', 'Printed.');
+        $this->set('general/error', 'print', 'Unable to print.');
 
-        $this->set('general/action', 'connect', 'إتصال');
-        $this->set('general/status', 'connecting', 'جاري الإتصال...');
-        $this->set('general/status', 'connected', 'تم الإتصال.');
-        $this->set('general/error', 'connect', 'غير قادر على الإتصال!');
+        $this->set('general/action', 'connect', 'Connect');
+        $this->set('general/status', 'connecting', 'Connecting...');
+        $this->set('general/status', 'connected', 'Connected');
+        $this->set('general/error', 'connect', 'Unable to connect.');
 
-        $this->set('general/status', 'disconnected', 'غير متصل.');
+        $this->set('general/status', 'disconnected', 'Disconnected');
 
-        $this->set('general/action', 'next', 'التالي');
-        $this->set('general/action', 'previous', 'السابق');
-        $this->set('general/action', 'skip', 'تخطي');
-        $this->set('general/action', 'finish', 'إنهاء');
+        $this->set('general/action', 'next', 'Next');
+        $this->set('general/action', 'previous', 'Previous');
+        $this->set('general/action', 'skip', 'Skip');
+        $this->set('general/action', 'finish', 'Finish');
 
         $this->setMultiple('general/week-day', array(
-            'd7'=>'الأحد',
-            'd1'=>'الأثنين',
-            'd2'=>'الثلاثاء',
-            'd3'=>'الأربعاء',
-            'd4'=>'الخميس',
-            'd5'=>'الجمعة',
-            'd6'=>'السبت',
+            'd7'=>'Sunday',
+            'd1'=>'Monday',
+            'd2'=>'Tuesday',
+            'd3'=>'Wednesday',
+            'd4'=>'Thursday',
+            'd5'=>'Friday',
+            'd6'=>'Saturday',
         ));
 
         $this->setMultiple('general/g-month', array(
-            'm1'=>'يناير',
-            'm2'=>'فبراير',
-            'm3'=>'مارس',
-            'm4'=>'أبريل',
-            'm5'=>'مايو',
-            'm6'=>'يونيو',
-            'm7'=>'يوليو',
-            'm8'=>'اغسطس',
-            'm9'=>'سبتمبر',
-            'm10'=>'أكتوبر',
-            'm11'=>'نوفمبر',
-            'm12'=>'ديسمبر',
+            'm1'=>'January',
+            'm2'=>'February',
+            'm3'=>'March',
+            'm4'=>'April',
+            'm5'=>'May',
+            'm6'=>'June',
+            'm7'=>'July',
+            'm8'=>'August',
+            'm9'=>'September',
+            'm10'=>'October',
+            'm11'=>'November',
+            'm12'=>'December',
         ));
         
         $this->setMultiple('general/i-month', array(
-            'm1'=>'محرم',
-            'm2'=>'صفر',
-            'm3'=>'ربيع اول',
-            'm4'=>'ربيع ثاني',
-            'm5'=>'جُمادى الأول',
-            'm6'=>'جُمادى الثاني',
-            'm7'=>'رجب',
-            'm8'=>'شعبان',
-            'm9'=>'رمضان',
-            'm10'=>'شوال',
-            'm11'=>'ذو القُعدة',
-            'm12'=>'ذو الحُحجة',
+            'm1'=>'Muḥarram',
+            'm2'=>'Ṣafar',
+            'm3'=>'Rabīʿ al-Awwal',
+            'm4'=>'Rabīʿ ath-Thānī ',
+            'm5'=>'Jumādá al-Ūlá',
+            'm6'=>'Jumādá al-Ākhirah',
+            'm7'=>'Rajab',
+            'm8'=>'Sha‘bān',
+            'm9'=>'Ramaḍān',
+            'm10'=>'Shawwāl',
+            'm11'=>'Dhū al-Qa‘dah',
+            'm12'=>'Dhū al-Ḥijjah',
         ));
     }
 }

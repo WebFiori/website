@@ -2,14 +2,15 @@
 use webfiori\entity\Theme;
 use webfiori\WebFiori;
 use webfiori\entity\Page;
-use functions\WebsiteFunctions;
+use webfiori\functions\WebsiteFunctions;
 use phpStructs\html\ListItem;
 use phpStructs\html\LinkNode;
 use phpStructs\html\HeadNode;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
-
+use webfiori\SiteConfig;
+use webfiori\Config;
 class WebFioriTheme extends Theme{
     public function __construct() {
         parent::__construct();

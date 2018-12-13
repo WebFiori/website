@@ -1,5 +1,6 @@
 <?php
 namespace webfiori\entity;
+use Exception;
 /**
  * An autoloader class to load classes as needed during runtime.
  *
@@ -51,10 +52,10 @@ class AutoLoader{
             $frameworkSearchFoldres = array(
                 '',
                 '/entity',
+                '/themes',
                 '/functions',
                 '/apis',
                 '/pages',
-                '/themes',
             );
             if(isset($options['search-folders'])){
                 foreach ($options['search-folders'] as $folder){

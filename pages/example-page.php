@@ -52,7 +52,7 @@ use phpStructs\html\HTMLNode;
 //load UI template components (JS, CSS and others)
 //it is optional. to use a theme but recomended
 Page::theme($themeName='WebFiori Theme');
-
+Page::translation();
 //sets the title of the page
 $lang = Page::lang();
 if($lang == 'AR'){

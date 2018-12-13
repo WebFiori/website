@@ -17,7 +17,8 @@ if(!defined('ROOT_DIR')){
         . '</body>'
         . '</html>');
 }
-use Config;
+use webfiori\Config;
+use webfiori\WebFiori;
 /**
  * PHP utility class.
  * @author Ibrahim <ibinshikh@hotmail.com>
@@ -114,7 +115,7 @@ class Util{
      * @return string The string after reversing its order.
      * @since 1.3.7
      */
-    public function reverse($str) {
+    public static function reverse($str) {
         $strToReverse = $str.'';
         $retV = '';
         $strLen = strlen($strToReverse);
@@ -271,8 +272,8 @@ class Util{
         Logger::logFuncCall(__METHOD__);
         Logger::log('Checking system status...');
         $returnValue = '';
-        if(class_exists('Config')){
-            if(class_exists('SiteConfig')){
+        if(class_exists('webfiori\Config')){
+            if(class_exists('webfiori\SiteConfig')){
                 if(Config::isConfig() === TRUE || WebFiori::getClassStatus() == 'INITIALIZING'){
                     if($checkDb === TRUE){
                         Logger::log('Checking database connection...');
@@ -284,7 +285,7 @@ class Util{
                     }
                 }
                 else{
-                    Logger::log('The function \'Config::get()->isConfig()\' returned FALSE or the core is still initializing.', 'warning');
+                    Logger::log('The function \'Config::isConfig()\' returned FALSE or the core is still initializing.', 'warning');
                     $returnValue = Util::NEED_CONF;
                 }
             }
@@ -319,7 +320,7 @@ class Util{
     public static function getGWeekday($date) {
         $format='YYYY-MM-DD';
         if($format == 'YYYY-MM-DD'){
-            return date('w', strtotime($date)) + 1;
+            return date('N', strtotime($date));
         }
         else{
             $split = explode('-', $format);

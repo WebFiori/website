@@ -24,6 +24,9 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity\mail;
+use webfiori\MailConfig;
+use webfiori\entity\File;
+use Exception;
 /**
  * Description of EmaiMessage
  *
@@ -71,7 +74,7 @@ class EmaiMessage {
     private function __construct($sendAccountName='') {
         Logger::logFuncCall(__METHOD__);
         Logger::log('Creating new instance of \'EmailMessage\'.', 'info');
-        if(class_exists('MailConfig')){
+        if(class_exists('webfiori\MailConfig')){
             Logger::log('Checking the existance of the account \''.$sendAccountName.'\'.', 'debug');
             $acc = MailConfig::getAccount($sendAccountName);
             if($acc instanceof EmailAccount){
