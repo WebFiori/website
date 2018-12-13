@@ -28,6 +28,8 @@ class FunctionDef {
     private $shortDescription;
     private $longDescription;
     private $pageUrl;
+    private $ns;
+    private $ownerClass;
     public function __construct() {
         $this->funcParams = array();
         $this->funcReturns = array(
@@ -129,6 +131,25 @@ class FunctionDef {
             'description'=>$desc
         );
     }
+    public function getNameSpace(){
+        return $this->ns;
+    }
+    public function setNameSpace($ns){
+        $this->ns = $ns;
+    }
+    /**
+     * 
+     * @return ClassAPI
+     */
+    public function getOwnerClass(){
+        return $this->ownerClass;
+    }
+    public function setOwnerClass($cl) {
+        if($cl instanceof ClassAPI){
+            $this->ownerClass = $cl;
+            $this->setNameSpace($cl->getNameSpace());
+        }
+    }
     /**
      * Returns HTML node that contains the summary part of the function.
      * @return HTMLNode The node will contain function name and short description.
@@ -139,8 +160,7 @@ class FunctionDef {
         $node->setClassName($node->getAttributeValue('class').' function-summary');
         $methNameNode = WebFioriGUI::createColNode(12, FALSE, FALSE);
         $methNameNode->setClassName('function-name');
-        var_dump($this->getPageURL());
-        $nodeText = $this->getAccessModofier().' function <a class="function-name" href="'.$this->getPageURL().'#'.str_replace('&', '', $this->getName()).'">'. str_replace('&', '&amp;', $this->getName()).'</a>(';
+        $nodeText = $this->getAccessModofier().' function <a class="function-name" href="'.$this->getPageURL().'/'. str_replace('\\', '/', trim($this->getOwnerClass()->getNameSpace(), '\\')).'/'.$this->getOwnerClass()->getName().'#'.str_replace('&', '', $this->getName()).'">'. str_replace('&', '&amp;', $this->getName()).'</a>(';
         $count = count($this->funcParams);
         for($x = 0 ; $x < $count ; $x++){
             $param = $this->funcParams['param-'.$x];

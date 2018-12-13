@@ -267,6 +267,7 @@ class ClassAPI {
     public function addFunction($func) {
         if($func instanceof FunctionDef){
             $func->setPageURL($this->baseUrl);
+            $func->setOwnerClass($this);
             $this->classMethods[] = $func;
         }
     }
