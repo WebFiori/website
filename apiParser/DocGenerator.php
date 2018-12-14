@@ -55,7 +55,7 @@ class DocGenerator {
             $this->baseUrl = isset($options['base-url']) ? $options['base-url']:'';
             if(Util::isDirectory($options['path'])){
                 if(Util::isDirectory($options['output-to'])){
-                    $classes = $this->_scanPathForFiles($options['path']);
+                    $classes = $this->_scanPathForFiles($options['path'],$options['exclude-path']);
                     $this->linksArr = array();
                     $this->classesLinksByNS = array();
                     $this->apiReadersArr = array();
@@ -67,14 +67,22 @@ class DocGenerator {
                             $options['site-name'] : 'Docs';
 
                     foreach ($this->apiReadersArr as $reader){
-                        Page::theme($options['theme']);
-                        Page::siteName($siteName);
-                        $classAPI = new ClassAPI($reader,$this->linksArr,$options);
-                        $classAPI->setBaseURL($this->baseUrl);
-                        $page = new APIPage($classAPI);
-                        $this->_createAsideNav();
-                        $page->createHTMLFile($options['output-to']);
-                        Page::reset();
+                        Page::lang('EN');
+                        Page::dir('ltr');
+                        $theme = Page::theme($options['theme']);
+                        if($theme instanceof APITheme){
+                            Page::siteName($siteName);
+                            $classAPI = new ClassAPI($reader,$this->linksArr,$options);
+                            $classAPI->setBaseURL($this->baseUrl);
+                            Page::insert($theme->createBodyNode());
+                            //$page = new APIPage($classAPI);
+                            $this->_createAsideNav();
+                            
+                            Page::reset();
+                        }
+                        else{
+                            throw new Exception('The selected theme is not a sub-class of \'APITheme\'.');
+                        }
                     }
                 }
                 else{
@@ -136,24 +144,30 @@ class DocGenerator {
             $ul->addChild($packageLi);
         }
     }
-    private function _scanPathForFiles($root){
+    private function _scanPathForFiles($root,$excPath=array()){
         $dirsStack = new Stack();
         $dirsStack->push($root);
         $retVal = array();
         while($root = $dirsStack->pop()){
-            $subDirs = scandir($root);
-            foreach ($subDirs as $subDir){
-                if($subDir != '.' && $subDir != '..'){
-                    $xSubDir = $root.'\\'.$subDir;
-                    if(Util::isDirectory($xSubDir)){
-                        $dirsStack->push($xSubDir);
-                    }
-                    else{
-                        if(strpos($subDir, '.php') !== FALSE){
-                            $retVal[] = $xSubDir;
+            Util::print_r('Path: '.$root);
+            if(!in_array($root, $excPath)){
+                $subDirs = scandir($root);
+                foreach ($subDirs as $subDir){
+                    if($subDir != '.' && $subDir != '..'){
+                        $xSubDir = $root.'\\'.$subDir;
+                        if(Util::isDirectory($xSubDir)){
+                            $dirsStack->push($xSubDir);
+                        }
+                        else{
+                            if(strpos($subDir, '.php') !== FALSE){
+                                $retVal[] = $xSubDir;
+                            }
                         }
                     }
                 }
+            }
+            else{
+                Util::print_r('Path Exc');
             }
         }
         return $retVal;
