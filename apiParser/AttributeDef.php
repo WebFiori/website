@@ -21,12 +21,33 @@ class AttributeDef {
     private $longDescription;
     private $accessMofifier;
     private $pageUrl;
+    private $ns;
+    private $ownerClass;
     /**
      * Sets attribute access modifier.
      * @param string $mod Attribute access modifier (e.g. 'public', 'protected', 'const').
      */
     public function setAccessModifier($mod) {
         $this->accessMofifier = $mod;
+    }
+    public function getNameSpace(){
+        return $this->ns;
+    }
+    public function setNameSpace($ns){
+        $this->ns = $ns;
+    }
+    /**
+     * 
+     * @return ClassAPI
+     */
+    public function getOwnerClass(){
+        return $this->ownerClass;
+    }
+    public function setOwnerClass($cl) {
+        if($cl instanceof ClassAPI){
+            $this->ownerClass = $cl;
+            $this->setNameSpace($cl->getNameSpace());
+        }
     }
     /**
      * Returns attribute access modifier.
@@ -107,7 +128,7 @@ class AttributeDef {
         $node->setClassName($node->getAttributeValue('class').' attribute-summary');
         $attrNameNode = WebFioriGUI::createColNode(12, FALSE, FALSE);
         $attrNameNode->setClassName('class-attribute');
-        $nodeText = $this->getAccessModofier().' <a class="class-attribute" href="'.$this->getPageURL().'#'.$this->getName().'">'.$this->getName().'</a>';
+        $nodeText = $this->getAccessModofier().' <a class="class-attribute" href="'.$this->getPageURL().'/'. str_replace('\\', '/', trim($this->getOwnerClass()->getNameSpace(), '\\')).'/'.$this->getOwnerClass()->getName().'#'.$this->getName().'">'.$this->getName().'</a>';
         $attrNameNode->addTextNode($nodeText);
         $node->addChild($attrNameNode);
         $descNode = new PNode();
