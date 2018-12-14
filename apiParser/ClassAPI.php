@@ -278,6 +278,7 @@ class ClassAPI {
     public function addAttribute($attr) {
         if($attr instanceof AttributeDef){
             $attr->setPageURL($this->baseUrl);
+            $attr->setOwnerClass($this);
             $this->classAttributes[] = $attr;
         }
     }
@@ -302,6 +303,12 @@ class ClassAPI {
             }
             return $summaryNode;
         }
+    }
+    public function getClassFunctions() {
+        return $this->classMethods;
+    }
+    public function getClassAttributes() {
+        return $this->classAttributes;
     }
     /**
      * Returns HTMLNode which contains all class functions details.
