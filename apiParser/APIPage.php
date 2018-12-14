@@ -46,6 +46,30 @@ class APIPage {
         Page::insert($class->getAttributesDetailsNode());
         Page::insert($class->getFunctionsDetailsNode());
     }
+    public function createPHPFile($path,$options=array(
+        
+    )) {
+        $savePath = $path.$this->class->getNameSpace();
+        if(Util::isDirectory($savePath, TRUE)){
+            $file = new File();
+            $file->setName($this->class->getName().'View.php');
+            $file->setPath($savePath);
+            $file->setRawData(
+                    'namespace docGenerator\\'.$this->class->getNameSpace().";\r\n"
+                    . 'use webfiori\entity\Page as P;'."\r\n"
+                    . 'class '.$this->class->getName().'View{'."\r\n"
+                    . '    __construct(){'."\r\n"
+                    . '        P::theme(\''.$options['theme'].'\');'."\r\n"
+                    . '        P::render();'."\r\n"
+                    . '    }'."\r\n"
+                    . '}'."\r\n"
+                    . 'new '.$this->class->getName().'View();'
+            );
+            $file->write();
+            return TRUE;
+        }
+        return FALSE;
+    }
     public function createHTMLFile($path) {
         $savePath = $path.$this->class->getNameSpace();
         if(Util::isDirectory($savePath, TRUE)){
