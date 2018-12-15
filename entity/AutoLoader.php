@@ -81,6 +81,7 @@ class AutoLoader{
         //Logger::logFuncCall(__METHOD__);
         //Logger::log('$root = \''.$root.'\'', 'debug');
         //Logger::log('$defineRoot = \''.$defineRoot.'\'', 'debug');
+        $this->searchFolders = array();
         if(defined('ROOT_DIR')){
             //Logger::log('Setting root search directory to ROOT_DIR.');
             $this->rootDir = ROOT_DIR;

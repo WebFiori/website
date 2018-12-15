@@ -14,6 +14,7 @@ use phpStructs\html\HTMLNode;
 use phpStructs\html\UnorderedList;
 use phpStructs\html\ListItem;
 use Exception;
+use webfiori\entity\File;
 /**
  * Description of DocGenerator
  *
@@ -24,6 +25,8 @@ class DocGenerator {
     private $classesLinksByNS;
     private $apiReadersArr;
     private $baseUrl;
+    private $routerLinks;
+    private $rootContainer;
     /**
      * 
      * @param type $options An array of options. The available options are:
@@ -55,17 +58,19 @@ class DocGenerator {
             $this->baseUrl = isset($options['base-url']) ? $options['base-url']:'';
             if(Util::isDirectory($options['path'])){
                 if(Util::isDirectory($options['output-to'])){
+                    $this->rootContainer = $options['route-root-folder'];
                     $classes = $this->_scanPathForFiles($options['path'],$options['exclude-path']);
                     $this->linksArr = array();
                     $this->classesLinksByNS = array();
                     $this->apiReadersArr = array();
+                    $this->routerLinks = array();
                     foreach ($classes as $classPath){
                         $this->apiReadersArr[] = new APIReader($classPath);
                     }
                     $this->_buildLinks();
                     $siteName = isset($options['site-name']) && strlen($options['site-name']) > 0 ?
                             $options['site-name'] : 'Docs';
-
+                    $this->createRoutesFile($options['output-to']);
                     foreach ($this->apiReadersArr as $reader){
                         Page::lang('EN');
                         Page::dir('ltr');
@@ -74,10 +79,11 @@ class DocGenerator {
                             Page::siteName($siteName);
                             $classAPI = new ClassAPI($reader,$this->linksArr,$options);
                             $classAPI->setBaseURL($this->baseUrl);
+                            $theme->setClass($classAPI);
                             Page::insert($theme->createBodyNode());
                             //$page = new APIPage($classAPI);
                             $this->_createAsideNav();
-                            
+                            $this->createHTMLFile($classAPI,$options['output-to']);
                             Page::reset();
                         }
                         else{
@@ -97,18 +103,56 @@ class DocGenerator {
             throw new Exception('Classes path is not set.');
         }
     }
+    public function createPHPFile($path,$options=array(
+        
+    )) {
+        $savePath = $path.$this->class->getNameSpace();
+        if(Util::isDirectory($savePath, TRUE)){
+            $file = new File();
+            $file->setName($this->class->getName().'View.php');
+            $file->setPath($savePath);
+            $file->setRawData(
+                    'namespace docGenerator\\'.$this->class->getNameSpace().";\r\n"
+                    . 'use webfiori\entity\Page as P;'."\r\n"
+                    . 'class '.$this->class->getName().'View{'."\r\n"
+                    . '    __construct(){'."\r\n"
+                    . '        P::theme(\''.$options['theme'].'\');'."\r\n"
+                    . '        P::render();'."\r\n"
+                    . '    }'."\r\n"
+                    . '}'."\r\n"
+                    . 'new '.$this->class->getName().'View();'
+            );
+            $file->write();
+            return TRUE;
+        }
+        return FALSE;
+    }
+    public function createHTMLFile($class,$path) {
+        $savePath = $path.$class->getNameSpace();
+        if(Util::isDirectory($savePath, TRUE)){
+            $file = new File();
+            $file->setName($class->getName().'.html');
+            $file->setPath($savePath);
+            $file->setRawData(Page::document()->toHTML());
+            $file->write();
+            return TRUE;
+        }
+        return FALSE;
+    }
     private function _buildLinks() {
         foreach ($this->apiReadersArr as $apiReader){
             $namespaceLink = $apiReader->getNamespace();
             $packageLink2 = str_replace('.', '/', $namespaceLink);
             $cName = $apiReader->getClassName();
+            $nsName = $apiReader->getNamespace();
             if($packageLink2 === ''){
                 $classLink = $this->baseUrl.'/'.$cName;
+                $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->rootContainer.'/'.$cName;
             }
             else{
                 $classLink = $this->baseUrl.$packageLink2.'/'.$cName;
+                $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->rootContainer.str_replace('\\', '/', $packageLink2).'/'.$cName;
             }
-            $nsName = $apiReader->getNamespace();
             $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
             $this->classesLinksByNS[$nsName][] = '<a class="side-link" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
             foreach ($apiReader->getConstantsNames() as $name){
@@ -144,12 +188,29 @@ class DocGenerator {
             $ul->addChild($packageLi);
         }
     }
+    private function createRoutesFile($path,$outputType='html'){
+        $loutputType = strtolower($outputType);
+        $ext = $loutputType == 'php' || $loutputType == 'html' ? $loutputType : 'html';
+        $file = new File();
+        $file->setPath($path);
+        $file->setName('DocGeneratorRoutes.php');
+        $routesStr = '<?php'."\r\n"
+                .'namespace docGenerator;'."\r\n"
+                .'use webfiori\entity\router\Router;'."\r\n"
+                . 'class DocGeneratorRoutes{'."\r\n"
+                    . '    public static function createRoutes(){'."\r\n";
+            foreach ($this->routerLinks as $link => $routeTo){
+                $routesStr .= '        Router::view(\'\docs'.$link.'\',\''.$routeTo.'.'.$ext.'\');'."\r\n";
+            }
+        $routesStr .= '    }'."\r\n}";
+        $file->setRawData($routesStr);
+        $file->write();
+    }
     private function _scanPathForFiles($root,$excPath=array()){
         $dirsStack = new Stack();
         $dirsStack->push($root);
         $retVal = array();
         while($root = $dirsStack->pop()){
-            Util::print_r('Path: '.$root);
             if(!in_array($root, $excPath)){
                 $subDirs = scandir($root);
                 foreach ($subDirs as $subDir){
@@ -165,9 +226,6 @@ class DocGenerator {
                         }
                     }
                 }
-            }
-            else{
-                Util::print_r('Path Exc');
             }
         }
         return $retVal;

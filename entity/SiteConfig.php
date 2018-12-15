@@ -91,12 +91,12 @@ class SiteConfig{
     private function __construct() {
         $this->configVision = '1.2.1';
         $this->webSiteNames = array('AR'=>'أكاديميا البرمجة','EN'=>'Programming Academia',);
-        $this->baseUrl = 'http://localhost/webfiori-website/';
+        $this->baseUrl = entity\Util::getBaseURL();
         $this->titleSep = ' | ';
         $this->primaryLang = 'EN';
         $this->baseThemeName = 'Greeny By Ibrahim Ali';
         $this->adminThemeName = 'Greeny By Ibrahim Ali';
-        $this->homePage = 'index';
+        $this->homePage = $this->baseUrl.'docs/webfiori/WebFiori';
         $this->descriptions = array('AR'=>'','EN'=>'',);
     }
     

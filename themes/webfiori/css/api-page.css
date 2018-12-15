@@ -8,26 +8,12 @@ and open the template in the editor.
     Author     : Ibrahim
 */
 
-.function-name, 
-.function-name *
-.class-name, 
-.class-name *
-.interface-name, 
-.interface-name *,
-.class-attribute, 
-.class-attribute *
-span.func-param, 
-.mono{
+.function-name, .function-name *
+.class-name, .class-name *
+.interface-name, .interface-name *,
+.class-attribute, .class-attribute *
+span.func-param{
     font-family: monospace !important;
-}
-nav ul{
-    padding: 10px;
-}
-.all-classes-label{
-    
-}
-.side-link{
-    
 }
 .summary-box-title{
     padding-left: 15px !important;
@@ -36,20 +22,13 @@ nav ul{
     font-weight: bold;
     height: 25px;
 }
-#side-content-area{
-    border: 1px solid;
+.api-page p{
+
 }
-.api-page p, 
-.api-page ul,
-.api-page li,
-.details-box,
-.description-box{
-    font-size: 11pt;
+.api-page p, .api-page ul,.api-page li{
+    font-size: 90%;
 }
-.function-summary,
-.function-details,
-.attribute-summary,
-attribute-details{
+.function-summary,.attribute-summary{
     border: 1px solid;
     padding-left: 25px;
     padding-top: 5px;

@@ -45,7 +45,9 @@ class FunctionDef {
     public function getPageURL(){
         return $this->pageUrl;
     }
-
+    public function getParameters() {
+        return $this->funcParams;
+    }
     /**
      * Sets function access modifier.
      * @param string $mod Function access modifier (e.g. 'public', 'protected).
@@ -214,38 +216,7 @@ class FunctionDef {
         $node->addChild($this->createReturnsBox());
         return $node;
     }
-    private function createReturnsBox() {
-        if(strlen($this->funcReturns['return-types']) != 0){
-            $node = WebFioriGUI::createRowNode(FALSE,FALSE);
-            $textNode = new PNode();
-            $textNode->addText('Returns: <span class="mono">'.$this->funcReturns['return-types'].'</span>');
-            $node->addChild($textNode);
-            $descNode = new HTMLNode();
-            $descNode->addTextNode($this->funcReturns['description']);
-            $descNode->setClassName('details-box');
-            $node->addChild($descNode);
-            return $node;
-        }
-    }
-    private function createParametersBox() {
-        $node = WebFioriGUI::createRowNode(FALSE,FALSE);
-        $textNode = new PNode();
-        $textNode->addText('Parameters:');
-        $node->addChild($textNode);
-        $ul = new UnorderedList();
-        $count = count($this->funcParams);
-        for($x = 0 ; $x < $count ; $x++){
-            $param = $this->funcParams['param-'.$x];
-            $li = new ListItem(TRUE);
-            $text = '<span style="font-family: monospace;">'.$param['var-type'].' '.$param['var-name'].'</span>';
-            if($param['is-optional'] === TRUE){
-                $text .= ' [Optional]';
-            }
-            $text .= ' '.$param['var-desc'];
-            $li->setText($text);
-            $ul->addChild($li);
-        }
-        $node->addChild($ul);
-        return $node;
+    public function getReturnTypes() {
+        return $this->funcReturns;
     }
 }

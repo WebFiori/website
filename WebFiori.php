@@ -138,6 +138,8 @@ class WebFiori{
          */
         require_once ROOT_DIR.'/entity/AutoLoader.php';
         $this->AU = AutoLoader::get();
+        var_dump($this->AU->getFolders());
+        var_dump($this->AU->getRoot());
         $this->setAutoloadDirectories();
         
         //uncomment next line to show runtime errors and warnings
@@ -261,6 +263,7 @@ class WebFiori{
         APIRoutes::create();
         ViewRoutes::create();
         ClosureRoutes::create();
+        \docGenerator\DocGeneratorRoutes::createRoutes();
         Logger::log('Routes initialization completed.', 'info', 'initialization-log');
     }
     /**
@@ -472,10 +475,11 @@ Router::closure('/testx', function(){
         'exclude-path'=>array(
             'C:\Server\apache2\htdocs\liskscode\themes'
         ),
-        'base-url'=> 'https://programingacademia.com/webfiori/docs',
-        'theme'=>'WebFiori Theme',
+        'base-url'=> 'https://programmingacademia.com/webfiori/docs',
+        'theme'=>'WebFiori API Theme',
         'site-name'=>'WebFiori API Docs',
-        'output-to'=>'C:\\Server\\apache2\\htdocs\\webfiori-website\\publish'
+        'output-to'=>'C:\\Server\\apache2\\htdocs\\webfiori-website\\pages\\apis-1.0.1',
+        'route-root-folder'=>'apis-1.0.1'
     ));
 });
 if(INITIAL_SYS_STATUS === TRUE){
