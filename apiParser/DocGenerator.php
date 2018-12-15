@@ -82,6 +82,9 @@ class DocGenerator {
                             $theme->setClass($classAPI);
                             Page::insert($theme->createBodyNode());
                             //$page = new APIPage($classAPI);
+                            $canonical = $options['base-url']. str_replace('\\', '/', $classAPI->getNameSpace()).'/'.$classAPI->getName();
+                            Page::canonical($canonical);
+                            Page::description($classAPI->getShortDescription());
                             $this->_createAsideNav();
                             $this->createHTMLFile($classAPI,$options['output-to']);
                             Page::reset();
@@ -200,7 +203,7 @@ class DocGenerator {
                 . 'class DocGeneratorRoutes{'."\r\n"
                     . '    public static function createRoutes(){'."\r\n";
             foreach ($this->routerLinks as $link => $routeTo){
-                $routesStr .= '        Router::view(\'\docs'.$link.'\',\''.$routeTo.'.'.$ext.'\');'."\r\n";
+                $routesStr .= '        Router::view(\'docs'.$link.'\',\''.$routeTo.'.'.$ext.'\');'."\r\n";
             }
         $routesStr .= '    }'."\r\n}";
         $file->setRawData($routesStr);

@@ -60,7 +60,7 @@ class AttributeDef {
      * Sets the long description of the attribute.
      * @param string $desc The long description of the attribute.
      */
-    public function setLongDescription($desc) {
+    public function setDescription($desc) {
         $this->longDescription = $desc;
     }
     public function setPageURL($url){
@@ -73,21 +73,21 @@ class AttributeDef {
      * Returns the long description of the attribute.
      * @return string The long description of the attribute.
      */
-    public function getLongDescription() {
+    public function getDescription() {
         return $this->longDescription;
     }
     /**
      * Sets the short description of the attribute.
      * @param string $desc The short description of the attribute.
      */
-    public function setShortDescription($desc) {
+    public function setSummary($desc) {
         $this->shortDescription = $desc;
     }
     /**
      * Returns the short description of the attribute.
      * @return string The short description of the attribute.
      */
-    public function getShortDescription() {
+    public function getSummary() {
         return $this->shortDescription;
     }
     /**
@@ -132,7 +132,7 @@ class AttributeDef {
         $attrNameNode->addTextNode($nodeText);
         $node->addChild($attrNameNode);
         $descNode = new PNode();
-        $descNode->addText($this->getShortDescription());
+        $descNode->addText($this->getSummary());
         $node->addChild($descNode);
         return $node;
     }
@@ -152,7 +152,7 @@ class AttributeDef {
         $attrNameNode->addTextNode($nodeText);
         $node->addChild($attrNameNode);
         $descNode = new HTMLNode();
-        $descNode->addTextNode($this->getLongDescription());
+        $descNode->addTextNode($this->getDescription());
         $descNode->setClassName('details-box');
         $node->addChild($descNode);
         return $node;

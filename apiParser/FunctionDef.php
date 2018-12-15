@@ -66,28 +66,28 @@ class FunctionDef {
      * Sets the long description of the function.
      * @param string $desc The long description of the function.
      */
-    public function setLongDescription($desc) {
+    public function setDescription($desc) {
         $this->longDescription = $desc;
     }
     /**
      * Returns the long description of the function.
      * @return string The long description of the function.
      */
-    public function getLongDescription() {
+    public function getDescription() {
         return $this->longDescription;
     }
     /**
      * Sets the short description of the function.
      * @param string $desc The short description of the function.
      */
-    public function setShortDescription($desc) {
+    public function setSummary($desc) {
         $this->shortDescription = $desc;
     }
     /**
      * Returns the short description of the function.
      * @return string The short description of the function.
      */
-    public function getShortDescription() {
+    public function getSummary() {
         return $this->shortDescription;
     }
     /**
@@ -177,7 +177,7 @@ class FunctionDef {
         $methNameNode->addTextNode($nodeText);
         $node->addChild($methNameNode);
         $descNode = new PNode();
-        $descNode->addText($this->getShortDescription());
+        $descNode->addText($this->getSummary());
         $node->addChild($descNode);
         return $node;
     }
@@ -207,7 +207,7 @@ class FunctionDef {
         $methNameNode->addTextNode($nodeText);
         $node->addChild($methNameNode);
         $descNode = new HTMLNode();
-        $descNode->addTextNode($this->getLongDescription());
+        $descNode->addTextNode($this->getDescription());
         $descNode->setClassName('description-box');
         $node->addChild($descNode);
         if($count != 0){

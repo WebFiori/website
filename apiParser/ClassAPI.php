@@ -111,14 +111,14 @@ class ClassAPI {
                 else{
                     $summary = '';
                 }
-                $api->setShortDescription($summary);
+                $api->setSummary($summary);
                 if(isset($docBlock['description'])){
                     $desc = $docBlock['description'];
                 }
                 else{
                     $desc = '';
                 }
-                $api->setLongDescription($summary.' '.$desc);
+                $api->setDescription($summary.' '.$desc);
                 $this->addAttribute($api);
             }
             
@@ -147,7 +147,7 @@ class ClassAPI {
                 else{
                     $summary = '';
                 }
-                $api->setShortDescription($summary);
+                $api->setSummary($summary);
                 if(isset($docBlock['description'])){
                     $desc = $docBlock['description'];
                 }
@@ -185,7 +185,7 @@ class ClassAPI {
                         $api->addFuncParam($param['name'], $typesStr, $description, $isOptional);
                     }
                 }
-                $api->setLongDescription($summary.' '.$desc);
+                $api->setDescription($summary.' '.$desc);
                 $this->addFunction($api);
             }
         }
