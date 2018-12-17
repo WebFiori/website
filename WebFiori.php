@@ -261,7 +261,7 @@ class WebFiori{
         APIRoutes::create();
         ViewRoutes::create();
         ClosureRoutes::create();
-        //\docGenerator\DocGeneratorRoutes::createRoutes();
+        \docGenerator\DocGeneratorRoutes::createRoutes();
         Logger::log('Routes initialization completed.', 'info', 'initialization-log');
     }
     /**
@@ -470,14 +470,17 @@ Router::closure('/testx', function(){
     Logger::enabled(FALSE);
     $reader = new DocGenerator(array(
         'path'=>'C:\Server\apache2\htdocs\liskscode',
+        'path'=>'C:\Server\apache2\htdocs\webfiori',
         'exclude-path'=>array(
             'C:\Server\apache2\htdocs\liskscode\themes'
+            'C:\Server\apache2\htdocs\webfiori\themes'
         ),
         'base-url'=> 'https://programmingacademia.com/webfiori/docs',
         'theme'=>'WebFiori API Theme',
         'site-name'=>'WebFiori API Docs',
         'output-to'=>'C:\\Server\\apache2\\htdocs\\webfiori-website\\pages\\apis-1.0.1',
-        'route-root-folder'=>'apis-1.0.1'
+        'route-root-folder'=>'apis-1.0.1',
+        'is-dynamic'=>TRUE
     ));
 });
 if(INITIAL_SYS_STATUS === TRUE){
