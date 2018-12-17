@@ -63,29 +63,29 @@ class FunctionDef {
         return $this->accessMofifier;
     }
     /**
-     * Sets the long description of the function.
-     * @param string $desc The long description of the function.
+     * Sets the description of the function.
+     * @param string $desc The description of the function.
      */
     public function setDescription($desc) {
         $this->longDescription = $desc;
     }
     /**
-     * Returns the long description of the function.
-     * @return string The long description of the function.
+     * Returns the description of the function.
+     * @return string The description of the function.
      */
     public function getDescription() {
         return $this->longDescription;
     }
     /**
-     * Sets the short description of the function.
-     * @param string $desc The short description of the function.
+     * Sets the summary of the function.
+     * @param string $desc The summary of the function.
      */
     public function setSummary($desc) {
         $this->shortDescription = $desc;
     }
     /**
-     * Returns the short description of the function.
-     * @return string The short description of the function.
+     * Returns the summary of the function.
+     * @return string The summary of the function.
      */
     public function getSummary() {
         return $this->shortDescription;

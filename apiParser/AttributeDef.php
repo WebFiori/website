@@ -57,8 +57,8 @@ class AttributeDef {
         return $this->accessMofifier;
     }
     /**
-     * Sets the long description of the attribute.
-     * @param string $desc The long description of the attribute.
+     * Sets the description of the attribute.
+     * @param string $desc The description of the attribute.
      */
     public function setDescription($desc) {
         $this->longDescription = $desc;
@@ -70,22 +70,22 @@ class AttributeDef {
         return $this->pageUrl;
     }
     /**
-     * Returns the long description of the attribute.
-     * @return string The long description of the attribute.
+     * Returns the description of the attribute.
+     * @return string The description of the attribute.
      */
     public function getDescription() {
         return $this->longDescription;
     }
     /**
-     * Sets the short description of the attribute.
-     * @param string $desc The short description of the attribute.
+     * Sets the description of the attribute.
+     * @param string $desc The description of the attribute.
      */
     public function setSummary($desc) {
         $this->shortDescription = $desc;
     }
     /**
-     * Returns the short description of the attribute.
-     * @return string The short description of the attribute.
+     * Returns the summary of the attribute.
+     * @return string The summary of the attribute.
      */
     public function getSummary() {
         return $this->shortDescription;
