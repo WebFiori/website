@@ -2,4 +2,5 @@
 test.*
 /tmp
 /publish
+/pages/apis-1.0.1
 logs/api-extractor-log.txt
