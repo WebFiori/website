@@ -27,6 +27,8 @@ class DocGenerator {
     private $baseUrl;
     private $routerLinks;
     private $rootContainer;
+    private $isDynamic;
+    private $indexLinks;
     /**
      * 
      * @param type $options An array of options. The available options are:
@@ -58,12 +60,14 @@ class DocGenerator {
             $this->baseUrl = isset($options['base-url']) ? $options['base-url']:'';
             if(Util::isDirectory($options['path'])){
                 if(Util::isDirectory($options['output-to'])){
+                    $this->isDynamic = isset($options['is-dynamic']) && $options['is-dynamic'] === TRUE ? TRUE : FALSE;
                     $this->rootContainer = $options['route-root-folder'];
                     $classes = $this->_scanPathForFiles($options['path'],$options['exclude-path']);
                     $this->linksArr = array();
                     $this->classesLinksByNS = array();
                     $this->apiReadersArr = array();
                     $this->routerLinks = array();
+                    $this->indexLinks = array();
                     foreach ($classes as $classPath){
                         $this->apiReadersArr[] = new APIReader($classPath);
                     }
@@ -71,6 +75,7 @@ class DocGenerator {
                     $siteName = isset($options['site-name']) && strlen($options['site-name']) > 0 ?
                             $options['site-name'] : 'Docs';
                     $this->createRoutesFile($options['output-to']);
+                    
                     foreach ($this->apiReadersArr as $reader){
                         Page::lang('EN');
                         Page::dir('ltr');
@@ -86,7 +91,7 @@ class DocGenerator {
                             Page::canonical($canonical);
                             Page::description($classAPI->getShortDescription());
                             $this->_createAsideNav();
-                            $this->createHTMLFile($classAPI,$options['output-to']);
+                            $this->createAPIPage($classAPI, $options);
                             Page::reset();
                         }
                         else{
@@ -106,24 +111,51 @@ class DocGenerator {
             throw new Exception('Classes path is not set.');
         }
     }
-    public function createPHPFile($path,$options=array(
+    private function createAPIPage($classAPI,$options){
+        if($this->isDynamicPage()){
+            $this->createPHPFile($classAPI,$options['output-to'], $options);
+        }
+        else{
+            $this->createHTMLFile($classAPI,$options['output-to']);
+        }
+    }
+    private function isDynamicPage() {
+        return $this->isDynamic;
+    }
+    public function createPHPFile($classAPI, $path,$options=array(
         
     )) {
-        $savePath = $path.$this->class->getNameSpace();
+        $savePath = $path.$classAPI->getNameSpace();
         if(Util::isDirectory($savePath, TRUE)){
             $file = new File();
-            $file->setName($this->class->getName().'View.php');
+            $file->setName($classAPI->getName().'View.php');
             $file->setPath($savePath);
+            $ns = trim($classAPI->getNameSpace(),'\\');
+            if(strlen($ns) != 0){
+                $ns = '\\'.$ns;
+            }
             $file->setRawData(
-                    'namespace docGenerator\\'.$this->class->getNameSpace().";\r\n"
+                    '<?php'."\r\n"
+                    . 'namespace docGenerator'.$ns.";\r\n"
                     . 'use webfiori\entity\Page as P;'."\r\n"
-                    . 'class '.$this->class->getName().'View{'."\r\n"
-                    . '    __construct(){'."\r\n"
+                    . 'use phpStructs\html\HTMLNode;'."\r\n"
+                    . 'class '.$classAPI->getName().'View{'."\r\n"
+                    . '    public function __construct(){'."\r\n"
                     . '        P::theme(\''.$options['theme'].'\');'."\r\n"
+                    . '        P::document()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
+                    . '        P::canonical(\''.Page::canonical().'\');'."\r\n"
+                    . '        P::description(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::description())).'\');'."\r\n"
+                    . '        P::siteName(\''.Page::siteName().'\');'."\r\n"
+                    . '        P::title(\''.Page::title().'\');'."\r\n"
+                    . '        $pageBody = new HTMLNode();'."\r\n"
+                    . '        $pageBody->addTextNode(\''."\r\n"
+                    . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(TRUE))).'\''."\r\n"
+                    . '        );'."\r\n"
+                    . '        P::insert($pageBody, \'page-body\');'."\r\n"
                     . '        P::render();'."\r\n"
                     . '    }'."\r\n"
                     . '}'."\r\n"
-                    . 'new '.$this->class->getName().'View();'
+                    . 'new '.$classAPI->getName().'View();'
             );
             $file->write();
             return TRUE;
@@ -134,13 +166,25 @@ class DocGenerator {
         $savePath = $path.$class->getNameSpace();
         if(Util::isDirectory($savePath, TRUE)){
             $file = new File();
-            $file->setName($class->getName().'.html');
+            $file->setName($class->getName().'View.html');
             $file->setPath($savePath);
             $file->setRawData(Page::document()->toHTML());
             $file->write();
             return TRUE;
         }
         return FALSE;
+    }
+    public function getIndexLinks() {
+        return $this->indexLinks;
+    }
+    public function getLinks() {
+        return $this->linksArr;
+    }
+    public function getLinksByNameSpace() {
+        return $this->classesLinksByNS;
+    }
+    public function getRouterLinks() {
+        return $this->routerLinks;
     }
     private function _buildLinks() {
         foreach ($this->apiReadersArr as $apiReader){
@@ -158,6 +202,11 @@ class DocGenerator {
             }
             $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
             $this->classesLinksByNS[$nsName][] = '<a class="side-link" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
+            $this->indexLinks[$nsName][] = array(
+                'class-link'=>'<a class="side-link" href="'.$classLink.'" target="_blank">'.$cName.'</a>',
+                'class-description'=>$apiReader->getClassSummary(),
+                'class-type'=>$apiReader->getClassAccessModifier()
+            );
             foreach ($apiReader->getConstantsNames() as $name){
                 $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'</a>';
             }
@@ -191,9 +240,8 @@ class DocGenerator {
             $ul->addChild($packageLi);
         }
     }
-    private function createRoutesFile($path,$outputType='html'){
-        $loutputType = strtolower($outputType);
-        $ext = $loutputType == 'php' || $loutputType == 'html' ? $loutputType : 'html';
+    private function createRoutesFile($path){
+        $ext = $this->isDynamicPage() ? 'php' : 'html';
         $file = new File();
         $file->setPath($path);
         $file->setName('DocGeneratorRoutes.php');
@@ -203,11 +251,49 @@ class DocGenerator {
                 . 'class DocGeneratorRoutes{'."\r\n"
                     . '    public static function createRoutes(){'."\r\n";
             foreach ($this->routerLinks as $link => $routeTo){
-                $routesStr .= '        Router::view(\'docs'.$link.'\',\''.$routeTo.'.'.$ext.'\');'."\r\n";
+                $routesStr .= '        Router::view(\'docs'.$link.'\',\''.$routeTo.'View.'.$ext.'\');'."\r\n";
             }
         $routesStr .= '    }'."\r\n}";
         $file->setRawData($routesStr);
         $file->write();
+    }
+    private function createNSIndexFile($ns){
+        
+        if(Util::isDirectory($savePath, TRUE)){
+            $file = new File();
+            $file->setName($classAPI->getName().'View.php');
+            $file->setPath($savePath);
+            $ns = trim($classAPI->getNameSpace(),'\\');
+            if(strlen($ns) != 0){
+                $ns = '\\'.$ns;
+            }
+            $file->setRawData(
+                    '<?php'."\r\n"
+                    . 'namespace docGenerator'.$ns.";\r\n"
+                    . 'use webfiori\entity\Page as P;'."\r\n"
+                    . 'use phpStructs\html\HTMLNode;'."\r\n"
+                    . 'class '.$classAPI->getName().'View{'."\r\n"
+                    . '    public function __construct(){'."\r\n"
+                    . '        P::theme(\''.$options['theme'].'\');'."\r\n"
+                    . '        P::document()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
+                    . '        P::canonical(\''.Page::canonical().'\');'."\r\n"
+                    . '        P::description(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::description())).'\');'."\r\n"
+                    . '        P::siteName(\''.Page::siteName().'\');'."\r\n"
+                    . '        P::title(\''.Page::title().'\');'."\r\n"
+                    . '        $pageBody = new HTMLNode();'."\r\n"
+                    . '        $pageBody->addTextNode(\''."\r\n"
+                    . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(TRUE))).'\''."\r\n"
+                    . '        );'."\r\n"
+                    . '        P::insert($pageBody, \'page-body\');'."\r\n"
+                    . '        P::render();'."\r\n"
+                    . '    }'."\r\n"
+                    . '}'."\r\n"
+                    . 'new '.$classAPI->getName().'View();'
+            );
+            $file->write();
+            return TRUE;
+        }
+        return FALSE;
     }
     private function _scanPathForFiles($root,$excPath=array()){
         $dirsStack = new Stack();
