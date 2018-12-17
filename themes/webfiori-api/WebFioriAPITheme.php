@@ -12,6 +12,7 @@ use phpStructs\html\UnorderedList;
 use webfiori\SiteConfig;
 use webfiori\Config;
 use webfiori\apiParser\APITheme;
+use webfiori\apiParser\NameSpaceAPI;
 
 class WebFioriAPITheme extends APITheme{
     public function __construct() {
@@ -374,6 +375,19 @@ class WebFioriAPITheme extends APITheme{
         $descNode->addText($func->getSummary());
         $node->addChild($descNode);
         return $node;
+    }
+    /**
+     * Creates HTMLNode object that contains namespace index file content.
+     * @param NameSpaceAPI $nsObj An object of type NameSpaceAPI.
+     * @return HTMLNode The function must be implemented in a way that it returns 
+     * an object of type HTMLNode which represents namespace index file content.
+     */
+    public function createNamespaceContentBlock($nsObj) {
+        if($nsObj instanceof NameSpaceAPI){
+            $node = WebFioriAPIGUI::createRowNode();
+        
+            return $node;
+        }
     }
 
 }
