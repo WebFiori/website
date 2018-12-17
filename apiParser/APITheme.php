@@ -214,4 +214,11 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode which represents class description block.
      */
     abstract public function createClassDescriptionNode();
+    /**
+     * Creates HTMLNode object that contains namespace index file content.
+     * @param NameSpaceAPI $nsObj An object of type NameSpaceAPI.
+     * @return HTMLNode The function must be implemented in a way that it returns 
+     * an object of type HTMLNode which represents namespace index file content.
+     */
+    abstract public function createNamespaceContentBlock($nsObj);
 }
