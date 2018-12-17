@@ -257,22 +257,22 @@ class DocGenerator {
         $file->setRawData($routesStr);
         $file->write();
     }
-    private function createNSIndexFile($ns){
-        
+    private function createNSIndexFile($path,$ns,$options){
+        $ns = trim($ns,'\\');
+        if(strlen($ns) != 0){
+            $ns = '\\'.$ns;
+        }
+        $savePath = $path.$ns;
         if(Util::isDirectory($savePath, TRUE)){
             $file = new File();
-            $file->setName($classAPI->getName().'View.php');
+            $file->setName('NSIndexView.php');
             $file->setPath($savePath);
-            $ns = trim($classAPI->getNameSpace(),'\\');
-            if(strlen($ns) != 0){
-                $ns = '\\'.$ns;
-            }
             $file->setRawData(
                     '<?php'."\r\n"
                     . 'namespace docGenerator'.$ns.";\r\n"
                     . 'use webfiori\entity\Page as P;'."\r\n"
                     . 'use phpStructs\html\HTMLNode;'."\r\n"
-                    . 'class '.$classAPI->getName().'View{'."\r\n"
+                    . 'class NSIndexView{'."\r\n"
                     . '    public function __construct(){'."\r\n"
                     . '        P::theme(\''.$options['theme'].'\');'."\r\n"
                     . '        P::document()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
@@ -288,7 +288,7 @@ class DocGenerator {
                     . '        P::render();'."\r\n"
                     . '    }'."\r\n"
                     . '}'."\r\n"
-                    . 'new '.$classAPI->getName().'View();'
+                    . 'new NSIndexView();'
             );
             $file->write();
             return TRUE;
