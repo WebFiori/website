@@ -221,7 +221,11 @@ class WebFioriAPITheme extends APITheme{
         $logoContainer->addChild($menu);
         return $headerSec;
     }
-
+    /**
+     * 
+     * @param AttributeDef $attr
+     * @return type
+     */
     public function createAttributeDetailsBlock($attr){
         $node = WebFioriAPIGUI::createRowNode(TRUE, FALSE);
         $node->setAttribute('style', 'border: 1px solid;');
@@ -233,7 +237,7 @@ class WebFioriAPITheme extends APITheme{
         $attrNameNode->addTextNode($nodeText);
         $node->addChild($attrNameNode);
         $descNode = new HTMLNode();
-        $descNode->addTextNode($attr->getLongDescription());
+        $descNode->addTextNode($attr->getDescription());
         $descNode->setClassName('details-box');
         $node->addChild($descNode);
         return $node;
@@ -249,11 +253,14 @@ class WebFioriAPITheme extends APITheme{
         $attrNameNode->addTextNode($nodeText);
         $node->addChild($attrNameNode);
         $descNode = new PNode();
-        $descNode->addText($attr->getShortDescription());
+        $descNode->addText($attr->getSummary());
         $node->addChild($descNode);
         return $node;
     }
-
+    /**
+     * 
+     * @return HTMLNode
+     */
     public function createClassDescriptionNode(){
         $class = $this->getClass();
         $node = WebFioriAPIGUI::createRowNode();
@@ -274,7 +281,11 @@ class WebFioriAPITheme extends APITheme{
         }
         return $node;
     }
-
+    /**
+     * 
+     * @param FunctionDef $func
+     * @return HTMLNode
+     */
     public function createFunctionDetailsBlock($func){
         $node = WebFioriAPIGUI::createRowNode(TRUE, FALSE);
         $node->setClassName($node->getAttributeValue('class').' function-details');
@@ -296,7 +307,7 @@ class WebFioriAPITheme extends APITheme{
         $methNameNode->addTextNode($nodeText);
         $node->addChild($methNameNode);
         $descNode = new HTMLNode();
-        $descNode->addTextNode($func->getLongDescription());
+        $descNode->addTextNode($func->getDescription());
         $descNode->setClassName('description-box');
         $node->addChild($descNode);
         if($count != 0){
@@ -360,7 +371,7 @@ class WebFioriAPITheme extends APITheme{
         $methNameNode->addTextNode($nodeText);
         $node->addChild($methNameNode);
         $descNode = new PNode();
-        $descNode->addText($func->getShortDescription());
+        $descNode->addText($func->getSummary());
         $node->addChild($descNode);
         return $node;
     }
