@@ -87,7 +87,8 @@ class ClassAPI {
         $this->cName = $classAPIReader->getClassName();
         $this->baseUrl = $options['base-url'];
         $this->setSummary($classAPIReader->getClassSummary());
-        $this->setLongDescription($classAPIReader->getClassDescription());
+        $this->setDescription($classAPIReader->getClassDescription());
+        $this->setClassType($classAPIReader->getParsedInfo()['class-def']['access-modifier']);
         foreach ($classAPIReader->getConstantsNames() as $name){
             $docBlock = $classAPIReader->getConstDocBlock($name);
             $api = new AttributeDef();
@@ -390,21 +391,21 @@ class ClassAPI {
      * Returns the description of the class.
      * @return string The description of the class.
      */
-    public function getShortDescription() {
+    public function getSummary() {
         return $this->shortDesc;
     }
     /**
      * Sets the description of the class.
      * @param string $desc The description of the class.
      */
-    public function setLongDescription($desc) {
+    public function setDescription($desc) {
         $this->desc = $desc;
     }
     /**
      * Returns the description of the class.
      * @return string The description of the class.
      */
-    public function getLongDescription() {
+    public function getDescription() {
         return $this->desc;
     }
 }
