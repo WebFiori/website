@@ -272,7 +272,7 @@ class WebFioriAPITheme extends APITheme{
         $node->addChild($titleNode);
         $descNode = new HTMLNode();
         $descNode->setAttribute('class', 'description-box');
-        $descNode->addTextNode($class->getShortDescription().' '.$class->getLongDescription());
+        $descNode->addTextNode($class->getSummary().' '.$class->getDescription());
         $node->addChild($descNode);
         $classV = $class->getVersion();
         if($classV !== NULL){
@@ -385,12 +385,14 @@ class WebFioriAPITheme extends APITheme{
     public function createNamespaceContentBlock($nsObj) {
         if($nsObj instanceof NameSpaceAPI){
             $node = WebFioriAPIGUI::createRowNode();
+            $titleNode = WebFioriAPIGUI::createTitleNode('Namespace <span class="mono">'.$nsObj->getName().'</span>');
+            Page::insert($titleNode);
             $interfaces = $nsObj->getInterfaces();
             if(count($interfaces) != 0){
                 $interfacesNode = WebFioriAPIGUI::createRowNode();
-                $interfacesNode->setClassName('classes-container');
+                $interfacesNode->setClassName('classes-container '.$interfacesNode->getAttributeValue('class'));
                 $label = new Label('All Interfaces:');
-                $label->setClassName('pa-ltr-col-3');
+                $label->setClassName('pa-ltr-col-10 box-title');
                 $interfacesNode->addChild($label);
                 foreach ($interfaces as $interface){
                     $cNode = WebFioriAPIGUI::createRowNode(FALSE, FALSE);
@@ -407,9 +409,9 @@ class WebFioriAPITheme extends APITheme{
             $classes = $nsObj->getClasses();
             if(count($classes) != 0){
                 $classesNode = WebFioriAPIGUI::createRowNode();
-                $classesNode->setClassName('classes-container');
+                $classesNode->setClassName('classes-container '.$classesNode->getAttributeValue('class'));
                 $label = new Label('All Classes:');
-                $label->setClassName('pa-ltr-col-3');
+                $label->setClassName('pa-ltr-col-10 box-title');
                 $classesNode->addChild($label);
                 foreach ($classes as $class){
                     $cNode = WebFioriAPIGUI::createRowNode(FALSE, FALSE);
