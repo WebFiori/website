@@ -23,6 +23,9 @@ span.func-param,
 nav ul{
     padding: 10px;
 }
+.classes-container{
+    border: 1px solid;
+}
 .all-classes-label{
     
 }
@@ -30,12 +33,20 @@ nav ul{
     font-size: 10pt;
 }
 .summary-box-title,
-.details-box-title{
+.details-box-title,
+.box-title{
     padding-left: 15px !important;
     background-color: #d33e42;
     color: white;
     font-weight: bold;
     height: 25px;
+}
+.class-row {
+    border: 1px solid;
+    margin-bottom: 2px !important;
+}
+.class-row p{
+    margin: 0;
 }
 #side-content-area{
     border: 1px solid;
