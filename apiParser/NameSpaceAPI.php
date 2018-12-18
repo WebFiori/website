@@ -22,8 +22,10 @@ class NameSpaceAPI {
     }
     private function _get($cType){
         $arr = array();
-        foreach ($this->classes as $classApi){
-            if($classApi->getClassType() == $cType){
+        $count = count($this->getAll());
+        for($x = 0 ; $x < $count ; $x++){
+            $classApi = $this->getAll()[$x];
+            if(trim($classApi->getClassType()) == $cType){
                 $arr[] = $classApi;
             }
         }
@@ -45,7 +47,9 @@ class NameSpaceAPI {
      * @return array
      */
     public function getClasses() {
-        return $this->_get('class');
+        $arr1 = $this->_get('class');
+        $arr2 = $this->_get('abstract class');
+        return array_merge($arr1, $arr2);
     }
     /**
      * Sets the name of the namespace.
