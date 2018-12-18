@@ -20,6 +20,33 @@ class NameSpaceAPI {
         $this->name = '\\';
         $this->classes = array();
     }
+    private function _get($cType){
+        $arr = array();
+        foreach ($this->classes as $classApi){
+            if($classApi->getClassType() == $cType){
+                $arr[] = $classApi;
+            }
+        }
+        return $arr;
+    }
+    /**
+     * Returns an array that contains an objects of type ClassAPI.
+     * The objects in the array will represents the interfaces in the 
+     * name space.
+     * @return array
+     */
+    public function getInterfaces() {
+        return $this->_get('interface');
+    }
+    /**
+     * Returns an array that contains an objects of type ClassAPI.
+     * The objects in the array will represents the classes in the 
+     * name space.
+     * @return array
+     */
+    public function getClasses() {
+        return $this->_get('class');
+    }
     /**
      * Sets the name of the namespace.
      * @param string $name A string in the format '\hello\world'
@@ -47,7 +74,7 @@ class NameSpaceAPI {
      * Returns an array that contains an objects of type APIClass.
      * @return array An array that contains an objects of type APIClass.
      */
-    public function getClasses() {
+    public function getAll() {
         return $this->classes;
     }
 }

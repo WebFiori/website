@@ -1,5 +1,4 @@
 <?php
-use webfiori\entity\Theme;
 use webfiori\WebFiori;
 use webfiori\entity\Page;
 use webfiori\functions\WebsiteFunctions;
@@ -13,6 +12,7 @@ use webfiori\SiteConfig;
 use webfiori\Config;
 use webfiori\apiParser\APITheme;
 use webfiori\apiParser\NameSpaceAPI;
+use phpStructs\html\Label;
 
 class WebFioriAPITheme extends APITheme{
     public function __construct() {
@@ -385,7 +385,44 @@ class WebFioriAPITheme extends APITheme{
     public function createNamespaceContentBlock($nsObj) {
         if($nsObj instanceof NameSpaceAPI){
             $node = WebFioriAPIGUI::createRowNode();
-        
+            $interfaces = $nsObj->getInterfaces();
+            if(count($interfaces) != 0){
+                $interfacesNode = WebFioriAPIGUI::createRowNode();
+                $interfacesNode->setClassName('classes-container');
+                $label = new Label('All Interfaces:');
+                $label->setClassName('pa-ltr-col-3');
+                $interfacesNode->addChild($label);
+                foreach ($interfaces as $interface){
+                    $cNode = WebFioriAPIGUI::createRowNode(FALSE, FALSE);
+                    $cNode->setClassName('class-row '.$cNode->getAttributeValue('class'));
+                    $link = new LinkNode($this->getBaseURL(), $interface->getName());
+                    $cNode->addChild($link);
+                    $descNode = new PNode();
+                    $descNode->addText($interface->getSummary());
+                    $cNode->addChild($descNode);
+                    $interfacesNode->addChild($cNode);
+                }
+                $node->addChild($interfacesNode);
+            }
+            $classes = $nsObj->getClasses();
+            if(count($classes) != 0){
+                $classesNode = WebFioriAPIGUI::createRowNode();
+                $classesNode->setClassName('classes-container');
+                $label = new Label('All Classes:');
+                $label->setClassName('pa-ltr-col-3');
+                $classesNode->addChild($label);
+                foreach ($classes as $class){
+                    $cNode = WebFioriAPIGUI::createRowNode(FALSE, FALSE);
+                    $cNode->setClassName('class-row '.$cNode->getAttributeValue('class'));
+                    $link = new LinkNode($this->getBaseURL(), $class->getName());
+                    $cNode->addChild($link);
+                    $descNode = new PNode();
+                    $descNode->addText($class->getSummary());
+                    $cNode->addChild($descNode);
+                    $classesNode->addChild($cNode);
+                }
+                $node->addChild($classesNode);
+            }
             return $node;
         }
     }

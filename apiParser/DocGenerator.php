@@ -26,9 +26,9 @@ class DocGenerator {
     private $apiReadersArr;
     private $baseUrl;
     private $routerLinks;
-    private $rootContainer;
+    private $routRootFolder;
     private $isDynamic;
-    private $indexLinks;
+    private $nsApiObjecsArr;
     /**
      * 
      * @param type $options An array of options. The available options are:
@@ -61,13 +61,13 @@ class DocGenerator {
             if(Util::isDirectory($options['path'])){
                 if(Util::isDirectory($options['output-to'])){
                     $this->isDynamic = isset($options['is-dynamic']) && $options['is-dynamic'] === TRUE ? TRUE : FALSE;
-                    $this->rootContainer = $options['route-root-folder'];
+                    $this->routRootFolder = $options['route-root-folder'];
                     $classes = $this->_scanPathForFiles($options['path'],$options['exclude-path']);
                     $this->linksArr = array();
                     $this->classesLinksByNS = array();
                     $this->apiReadersArr = array();
                     $this->routerLinks = array();
-                    $this->indexLinks = array();
+                    $this->nsApiObjecsArr = array();
                     foreach ($classes as $classPath){
                         $this->apiReadersArr[] = new APIReader($classPath);
                     }
@@ -75,7 +75,6 @@ class DocGenerator {
                     $siteName = isset($options['site-name']) && strlen($options['site-name']) > 0 ?
                             $options['site-name'] : 'Docs';
                     $this->createRoutesFile($options['output-to']);
-                    
                     foreach ($this->apiReadersArr as $reader){
                         Page::lang('EN');
                         Page::dir('ltr');
@@ -96,6 +95,20 @@ class DocGenerator {
                         }
                         else{
                             throw new Exception('The selected theme is not a sub-class of \'APITheme\'.');
+                        }
+                        
+                    }
+                    foreach ($this->getNSAPIObjcts() as $ns => $nsObj){
+                        $theme = Page::theme($options['theme']);
+                        if($theme instanceof APITheme){
+                            Page::siteName($siteName);
+                            Page::insert($theme->createNamespaceContentBlock($nsObj));
+                            //$page = new APIPage($classAPI);
+                            $canonical = $options['base-url']. str_replace('\\', '/', $nsObj->getName());
+                            Page::canonical($canonical);
+                            $this->_createAsideNav();
+                            $this->createNSIndexFile($options['output-to'],$nsObj->getName(), $options);
+                            Page::reset();
                         }
                     }
                 }
@@ -174,8 +187,8 @@ class DocGenerator {
         }
         return FALSE;
     }
-    public function getIndexLinks() {
-        return $this->indexLinks;
+    public function getNSAPIObjcts() {
+        return $this->nsApiObjecsArr;
     }
     public function getLinks() {
         return $this->linksArr;
@@ -187,6 +200,7 @@ class DocGenerator {
         return $this->routerLinks;
     }
     private function _buildLinks() {
+        $nsClasses = array();
         foreach ($this->apiReadersArr as $apiReader){
             $namespaceLink = $apiReader->getNamespace();
             $packageLink2 = str_replace('.', '/', $namespaceLink);
@@ -194,25 +208,31 @@ class DocGenerator {
             $nsName = $apiReader->getNamespace();
             if($packageLink2 === ''){
                 $classLink = $this->baseUrl.'/'.$cName;
-                $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->rootContainer.'/'.$cName;
+                $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.'/'.$cName;
+                $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.'NSIndex';
             }
             else{
                 $classLink = $this->baseUrl.$packageLink2.'/'.$cName;
-                $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->rootContainer.str_replace('\\', '/', $packageLink2).'/'.$cName;
+                $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/'.$cName;
+                $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/NSIndex';
             }
             $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
-            $this->classesLinksByNS[$nsName][] = '<a class="side-link" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
-            $this->indexLinks[$nsName][] = array(
-                'class-link'=>'<a class="side-link" href="'.$classLink.'" target="_blank">'.$cName.'</a>',
-                'class-description'=>$apiReader->getClassSummary(),
-                'class-type'=>$apiReader->getClassAccessModifier()
-            );
+            $this->classesLinksByNS[$nsName][] = '<a class="mono" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
+            $nsClasses[$nsName][] = new ClassAPI($apiReader);
             foreach ($apiReader->getConstantsNames() as $name){
                 $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'</a>';
             }
             foreach ($apiReader->getFunctionsNames() as $name){
                 $this->linksArr[$cName.'::'.$name.'()'] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'()</a>';
             }
+        }
+        foreach ($nsClasses as $nsName => $classes){
+            $ns = new NameSpaceAPI();
+            $ns->setName($nsName);
+            foreach ($classes as $class){
+                $ns->addClass($class);
+            }
+            $this->nsApiObjecsArr[] = $ns;
         }
     }
     /**
@@ -257,6 +277,13 @@ class DocGenerator {
         $file->setRawData($routesStr);
         $file->write();
     }
+    /**
+     * 
+     * @param type $path
+     * @param type $ns
+     * @param type $options
+     * @return boolean
+     */
     private function createNSIndexFile($path,$ns,$options){
         $ns = trim($ns,'\\');
         if(strlen($ns) != 0){
