@@ -88,7 +88,7 @@ class DocGenerator {
                             //$page = new APIPage($classAPI);
                             $canonical = $options['base-url']. str_replace('\\', '/', $classAPI->getNameSpace()).'/'.$classAPI->getName();
                             Page::canonical($canonical);
-                            Page::description($classAPI->getShortDescription());
+                            Page::description($classAPI->getSummary());
                             $this->_createAsideNav();
                             $this->createAPIPage($classAPI, $options);
                             Page::reset();
