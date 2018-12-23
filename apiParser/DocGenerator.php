@@ -58,6 +58,9 @@ class DocGenerator {
         if(isset($options['path'])){
             $options['path'] = str_replace('/', '\\', $options['path']);
             $this->baseUrl = isset($options['base-url']) ? $options['base-url']:'';
+            if($this->baseUrl[strlen($this->baseUrl) - 1] != '/'){
+                $this->baseUrl = $this->baseUrl.'/';
+            }
             if(Util::isDirectory($options['path'])){
                 if(Util::isDirectory($options['output-to'])){
                     $this->isDynamic = isset($options['is-dynamic']) && $options['is-dynamic'] === TRUE ? TRUE : FALSE;
@@ -80,6 +83,7 @@ class DocGenerator {
                         Page::dir('ltr');
                         $theme = Page::theme($options['theme']);
                         if($theme instanceof APITheme){
+                            $theme->setBaseURL($this->getBaseURL());
                             Page::siteName($siteName);
                             $classAPI = new ClassAPI($reader,$this->linksArr,$options);
                             $classAPI->setBaseURL($this->baseUrl);
@@ -98,14 +102,17 @@ class DocGenerator {
                         }
                         
                     }
-                    foreach ($this->getNSAPIObjcts() as $ns => $nsObj){
+                    foreach ($this->getNSAPIObjcts() as $nsObj){
                         $theme = Page::theme($options['theme']);
                         if($theme instanceof APITheme){
+                            $theme->setBaseURL($this->getBaseURL());
                             Page::siteName($siteName);
                             Page::insert($theme->createNamespaceContentBlock($nsObj));
                             //$page = new APIPage($classAPI);
                             $canonical = $options['base-url']. str_replace('\\', '/', $nsObj->getName());
                             Page::canonical($canonical);
+                            Page::description('All classes in the namespace '.$nsObj->getName().'.');
+                            Page::title('Namespace '.$nsObj->getName());
                             $this->_createAsideNav();
                             $this->createNSIndexFile($options['output-to'],$nsObj->getName(), $options);
                             Page::reset();
@@ -164,7 +171,8 @@ class DocGenerator {
                     . '        $pageBody->addTextNode(\''."\r\n"
                     . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(TRUE))).'\''."\r\n"
                     . '        );'."\r\n"
-                    . '        P::insert($pageBody, \'page-body\');'."\r\n"
+                    . '        $body = P::document()->getChildByID(\'page-body\');'."\r\n"
+                    . '        P::document()->getBody()->replaceChild($body, $pageBody);'."\r\n"
                     . '        P::render();'."\r\n"
                     . '    }'."\r\n"
                     . '}'."\r\n"
@@ -249,7 +257,7 @@ class DocGenerator {
         $aside->addChild($nav);
         foreach ($this->classesLinksByNS as $nsName => $nsClasses){
             $packageLi = new ListItem();
-            $packageLi->setText($nsName);
+            $packageLi->setText('<a href="'.$this->getBaseURL().str_replace('\\','/',$nsName).'">'.$nsName.'</a>');
             $packageUl = new UnorderedList();
             $packageLi->addChild($packageUl);
             foreach ($nsClasses as $classLink){
@@ -259,6 +267,9 @@ class DocGenerator {
             }
             $ul->addChild($packageLi);
         }
+    }
+    public function getBaseURL(){
+        return $this->baseUrl;
     }
     private function createRoutesFile($path){
         $ext = $this->isDynamicPage() ? 'php' : 'html';
@@ -311,7 +322,8 @@ class DocGenerator {
                     . '        $pageBody->addTextNode(\''."\r\n"
                     . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(TRUE))).'\''."\r\n"
                     . '        );'."\r\n"
-                    . '        P::insert($pageBody, \'page-body\');'."\r\n"
+                    . '        $body = P::document()->getChildByID(\'page-body\');'."\r\n"
+                    . '        P::document()->getBody()->replaceChild($body, $pageBody);'."\r\n"
                     . '        P::render();'."\r\n"
                     . '    }'."\r\n"
                     . '}'."\r\n"

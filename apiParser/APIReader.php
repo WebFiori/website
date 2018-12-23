@@ -1279,7 +1279,7 @@ class APIReader {
             $char = $this->getFileText()[$startIndex];
             Logger::log('Character: '.$char, 'debug');
             Logger::log('Checking character type...');
-            if($char == '*' || $char == '.'){
+            if($char == '.'){
                 Logger::log('End of summary.');
                 if($char == '.'){
                     $startIndex++;

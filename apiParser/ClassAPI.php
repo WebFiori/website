@@ -119,6 +119,7 @@ class ClassAPI {
                 else{
                     $desc = '';
                 }
+                
                 $api->setDescription($summary.' '.$desc);
                 $this->addAttribute($api);
             }

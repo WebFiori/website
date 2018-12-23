@@ -36,8 +36,11 @@ class ViewRoutes {
      * @since 1.0
      */
     public static function create(){
-        Router::view('/', '/default.html');
-        Router::view('/example', '/ExamplePage.php');
+        Router::view('/', '/WebFioriHome.php');
+        Router::view('/webfiori', '/WebFioriHome.php');
+        Router::view('/docs', '/apis-1.0.1/webfiori/NSIndexView.php');
+        Router::view('/learn', '/LearnView.php');
+        Router::view('/download', '/DownloadView.php');
     }
     /**
      * A test for creating a site map from views URIs

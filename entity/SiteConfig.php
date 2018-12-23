@@ -90,7 +90,7 @@ class SiteConfig{
     }
     private function __construct() {
         $this->configVision = '1.2.1';
-        $this->webSiteNames = array('AR'=>'أكاديميا البرمجة','EN'=>'Programming Academia',);
+        $this->webSiteNames = array('AR'=>'ويب فيوري','EN'=>'WebFiori Framework',);
         $this->baseUrl = entity\Util::getBaseURL();
         $this->titleSep = ' | ';
         $this->primaryLang = 'EN';

@@ -121,11 +121,10 @@ class WebFioriTheme extends Theme{
         $contactInfo = new HTMLNode();
         $contactInfo->setClassName('pa-'.Page::dir().'-col-12');
         $p = new PNode();
-        $p->addText('013 xxx xxxx', array('new-line'=>TRUE));
-        $p->addText('youremail@example.com',array('new-line'=>TRUE));
+        $p->addText('webfiori@programmingacademia.com',array('new-line'=>TRUE));
         $contactInfo->addChild($p);
         $node->addChild($contactInfo);
-        $p->addText('Your Copyright Notice © 2018');
+        $p->addText('All Rights Reserved © '.date('Y'));
         $div = new HTMLNode('div');
         $div->setAttribute('class', 'pa-ltr-col-twelve');
         $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '

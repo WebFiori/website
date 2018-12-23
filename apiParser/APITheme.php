@@ -168,7 +168,7 @@ abstract class APITheme extends Theme{
                 $titleNode->addText('Class Attributes Details');
                 $detailsNode->addChild($titleNode);
                 foreach ($class->getClassAttributes() as $attr){
-                     $detailsNode->addChild($this->createAttributeSummaryBlock($attr));
+                     $detailsNode->addChild($this->createAttributeDetailsBlock($attr));
                 }
                 return $detailsNode;
             }

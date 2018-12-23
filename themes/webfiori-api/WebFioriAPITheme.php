@@ -172,6 +172,19 @@ class WebFioriAPITheme extends APITheme{
         $headTag = new HeadNode();
         $headTag->setBase(SiteConfig::get()->getBaseURL());
         $headTag->addLink('icon', Page::imagesDir().'/favicon.png');
+        $js = new HTMLNode('script');
+        $js->setAttribute('async', '');
+        $js->setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=UA-91825602-1');
+        $headTag->addChild($js);
+        $jsCode = new phpStructs\html\JsCode();
+        $jsCode->addCode(''
+                . 'window.dataLayer = window.dataLayer || [];'
+                . 'function gtag(){'
+                . 'dataLayer.push(arguments);'
+                . '}'
+                . 'gtag(\'js\', new Date());'
+                . 'gtag(\'config\', \'UA-91825602-1\');');
+        $headTag->addChild($jsCode);
         $headTag->addCSS(Page::cssDir().'/Grid.css');
         $headTag->addCSS(Page::cssDir().'/colors.css');
         $headTag->addCSS(Page::cssDir().'/theme.css');
@@ -397,7 +410,7 @@ class WebFioriAPITheme extends APITheme{
                 foreach ($interfaces as $interface){
                     $cNode = WebFioriAPIGUI::createRowNode(FALSE, FALSE);
                     $cNode->setClassName('class-row '.$cNode->getAttributeValue('class'));
-                    $link = new LinkNode($this->getBaseURL(), $interface->getName());
+                    $link = new LinkNode($this->getBaseURL(). str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interface->getName(), $interface->getName());
                     $cNode->addChild($link);
                     $descNode = new PNode();
                     $descNode->addText($interface->getSummary());
@@ -416,7 +429,7 @@ class WebFioriAPITheme extends APITheme{
                 foreach ($classes as $class){
                     $cNode = WebFioriAPIGUI::createRowNode(FALSE, FALSE);
                     $cNode->setClassName('class-row '.$cNode->getAttributeValue('class'));
-                    $link = new LinkNode($this->getBaseURL(), $class->getName());
+                    $link = new LinkNode($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$class->getName(), $class->getName());
                     $cNode->addChild($link);
                     $descNode = new PNode();
                     $descNode->addText($class->getSummary());
