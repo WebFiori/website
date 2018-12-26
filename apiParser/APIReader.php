@@ -1274,12 +1274,18 @@ class APIReader {
         Logger::logFuncCall(__METHOD__);
         $summary = '';
         Logger::log('Starting the process of extracting summary...');
+        $mightBeDocBlockEnd = FALSE;
         while ($startIndex < $this->getFileSize()){
             Logger::log('Character index: '.$startIndex, 'debug');
             $char = $this->getFileText()[$startIndex];
             Logger::log('Character: '.$char, 'debug');
             Logger::log('Checking character type...');
-            if($char == '.'){
+            if($char == '/' && $mightBeDocBlockEnd){
+                Logger::log('End of doc block.');
+                $summary.= '.';
+                break;
+            }
+            else if($char == '.' || $char == '@'){
                 Logger::log('End of summary.');
                 if($char == '.'){
                     $startIndex++;
@@ -1287,7 +1293,12 @@ class APIReader {
                 }
                 break;
             }
+            else if($char == '*'){
+                //just skip it. Or it is end of DocBlock.
+                $mightBeDocBlockEnd = TRUE;
+            }
             else{
+                $mightBeDocBlockEnd = FALSE;
                 if($char != "\n" && $char != "\r"){
                     Logger::log('Appending character to summary string...');
                     $summary .= $char;
