@@ -224,14 +224,14 @@ class DocGenerator {
                 $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/NSIndex';
             }
-            $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
-            $this->classesLinksByNS[$nsName][] = '<a class="mono" href="'.$classLink.'" target="_blank">'.$cName.'</a>';
+            $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'">'.$cName.'</a>';
+            $this->classesLinksByNS[$nsName][] = '<a class="mono" href="'.$classLink.'">'.$cName.'</a>';
             $nsClasses[$nsName][] = new ClassAPI($apiReader);
             foreach ($apiReader->getConstantsNames() as $name){
-                $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'</a>';
+                $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'</a>';
             }
             foreach ($apiReader->getFunctionsNames() as $name){
-                $this->linksArr[$cName.'::'.$name.'()'] = '<a class="mono" href="'.$classLink.'#'.$name.'" target="_blank">'.$cName.'::'.$name.'()</a>';
+                $this->linksArr[$cName.'::'.$name.'()'] = '<a class="mono" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'()</a>';
             }
         }
         foreach ($nsClasses as $nsName => $classes){
