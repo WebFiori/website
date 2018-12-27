@@ -9,7 +9,7 @@
 namespace webfiori\views;
 use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
-
+use phpStructs\html\HTMLNode;
 /**
  * Description of LearnView
  *
@@ -23,6 +23,8 @@ class LearnView extends WebFioriPage{
         Page::description('Here you will find a list of topics that you might '
                 . 'need to learn in order to use WebFiori Framework in the most '
                 . 'effictive way.');
+        Page::insert(HTMLNode::createTextNode('Coming Soon.'));
         Page::render();
     }
 }
+new LearnView();
