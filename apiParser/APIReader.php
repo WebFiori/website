@@ -1294,6 +1294,7 @@ class APIReader {
                 break;
             }
             else if($char == '*'){
+                Logger::log('Might be end of doc block.');
                 //just skip it. Or it is end of DocBlock.
                 $mightBeDocBlockEnd = TRUE;
             }
