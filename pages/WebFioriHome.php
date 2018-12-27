@@ -9,6 +9,7 @@
 namespace webfiori\views;
 use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
+use phpStructs\html\HTMLNode;
 /**
  * Description of WebFioriHome
  *
@@ -20,6 +21,7 @@ class WebFioriHome extends WebFioriPage{
         Page::title('WebFiori Home');
         Page::siteName('WebFiori');
         Page::description('WebFiori Framework. Built to make the web blooming.');
+        Page::insert(HTMLNode::createTextNode('Coming Soon.'));
         Page::render();
     }
 }
