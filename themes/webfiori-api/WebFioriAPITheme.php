@@ -52,20 +52,20 @@ class WebFioriAPITheme extends APITheme{
             //adding menu items 
             $mainMenu = &Page::document()->getChildByID('main-menu');
 
-//            $item1 = new ListItem();
-//            $link1 = new LinkNode(SiteConfig::get()->getBaseURL(), $translation->get('menus/main-menu/menu-item-1'));
-//            $item1->addChild($link1);
-//            $mainMenu->addChild($item1);
-//
-//            $item2 = new ListItem();
-//            $link2 = new LinkNode(SiteConfig::get()->getBaseURL(), $translation->get('menus/main-menu/menu-item-2'));
-//            $item2->addChild($link2);
-//            $mainMenu->addChild($item2);
-//
-//            $item3 = new ListItem();
-//            $link3 = new LinkNode(SiteConfig::get()->getBaseURL(), $translation->get('menus/main-menu/menu-item-3'));
-//            $item3->addChild($link3);
-//            $mainMenu->addChild($item3);
+            $item1 = new ListItem();
+            $link1 = new LinkNode($this->getBaseURL().'download', $translation->get('menus/main-menu/menu-item-1'));
+            $item1->addChild($link1);
+            $mainMenu->addChild($item1);
+
+            $item2 = new ListItem();
+            $link2 = new LinkNode(SiteConfig::getBaseURL().'docs/webfiori', $translation->get('menus/main-menu/menu-item-2'));
+            $item2->addChild($link2);
+            $mainMenu->addChild($item2);
+
+            $item3 = new ListItem();
+            $link3 = new LinkNode(SiteConfig::getBaseURL().'learn', $translation->get('menus/main-menu/menu-item-3'));
+            $item3->addChild($link3);
+            $mainMenu->addChild($item3);
 
         });
 
