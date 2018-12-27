@@ -8,6 +8,7 @@
 namespace webfiori\views;
 use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
+use phpStructs\html\HTMLNode;
 /**
  * Description of DownloadView
  *
@@ -19,6 +20,8 @@ class DownloadView extends WebFioriPage{
         Page::title('Download');
         Page::siteName('WebFiori');
         Page::description('Links to download WebFiori Framework.');
+        Page::insert(HTMLNode::createTextNode('Coming Soon.'));
         Page::render();
     }
 }
+new DownloadView();
