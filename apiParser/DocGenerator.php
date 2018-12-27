@@ -109,7 +109,7 @@ class DocGenerator {
                             Page::siteName($siteName);
                             Page::insert($theme->createNamespaceContentBlock($nsObj));
                             //$page = new APIPage($classAPI);
-                            $canonical = $options['base-url']. str_replace('\\', '/', $nsObj->getName());
+                            $canonical = trim($options['base-url'],'/'). str_replace('\\', '/', $nsObj->getName());
                             Page::canonical($canonical);
                             Page::description('All classes in the namespace '.$nsObj->getName().'.');
                             Page::title('Namespace '.$nsObj->getName());
@@ -215,12 +215,12 @@ class DocGenerator {
             $cName = $apiReader->getClassName();
             $nsName = $apiReader->getNamespace();
             if($packageLink2 === ''){
-                $classLink = $this->baseUrl.'/'.$cName;
+                $classLink = trim($this->baseUrl,'/').'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.'NSIndex';
             }
             else{
-                $classLink = $this->baseUrl.$packageLink2.'/'.$cName;
+                $classLink = trim($this->baseUrl,'/').$packageLink2.'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/NSIndex';
             }
@@ -257,7 +257,7 @@ class DocGenerator {
         $aside->addChild($nav);
         foreach ($this->classesLinksByNS as $nsName => $nsClasses){
             $packageLi = new ListItem();
-            $packageLi->setText('<a href="'.$this->getBaseURL().str_replace('\\','/',$nsName).'">'.$nsName.'</a>');
+            $packageLi->setText('<a href="'.trim($this->getBaseURL(),'/').str_replace('\\','/',$nsName).'">'.$nsName.'</a>');
             $packageUl = new UnorderedList();
             $packageLi->addChild($packageUl);
             foreach ($nsClasses as $classLink){
