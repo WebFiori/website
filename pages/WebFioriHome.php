@@ -35,9 +35,71 @@ class WebFioriHome extends WebFioriPage{
         $parag1->addText('If this is the case, then <em>WebFiori Framework</em> is your choice.');
         Page::insert($parag1);
         $this->createSec1();
+        $this->createSec4();
+        $this->createSec2();
+        $this->createSec3();
         Page::render();
     }
-    
+    public function createSec4() {
+        $sec = new HTMLNode('section');
+        $hNode = new HTMLNode('h1');
+        $hNode->addTextNode('Downloading The Framework');
+        $sec->addChild($hNode);
+        $parag1 = new PNode();
+        $parag1->addText('Please go to <a href="'.\webfiori\SiteConfig::getBaseURL().'download">downloads page</a> to check the available '
+                . 'download options.');
+        $sec->addChild($parag1);
+        Page::insert($sec);
+    }
+    public function createSec2(){
+        $sec = new HTMLNode('section');
+        $hNode = new HTMLNode('h1');
+        $hNode->addTextNode('Is it free to use it?');
+        $sec->addChild($hNode);
+        $parag1 = new PNode();
+        $parag1->addText('Yes for sure. You can use it for free of charge. In '
+                . 'addition, it is open source. This means you can modify the '
+                . 'source code of the framework the way you like as long as you '
+                . 'follow MIT license regarding open source software modifications.');
+        $sec->addChild($parag1);
+        Page::insert($sec);
+    }
+    public function createSec3(){
+        $sec = new HTMLNode('section');
+        $hNode = new HTMLNode('h1');
+        $hNode->addTextNode('Why did you build such framework since there are many '
+                . 'good ones already out there?');
+        $sec->addChild($hNode);
+        $parag1 = new PNode();
+        $parag1->addText('One of the reasons is <b>simplicity</b>. '
+                . 'Some of the available frameworks makes it difficult for you '
+                . 'to develop your website or web application by overwhelming you '
+                . 'with many features which you don\'t actually need. WebFiori Framework '
+                . 'gives you the simplest set of tools that you would need to setup a '
+                . 'website, web application or web APIs.');
+        $sec->addChild($parag1);
+        $parag2 = new PNode();
+        $parag2->addText('Another reason is the <b>ease of use</b>. '
+                . 'Many of the available frameworks aren\'t easy to master in '
+                . 'short time. While developing the framework, one of the things that '
+                . 'we put in mind is how to help developers learn how to use the '
+                . 'framework in no time. If you want to create static web pages (HTML only), then '
+                . 'you only need to learn about routing. You might need to learn '
+                . 'more if you want to use PHP features for your web pages. '
+                . 'If you want to create a nice looking pages, You need to learn '
+                . 'about the basics of theming in the framework. If you want to '
+                . 'develop web APIs, Then you need to learn about routing plus creating '
+                . 'API classes.');
+        $sec->addChild($parag2);
+        $parag3 = new PNode();
+        $parag3->addText('The final reason is <b>learning</b>. While building '
+                . 'the framework, I (The developer of the framework) learned many '
+                . 'new concepts which I did not know about while I was student '
+                . 'at university. Building new something from scratch was a good '
+                . 'chance to learn new thingsand to put my skills into something that can help me and others.');
+        $sec->addChild($parag3);
+        Page::insert($sec);
+    }
     private function createSec1(){
         $sec = new HTMLNode('section');
         $hNode = new HTMLNode('h1');
@@ -59,15 +121,15 @@ class WebFioriHome extends WebFioriPage{
         $feature1->setText('Theming and the ability to create multiple UIs for the same web page using any CSS or JavaScript framework.');
         $ul->addChild($feature1);
         $feature2 = new ListItem(TRUE);
-        $feature2->setText('Support for routing that makes the ability of creating search '
-                . 'engine friendly links an easy task.');
+        $feature2->setText('Support for routing that makes the ability of creating search-'
+                . 'engine-friendly links an easy task.');
         $ul->addChild($feature2);
         $feature3 = new ListItem(TRUE);
         $feature3->setText('Creation of web APIs that supports JSON, data filtering and '
                 . 'validation.');
         $ul->addChild($feature3);
         $feature4 = new ListItem(TRUE);
-        $feature4->setText('Support for MySQL schema and query building.');
+        $feature4->setText('Basic support for MySQL schema and query building.');
         $ul->addChild($feature4);
         $feature5 = new ListItem(TRUE);
         $feature5->setText('Lightweight. The total size of framework core files is '
@@ -82,24 +144,24 @@ class WebFioriHome extends WebFioriPage{
                 . 'sessions at once.');
         $ul->addChild($feature7);
         $feature8 = new ListItem(TRUE);
-        $feature8->setText('Support for sending emails in a simple way by using SMTP '
+        $feature8->setText('Support for creating and sending nice-looking emails in a simple way by using SMTP '
                 . 'protocol.');
         $ul->addChild($feature8);
         $feature9 = new ListItem(TRUE);
         $feature9->setText('Autoloading of user defined classes.');
         $ul->addChild($feature9);
         $feature10 = new ListItem(TRUE);
-        $feature10->setText('The ability to create atomatic tasks and let them '
+        $feature10->setText('The ability to create automatic tasks and let them '
                 . 'run in specific time using CRON.');
         $ul->addChild($feature10);
         $feature11 = new ListItem(TRUE);
-        $feature11->setText('Support for logging system events.');
+        $feature11->setText('Support for logging of system events.');
         $ul->addChild($feature11);
         $feature12 = new ListItem(TRUE);
         $feature12->setText('Well-defined file upload and file handling sub-system.');
         $ul->addChild($feature12);
         $feature13 = new ListItem(TRUE);
-        $feature13->setText('Building web page\'s DOM using PHP language.');
+        $feature13->setText('Building and manipulating the DOM of a web page using PHP language.');
         $ul->addChild($feature13);
         $sec->addChild($ul);
         Page::insert($sec);
