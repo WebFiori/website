@@ -56,7 +56,7 @@ class WebFioriHome extends WebFioriPage{
         $sec->addChild($parag1);
         $ul = new UnorderedList();
         $feature1 = new ListItem(TRUE);
-        $feature1->setText('Theming and the ability to create multiple UIs for the same web page.');
+        $feature1->setText('Theming and the ability to create multiple UIs for the same web page using any CSS or JavaScript framework.');
         $ul->addChild($feature1);
         $feature2 = new ListItem(TRUE);
         $feature2->setText('Support for routing that makes the ability of creating search '
@@ -86,17 +86,21 @@ class WebFioriHome extends WebFioriPage{
                 . 'protocol.');
         $ul->addChild($feature8);
         $feature9 = new ListItem(TRUE);
-        $feature9->setText('');
+        $feature9->setText('Autoloading of user defined classes.');
         $ul->addChild($feature9);
         $feature10 = new ListItem(TRUE);
-        $feature10->setText('');
+        $feature10->setText('The ability to create atomatic tasks and let them '
+                . 'run in specific time using CRON.');
         $ul->addChild($feature10);
         $feature11 = new ListItem(TRUE);
-        $feature11->setText('');
+        $feature11->setText('Support for logging system events.');
         $ul->addChild($feature11);
         $feature12 = new ListItem(TRUE);
-        $feature12->setText('');
+        $feature12->setText('Well-defined file upload and file handling sub-system.');
         $ul->addChild($feature12);
+        $feature13 = new ListItem(TRUE);
+        $feature13->setText('Building web page\'s DOM using PHP language.');
+        $ul->addChild($feature13);
         $sec->addChild($ul);
         Page::insert($sec);
     }
