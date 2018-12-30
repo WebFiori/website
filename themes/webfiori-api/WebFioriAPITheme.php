@@ -306,7 +306,7 @@ class WebFioriAPITheme extends APITheme{
         $methNameNode = WebFioriAPIGUI::createColNode(12, FALSE, FALSE);
         $methNameNode->setID(str_replace('&', '', $func->getName()));
         $methNameNode->setClassName($methNameNode->getAttributeValue('class').' function-name');
-        $nodeText = $func->getAccessModofier().' function '. str_replace('&', '&amp;', $func->getName()).'(';
+        $nodeText = $func->getAccessModofier().' '. str_replace('&', '&amp;', $func->getName()).'(';
         $count = count($func->getParameters());
         for($x = 0 ; $x < $count ; $x++){
             $param = $func->getParameters()['param-'.$x];
@@ -370,7 +370,7 @@ class WebFioriAPITheme extends APITheme{
         $node->setClassName($node->getAttributeValue('class').' function-summary');
         $methNameNode = WebFioriAPIGUI::createColNode(12, FALSE, FALSE);
         $methNameNode->setClassName('function-name');
-        $nodeText = $func->getAccessModofier().' function <a class="function-name" href="'.$func->getPageURL().'/'. str_replace('\\', '/', trim($func->getOwnerClass()->getNameSpace(), '\\')).'/'.$func->getOwnerClass()->getName().'#'.str_replace('&', '', $func->getName()).'">'. str_replace('&', '&amp;', $func->getName()).'</a>(';
+        $nodeText = $func->getAccessModofier().' <a class="function-name" href="'.$func->getPageURL().'/'. str_replace('\\', '/', trim($func->getOwnerClass()->getNameSpace(), '\\')).'/'.$func->getOwnerClass()->getName().'#'.str_replace('&', '', $func->getName()).'">'. str_replace('&', '&amp;', $func->getName()).'</a>(';
         $count = count($func->getParameters());
         for($x = 0 ; $x < $count ; $x++){
             $param = $func->getParameters()['param-'.$x];
