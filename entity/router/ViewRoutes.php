@@ -41,6 +41,7 @@ class ViewRoutes {
         Router::view('/docs', '/apis-1.0.1/webfiori/NSIndexView.php');
         Router::view('/learn', '/LearnView.php');
         Router::view('/download', '/DownloadView.php');
+        Router::view('/learn/topics/cron', '/learning/cron/Index.php');
     }
     /**
      * A test for creating a site map from views URIs

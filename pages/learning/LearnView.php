@@ -6,25 +6,26 @@
  * and open the template in the editor.
  */
 
-namespace webfiori\views;
+namespace webfiori\views\learn;
 use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
 use phpStructs\html\HTMLNode;
+use webfiori\views\learn\LearningAsideMenu;
 /**
  * Description of LearnView
  *
  * @author Ibrahim
  */
 class LearnView extends WebFioriPage{
-    public function __construct() {
-        parent::__construct();
-        Page::title('Learnning Center');
-        Page::siteName('WebFiori');
-        Page::description('Here you will find a list of topics that you might '
+    public function __construct($title='Learnning Center',$desc='Here you will find a list of topics that you might '
                 . 'need to learn in order to use WebFiori Framework in the most '
-                . 'effictive way.');
-        Page::insert(HTMLNode::createTextNode('Coming Soon.'));
+                . 'effictive way.') {
+        parent::__construct();
+        Page::title($title);
+        Page::description($desc);
+        Page::document()->getChildByID('side-content-area')->addChild(LearningAsideMenu::createAsideNav());
+    }
+    public function display() {
         Page::render();
     }
 }
-new LearnView();
