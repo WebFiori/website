@@ -9,8 +9,12 @@
 namespace webfiori\views\learn;
 use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
+use webfiori\entity\Util;
 use phpStructs\html\HTMLNode;
+use phpStructs\html\PNode;
+use phpStructs\html\LinkNode;
 use webfiori\views\learn\LearningAsideMenu;
+use WebFioriGUI;
 /**
  * Description of LearnView
  *
@@ -22,10 +26,28 @@ class LearnView extends WebFioriPage{
                 . 'effictive way.') {
         parent::__construct();
         Page::title($title);
+        WebFioriGUI::createTitleNode($title);
         Page::description($desc);
         Page::document()->getChildByID('side-content-area')->addChild(LearningAsideMenu::createAsideNav());
     }
     public function display() {
         Page::render();
+    }
+    public function createHeaderSection($array){
+        $headerContainer = new HTMLNode();
+        $headerContainer->setClassName('header-container');
+        $pageUrl = Util::getRequestedURL();
+        $p = new PNode();
+        $p->addText('<b class="header-title">Content of the page:</b>');
+        $headerContainer->addChild($p);
+        $header = new HTMLNode('header');
+        $headerContainer->addChild($header);
+        foreach ($array as $elId => $text){
+            $link = new LinkNode($pageUrl.'#'.$elId, $text);
+            $h = new HTMLNode('h2');
+            $h->addChild($link);
+            $header->addChild($h);
+        }
+        Page::insert($headerContainer);
     }
 }
