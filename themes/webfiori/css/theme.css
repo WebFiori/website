@@ -150,3 +150,12 @@ h2#post-title{
 header *{
     font-size: 11pt;
 }
+.page-title{
+    font-size: 20pt;
+    margin-bottom: 20px !important;
+    border-left: 4px solid;
+    border-bottom: 4px solid;
+    padding: 10px !important;
+    border-radius: 5px;
+    background-color: aliceblue;
+}

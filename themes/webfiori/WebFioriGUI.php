@@ -19,49 +19,9 @@ class WebFioriGUI{
         else{
             $h1->addTextNode(Page::title());
         }
-        $h1->setClassName('pa-'.Page::dir().'-col-10-nm-np');
+        $h1->setClassName('page-title');
         $titleRow->addChild($h1);
         Page::document()->getChildByID('main-content-area')->addChild($titleRow);
-    }
-    public static function functionDescription($arr=array(
-        'long-name'=>'public static function getX()',
-        'f-description'=>'Function Description.'
-    )) {
-        $row = self::createRowNode();
-        $row->setAttribute('style', 'border: 1px solid;');
-        $nameNode = self::createColNode(12,FALSE,FALSE);
-        $nameNode->addTextNode('<b>'.$arr['long-name'].'</b>');
-        $row->addChild($nameNode);
-        
-        $descNode = new PNode();
-        $descNode->addText($arr['f-description']);
-        $row->addChild($descNode);
-        
-        $ul = new UnorderedList();
-        $paramsLi = new ListItem();
-        $paramsLi->setText('<b>Parameters:</b>');
-        $ul->addChild($paramsLi);
-        $returnsLi = new ListItem();
-        $returnsLi->setText('<b>Returns:</b>');
-        $ul->addChild($returnsLi);
-        $sinceLi = new ListItem();
-        $sinceLi->setText('<b>Since:</b>');
-        $ul->addChild($sinceLi);
-        $throwsLi = new ListItem();
-        $throwsLi->setText('<b>Throws:</b>');
-        $ul->addChild($throwsLi);
-        $row->addChild($ul);
-        
-        return $row;
-    }
-    public static function createConstDefNode($options=array()){
-        
-    } 
-    public static function createFunctionReturnNode($returns=array()) {
-        
-    }
-    public static function createFunctionParamsNode($paramsArr=array()) {
-        
     }
     /**
      * 
