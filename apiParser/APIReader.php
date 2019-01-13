@@ -405,7 +405,7 @@ class APIReader {
      * @return array An array that contains the names of class function.
      * @since 1.0
      */
-    public function getFunctionsNames(){
+    public function getMethodsNames(){
         $retVal = array();
         foreach ($this->parsedClassInfo['functions'] as $func){
             $retVal[] = trim($func['name']);

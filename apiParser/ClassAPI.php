@@ -125,7 +125,7 @@ class ClassAPI {
             }
             
         }
-        foreach ($classAPIReader->getFunctionsNames() as $name){
+        foreach ($classAPIReader->getMethodsNames() as $name){
             $docBlock = $classAPIReader->getFunctionDocBlock($name);
             $api = new FunctionDef();
             $api->setName($name);

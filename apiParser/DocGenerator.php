@@ -230,7 +230,7 @@ class DocGenerator {
             foreach ($apiReader->getConstantsNames() as $name){
                 $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'</a>';
             }
-            foreach ($apiReader->getFunctionsNames() as $name){
+            foreach ($apiReader->getMethodsNames() as $name){
                 $this->linksArr[$cName.'::'.$name.'()'] = '<a class="mono" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'()</a>';
             }
         }
