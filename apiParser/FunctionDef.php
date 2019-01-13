@@ -6,11 +6,6 @@
  * and open the template in the editor.
  */
 namespace webfiori\apiParser;
-use WebFioriGUI;
-use phpStructs\html\PNode;
-use phpStructs\html\HTMLNode;
-use phpStructs\html\UnorderedList;
-use phpStructs\html\ListItem;
 /**
  * A class that is used to build a GUI blocks for function definition. 
  *
@@ -151,70 +146,6 @@ class FunctionDef {
             $this->ownerClass = $cl;
             $this->setNameSpace($cl->getNameSpace());
         }
-    }
-    /**
-     * Returns HTML node that contains the summary part of the function.
-     * @return HTMLNode The node will contain function name and short description.
-     */
-    public function summaryHTMLNode() {
-        $node = WebFioriGUI::createRowNode(TRUE, FALSE);
-        $node->setAttribute('style', 'border: 1px solid;');
-        $node->setClassName($node->getAttributeValue('class').' function-summary');
-        $methNameNode = WebFioriGUI::createColNode(12, FALSE, FALSE);
-        $methNameNode->setClassName('function-name');
-        $nodeText = $this->getAccessModofier().' function <a class="function-name" href="'.$this->getPageURL().'/'. str_replace('\\', '/', trim($this->getOwnerClass()->getNameSpace(), '\\')).'/'.$this->getOwnerClass()->getName().'#'.str_replace('&', '', $this->getName()).'">'. str_replace('&', '&amp;', $this->getName()).'</a>(';
-        $count = count($this->funcParams);
-        for($x = 0 ; $x < $count ; $x++){
-            $param = $this->funcParams['param-'.$x];
-            if($x + 1 == $count){
-                $nodeText .= $param['var-type'].' '.$param['var-name'];
-            }
-            else{
-                $nodeText .= $param['var-type'].' '.$param['var-name'].', ';
-            }
-        }
-        $nodeText .= ')';
-        $methNameNode->addTextNode($nodeText);
-        $node->addChild($methNameNode);
-        $descNode = new PNode();
-        $descNode->addText($this->getSummary());
-        $node->addChild($descNode);
-        return $node;
-    }
-    /**
-     * Returns HTML node that contains the details part of the function.
-     * @return HTMLNode The node will contain function name, long description, 
-     * parameters description and return description.
-     */
-    public function asHTMLNode() {
-        $node = WebFioriGUI::createRowNode(TRUE, FALSE);
-        $node->setClassName($node->getAttributeValue('class').' function-details');
-        $methNameNode = WebFioriGUI::createColNode(12, FALSE, FALSE);
-        $methNameNode->setID(str_replace('&', '', $this->getName()));
-        $methNameNode->setClassName($methNameNode->getAttributeValue('class').' function-name');
-        $nodeText = $this->getAccessModofier().' function '. str_replace('&', '&amp;', $this->getName()).'(';
-        $count = count($this->funcParams);
-        for($x = 0 ; $x < $count ; $x++){
-            $param = $this->funcParams['param-'.$x];
-            if($x + 1 == $count){
-                $nodeText .= $param['var-type'].' '. str_replace('&', '&amp', $param['var-name']);
-            }
-            else{
-                $nodeText .= $param['var-type'].' '.str_replace('&', '&amp', $param['var-name']).', ';
-            }
-        }
-        $nodeText .= ')';
-        $methNameNode->addTextNode($nodeText);
-        $node->addChild($methNameNode);
-        $descNode = new HTMLNode();
-        $descNode->addTextNode($this->getDescription());
-        $descNode->setClassName('description-box');
-        $node->addChild($descNode);
-        if($count != 0){
-            $node->addChild($this->createParametersBox());
-        }
-        $node->addChild($this->createReturnsBox());
-        return $node;
     }
     public function getReturnTypes() {
         return $this->funcReturns;

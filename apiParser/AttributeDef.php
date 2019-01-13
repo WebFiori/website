@@ -6,9 +6,6 @@
  * and open the template in the editor.
  */
 namespace webfiori\apiParser;
-use WebFioriGUI;
-use phpStructs\html\PNode;
-use phpStructs\html\HTMLNode;
 /**
  * Definition of class attribute
  *
@@ -117,44 +114,5 @@ class AttributeDef {
      */
     public function getName() {
         return $this->name;
-    }
-    /**
-     * Returns HTML node that contains the summary part of the attribute.
-     * @return HTMLNode The node will contain attribute name and short description.
-     */
-    public function summaryHTMLNode() {
-        $node = WebFioriGUI::createRowNode(TRUE, FALSE);
-        $node->setAttribute('style', 'border: 1px solid;');
-        $node->setClassName($node->getAttributeValue('class').' attribute-summary');
-        $attrNameNode = WebFioriGUI::createColNode(12, FALSE, FALSE);
-        $attrNameNode->setClassName('class-attribute');
-        $nodeText = $this->getAccessModofier().' <a class="class-attribute" href="'.$this->getPageURL().'/'. str_replace('\\', '/', trim($this->getOwnerClass()->getNameSpace(), '\\')).'/'.$this->getOwnerClass()->getName().'#'.$this->getName().'">'.$this->getName().'</a>';
-        $attrNameNode->addTextNode($nodeText);
-        $node->addChild($attrNameNode);
-        $descNode = new PNode();
-        $descNode->addText($this->getSummary());
-        $node->addChild($descNode);
-        return $node;
-    }
-    
-    /**
-     * Returns HTML node that contains the details part of the attribute.
-     * @return HTMLNode The node will contain attribute name and long description.
-     */
-    public function asHTMLNode() {
-        $node = WebFioriGUI::createRowNode(TRUE, FALSE);
-        $node->setAttribute('style', 'border: 1px solid;');
-        $node->setClassName($node->getAttributeValue('class').' attribute-summary');
-        $attrNameNode = WebFioriGUI::createColNode(12, FALSE, FALSE);
-        $attrNameNode->setClassName('class-attribute');
-        $attrNameNode->setID($this->getName());
-        $nodeText = $this->getAccessModofier().' '.$this->getName();
-        $attrNameNode->addTextNode($nodeText);
-        $node->addChild($attrNameNode);
-        $descNode = new HTMLNode();
-        $descNode->addTextNode($this->getDescription());
-        $descNode->setClassName('details-box');
-        $node->addChild($descNode);
-        return $node;
     }
 }
