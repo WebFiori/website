@@ -182,7 +182,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode which represents summary block of the 
      * function.
      */
-    abstract public function createFunctionSummaryBlock($func);
+    abstract public function createMethodSummaryBlock($func);
     /**
      * Creates HTMLNode object that contains class function details.
      * @param FunctionDef $func An object of type FunctionDef.
@@ -190,7 +190,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode which represents details block of the 
      * function.
      */
-    abstract public function createFunctionDetailsBlock($func);
+    abstract public function createMethodDetailsBlock($func);
     /**
      * Creates HTMLNode object that contains class attribute summary.
      * @param AttributeDef $attr An object of type AttributeDef.

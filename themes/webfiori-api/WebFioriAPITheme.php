@@ -300,7 +300,7 @@ class WebFioriAPITheme extends APITheme{
      * @param FunctionDef $func
      * @return HTMLNode
      */
-    public function createFunctionDetailsBlock($func){
+    public function createMethodDetailsBlock($func){
         $node = WebFioriAPIGUI::createRowNode(TRUE, FALSE);
         $node->setClassName($node->getAttributeValue('class').' function-details');
         $methNameNode = WebFioriAPIGUI::createColNode(12, FALSE, FALSE);
@@ -364,7 +364,7 @@ class WebFioriAPITheme extends APITheme{
      * @param FunctionDef $func
      * @return type
      */
-    public function createFunctionSummaryBlock($func){
+    public function createMethodSummaryBlock($func){
         $node = WebFioriAPIGUI::createRowNode(TRUE, FALSE);
         $node->setAttribute('style', 'border: 1px solid;');
         $node->setClassName($node->getAttributeValue('class').' function-summary');
