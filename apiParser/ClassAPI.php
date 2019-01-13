@@ -187,6 +187,9 @@ class ClassAPI {
                         $api->addFuncParam($param['name'], $typesStr, $description, $isOptional);
                     }
                 }
+                if(isset($docBlock['@return'])){
+                    
+                }
                 $api->setDescription($summary.' '.$desc);
                 $this->addFunction($api);
             }
@@ -293,65 +296,11 @@ class ClassAPI {
         $summaryNode->addChild($titleNode);
         return $summaryNode;
     }
-    /**
-     * Returns HTMLNode which contains all class functions summaries.
-     * @return HTMLNode HTMLNode which contains all class functions summaries.
-     */
-    public function getFunctionsSummaryNode() {
-        if(count($this->classMethods) != 0){
-            $summaryNode = $this->createBox('Class Functions Summary');
-            foreach ($this->classMethods as $method){
-                $summaryNode->addChild($method->summaryHTMLNode());
-            }
-            return $summaryNode;
-        }
-    }
     public function getClassMethods() {
         return $this->classMethods;
     }
     public function getClassAttributes() {
         return $this->classAttributes;
-    }
-    /**
-     * Returns HTMLNode which contains all class functions details.
-     * @return HTMLNode HTMLNode which contains all class functions details.
-     */
-    public function getFunctionsDetailsNode() {
-        if(count($this->classMethods) != 0){
-            $detailsNode = $this->createBox('Class Functions Details');
-            foreach ($this->classMethods as $method){
-                $detailsNode->addChild($method->asHTMLNode());
-            }
-            return $detailsNode;
-        }
-    }
-    
-    
-    /**
-     * Returns HTMLNode which contains all class attributes summaries.
-     * @return HTMLNode HTMLNode which contains all class attributes summaries.
-     */
-    public function getAttributesSummaryNode() {
-        if(count($this->classAttributes) != 0){
-            $summaryNode = $this->createBox('Class Attributes Summary');
-            foreach ($this->classAttributes as $attribute){
-                $summaryNode->addChild($attribute->summaryHTMLNode());
-            }
-            return $summaryNode;
-        }
-    }
-    /**
-     * Returns HTMLNode which contains all class attributes details.
-     * @return HTMLNode HTMLNode which contains all class attributes details.
-     */
-    public function getAttributesDetailsNode() {
-        if(count($this->classAttributes) != 0){
-            $detailsNode = $this->createBox('Class Attributes Details');
-            foreach ($this->classAttributes as $attribute){
-                $detailsNode->addChild($attribute->asHTMLNode());
-            }
-            return $detailsNode;
-        }
     }
     /**
      * Returns the long name of the class (e.g. 
