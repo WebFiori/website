@@ -77,7 +77,7 @@ abstract class APITheme extends Theme{
     public function createFunctionsSummaryBlock(){
         $class = $this->getClass();
         if($class !== NULL){
-            $funcs = $class->getClassFunctions();
+            $funcs = $class->getClassMethods();
             if(count($funcs) > 0){
                 $summaryNode = new HTMLNode();
                 $summaryNode->setAttribute('class', 'summary-box');
@@ -86,7 +86,7 @@ abstract class APITheme extends Theme{
                 $titleNode->setClassName('summary-box-title');
                 $titleNode->addText('Class Functions Summary');
                 $summaryNode->addChild($titleNode);
-                foreach ($class->getClassFunctions() as $method){
+                foreach ($class->getClassMethods() as $method){
                     $summaryNode->addChild($this->createFunctionSummaryBlock($method));
                 }
                 return $summaryNode;
@@ -104,7 +104,7 @@ abstract class APITheme extends Theme{
     public function createFunctionsDetailsBlock(){
         $class = $this->getClass();
         if($class !== NULL){
-            $funcs = $class->getClassFunctions();
+            $funcs = $class->getClassMethods();
             if(count($funcs) > 0){
                 $detailsNode = new HTMLNode();
                 $detailsNode->setAttribute('class', 'details-box');
@@ -113,7 +113,7 @@ abstract class APITheme extends Theme{
                 $titleNode->setClassName('details-box-title');
                 $titleNode->addText('Class Functions Details');
                 $detailsNode->addChild($titleNode);
-                foreach ($class->getClassFunctions() as $method){
+                foreach ($class->getClassMethods() as $method){
                     $detailsNode->addChild($this->createFunctionDetailsBlock($method));
                 }
                 return $detailsNode;

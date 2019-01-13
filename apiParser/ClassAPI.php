@@ -306,7 +306,7 @@ class ClassAPI {
             return $summaryNode;
         }
     }
-    public function getClassFunctions() {
+    public function getClassMethods() {
         return $this->classMethods;
     }
     public function getClassAttributes() {
