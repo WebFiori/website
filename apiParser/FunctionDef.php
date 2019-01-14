@@ -28,7 +28,7 @@ class FunctionDef {
     public function __construct() {
         $this->funcParams = array();
         $this->funcReturns = array(
-            'return-types'=>'',
+            'return-types'=>array(),
             'description'=>''
         );
         
@@ -117,16 +117,17 @@ class FunctionDef {
         );
     }
     /**
-     * Sets the return type description.
-     * @param string $returnTypes A string that represents the return types 
-     * of the function.
-     * @param string $desc A string that describes the returned value.
+     * Sets method return values and description.
+     * @param type $ret
      */
-    public function setReturns($returnTypes, $desc) {
-        $this->funcReturns = array(
-            'return-types'=>$returnTypes,
-            'description'=>$desc
-        );
+    public function setReturns($ret) {
+        if(gettype($ret) == 'array'){
+            if(isset($ret['return-types'])){
+                if(isset($ret['description'])){
+                    $this->funcReturns = $ret;
+                }
+            }
+        }
     }
     public function getNameSpace(){
         return $this->ns;

@@ -927,7 +927,7 @@ class APIReader {
                 }
                 Logger::log('Extracted tag = \''.$tag.'\'.','debug');
                 $extracted = $this->_extractTagInfo($tag, $startCharIndex);
-                if($tag == '@since' || $tag == '@version' || $tag == '@package' || $tag == '@var' || $tag == '@return'){
+                if($tag == '@since' || $tag == '@version' || $tag == '@package' || $tag == '@var' || $tag == '@return' || $tag == '@throws'){
                     $parsed[$tag] = $extracted;
                 }
                 else{

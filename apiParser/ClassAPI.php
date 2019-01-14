@@ -187,8 +187,8 @@ class ClassAPI {
                         $api->addFuncParam($param['name'], $typesStr, $description, $isOptional);
                     }
                 }
-                if(isset($docBlock['@return'])){
-                    
+                if(isset($docBlock['@return']) && gettype($docBlock['@return']['return-types']) == 'array'){
+                    $api->setReturns($docBlock['@return']);
                 }
                 $api->setDescription($summary.' '.$desc);
                 $this->addFunction($api);
