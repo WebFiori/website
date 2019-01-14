@@ -13,6 +13,7 @@ use webfiori\Config;
 use webfiori\apiParser\APITheme;
 use webfiori\apiParser\NameSpaceAPI;
 use phpStructs\html\Label;
+use webfiori\entity\Util;
 
 class WebFioriAPITheme extends APITheme{
     public function __construct() {
@@ -345,18 +346,29 @@ class WebFioriAPITheme extends APITheme{
             $paramsNode->addChild($ul);
             $node->addChild($paramsNode);
         }
-        if(strlen($func->getReturnTypes()['return-types']) != 0){
+        $return = $func->getReturnTypes();
+        Util::print_r($return);
+        $retCount = count($return['return-types']);
+        var_dump($return['return-types']);
+        Util::print_r($retCount);
+        if($retCount != 0){
             $retNode = WebFioriGUI::createRowNode(FALSE,FALSE);
             $textNode = new PNode();
-            $textNode->addText('Returns: <span class="mono">'.$func->funcReturns['return-types'].'</span>');
+            $retStr = '';
+            for($x = 0 ; $x < $retCount ; $x++){
+                if($x + 1 == $retCount){
+                    $retStr .= $return['return-types'][$x];
+                }
+            }
+            $textNode->addText('Returns: <span class="mono">'.$retStr.'</span>');
             $retNode->addChild($textNode);
             $descNode = new HTMLNode();
-            $descNode->addTextNode($func->funcReturns['description']);
+            $descNode->addTextNode($return['description']);
             $descNode->setClassName('details-box');
             $retNode->addChild($descNode);
             $node->addChild($retNode);
+            echo 'cccccccccc';
         }
-        
         return $node;
     }
     /**
