@@ -927,7 +927,7 @@ class APIReader {
                 }
                 Logger::log('Extracted tag = \''.$tag.'\'.','debug');
                 $extracted = $this->_extractTagInfo($tag, $startCharIndex);
-                if($tag == '@since' || $tag == '@version' || $tag == '@package' || $tag == '@var'){
+                if($tag == '@since' || $tag == '@version' || $tag == '@package' || $tag == '@var' || $tag == '@return'){
                     $parsed[$tag] = $extracted;
                 }
                 else{
@@ -1020,11 +1020,11 @@ class APIReader {
         Logger::log('Return type: \''.$returnType.'\'', 'debug');
         Logger::log('Return description: \''.$returnDesc.'\'', 'debug');
         if($tag == '@throws'){
-            $retVal['exception-type'] = $returnType;
+            $retVal['exception-types'] = explode('|', $returnType);
             $retVal['description'] = trim($returnDesc);
         }
         else if($tag == '@return'){
-            $retVal['return-type'] = $returnType;
+            $retVal['return-types'] = explode('|', $returnType);
             $retVal['description'] = trim($returnDesc);
         }
         Logger::logReturnValue($retVal);

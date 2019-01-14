@@ -54,9 +54,9 @@ abstract class APITheme extends Theme{
         $body->setID('api-page-body');
         $body->addChild($this->createClassDescriptionNode());
         $body->addChild($this->createAttrsSummaryBlock());
-        $body->addChild($this->createFunctionsSummaryBlock());
+        $body->addChild($this->createMethodsSummaryBlock());
         $body->addChild($this->createAttrsDetailsBlock());
-        $body->addChild($this->createFunctionsDetailsBlock());
+        $body->addChild($this->createMethodsDetailsBlock());
         return $body;
     }
     /**
@@ -74,7 +74,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode that contains all functions summary. 
      * If the class has no functions, the function will return NULL.
      */
-    public function createFunctionsSummaryBlock(){
+    public function createMethodsSummaryBlock(){
         $class = $this->getClass();
         if($class !== NULL){
             $funcs = $class->getClassMethods();
@@ -87,7 +87,7 @@ abstract class APITheme extends Theme{
                 $titleNode->addText('Class Functions Summary');
                 $summaryNode->addChild($titleNode);
                 foreach ($class->getClassMethods() as $method){
-                    $summaryNode->addChild($this->createFunctionSummaryBlock($method));
+                    $summaryNode->addChild($this->createMethodSummaryBlock($method));
                 }
                 return $summaryNode;
             }
@@ -101,7 +101,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode that contains all functions details. 
      * If the class has no functions, the function will return NULL.
      */
-    public function createFunctionsDetailsBlock(){
+    public function createMethodsDetailsBlock(){
         $class = $this->getClass();
         if($class !== NULL){
             $funcs = $class->getClassMethods();
@@ -114,7 +114,7 @@ abstract class APITheme extends Theme{
                 $titleNode->addText('Class Functions Details');
                 $detailsNode->addChild($titleNode);
                 foreach ($class->getClassMethods() as $method){
-                    $detailsNode->addChild($this->createFunctionDetailsBlock($method));
+                    $detailsNode->addChild($this->createMethodDetailsBlock($method));
                 }
                 return $detailsNode;
             }

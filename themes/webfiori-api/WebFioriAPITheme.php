@@ -93,15 +93,15 @@ class WebFioriAPITheme extends APITheme{
         }
         return $node;
     }
-    public function createFunctionsSummaryBlock(){
-        $node = parent::createFunctionsSummaryBlock();
+    public function createMethodsSummaryBlock(){
+        $node = parent::createMethodsSummaryBlock();
         if($node !== NULL){
             $node->setClassName('pa-row '.$node->getAttributeValue('class'));
         }
         return $node;
     }
-    public function createFunctionsDetailsBlock(){
-        $node = parent::createFunctionsDetailsBlock();
+    public function createMethodsDetailsBlock(){
+        $node = parent::createMethodsDetailsBlock();
         if($node !== NULL){
             $node->setClassName('pa-row '.$node->getAttributeValue('class'));
         }
