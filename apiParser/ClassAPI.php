@@ -188,7 +188,18 @@ class ClassAPI {
                     }
                 }
                 if(isset($docBlock['@return']) && gettype($docBlock['@return']['return-types']) == 'array'){
-                    $api->setReturns($docBlock['@return']);
+                    $retArr = array();
+                    $retArr['description'] = $docBlock['@return']['description'];
+                    $retArr['return-types'] = array();
+                    foreach ($docBlock['@return']['return-types'] as $str){
+                        if(isset($linksArr[$str])){
+                            $retArr['return-types'][] = $linksArr[$str];
+                        }
+                        else{
+                            $retArr['return-types'][] = $str;
+                        }
+                    }
+                    $api->setReturns($retArr);
                 }
                 $api->setDescription($summary.' '.$desc);
                 $this->addFunction($api);

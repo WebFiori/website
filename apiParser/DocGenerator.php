@@ -210,6 +210,18 @@ class DocGenerator {
     }
     private function _buildLinks() {
         $nsClasses = array();
+        $this->linksArr['NULL'] = '<a class="mono" href="http://php.net/manual/en/language.types.null.php" target="_blank">NULL</a>';
+        $this->linksArr['TRUE'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">TRUE</a>';
+        $this->linksArr['FALSE'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">FALSE</a>';
+        $this->linksArr['int'] = '<a class="mono" href="http://php.net/manual/en/language.types.integer.php" target="_blank">int</a>';
+        $this->linksArr['array'] = '<a class="mono" href="http://php.net/manual/en/language.types.array.php" target="_blank">array</a>';
+        $this->linksArr['string'] = '<a class="mono" href="http://php.net/manual/en/language.types.string.php" target="_blank">string</a>';
+        $this->linksArr['callable'] = '<aclass="mono" href="http://php.net/manual/en/language.types.callable.php" target="_blank">callable</a>';
+        $this->linksArr['float'] = '<a class="mono" href="http://php.net/manual/en/language.types.float.php" target="_blank">float</a>';
+        $this->linksArr['double'] = '<a class="mono" href="http://php.net/manual/en/language.types.float.php" target="_blank">double</a>';
+        $this->linksArr['resource'] = '<a class="mono" href="http://php.net/manual/en/language.types.resource.php" target="_blank">resource</a>';
+        $this->linksArr['iterable'] = '<a class="mono" href="http://php.net/manual/en/language.types.iterable.php" target="_blank">iterable</a>';
+        $this->linksArr['object'] = '<a class="mono" href="http://php.net/manual/en/language.types.object.php" target="_blank">object</a>';
         foreach ($this->apiReadersArr as $apiReader){
             $namespaceLink = $apiReader->getNamespace();
             $packageLink2 = str_replace('.', '/', $namespaceLink);
