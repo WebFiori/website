@@ -346,28 +346,17 @@ class WebFioriAPITheme extends APITheme{
             $paramsNode->addChild($ul);
             $node->addChild($paramsNode);
         }
-        $return = $func->getReturnTypes();
-        Util::print_r($return);
-        $retCount = count($return['return-types']);
-        var_dump($return['return-types']);
-        Util::print_r($retCount);
-        if($retCount != 0){
+        $return = $func->getMethodReturnTypesStr();
+        if($return !== NULL){
             $retNode = WebFioriGUI::createRowNode(FALSE,FALSE);
             $textNode = new PNode();
-            $retStr = '';
-            for($x = 0 ; $x < $retCount ; $x++){
-                if($x + 1 == $retCount){
-                    $retStr .= $return['return-types'][$x];
-                }
-            }
-            $textNode->addText('Returns: <span class="mono">'.$retStr.'</span>');
+            $textNode->addText('Returns: <span class="mono">'.$return.'</span>');
             $retNode->addChild($textNode);
             $descNode = new HTMLNode();
-            $descNode->addTextNode($return['description']);
+            $descNode->addTextNode($func->getMethodReturnDescription());
             $descNode->setClassName('details-box');
             $retNode->addChild($descNode);
             $node->addChild($retNode);
-            echo 'cccccccccc';
         }
         return $node;
     }

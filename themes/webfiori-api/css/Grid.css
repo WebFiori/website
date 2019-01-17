@@ -32,6 +32,9 @@ THE SOFTWARE.
     [class*="-col-"] {
         width: 99% !important;
     }
+    #side-content-area{
+        /*display: none;*/
+    }
 }
 @media screen and (min-width: 768px) and (max-width: 992px){
     

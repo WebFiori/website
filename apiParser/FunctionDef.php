@@ -34,6 +34,48 @@ class FunctionDef {
         
         $this->accessMofifier = '';
     }
+    /**
+     * Returns a string that contains the names of return types of the method.
+     * @return string|NULL If the method has return types, a string in the 
+     * format 'Type_1|Type_2|Type_3' is returned. If the method has no return types, 
+     * the method will return NULL.
+     */
+    public function getMethodReturnTypesStr() {
+        $return = $this->getReturnTypes();
+        $retCount = count($return['return-types']);
+        if($retCount != 0){
+            $retStr = '';
+            for($x = 0 ; $x < $retCount ; $x++){
+                if($x + 1 == $retCount){
+                    $retStr .= $return['return-types'][$x];
+                }
+                else{
+                    $retStr .= $return['return-types'][$x].'|';
+                }
+            }
+            return $retStr;
+        }
+        else{
+            return NULL;
+        }
+    }
+    /**
+     * Returns astring that represents the description of what does the method 
+     * returns.
+     * @return string|NULL If the method hasa return type(s), the method 
+     * will return a string. If the method has no return type(s), the method 
+     * will return NULL.
+     */
+    public function getMethodReturnDescription() {
+        $return = $this->getReturnTypes();
+        $retCount = count($return['return-types']);
+        if($retCount != 0){
+            return $return['description'];
+        }
+        else{
+            return NULL;
+        }
+    }
     public function setPageURL($url){
         $this->pageUrl = $url;
     }
