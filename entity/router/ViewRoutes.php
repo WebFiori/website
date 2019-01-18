@@ -1,9 +1,8 @@
 <?php
-
 /*
  * The MIT License
  *
- * Copyright 2018 ibrah.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,9 +23,27 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity\router;
+if(!defined('ROOT_DIR')){
+    header("HTTP/1.1 403 Forbidden");
+    die(''
+        . '<!DOCTYPE html>'
+        . '<html>'
+        . '<head>'
+        . '<title>Forbidden</title>'
+        . '</head>'
+        . '<body>'
+        . '<h1>403 - Forbidden</h1>'
+        . '<hr>'
+        . '<p>'
+        . 'Direct access not allowed.'
+        . '</p>'
+        . '</body>'
+        . '</html>');
+}
 /**
- * A class that only has a function to create views routes.
- *
+ * A class that only has one method to initiate some of system routes.
+ * The class is meant to only initiate the routes which uses the method 
+ * Router::view().
  * @author Ibrahim
  * @version 1.0
  */
@@ -38,10 +55,11 @@ class ViewRoutes {
     public static function create(){
         Router::view('/', '/WebFioriHome.php');
         Router::view('/webfiori', '/WebFioriHome.php');
-        Router::view('/docs', '/apis-1.0.1/webfiori/NSIndexView.php');
+        Router::view('/docs', '/apis-1.0.0/webfiori/NSIndexView.php');
         Router::view('/learn', '/LearnView.php');
         Router::view('/download', '/DownloadView.php');
         Router::view('/learn/topics/cron', '/learning/cron/Index.php');
+        \docGenerator\DocGeneratorRoutes::createRoutes();
     }
     /**
      * A test for creating a site map from views URIs

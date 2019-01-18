@@ -1,10 +1,33 @@
 <?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2019 Ibrahim BinAlshikh, phMysql library.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 namespace phMysql;
 use mysqli;
 /**
  * A class that is used to connect to MySQL database. It works as an interface 
- * for <b>mysqli</b> 
- * @author Ibrahim <ibinshikh@hotmail.com>
+ * for <b>mysqli</b>.
+ * @author Ibrahim
  * @version 1.3.1
  */
 class MySQLLink{
@@ -116,6 +139,8 @@ class MySQLLink{
         $this->currentRow = -1;
         if($this->link){
             $this->link->set_charset("utf8");
+            mysqli_query($this->link, "set character_set_client='utf8'");
+            mysqli_query ($this->link, "set character_set_results='utf8'" );
         }
         else{
             $this->lastErrorNo = mysqli_connect_errno();
@@ -140,12 +165,19 @@ class MySQLLink{
     }
     /**
      * Reconnect to MySQL server if a connection was established before.
-     * @return boolean If the reconnect attempt was succeeded, the function 
+     * @return boolean If the reconnect attempt was succeeded, the method 
      * will return TRUE.
      * @since 1.3.1
      */
     public function reconnect() {
         return $this->isConnected();
+    }
+    /**
+     * Returns the name of the database that the instance is connected to.
+     * @return string The name of the database.
+     */
+    public function getDBName() {
+        return $this->db;
     }
     /**
      * Checks if the connection is still active or its dead and try to reconnect.
@@ -160,8 +192,11 @@ class MySQLLink{
         if($this->link instanceof mysqli){
             $this->link = @mysqli_connect($this->host, $this->user, $this->pass,NULL , $this->portNum);
             if($this->link){
+                $this->link->set_charset("utf8");
+                mysqli_query($this->link, "set character_set_client='utf8'");
+                mysqli_query($this->link, "set character_set_results='utf8'");
                 if($this->db !== NULL){
-                    $test = $this->setDB($this->db);
+                    $test = mysqli_select_db($this->link, $this->db);
                 }
                 else{
                     $test = TRUE;
@@ -177,7 +212,7 @@ class MySQLLink{
     
     /**
      * Return the number of rows returned by last query.
-     * If no result returned by MySQL server, the function will return -1.
+     * If no result returned by MySQL server, the method will return -1.
      * @return int
      * @since 1.0
      */
@@ -189,7 +224,7 @@ class MySQLLink{
     }
     /**
      * Select a database instance.
-     * This function will always return FALSE if no connection has been 
+     * This method will always return FALSE if no connection has been 
      * established with the database. 
      * @param string $dbName The name of the database instance.
      * @return boolean TRUE if the instance is selected. FALSE
@@ -197,16 +232,8 @@ class MySQLLink{
      * @since 1.0
      */
     public function setDB($dbName){
-        if(gettype($this->link) == 'object' && !mysqli_select_db($this->link, $dbName)){
-            $this->lastErrorMessage = $this->link->error;
-            $this->lastErrorNo = $this->link->errno;
-            return false;
-        }
-        else{
-            $this->db = $dbName;
-            return true;
-        }
-        return FALSE;
+        $this->db = $dbName;
+        return $this->reconnect();
     }
     /**
      * Returns the result set in case of executing select query.
@@ -221,7 +248,7 @@ class MySQLLink{
     /**
      * Returns the row which the class is pointing to in the result set.
      * @return array|NULL an associative array that represents a table row.  
-     * If no results are fetched, the function will return NULL. 
+     * If no results are fetched, the method will return NULL. 
      * @since 1.0
      */
     public function getRow(){
@@ -239,8 +266,8 @@ class MySQLLink{
         return NULL;
     }
     /**
-     * Helper function that is used to initialize the array of rows in case 
-     * of first call to the function getRow()
+     * Helper method that is used to initialize the array of rows in case 
+     * of first call to the method getRow()
      * @param type $retry
      * @return type
      */
@@ -261,7 +288,7 @@ class MySQLLink{
      * Returns the next row that was resulted from executing a query that has 
      * results.
      * @return array|NULL The next row in the result set. If no more rows are 
-     * in the set, the function will return NULL.
+     * in the set, the method will return NULL.
      * @since 1.3
      */
     public function nextRow() {
@@ -302,10 +329,10 @@ class MySQLLink{
      * Returns an array which contains all data from a specific column given its 
      * name.
      * @param string $colKey The name of the column as specified in the last 
-     * executed query. It must be a value when passed to the function 
+     * executed query. It must be a value when passed to the method 
      * Table::getCol() will return an object of type 'Column'.
      * @return array An array which contains all data from the given column. 
-     * if the column does not exist, the function will return the constant 
+     * if the column does not exist, the method will return the constant 
      * 'Table::NO_SUCH_TABLE'.
      * @since 1.2
      */
@@ -342,6 +369,9 @@ class MySQLLink{
             $this->lastQuery = $query;
             if($this->isConnected()){
                 $eploded = explode(';', trim($query->getQuery(), ';'));
+                if(!$query->isBlobInsertOrUpdate()){
+                    mysqli_query($this->link, 'set collation_connection =\''.$query->getStructure()->getCollation().'\'');
+                }
                 if(count($eploded) != 1){
                     $r = mysqli_multi_query($this->link, $query->getQuery());
                     while(mysqli_more_results($this->link)){
@@ -352,6 +382,7 @@ class MySQLLink{
                         $this->lastErrorMessage = $this->link->error;
                         $this->lastErrorNo = $this->link->errno;
                     }
+                    $query->setIsBlobInsertOrUpdate(FALSE);
                     return $r;
                 }
                 if($query->getType() == 'select' || $query->getType() == 'show'
@@ -367,6 +398,7 @@ class MySQLLink{
                         $this->lastErrorMessage = $this->link->error;
                         $this->lastErrorNo = $this->link->errno;
                         $this->result = NULL;
+                        $query->setIsBlobInsertOrUpdate(FALSE);
                         return false;
                     }
                 }
@@ -377,12 +409,14 @@ class MySQLLink{
                         $this->lastErrorMessage = $this->link->error;
                         $this->lastErrorNo = $this->link->errno;
                         $this->result = NULL;
+                        $query->setIsBlobInsertOrUpdate(FALSE);
                         return false;
                     }
                     else{
                         $this->lastErrorMessage = 'NO ERRORS';
                         $this->lastErrorNo = 0;
                         $this->result = NULL;
+                        $query->setIsBlobInsertOrUpdate(FALSE);
                         return true;
                     }
                 }

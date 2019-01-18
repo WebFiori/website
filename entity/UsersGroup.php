@@ -1,9 +1,8 @@
 <?php
-namespace webfiori\entity;
 /*
  * The MIT License
  *
- * Copyright 2018 Ibrahim.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +22,7 @@ namespace webfiori\entity;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
     header("HTTP/1.1 403 Forbidden");
     die(''
@@ -109,7 +109,7 @@ class UsersGroup implements JsonI{
     /**
      * Checks if the group has the given privilege or not.
      * @param Privilege $p An object of type 'Privilige'.
-     * @return boolean The function will return TRUE if the group has the given 
+     * @return boolean The method will return TRUE if the group has the given 
      * privilege. FALSE if not.
      * @since 1.0
      */
@@ -144,7 +144,7 @@ class UsersGroup implements JsonI{
      * @param Privilege $pr An object of type Privilege. Note that 
      * the privilege will be added only if there us no privilege in 
      * the group which has the same ID.
-     * @return boolean The function will return TRUE if the privilege was 
+     * @return boolean The method will return TRUE if the privilege was 
      * added.
      * @since 1.0
      */

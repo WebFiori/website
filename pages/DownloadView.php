@@ -10,6 +10,7 @@ use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
+use webfiori\WebFiori;
 /**
  * Description of DownloadView
  *
@@ -24,7 +25,7 @@ class DownloadView extends WebFioriPage{
         
         $parag1 = new PNode();
         $parag1->addText('The latest release of the framework is v1.0.1. '
-                . 'You Please click <a>here</a> to download a zip file that contains all '
+                . 'You Please click <a href="'.WebFiori::getSiteConfig()->getBaseURL().'downloads/webfiori-v1.0.0">here</a> to download a zip file that contains all '
                 . 'what you need.');
         Page::insert($parag1);
         

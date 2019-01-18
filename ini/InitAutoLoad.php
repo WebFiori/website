@@ -2,7 +2,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Ibrahim, JsonX library.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace jsonx;
+namespace webfiori\ini;
+use webfiori\entity\AutoLoader;
 /**
- * An interface for the objects that can be added to an instance of JsonX.
- * @author Ibrahim 
+ * A class that has one method to initialize user-defined autoload directories.
+ *
+ * @author Ibrahim
  * @version 1.0
- * @see JsonX
  */
-interface JsonI {
+class InitAutoLoad {
     /**
-     * Returns an object of type JsonX.
-     * This method can be implemented by any class that will be added  
-     * to any JsonX instance. It is used to customize the generated 
-     * JSON string.
-     * @return JsonX An instance of JsonX.
-     * @since 1.0
+     * Add user-defined directories to the set of directories at which the framework 
+     * will search for classes.
+     * The developer can use the method AutoLoader::newSearchFolder() to add 
+     * new search directory.
      */
-    public function toJSON();
+    public static function init() {
+        $AU = AutoLoader::get();
+        $AU->newSearchFolder('apiParser');
+        //$AU->newSearchFolder('my-entities', FALSE);
+    }
 }

@@ -1,12 +1,42 @@
 <?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2019 Ibrahim BinAlshikh, phMysql library.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 namespace phMysql;
+use Exception;
 /**
  * A base class that is used to construct MySQL queries. It can be used as a base 
  * class for constructing other MySQL queries.
- * @author Ibrahim <ibinshikh@hotmail.com>
- * @version 1.8.4
+ * @author Ibrahim
+ * @version 1.8.5
  */
 abstract class MySQLQuery{
+    /**
+     * An attribute that is set to TRUE if the query is un update or insert of 
+     * blob datatype.
+     * @var boolean 
+     */
+    private $isFileInsert;
     /**
      * Line feed character.
      * @since 1.8.1
@@ -166,6 +196,7 @@ abstract class MySQLQuery{
     public function __construct() {
         $this->query = self::SELECT.' a_table';
         $this->queryType = 'select';
+        $this->setIsBlobInsertOrUpdate(FALSE);
     }
     /**
      * Constructs a query that can be used to alter the properties of a table
@@ -285,7 +316,7 @@ abstract class MySQLQuery{
     }
     /**
      * Returns the value of the property $query.
-     * It is simply the query that was constructed by calling any function 
+     * It is simply the query that was constructed by calling any method 
      * of the class.
      * @return string a MySql query.
      * @since 1.0
@@ -324,7 +355,7 @@ abstract class MySQLQuery{
      * @param int $limit The value of the attribute 'limit' of the select statement. 
      * If zero or a negative value is given, it will not be ignored. 
      * Default is -1.
-     * @param int $offset [Optional] The value of the attribute 'offset' of the select statement. 
+     * @param int $offset The value of the attribute 'offset' of the select statement. 
      * If zero or a negative value is given, it will not be ignored. 
      * Default is -1.
      * @since 1.0
@@ -379,10 +410,16 @@ abstract class MySQLQuery{
         'column'=>'',
         'rename-to'=>'',
         'order-by'=>NULL,
-        'order-type'=>'A'
+        'order-type'=>'A',
+        'in'=>array()
         )) {
         $table = $this->getStructure();
         if($table instanceof MySQLTable){
+            $vNum = $table->getMySQLVersion();
+            $vSplit = explode('.', $vNum);
+            if(intval($vSplit[0]) <= 5 && intval($vSplit[1]) < 6){
+                
+            }
             $selectQuery = 'select ';
             $limit = isset($selectOptions['limit']) ? $selectOptions['limit'] : -1;
             $offset = isset($selectOptions['offset']) ? $selectOptions['offset'] : -1;
@@ -490,6 +527,9 @@ abstract class MySQLQuery{
         }
         return FALSE;
     }
+    private function _selectIn($optionsArr){
+        
+    }
     /**
      * Constructs a query that can be used to get table data based on a specific 
      * column value.
@@ -502,7 +542,7 @@ abstract class MySQLQuery{
      * @param int $limit The value of the attribute 'limit' of the select statement. 
      * If zero or a negative value is given, it will not be included in the generated 
      * MySQL query. Default is -1.
-     * @param int $offset [Optional] The value of the attribute 'offset' of the select statement. 
+     * @param int $offset The value of the attribute 'offset' of the select statement. 
      * If zero or a negative value is given, it will not be included in the generated 
      * MySQL query. Default is -1.
      * @since 1.0
@@ -648,6 +688,7 @@ abstract class MySQLQuery{
                                 if($fileContent !== FALSE){
                                     $data = '\''. addslashes($fileContent).'\'';
                                     $vals .= $data.$comma;
+                                    $this->setIsBlobInsertOrUpdate(TRUE);
                                 }
                                 else{
                                     $vals .= 'NULL'.$comma;
@@ -766,7 +807,7 @@ abstract class MySQLQuery{
      * @param array $valsConds An array that can have only two possible values, 
      * '=' and '!='. The number of elements in this array must match number of 
      * elements in the array $cols.
-     * @param array $jointOps [Optional] An array which contains conditional operators 
+     * @param array $jointOps An array which contains conditional operators 
      * to join conditions. The operators can be logical or bitwise. Possible 
      * values include: &&, ||, and, or, |, &, xor. It is optional in case there 
      * is only one condition.
@@ -789,7 +830,7 @@ abstract class MySQLQuery{
         $this->setQuery($query.$this->createWhereConditions($cols, $vals, $valsConds, $jointOps).';', 'delete');
     }
     /**
-     * A function that is used to create the 'where' part of any query in case 
+     * A method that is used to create the 'where' part of any query in case 
      * of multiple columns.
      * @param array $cols An array that holds an objects of type 'Column'.
      * @param array $vals An array that contains columns values. The number of 
@@ -890,7 +931,7 @@ abstract class MySQLQuery{
      * @param array $valsConds An array that can have only two possible values, 
      * '=' and '!='. The number of elements in this array must match number of 
      * elements in the array $colsAndNewVals.
-     * @param array $jointOps [Optional] An array which contains conditional operators 
+     * @param array $jointOps An array which contains conditional operators 
      * to join conditions. The operators can be logical or bitwise. Possible 
      * values include: &&, ||, and, or, |, &, xor. It is optional in case there 
      * is only one condition.
@@ -925,6 +966,7 @@ abstract class MySQLQuery{
                                 if($fileContent !== FALSE){
                                     $data = '\''. addslashes($fileContent).'\'';
                                     $colsStr .= $data.$comma;
+                                    $this->setIsBlobInsertOrUpdate(TRUE);
                                 }
                                 else{
                                     $colsStr .= 'NULL'.$comma;
@@ -966,6 +1008,7 @@ abstract class MySQLQuery{
                                     if($fileContent !== FALSE){
                                         $data = '\''. addslashes($fileContent).'\'';
                                         $colsStr .= $data.$comma;
+                                        $this->setIsBlobInsertOrUpdate(TRUE);
                                     }
                                     else{
                                         $colsStr .= 'NULL'.$comma;
@@ -1006,6 +1049,29 @@ abstract class MySQLQuery{
         $this->setQuery('update '.$this->getStructureName().' set '.$colsStr.$this->createWhereConditions($colsArr, $valsArr, $valsConds, $jointOps).';', 'update');
     }
     /**
+     * Checks if the query represents a blob insert or update.
+     * The aim of this method is to fix an issue with setting the collation 
+     * of the connection while executing a query.
+     * @return boolean The Function will return TRUE if the query represents an 
+     * insert or un update of blob datatype. FALSE if not.
+     * @since 1.8.5
+     */
+    public function isBlobInsertOrUpdate(){
+        return $this->isFileInsert;
+    }
+    /**
+     * Sets the property that is used to check if the query represents an insert 
+     * or an update of a blob datatype.
+     * The attribute is used to fix an issue with setting the collation 
+     * of the connection while executing a query.
+     * @param boolean $boolean TRUE if the query represents an insert or an update 
+     * of a blob datatype. FALSE if not.
+     * @since 1.8.5
+     */
+    public function setIsBlobInsertOrUpdate($boolean) {
+        $this->isFileInsert = $boolean === TRUE ? TRUE : FALSE;
+    }
+    /**
      * Updates a table columns that has a datatype of blob from source files.
      * @param array $arr An associative array of keys and values. The keys will 
      * be acting as the columns names and the values should be a path to a file 
@@ -1025,6 +1091,7 @@ abstract class MySQLQuery{
                 $fileContent = fread($file, filesize($fixedPath));
                 if($fileContent !== FALSE){
                     $data = '\''. addslashes($fileContent).'\'';
+                    $this->setIsBlobInsertOrUpdate(TRUE);
                 }
             }
             if($index + 1 == $count){
@@ -1039,21 +1106,25 @@ abstract class MySQLQuery{
     }
     /**
      * Constructs a query that can be used to select maximum value of a table column.
-     * @param string $col The name of the column.
+     * @param string $col The name of the column as specified while initializing 
+     * linked table. This value should return an object of type Column 
+     * when passed to the method MySQLQuery::getCol().
      * @param string $rename The new name of the column that contains max value. 
      * The default value is 'max'.
      * @since 1.3
      */
     public function selectMax($col,$rename='max'){
         return $this->select(array(
-            'column'=>$col,
+            'column'=> $col,
             'select-max'=>TRUE,
             'rename-to'=>$rename
         ));
     }
     /**
      * Constructs a query that can be used to select minimum value of a table column.
-     * @param string $col The name of the column.
+     * @param string $col The name of the column as specified while initializing 
+     * linked table. This value should return an object of type Column 
+     * when passed to the method MySQLQuery::getCol().
      * @param string $rename The new name of the column that contains min value. 
      * The default value is 'min'.
      * @since 1.3
@@ -1070,9 +1141,9 @@ abstract class MySQLQuery{
      * with the query class.
      * @param boolean $inclComments If set to TRUE, the generated MySQL 
      * query will have basic comments explaining the structure.
-     * @return boolean Once the query is structured, the function will return 
-     * TRUE. If the query is not created, the function will return FALSE. 
-     * The query will not constructed if the function 'MySQLQuery::getStructure()' 
+     * @return boolean Once the query is structured, the method will return 
+     * TRUE. If the query is not created, the method will return FALSE. 
+     * The query will not constructed if the method 'MySQLQuery::getStructure()' 
      * did not return an object of type 'Table'.
      * @since 1.5
      */
@@ -1088,8 +1159,8 @@ abstract class MySQLQuery{
      * Returns the name of the column from the table given its key.
      * @param string $colKey The name of the column key.
      * @return string The name of the column in the table. If no column was 
-     * found, the function will return the string MySQLTable::NO_SUCH_COL. If there is 
-     * no table linked with the query object, the function will return the 
+     * found, the method will return the string MySQLTable::NO_SUCH_COL. If there is 
+     * no table linked with the query object, the method will return the 
      * string MySQLQuery::NO_STRUCTURE.
      * @since 1.5
      */
@@ -1104,8 +1175,8 @@ abstract class MySQLQuery{
      * Returns a column from the table given its key.
      * @param string $colKey The name of the column key.
      * @return string|Column The the column in the table. If no column was 
-     * found, the function will return the string 'MySQLTable::NO_SUCH_COL'. If there is 
-     * no table linked with the query object, the function will return the 
+     * found, the method will return the string 'MySQLTable::NO_SUCH_COL'. If there is 
+     * no table linked with the query object, the method will return the 
      * string MySQLQuery::NO_STRUCTURE.
      * @since 1.6
      */
@@ -1125,7 +1196,7 @@ abstract class MySQLQuery{
      * Returns the index of a column given its key.
      * @param string $colKey The name of the column key.
      * @return int  The index of the column if found starting from 0. 
-     * If the column was not found, the function will return -1.
+     * If the column was not found, the method will return -1.
      * @since 1.8.4
      */
     public function getColIndex($colKey){
@@ -1142,7 +1213,7 @@ abstract class MySQLQuery{
     /**
      * Returns the name of the table that is used to construct queries.
      * @return string The name of the table that is used to construct queries. 
-     * if no table is linked, the function will return the string MySQLQuery::NO_STRUCTURE.
+     * if no table is linked, the method will return the string MySQLQuery::NO_STRUCTURE.
      * @since 1.5
      */
     public function getStructureName(){

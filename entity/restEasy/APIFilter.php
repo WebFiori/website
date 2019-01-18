@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * * Copyright 2018 Ibrahim BinAlshikh.
+ * Copyright 2019 Ibrahim BinAlshikh, restEasy library.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,8 @@
 namespace restEasy;
 /**
  * A class used to filter request parameters.
+ * This class is the core class which is used to manage and set request 
+ * parameters.
  * @author Ibrahim
  * @version 1.2.1
  */
@@ -95,6 +97,10 @@ class APIFilter{
                 array_push($attribute['filters'], FILTER_SANITIZE_NUMBER_INT);
                 array_push($attribute['filters'], FILTER_VALIDATE_INT);
             }
+            else if($paramType == 'string'){
+                $attribute['options']['options']['allow-empty'] = $reqParam->isEmptyStringAllowed();
+                array_push($attribute['filters'], FILTER_DEFAULT);
+            }
             else if($paramType == 'float'){
                 array_push($attribute['filters'], FILTER_SANITIZE_NUMBER_FLOAT);
             }
@@ -145,7 +151,7 @@ class APIFilter{
      * @param string $array A string in the format '[3,"hello",4.8,"",44,...]'.
      * @return string|array If the string has valid array format, an array 
      * which contains the values is returned. If has invalid syntax, the 
-     * function will return the string 'INV'.
+     * method will return the string 'INV'.
      * @since 1.2.1
      */
     private static function _filterArray($array) {
@@ -168,7 +174,7 @@ class APIFilter{
                         }
                     }
                     else{
-                        if($char == "\""){
+                        if($char == '"' || $char == "'"){
                             $tmpArrValue = strtolower(trim($tmpArrValue));
                             if(strlen($tmpArrValue)){
                                 if($tmpArrValue == 'true'){
@@ -191,7 +197,7 @@ class APIFilter{
                                 }
                             }
                             else{
-                                $result = self::_parseStringFromArray($array, $x + 1, $len - 1);
+                                $result = self::_parseStringFromArray($array, $x + 1, $len - 1, $char);
                                 if($result['parsed'] == TRUE){
                                     $x = $result['end'];
                                     $arrayValues[] = filter_var($result['string'], FILTER_SANITIZE_STRING);
@@ -240,22 +246,22 @@ class APIFilter{
     }
     /**
      * Checks if a given string represents an integer or float value. 
-     * If the given string represents numeric value, the function will 
+     * If the given string represents numeric value, the method will 
      * convert it to its numerical value.
      * @param string $str A value such as '1' or '7.0'.
      * @return string|int|double If the given string does not represents any 
-     * numerical value, the function will return the string 'INV'. If the 
+     * numerical value, the method will return the string 'INV'. If the 
      * given string represents an integer, an integer value is returned. 
      * If the given string represents a floating point value, a float number 
      * is returned.
      */
     private static function checkIsNumber($str){
-        $str = trim($str);
-        $len = strlen($str);
+        $strX = trim($str);
+        $len = strlen($strX);
         $isFloat = FALSE;
         $retVal = 'INV';
         for($y = 0 ; $y < $len ; $y++){
-            $char = $str[$y];
+            $char = $strX[$y];
             if($char == '.' && !$isFloat){
                 $isFloat = TRUE;
             }
@@ -272,23 +278,23 @@ class APIFilter{
             }
         }
         if($isFloat){
-            $retVal = floatval($str);
+            $retVal = floatval($strX);
         }
         else{
-            $retVal = intval($str);
+            $retVal = intval($strX);
         }
         return $retVal;
     }
     /**
      * Extract string value from an array that is formed as string.
-     * It is a helper function that works with the function APIFilter::_parseStringFromArray().
+     * It is a helper method that works with the method APIFilter::_parseStringFromArray().
      * @param type $arr
      * @param type $start
      * @param type $len
      * @return boolean
      * @since 1.2.1
      */
-    private static function _parseStringFromArray($arr,$start,$len){
+    private static function _parseStringFromArray($arr,$start,$len,$stringEndChar){
         $retVal = array(
             'end'=>0,
             'string'=>'',
@@ -297,7 +303,7 @@ class APIFilter{
         $str = "";
         for($x = $start ; $x < $len ; $x++){
             $ch = $arr[$x];
-            if($ch == '"'){
+            if($ch == $stringEndChar){
                 $str .= "";
                 $retVal['end'] = $x;
                 $retVal['string'] = $str;
@@ -336,7 +342,7 @@ class APIFilter{
      * Returns an associative array that contains request body inputs.
      * The data in the array will have the filters applied to.
      * @return array|NULL The array that contains request inputs. If no data was 
-     * filtered, the function will return NULL.
+     * filtered, the method will return NULL.
      * @since 1.0
      */
     public function getInputs(){
@@ -378,8 +384,14 @@ class APIFilter{
                             foreach ($def['filters'] as $val) {
                                 $filteredValue = filter_var($filteredValue, $val, $def['options']);
                             }
-                            if($filteredValue == FALSE){
+                            if($filteredValue === FALSE){
                                 $filteredValue = 'INV';
+                            }
+                            if($def['parameter']->getType() == 'string' &&
+                                    $filteredValue != 'INV' &&
+                                    strlen($filteredValue) == 0 && 
+                                    $def['options']['options']['allow-empty'] === FALSE){
+                                $this->inputs[$name] = 'INV';
                             }
                         }
                         $arr['basic-filter-result'] = $filteredValue;
@@ -395,7 +407,7 @@ class APIFilter{
                     else{
                         $this->inputs[$name] = $r;
                     }
-                    if($this->inputs[$name] == FALSE && $def['parameter']->getType() != 'boolean'){
+                    if($this->inputs[$name] === FALSE && $def['parameter']->getType() != 'boolean'){
                         $this->inputs[$name] = 'INV';
                     }
                 }
@@ -412,6 +424,12 @@ class APIFilter{
                             $this->inputs[$name] = filter_var($this->inputs[$name], $val, $def['options']);
                         }
                         if($this->inputs[$name] === FALSE){
+                            $this->inputs[$name] = 'INV';
+                        }
+                        if($def['parameter']->getType() == 'string' &&
+                                $this->inputs[$name] != 'INV' &&
+                                strlen($this->inputs[$name]) == 0 && 
+                                $def['options']['options']['allow-empty'] === FALSE){
                             $this->inputs[$name] = 'INV';
                         }
                     }
@@ -454,7 +472,13 @@ class APIFilter{
                             foreach ($def['filters'] as $val) {
                                 $filteredValue = filter_var($filteredValue, $val, $def['options']);
                             }
-                            if($filteredValue == FALSE){
+                            if($filteredValue === FALSE){
+                                $filteredValue = 'INV';
+                            }
+                            if($def['parameter']->getType() == 'string' && 
+                                    strlen($filteredValue) == 0 && 
+                                    $def['options']['options']['allow-empty'] === FALSE){
+                                
                                 $filteredValue = 'INV';
                             }
                         }
@@ -471,7 +495,7 @@ class APIFilter{
                     else{
                         $this->inputs[$name] = $r;
                     }
-                    if($this->inputs[$name] == FALSE && $def['parameter']->getType() != 'boolean'){
+                    if($this->inputs[$name] === FALSE && $def['parameter']->getType() != 'boolean'){
                         $this->inputs[$name] = 'INV';
                     }
                 }
@@ -488,6 +512,12 @@ class APIFilter{
                             $this->inputs[$name] = filter_var($this->inputs[$name], $val, $def['options']);
                         }
                         if($this->inputs[$name] === FALSE){
+                            $this->inputs[$name] = 'INV';
+                        }
+                        if($def['parameter']->getType() == 'string' &&
+                                $this->inputs[$name] != 'INV' &&
+                                strlen($this->inputs[$name]) == 0 && 
+                                $def['options']['options']['allow-empty'] === FALSE){
                             $this->inputs[$name] = 'INV';
                         }
                     }

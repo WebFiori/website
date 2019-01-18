@@ -9,8 +9,8 @@ use phpStructs\html\HeadNode;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
-use webfiori\SiteConfig;
-use webfiori\Config;
+use webfiori\conf\SiteConfig;
+use webfiori\conf\Config;
 
 class WebFioriTheme extends Theme{
     public function __construct() {
@@ -27,7 +27,14 @@ class WebFioriTheme extends Theme{
             'WebFioriGUI.php','LangExt.php'
         ));
         $this->setBeforeLoaded(function(){
-            $lang = WebFiori::getWebsiteFunctions()->getSessionLang(TRUE);
+            WebsiteFunctions::get()->useSession(array(
+                'name'=>'lang-session',
+                'create-new'=>true,
+                'duration'=>60*24*7,
+                'refresh'=>TRUE
+            ));
+            $session = WebsiteFunctions::get()->getSession();
+            $lang = $session->getLang(TRUE);
             Page::lang($lang);
             if($lang == 'AR'){
                 Page::dir('rtl');
@@ -37,7 +44,8 @@ class WebFioriTheme extends Theme{
             }
         });
         $this->setAfterLoaded(function(){
-            Page::lang(WebsiteFunctions::get()->getSession()->getLang(TRUE));
+            $session = WebsiteFunctions::get()->getSession();
+            Page::lang($session->getLang(TRUE));
             Page::document()->getChildByID('main-content-area')->setClassName('pa-'.Page::dir().'-col-10');
             Page::document()->getChildByID('side-content-area')->setClassName('pa-'.Page::dir().'-col-2');
             Page::document()->getChildByID('page-body')->setClassName('pa-row');
@@ -121,10 +129,11 @@ class WebFioriTheme extends Theme{
         $contactInfo = new HTMLNode();
         $contactInfo->setClassName('pa-'.Page::dir().'-col-12');
         $p = new PNode();
-        $p->addText('webfiori@programmingacademia.com',array('new-line'=>TRUE));
+        $p->addText('013 xxx xxxx', array('new-line'=>TRUE));
+        $p->addText('youremail@example.com',array('new-line'=>TRUE));
         $contactInfo->addChild($p);
         $node->addChild($contactInfo);
-        $p->addText('All Rights Reserved © '.date('Y'));
+        $p->addText('Your Copyright Notice © 2018');
         $div = new HTMLNode('div');
         $div->setAttribute('class', 'pa-ltr-col-twelve');
         $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '

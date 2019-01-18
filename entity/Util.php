@@ -1,4 +1,27 @@
 <?php
+/*
+ * The MIT License
+ *
+ * Copyright 2019 Ibrahim, WebFiori Framework.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
     header("HTTP/1.1 403 Forbidden");
@@ -17,34 +40,36 @@ if(!defined('ROOT_DIR')){
         . '</body>'
         . '</html>');
 }
-use webfiori\Config;
+use webfiori\conf\Config;
+use webfiori\entity\DBConnectionFactory;
+use webfiori\entity\DBConnectionInfo;
 use webfiori\WebFiori;
 /**
- * PHP utility class.
- * @author Ibrahim <ibinshikh@hotmail.com>
- * @version 1.3.7
+ * Framework utility class.
+ * @author Ibrahim
+ * @version 1.3.8
  */
 class Util{
     /**
-     * A constant that is returned by <b>Util::checkSystemStatus()</b> to indicate 
+     * A constant that is returned by Util::checkSystemStatus() to indicate 
      * that the file 'Config.php' is missing.
      * @since 1.2
      */
     const MISSING_CONF_FILE = 'missing_config_file';
     /**
-     * A constant that is returned by <b>Util::checkSystemStatus()</b> to indicate 
+     * A constant that is returned by Util::checkSystemStatus() to indicate 
      * that the file 'SiteConfig.php' is missing.
      * @since 1.2
      */
     const MISSING_SITE_CONF_FILE = 'missing_site_config_file';
     /**
-     * A constant that is returned by <b>Util::checkSystemStatus()</b> to indicate 
+     * A constant that is returned by Util::checkSystemStatus() to indicate 
      * that system is not configured yet.
      * @since 1.2
      */
     const NEED_CONF = 'sys_conf_err';
     /**
-     * A constant that is returned by <b>Util::checkSystemStatus()</b> to indicate 
+     * A constant that is returned by Util::checkSystemStatus() to indicate 
      * that database connection was not established.
      * @since 1.2
      */
@@ -56,11 +81,11 @@ class Util{
      */
     private static $dbTestInstance;
     /**
-     * Returns the instance of 'DatabaseLink' which is used to check database 
-     * connection using the function 'Util::checkDbConnection()'.
-     * @return DatabaseLink|NULL The instance of 'DatabaseLink' which is used to check database 
-     * connection using the function 'Util::checkDbConnection()'. If no test was 
-     * performed, the function will return NULL.
+     * Returns the instance of 'MySQLLink' which is used to check database 
+     * connection using the method 'Util::checkDbConnection()'.
+     * @return MySQLLink|NULL The instance of 'MySQLLink' which is used to check database 
+     * connection using the method 'Util::checkDbConnection()'. If no test was 
+     * performed, the method will return NULL.
      * @since 1.2
      */
     public static function getDatabaseTestInstance(){
@@ -71,7 +96,7 @@ class Util{
      * @param string $str A string that represents a number.
      * @return int|float|boolean If the given string represents an integer, 
      * the value is returned as an integer. If the given string represents a float, 
-     * the value is returned as a float. If the function is unable to convert 
+     * the value is returned as a float. If the method is unable to convert 
      * the string to its numerical value, it will return FALSE.
      * @since 1.3.5
      */
@@ -107,10 +132,10 @@ class Util{
     }
     /**
      * Returns the reverse of a string.
-     * This function can be used to reverse the order of any string. 
+     * This method can be used to reverse the order of any string. 
      * For example, if the given string is '   Good Morning Buddy', the 
-     * function will return 'ydduB gninriM dooG   '. If NULL is given, the 
-     * function will return empty string.
+     * method will return 'ydduB gninriM dooG   '. If NULL is given, the 
+     * method will return empty string.
      * @param string $str The string that will be reversed.
      * @return string The string after reversing its order.
      * @since 1.3.7
@@ -125,8 +150,43 @@ class Util{
         return $retV;
     }
     /**
+     * Converts a positive integer value to binary string.
+     * @param int $intVal The number that will be converted.
+     * @return boolean|string If the given value is an integer and it is greater 
+     * than -1, a string of zeros and ones is returned. Other than that, 
+     * FALSE is returned.
+     * @since 1.3.8
+     */
+    public static function binaryString($intVal){
+        if(gettype($intVal) == 'integer' && $intVal >= 0){
+            $retVal = '';
+            if($intVal == 0){
+                $retVal = '0';
+            }
+            else{
+                $q = 100;
+                $bit = $intVal % 2;
+                while ($intVal > 0){
+                    $q = floor($intVal / 2);
+                    $bit = $intVal % 2;
+                    $retVal = $bit.$retVal;
+                    $intVal = $q;
+                }
+            }
+            return $retVal;
+        }
+        return FALSE;
+    }
+    /**
      * Returns HTTP request headers.
-     * @return array An associative array of request headers.
+     * This method will try to extract request headers using two ways, 
+     * first, it will check if the method 'apache_request_headers()' is 
+     * exist or not. If it does, then request headers will be taken from 
+     * there. If it does not exist, it will try to extract request headers 
+     * from the super global $_SERVER.
+     * @return array An associative array of request headers. The indices 
+     * will represents the headers and the values are the values of the 
+     * headers. The indices will be all in lower case.
      * @since 1.3.3
      */
     public static function getRequestHeaders(){
@@ -161,7 +221,7 @@ class Util{
         return $retVal;
     }
     /**
-     * An alias for the function 'Util::getClientIP()'.
+     * An alias for the method 'Util::getClientIP()'.
      * @return string The IP address of the user who has initiated the request.
      * @since 1.3
      */
@@ -201,7 +261,7 @@ class Util{
     }
     /**
      * Test a connection to system database or external one.
-     * @param array $dbAttrs [Optional] An associative array. The array can 
+     * @param array $dbAttrs An associative array. The array can 
      * have 4 indices:
      * <ul>
      * <li><b>host</b>: The name of database host. It can be a URL, an IP address 
@@ -211,10 +271,10 @@ class Util{
      * <li><b>pass</b>: The password of the user.</li>
      * <li><b>db-name</b>: The name of the database.</li>
      * </ul>
-     * If the given parameter is not provided, the function will try to test 
+     * If the given parameter is not provided, the method will try to test 
      * database settings that where set in the class 'Config'.
-     * @return boolean|string If the connection was established, the function will 
-     * return TRUE. If no connection was established, the function will 
+     * @return boolean|string If the connection was established, the method will 
+     * return TRUE. If no connection was established, the method will 
      * return 'Util::DB_NEED_CONF'.
      * @since 1.3.2
      */
@@ -257,27 +317,51 @@ class Util{
 
     /**
      * Check the overall status of the system.
-     * @param boolean $checkDb If set to TRUE, the function will also check 
+     * @param boolean $checkDb If set to TRUE, the method will also check 
      * database connection status. The settings of the connection will 
-     * be taken from the class 'Config'.
-     * @return boolean|string The function will return TRUE in case everything 
-     * was fine. If the file 'Config.php' was not found, The function will return 
-     * 'Util::MISSING_CONF_FILE'. If the file 'SiteConfig.php' was not found, The function will return 
-     * 'Util::MISSING_CONF_FILE'. If the system is not configured yet, the function 
+     * be taken from the class 'Config'. Default is FALSE.
+     * @return boolean|string The method will return TRUE in case everything 
+     * was fine. If the file 'Config.php' was not found, The method will return 
+     * 'Util::MISSING_CONF_FILE'. If the file 'SiteConfig.php' was not found, The method will return 
+     * 'Util::MISSING_CONF_FILE'. If the system is not configured yet, the method 
      * will return 'Util::NEED_CONF'. If the system is unable to connect to 
-     * the database, the function will return 'Util::DB_NEED_CONF'.
+     * the database, the method will return an associative array 
+     * with two indices that contains connection error info. The first 
+     * one is 'error-code' and the second one is 'error-message'.
      * @since 1.2
      */
-    public static function checkSystemStatus($checkDb=false){
+    public static function checkSystemStatus($checkDb=false,$dbName=''){
         Logger::logFuncCall(__METHOD__);
         Logger::log('Checking system status...');
         $returnValue = '';
-        if(class_exists('webfiori\Config')){
-            if(class_exists('webfiori\SiteConfig')){
+        if(class_exists('webfiori\conf\Config')){
+            if(class_exists('webfiori\conf\SiteConfig')){
                 if(Config::isConfig() === TRUE || WebFiori::getClassStatus() == 'INITIALIZING'){
                     if($checkDb === TRUE){
                         Logger::log('Checking database connection...');
-                        $returnValue = self::checkDbConnection();
+                        Logger::log('Database to check = \''.$dbName.'\'.', 'debug');
+                        $connInfo = Config::getDBConnection($dbName);
+                        if($connInfo instanceof DBConnectionInfo){
+                            $returnValue = DBConnectionFactory::mysqlLink(array(
+                                'host'=>$connInfo->getHost(),
+                                'port'=>$connInfo->getPort(),
+                                'user'=>$connInfo->getUsername(),
+                                'pass'=>$connInfo->getPassword(),
+                                'db-name'=>$connInfo->getDBName()
+                            ));
+                            if(gettype($returnValue) == 'object'){
+                                Logger::log('Connected.');
+                                $returnValue = TRUE;
+                            }
+                            else{
+                                Logger::log('Unable to connect to database.','error');
+                                $returnValue = self::DB_NEED_CONF;
+                            }
+                        }
+                        else{
+                            Logger::log('No connection information was found for the given database.', 'warning');
+                            $returnValue = self::DB_NEED_CONF;
+                        }
                     }
                     else{
                         Logger::log('No need to check database connection');
@@ -285,7 +369,7 @@ class Util{
                     }
                 }
                 else{
-                    Logger::log('The function \'Config::isConfig()\' returned FALSE or the core is still initializing.', 'warning');
+                    Logger::log('The method \'Config::isConfig()\' returned FALSE or the core is still initializing.', 'warning');
                     $returnValue = Util::NEED_CONF;
                 }
             }
@@ -314,7 +398,7 @@ class Util{
      * year number. The string must be provided in the format 'YYYY-MM-DD'.
      * @return int|boolean ISO-8601 numeric representation of the day that 
      * represents the given date in the week. 1 for Monday and 7 for Sunday. 
-     * If the function fails, it will return FALSE.
+     * If the method fails, it will return FALSE.
      * @since 1.3.4
      */
     public static function getGWeekday($date) {
@@ -390,14 +474,17 @@ class Util{
         return $datesArr;
     }
     /**
-     * Call the function 'print_r' and insert 'pre' around it.
-     * @param mixed $expr
+     * Call the method 'print_r' and insert 'pre' around it.
+     * The method is used to make the output well formatted and user 
+     * readable.
+     * @param mixed $expr Any variable or value that can be passed to the 
+     * function 'print_r'.
      * @since 1.0
      */
     public static function print_r($expr){
-        $expr = str_replace('<', '&lt;', $expr);
-        $expr = str_replace('>', '&gt;', $expr);
-        ?><pre><?php print_r($expr)?></pre><?php
+        $expr1 = str_replace('<', '&lt;', $expr);
+        $expr2 = str_replace('>', '&gt;', $expr1);
+        ?><pre><?php print_r($expr2)?></pre><?php
     }
     /**
      * Returns unicode code of a character.
@@ -422,10 +509,10 @@ class Util{
         return mb_strtolower($char, "UTF-8") != $char;
     }
     /**
-     * Call this function to display errors and warnings.
+     * Call this method to display errors and warnings.
      * Used for debugging. Also, enable logging for info, warning and error 
      * messages. To enable logging for debug info, define the constant 
-     * 'DEBUG'
+     * 'DEBUG'.
      * @since 0.2
      */
     public static function displayErrors(){
@@ -434,8 +521,8 @@ class Util{
         error_reporting(-1);
     }
     /**
-     * This function is used to filter scripting code such as 
-     * JavaScript or PHP.
+     * This method is used to filter scripting code such as 
+     * JavaScript or PHP. 
      * @param string $input
      * @return string
      * @since 0.2
@@ -450,9 +537,9 @@ class Util{
      * Checks if a given directory exists or not.
      * @param string $dir A string in a form of directory (Such as 'root/home/res').
      * @param boolean $createIfNot If set to TRUE and the given directory does 
-     * not exists, The function will try to create the directory.
-     * @return boolean In general, the function will return FALSE if the 
-     * given directory does not exists. The function will return TRUE only 
+     * not exists, The method will try to create the directory.
+     * @return boolean In general, the method will return FALSE if the 
+     * given directory does not exists. The method will return TRUE only 
      * in two cases, If the directory exits or it does not exists but was created.
      * @since 0.1
      */

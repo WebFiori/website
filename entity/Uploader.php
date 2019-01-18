@@ -1,4 +1,27 @@
 <?php
+/*
+ * The MIT License
+ *
+ * Copyright 2019 Ibrahim, WebFiori Framework.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
     header("HTTP/1.1 403 Forbidden");
@@ -30,7 +53,7 @@ use webfiori\entity\Util;
 class Uploader implements JsonI{
     /**
      * A constant that is used to indicates upload directory does not exists.
-     * It usually returned by some functions as error code.
+     * It usually returned by some methods as error code.
      * @since 1.0
      */
     const NO_SUCH_DIR = 'no_such_dir';
@@ -242,14 +265,14 @@ class Uploader implements JsonI{
     private $extentions = array();
     /**
      * Sets the directory at which the file will be uploaded to.
-     * This function does not check whether the directory is exist or not. It 
+     * This method does not check whether the directory is exist or not. It 
      * just validate that the structure of the path is valid by replacing 
      * forward slashes with backward slashes. The directory will never update 
      * if the given string is empty.
      * @param string $dir Upload Directory (such as '/files/uploads' or 
      * 'C:/Server/uploads'). 
-     * @return boolean If upload directory was updated, the function will 
-     * return TRUE. If not updated, the function will return FALSE.
+     * @return boolean If upload directory was updated, the method will 
+     * return TRUE. If not updated, the method will return FALSE.
      * @since 1.0
      */
     public function setUploadDir($dir){
@@ -405,7 +428,7 @@ class Uploader implements JsonI{
      * Returns MIME type of a file extension.
      * @param string $ext File extension without the suffix (such as 'jpg').
      * @return string|NULL If the extension MIME type is found, it will be 
-     * returned. If not, the function will return NULL.
+     * returned. If not, the method will return NULL.
      * @since 1.0
      * @deprecated since 1.2.1
      */
@@ -429,7 +452,7 @@ class Uploader implements JsonI{
      * Checks if uploaded file is allowed or not.
      * @param string $fileName The name of the file (such as 'image.png')
      * @return boolean If file extension is in the array of allowed types, 
-     * the function will return TRUE.
+     * the method will return TRUE.
      * @since 1.0
      */
     private function isValidExt($fileName){
@@ -445,7 +468,7 @@ class Uploader implements JsonI{
      * Checks if PHP upload code is error or not.
      * @param int $code PHP upload code.
      * @return boolean If the given code does not equal to UPLOAD_ERR_OK, the 
-     * function will return TRUE.
+     * method will return TRUE.
      * @since 1.0
      */
     private function isError($code){
@@ -532,9 +555,10 @@ class Uploader implements JsonI{
                                     if(!file_exists($targetDir)){
                                         $fileInfoArr['is-exist'] = FALSE;
                                         $fileInfoArr['is-replace'] = FALSE;
-                                            if(move_uploaded_file($fileOrFiles["tmp_name"][$x], $targetDir)){
-                                                if(function_exists('mime_content_type')){
-                                                $fileInfoArr['mime'] = mime_content_type($fileInfoArr['upload-path'].'\\'.$fileInfoArr['name']);
+                                        if(move_uploaded_file($fileOrFiles["tmp_name"][$x], $targetDir)){
+                                            if(function_exists('mime_content_type')){
+                                                $fPath = str_replace('\\','/',$fileInfoArr['upload-path'].'/'.$fileInfoArr['name']);
+                                                $fileInfoArr['mime'] = mime_content_type($fPath);
                                             }
                                             else{
                                                 $ext = pathinfo($fileInfoArr['name'], PATHINFO_EXTENSION);
@@ -548,7 +572,8 @@ class Uploader implements JsonI{
                                     }
                                     else{
                                         if(function_exists('mime_content_type')){
-                                            $fileInfoArr['mime'] = mime_content_type($fileInfoArr['upload-path'].'\\'.$fileInfoArr['name']);
+                                            $fPath = str_replace('\\','/',$fileInfoArr['upload-path'].'/'.$fileInfoArr['name']);
+                                            $fileInfoArr['mime'] = mime_content_type($fPath);
                                         }
                                         else{
                                             $ext = pathinfo($fileInfoArr['name'], PATHINFO_EXTENSION);
@@ -609,7 +634,8 @@ class Uploader implements JsonI{
                                     if(move_uploaded_file($fileOrFiles["tmp_name"], $targetDir)){
                                         $fileInfoArr['uploaded'] = TRUE;
                                         if(function_exists('mime_content_type')){
-                                            $fileInfoArr['mime'] = mime_content_type($fileInfoArr['upload-path'].'\\'.$fileInfoArr['name']);
+                                            $fPath = str_replace('\\','/',$fileInfoArr['upload-path'].'/'.$fileInfoArr['name']);
+                                            $fileInfoArr['mime'] = mime_content_type($fPath);
                                         }
                                         else{
                                             $ext = pathinfo($fileInfoArr['name'], PATHINFO_EXTENSION);
@@ -623,7 +649,8 @@ class Uploader implements JsonI{
                                 else{
                                     $fileInfoArr['is-exist'] = TRUE;
                                     if(function_exists('mime_content_type')){
-                                        $fileInfoArr['mime'] = mime_content_type($fileInfoArr['upload-path'].'\\'.$fileInfoArr['name']);
+                                        $fPath = str_replace('\\','/',$fileInfoArr['upload-path'].'/'.$fileInfoArr['name']);
+                                        $fileInfoArr['mime'] = mime_content_type($fPath);
                                     }
                                     else{
                                         $ext = pathinfo($fileInfoArr['name'], PATHINFO_EXTENSION);

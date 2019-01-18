@@ -1,9 +1,8 @@
 <?php
-
 /*
  * The MIT License
  *
- * Copyright 2018 Ibrahim.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -87,7 +86,7 @@ class Privilege implements JsonI{
     /**
      * Returns the name of the privilege.
      * @return string The name of the privilege. If the name was not updated, 
-     * the function will return 'PR_NAME'.
+     * the method will return 'PR_NAME'.
      * @since 1.0
      */
     public function getName() {
@@ -96,7 +95,7 @@ class Privilege implements JsonI{
     /**
      * Returns the ID of the privilege.
      * @return string The ID of the privilege. If the ID was not set, 
-     * the function will return 'PR'.
+     * the method will return 'PR'.
      * @since 1.0
      */
     public function getID() {

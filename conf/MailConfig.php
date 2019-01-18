@@ -1,5 +1,29 @@
 <?php
-namespace webfiori;
+/*
+ * The MIT License
+ *
+ * Copyright 2019 Ibrahim, WebFiori Framework.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+namespace webfiori\conf;
 if(!defined('ROOT_DIR')){
     header("HTTP/1.1 403 Forbidden");
     die(''
@@ -17,10 +41,11 @@ if(!defined('ROOT_DIR')){
         . '</body>'
         . '</html>');
 }
+use webfiori\entity\mail\EmailAccount;
 /**
- * A file that contains SMTP accounts information.
+ * SMTP configuration class.
  * The developer can create multiple SMTP accounts and add 
- * Connection information here.
+ * Connection information inside the body of this class.
  * @author Ibrahim
  * @version 1.0
  */
@@ -33,8 +58,8 @@ class MailConfig{
      */
     private static $inst;
     /**
-     * Returnd a singleton instance of the class.
-     * Calling this function multiple times will result in returning 
+     * Return a single instance of the class.
+     * Calling this method multiple times will result in returning 
      * the same instance every time.
      * @return MailConfig
      * @since 1.0
@@ -49,7 +74,7 @@ class MailConfig{
     }
 /**
      * Adds an email account.
-     * The developer can use this function to add new account during runtime. 
+     * The developer can use this method to add new account during runtime. 
      * The account will be removed once the program finishes.
      * @param EmailAccount $acc an object of type EmailAccount.
      * @param string $name A name to associate with the email account.
@@ -67,12 +92,12 @@ class MailConfig{
     }
     /**
      * Returns an email account given its name.
-     * The function will search for an account with the given name in the set 
+     * The method will search for an account with the given name in the set 
      * of added accounts. If no account was found, NULL is returned.
      * @param string $name The name of the account.
-     * @return EmailAccount|null If the account is found, The function 
+     * @return EmailAccount|null If the account is found, The method 
      * will return an object of type EmailAccount. Else, the 
-     * function will return NULL.
+     * method will return NULL.
      * @since 1.0
      */
     public static function &getAccount($name){

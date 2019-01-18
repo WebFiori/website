@@ -22,7 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace webfiori\entity\router;
+namespace webfiori\ini;
+use webfiori\entity\cron\Cron;
+use webfiori\entity\cron\CronJob;
+
 if(!defined('ROOT_DIR')){
     header("HTTP/1.1 403 Forbidden");
     die(''
@@ -40,44 +43,32 @@ if(!defined('ROOT_DIR')){
         . '</body>'
         . '</html>');
 }
-use webfiori\entity\Logger;
-use webfiori\apiParser\DocGenerator;
-use webfiori\entity\File;
 /**
- * A class that only has one method to initiate some of system routes.
- * The class is meant to only initiate the routes which uses the method 
- * Router::closure().
+ * A class that has one method to initialize cron jobs.
+ *
  * @author Ibrahim
  * @version 1.0
  */
-class ClosureRoutes {
+class InitCron {
     /**
-     * Create all closure routes. Include your own here.
+     * A method that can be used to initialize cron jobs.
+     * The developer can use this method to create cron jobs.
      * @since 1.0
      */
-    public static function create() {
-        Router::closure('/testx', function(){
-        //    $r = new APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
-        //    Util::print_r($r->getParsedInfo());
-            Logger::enabled(FALSE);
-            $reader = new DocGenerator(array(
-                'path'=>'C:\Server\apache2\htdocs\webfiori',
-                'exclude-path'=>array(
-                    'C:\Server\apache2\htdocs\webfiori\themes'
-                ),
-                'base-url'=> 'https://programmingacademia.com/webfiori/docs',
-                'theme'=>'WebFiori API Theme',
-                'site-name'=>'WebFiori API Docs',
-                'output-to'=>'C:\\Server\\apache2\\htdocs\\webfiori-website\\pages\\apis-1.0.0',
-                'route-root-folder'=>'apis-1.0.0',
-                'is-dynamic'=>TRUE
-            ));
-        });
-        Router::closure('/dounloads/webfiori-v1.0.0', function(){
-            
-        });
-        Router::get()->setOnNotFound(function(){
-            new \webfiori\views\NotFound();
-        });
+    public static function init() {
+        //set an optional password to protect jobs from 
+        //unauthorized execution access
+        Cron::password('123456');
+        
+        //enable job execution log
+        Cron::execLog(TRUE);
+        
+        //add jobs
+        //$job = new CronJob('*/5,*/3 * * * *');
+        //$job->setOnExecution(function($params){
+        //    $file = fopen('cron.txt', 'a+');
+        //    fwrite($file, 'Job \''.$params[0]->getJobName().'\' executed at '.date(DATE_RFC1123)."\r\n");
+        //},array($job));
+        //Cron::scheduleJob($job);
     }
 }

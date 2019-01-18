@@ -1,4 +1,27 @@
 <?php
+/*
+ * The MIT License
+ *
+ * Copyright 2019 Ibrahim, WebFiori Framework.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
     header("HTTP/1.1 403 Forbidden");
@@ -19,13 +42,32 @@ if(!defined('ROOT_DIR')){
 }
 use phpStructs\html\HTMLDoc;
 use webfiori\entity\langs\Language;
-use webfiori\functions\WebsiteFunctions;
 use phpStructs\html\HeadNode;
-use webfiori\SiteConfig;
+use webfiori\conf\SiteConfig;
 use phpStructs\html\HTMLNode;
 use Exception;
 /**
- * A class used to initialize main page components.
+ * A class used to initialize view components.
+ * This class is one of the core components for creating web pages. It is simply 
+ * represents a web page. By default class has a HTML document that contains 
+ * the following basic elements:
+ * <ul>
+ * <li>Head tag that contains CSS, JS and other meta and link tags.</li>
+ * <li>A div element which has the ID 'page-body' that represents the body 
+ * of the page.</li>
+ * <li>A div element which has the ID 'page-header' that represents the header 
+ * section of the page.</li>
+ * <li>A div element which has the ID 'page-footer' that represents the footer 
+ * section of the page.</li>
+ * <li>A div element which has the ID 'main-content-area' that represents the area 
+ * at which user content will be added to.</li>
+ * <li>A div element which has the ID 'side-content-area' that represents the side 
+ * section of the page.</li>
+ * </ul>
+ * In addition to that, this class can be used to set some of the basic attributes 
+ * of the page including page language, title, description, writing direction 
+ * and canonical URL. Also, this class can be used to load a specific theme 
+ * and use it to change the look and feel of the web site.
  * @author Ibrahim <ibinshikh@hotmail.com>
  * @version 1.9
  */
@@ -79,7 +121,7 @@ class Page{
      */
     private $title;
     /**
-     * The name of the website that will be appended with the title of 
+     * The name of the web site that will be appended with the title of 
      * the page.
      * @var string 
      * @since 1.8
@@ -87,7 +129,7 @@ class Page{
     private $websiteName;
     /**
      * The character or string that is used to separate web page title 
-     * and website name.
+     * and web site name.
      * @var string
      * @since 1.8 
      */
@@ -131,8 +173,8 @@ class Page{
     }
     /**
      * Returns the canonical URL of the page.
-     * @return NULL|string The function will return the  canonical URL of the page 
-     * if set. If not, the function will return <b>NULL</b>.
+     * @return NULL|string The method will return the  canonical URL of the page 
+     * if set. If not, the method will return NULL.
      * @since 1.2
      */
     public function getCanonical() {
@@ -140,8 +182,10 @@ class Page{
     }
     /**
      * Sets or gets the canonical URL of the page.
-     * @param string $new [Optional] The new canonical URL.
-     * @return string The canonical URL of the page.
+     * @param string|NULL $new The new canonical URL. If NULL is given, the 
+     * method will not update the canonical URL.
+     * @return string|NULL The canonical URL of the page. If the canonical 
+     * is not set, the method will return NULL.
      * @since 1.9
      */
     public static function canonical($new=null){
@@ -171,7 +215,6 @@ class Page{
         $this->isDynamic = TRUE;
         $this->incAside = TRUE;
         $this->setWritingDir();
-        WebsiteFunctions::get()->getSession()->initSession(FALSE, TRUE);
         $this->setCanonical(Util::getRequestedURL());
         $this->document->setLanguage($this->getLang());
         $headNode = new HeadNode(
@@ -198,10 +241,10 @@ class Page{
         Logger::logFuncReturn(__METHOD__);
     }
     /**
-     * Sets or returns the name of page website.
-     * @param string $new [Optional] The new name to set. It must be not-empty 
+     * Sets or returns the name of page web site.
+     * @param string $new The new name to set. It must be not-empty 
      * string in order to update.
-     * @return string The name of page website. Default is 'My Website'.
+     * @return string The name of page web site. Default is 'My X Website'.
      * @since 1.9
      */
     public static function siteName($new=null) {
@@ -212,25 +255,27 @@ class Page{
         return $p->getWebsiteName();
     }
     /**
-     * Returns the name of the website.
-     * @return string The name of the website. If the name was not set 
-     * using the function <b>Page::setWebsiteName()</b>, the returned value will 
-     * be 'My Website'.
+     * Returns the name of the web site.
+     * @return string The name of the web site. If the name was not set 
+     * using the method Page::siteName(), the returned value will 
+     * be 'My X Website'.
      * @since 1.8
      */
     public function getWebsiteName() {
         return $this->websiteName;
     }
     /**
-     * Sets the name of the website.
-     * @param string $name The name of the website that will be appended with the title of 
-     * the page. It will be updated only if the given string is not empty. 
-     * Also note that if page document was created, 
-     * calling this function will set the value of the &lt;titlt&gt; node. 
-     * The format of the title is <b>PAGE_NAME TITLE_SEP WEBSITE_NAME</b>. 
+     * Sets the name of the web site.
+     * The name of the web site is used in setting the title of the page. 
+     * The format of the title is 'PAGE_NAME TITLE_SEP WEBSITE_NAME'. 
      * for example, if the page name is 'Home' and title separator is 
-     * '|' and the name of the website is 'Programming Academia'. The title 
+     * '|' and the name of the web site is 'Programming Academia'. The title 
      * of the page will be 'Home | Programming Academia'.
+     * The name will be updated only if the given string is not empty. 
+     * Also note that if page document was created, 
+     * calling this method will set the value of the &lt;titlt&gt; node.
+     * @param string $name The name of the web site that will be appended with the title of 
+     * the page. 
      * @since 1.8
      */
     public function setWebsiteName($name) {
@@ -240,10 +285,10 @@ class Page{
         }
     }
     /**
-     * Sets or returns the string that is used to separate website name from 
+     * Sets or returns the string that is used to separate web site name from 
      * the title of the page.
-     * @param string $new [Optional] The new title separator.
-     * @return string The string that is used to separate website name from 
+     * @param string $new The new title separator.
+     * @return string The string that is used to separate web site name from 
      * the title of the page.
      * @since 1.9
      */
@@ -256,10 +301,10 @@ class Page{
     }
     /**
      * Returns the character or string that is used to separate web page title 
-     * and website name.
+     * and web site name.
      * @return string The character or string that is used to separate web page title 
-     * and website name. If the separator was not set 
-     * using the function <b>Page::setTitleSep()</b>, the returned value will 
+     * and web site name. If the separator was not set 
+     * using the method <b>Page::setTitleSep()</b>, the returned value will 
      * be ' | '.
      * @since 1.8
      */
@@ -267,15 +312,17 @@ class Page{
         return $this->titleSep;
     }
     /**
-     * Sets the character or string that is used to separate web page title 
-     * @param string $str The new character or string that will be used to 
-     * separate page title and website name. It will be set only if it is not 
-     * empty string. Also note that if page document was created, 
-     * calling this function will set the value of the &lt;titlt&gt; node. 
-     * The format of the title is <b>PAGE_NAME TITLE_SEP WEBSITE_NAME</b>. 
+     * Sets the character or string that is used to separate web page title.
+     * The given character or string is used in setting the title of the page. 
+     * The format of the title is 'PAGE_NAME TITLE_SEP WEBSITE_NAME'. 
      * for example, if the page name is 'Home' and title separator is 
-     * '|' and the name of the website is 'Programming Academia'. The title 
+     * '|' and the name of the web site is 'Programming Academia'. The title 
      * of the page will be 'Home | Programming Academia'.
+     * The character be updated only if the given string is not empty. 
+     * Also note that if page document was created, 
+     * calling this method will set the value of the &lt;titlt&gt; node.
+     * @param string $str The new character or string that will be used to 
+     * separate page title and web site name.
      * @since 1.8
      */
     public function setTitleSep($str) {
@@ -295,8 +342,8 @@ class Page{
     }
     /**
      * Checks if the type of page will be dynamic or static.
-     * @return boolean The function will return <b>TRUE</b> if document 
-     * type is dynamic. Otherwise, the function will return <b>FALSE</b>.
+     * @return boolean The method will return TRUE if document 
+     * type is dynamic. Otherwise, the method will return FALSE.
      * @since 1.6
      */
     public function isDynamicDoc() {
@@ -307,8 +354,8 @@ class Page{
      * @param HTMLNode $node The node that will be inserted.
      * @param string $parentNodeId The ID of the node that the given node 
      * will be inserted to.
-     * @return boolean The function will return <b>TRUE</b> if the given node 
-     * was inserted. If it is not, the function will return <b>FALSE</b>.
+     * @return boolean The method will return TRUE if the given node 
+     * was inserted. If it is not, the method will return FALSE.
      * @since 1.9
      */
     public static function insert($node,$parentNodeId='main-content-area'){
@@ -323,8 +370,8 @@ class Page{
      * @param HTMLNode $node The node that will be inserted.
      * @param string $parentNodeId The ID of the node that the given node 
      * will be inserted to.
-     * @return boolean The function will return <b>TRUE</b> if the given node 
-     * was inserted. If it is not, the function will return <b>FALSE</b>.
+     * @return boolean The method will return TRUE if the given node 
+     * was inserted. If it is not, the method will return FALSE.
      * @since 1.6
      */
     public function insertNode($node,$parentNodeId='') {
@@ -376,8 +423,8 @@ class Page{
     }
     /**
      * Sets or gets the title of the page.
-     * @param string $new [Optional] The title of the page. Note that if page document was created, 
-     * calling this function will set the value of the &lt;titlt&gt; node. 
+     * @param string $new The title of the page. Note that if page document was created, 
+     * calling this method will set the value of the &lt;titlt&gt; node. 
      * The format of the title is <b>PAGE_NAME TITLE_SEP WEBSITE_NAME</b>. 
      * for example, if the page name is 'Home' and title separator is 
      * '|' and the name of the website is 'Programming Academia'. The title 
@@ -396,7 +443,7 @@ class Page{
      * Sets the title of the page.
      * @param string $val The title of the page. If <b>NULL</b> is given, 
      * the title will not updated. Also note that if page document was created, 
-     * calling this function will set the value of the &lt;titlt&gt; node. 
+     * calling this method will set the value of the &lt;titlt&gt; node. 
      * The format of the title is <b>PAGE_NAME TITLE_SEP WEBSITE_NAME</b>. 
      * for example, if the page name is 'Home' and title separator is 
      * '|' and the name of the website is 'Programming Academia'. The title 
@@ -429,7 +476,7 @@ class Page{
     /**
      * Returns the title of the page.
      * @return string|NULL The title of the page. If the title is not set, 
-     * the function will return <b>NULL</b>
+     * the method will return NULL.
      * @since 1.0
      */
     public function getTitle(){
@@ -437,7 +484,7 @@ class Page{
     }
     /**
      * Checks if the selected theme is loaded or not.
-     * @return boolean <b>TRUE</b> if loaded. <b>FALSE</b> if not loaded.
+     * @return boolean TRUE if loaded. FALSE if not loaded.
      * @since 1.1
      */
     public function isThemeLoaded(){
@@ -445,7 +492,7 @@ class Page{
     }
     /**
      * Sets or gets the description of the page.
-     * @param string $new [Optional] The description of the page.
+     * @param string $new The description of the page.
      * @since 1.9
      * @return string The description of the page.
      */
@@ -485,18 +532,18 @@ class Page{
     /**
      * Returns the description of the page.
      * @return string|NULL The title of the page. If the description is not set, 
-     * the function will return <b>NULL</b>
+     * the method will return NULL
      * @since 1.0
      */
     public function getDescription(){
         return $this->description;
     }
    /**
-    * Load the translation file based on the language code. The function uses 
+    * Load the translation file based on the language code. The method uses 
     * two checks to load the translation. If the page language is set using 
-    * the function Page::setLang(), then the language that will be loaded 
-    * will be based on the value returned by the function Page::getLang(). If 
-    * the language is not set, The function will throw an exception.
+    * the method Page::setLang(), then the language that will be loaded 
+    * will be based on the value returned by the method Page::getLang(). If 
+    * the language is not set, The method will throw an exception.
     * @since 1.0
     */
     public function usingLanguage(){
@@ -516,7 +563,7 @@ class Page{
      * @param string $new A two digit language code such as AR or EN. 
      * An exception will be thrown if the given language is not supported.
      * @return string|NULL Two digit language code. In case language is not set, the 
-     * function will return NULL
+     * method will return NULL
      * @see Page::setLang()
      * @throws Exception
      * @since 1.9
@@ -531,7 +578,7 @@ class Page{
     /**
      * Returns the language.
      * @return string|NULL Two digit language code. In case language is not set, the 
-     * function will return NULL
+     * method will return NULL
      * @since 1.0
      */
     public function getLang(){
@@ -539,22 +586,18 @@ class Page{
     }
     /**
      * Sets the display language of the page.
+     * The length of the given string must be 2 characters in order to set the 
+     * language code.
      * @param string $lang a two digit language code such as AR or EN.
-     * @return boolean True if the language was not set and its the first time to set. 
-     * if it was set before, the method will return false.
-     * @throws Exception If the language is not supported.
      * @since 1.0
-    */
+     */
     public function setLang($lang='EN'){
         $langU = strtoupper(trim($lang));
-        if(in_array($langU, SessionManager::SUPPORTED_LANGS)){
+        if(strlen($lang) == 2){
             $this->contentLang = $langU;
             if($this->document != NULL){
                 $this->document->setLanguage($langU);
             }
-        }
-        else{
-            throw new Exception('Unknown language code: '.$lang);
         }
     }
     /**
@@ -567,7 +610,7 @@ class Page{
     /**
      * Loads and returns translation based on page language code.
      * @return Language|NULL An object of type Language is returned 
-     * if the language is loaded. Other than that, the function will return 
+     * if the language is loaded. Other than that, the method will return 
      * NULL.
      * @since 1.9
      */
@@ -584,8 +627,8 @@ class Page{
      * Returns the language variables based on loaded translation.
      * @return Language|NULL an object of type 'Language' if language 
      * is loaded. If no language found, 'NULL' is returned. This 
-     * function should be called after calling the function 'Page::loadTranslation()' in 
-     * order for the function to return non-null value.
+     * method should be called after calling the method 'Page::loadTranslation()' in 
+     * order for the method to return non-null value.
      * @since 1.6
      */
     public function &getLanguage() {
@@ -598,11 +641,11 @@ class Page{
     }
     /**
      * Loads or returns page theme.
-     * @param string [Optional] $name The name of the theme which will be 
+     * @param string $name The name of the theme which will be 
      * loaded. If NULL is given, nothing will be loaded.
-     * @return Theme|NULL If a theme is already loaded, the function will 
+     * @return Theme|NULL If a theme is already loaded, the method will 
      * return the loaded theme contained in an object of type Theme. If no 
-     * theme is loaded, the function will return NULL.
+     * theme is loaded, the method will return NULL.
      * @see Page::usingTheme()
      * @since 1.9
      */
@@ -615,13 +658,13 @@ class Page{
     }
     /**
      * Loads a theme given its name.
-     * @param string $themeName [Optional] The name of the theme as specified by the 
+     * @param string $themeName The name of the theme as specified by the 
      * variable 'name' in theme definition. If the given name is 'NULL', the 
-     * function will load the default theme as specified by the function 
+     * method will load the default theme as specified by the method 
      * 'SiteConfig::getBaseThemeName()'. Note that once the theme is updated, 
      * the document content of the page will reset if it was set before calling this 
-     * function.
-     * @throws Exception The function will throw 
+     * method.
+     * @throws Exception The method will throw 
      * an exception if no theme was found which has the given name. Another case is 
      * when the file 'theme.php' of the theme is missing. 
      * Finally, an exception will be thrown if theme component is not found.
@@ -672,7 +715,7 @@ class Page{
      * Returns the directory at which CSS files of loaded theme exists.
      * @return string The directory at which CSS files of the theme exists 
      * (e.g. 'publish/my-theme/css' ). 
-     * If the theme is not loaded, the function will return empty string.
+     * If the theme is not loaded, the method will return empty string.
      * @since 1.9
      */
     public static function cssDir(){
@@ -682,7 +725,7 @@ class Page{
      * Returns the directory at which CSS files of the theme exists.
      * @return string The directory at which CSS files of the theme exists 
      * (e.g. 'publish/my-theme/css' ). 
-     * If the theme is not loaded, the function will return empty string.
+     * If the theme is not loaded, the method will return empty string.
      * @since 1.6
      */
     public function getThemeCSSDir() {
@@ -696,7 +739,7 @@ class Page{
      * Returns the directory at which image files of loaded theme exists.
      * @return string The directory at which image files of the theme exists 
      * (e.g. 'publish/my-theme/images' ). 
-     * If the theme is not loaded, the function will return empty string.
+     * If the theme is not loaded, the method will return empty string.
      * @since 1.9
      */
     public static function imagesDir(){
@@ -706,7 +749,7 @@ class Page{
      * Returns the directory at which image files of the theme exists.
      * @return string The directory at which image files of the theme exists 
      * (e.g. 'publish/my-theme/images' ). 
-     * If the theme is not loaded, the function will return empty string.
+     * If the theme is not loaded, the method will return empty string.
      * @since 1.6
      */
     public function getThemeImagesDir() {
@@ -720,7 +763,7 @@ class Page{
      * Returns the directory at which JavaScript files of the theme exists.
      * @return string The directory at which JavaScript files of the theme exists 
      * (e.g. 'publish/my-theme/js' ). 
-     * If the theme is not loaded, the function will return empty string.
+     * If the theme is not loaded, the method will return empty string.
      * @since 1.9
      */
     public static function jsDir(){
@@ -730,7 +773,7 @@ class Page{
      * Returns the directory at which JavaScript files of the theme exists.
      * @return string The directory at which JavaScript files of the theme exists 
      * (e.g. 'publish/my-theme/js' ). 
-     * If the theme is not loaded, the function will return empty string.
+     * If the theme is not loaded, the method will return empty string.
      * @since 1.6
      */
     public function getThemeJSDir() {
@@ -741,9 +784,9 @@ class Page{
         return '';
     }
     /**
-     * Returns an object of type <b>Theme</b> that contains loaded theme information.
-     * @return Theme|NULL An object of type <b>Theme</b> that contains theme information. If the theme 
-     * is not loaded, the function will return <b>NULL</b>.
+     * Returns an object of type 'Theme' that contains loaded theme information.
+     * @return Theme|NULL An object of type Theme that contains theme information. If the theme 
+     * is not loaded, the method will return NULL.
      * @since 1.6
      */
     public function getTheme() {
@@ -753,7 +796,7 @@ class Page{
      * Sets or gets page writing direction.
      * @param string $new 'ltr' or 'rtl'.
      * @return string|NULL If the writing direction was set, 
-     * the function will return it. If not, the function will return NULL.
+     * the method will return it. If not, the method will return NULL.
      * @since 1.9
      */
     public static function dir($new=null) {
@@ -767,7 +810,7 @@ class Page{
     /**
      * Returns the writing direction of the page.
      * @return string|NULL 'ltr' or 'rtl'. If the writing direction is not set, 
-     * the function will return <b>NULL</b>
+     * the method will return NULL.
      * @since 1.0
      */
     public function getWritingDir(){
@@ -775,13 +818,13 @@ class Page{
     }
     /**
      * Sets the writing direction of the page.
-     * @param string $dir <b>Page::DIR_LTR</b> or <b>Page::DIR_RTL</b>.
+     * @param string $dir Page::DIR_LTR or Page::DIR_RTL.
      * @return boolean True if the direction was not set and its the first time to set. 
      * if it was set before, the method will return false.
-     * @throws Exception If the writing direction is not <b>Page::DIR_LTR</b> or <b>Page::DIR_RTL</b>.
+     * @throws Exception If the writing direction is not Page::DIR_LTR or Page::DIR_RTL.
      * @since 1.0
      */
-    function setWritingDir($dir='ltr'){
+    public function setWritingDir($dir='ltr'){
         $dirL = strtolower($dir);
         if($dirL == Language::DIR_LTR || $dirL == Language::DIR_RTL){
             $this->contentDir = $dirL;
@@ -793,8 +836,8 @@ class Page{
     }
     /**
      * Sets the property that is used to check if page has a header section or not.
-     * @param boolean $bool <b>TRUE</b> to include the header section. <b>FALSE</b> if 
-     * not. <b>HAS BUG</b>
+     * @param boolean $bool TRUE to include the header section. FALSE if 
+     * not.
      * @since 1.2
      */
     public function setHasHeader($bool){
@@ -816,7 +859,12 @@ class Page{
             $this->incHeader = $bool;
         }
     }
-    
+    /**
+     * Sets the property that is used to check if page has an aside section or not.
+     * @param boolean $bool TRUE to include aside section. FALSE if 
+     * not.
+     * @since 1.2
+     */
     public function setHasAside($bool){
         if(gettype($bool) == 'boolean'){
             if($this->incAside == FALSE && $bool == TRUE){
@@ -834,8 +882,8 @@ class Page{
 
     /**
      * Sets the property that is used to check if page has a footer section or not.
-     * @param boolean $bool <b>TRUE</b> to include the footer section. <b>FALSE</b> if 
-     * not. <b>HAS BUG</b>
+     * @param boolean $bool TRUE to include the footer section. FALSE if 
+     * not.
      * @since 1.2
      */
     public function setHasFooter($bool){
@@ -854,10 +902,10 @@ class Page{
     }
     /**
      * Sets or checks if the page will have aside area or not.
-     * @param boolean|NULL $bool [Optional] If set to TRUE, the generated page 
+     * @param boolean|NULL $bool If set to TRUE, the generated page 
      * will have a 'div' element with ID = 'side-content-area'. If set to 
      * FALSE, the generated page will have no such element.
-     * @return boolean The function will return TRUE if the page will have 
+     * @return boolean The method will return TRUE if the page will have 
      * aside area.
      */
     public static function aside($bool=null) {
@@ -869,10 +917,10 @@ class Page{
     }
     /**
      * Sets or checks if the page will have footer area or not.
-     * @param boolean|NULL $bool [Optional] If set to TRUE, the generated page 
+     * @param boolean|NULL $bool If set to TRUE, the generated page 
      * will have a 'div' element with ID = 'page-footer'. If set to 
      * FALSE, the generated page will have no such element.
-     * @return boolean The function will return TRUE if the page will have 
+     * @return boolean The method will return TRUE if the page will have 
      * footer area.
      */
     public static function footer($bool=null) {
@@ -884,10 +932,10 @@ class Page{
     }
     /**
      * Sets or checks if the page will have header area or not.
-     * @param boolean|NULL $bool [Optional] If set to TRUE, the generated page 
+     * @param boolean|NULL $bool If set to TRUE, the generated page 
      * will have a 'div' element with ID = 'page-header'. If set to 
      * FALSE, the generated page will have no such element.
-     * @return boolean The function will return TRUE if the page will have 
+     * @return boolean The method will return TRUE if the page will have 
      * header area.
      */
     public static function header($bool=null) {
@@ -899,7 +947,7 @@ class Page{
     }
     /**
      * Checks if the page will have a footer section or not.
-     * @return boolean <b>TRUE</b> if the page has a footer section.
+     * @return boolean TRUE if the page has a footer section.
      * @since 1.2
      */
     public function hasFooter(){
@@ -907,7 +955,7 @@ class Page{
     }
     /**
      * Checks if the page will have a header section or not.
-     * @return boolean <b>TRUE</b> if the page has a header section.
+     * @return boolean TRUE if the page has a header section.
      * @since 1.2
      */
     public function hasHeader(){
@@ -915,7 +963,7 @@ class Page{
     }
     /**
      * Checks if the page will have an aside section or not.
-     * @return boolean <b>TRUE</b> if the page has an aside section.
+     * @return boolean TRUE if the page has an aside section.
      * @since 1.6
      */
     public function hasAside() {

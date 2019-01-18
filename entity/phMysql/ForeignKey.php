@@ -1,14 +1,37 @@
 <?php
+/**
+ * MIT License
+ *
+ * Copyright (c) 2019 Ibrahim BinAlshikh, phMysql library.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 namespace phMysql;
 /**
  * A class that represents a foreign key.
  *
- * @author Ibrahim <ibinshikh@hotmail.com>
+ * @author Ibrahim
  * @version 1.3
  */
 class ForeignKey {
     /**
-     * A constant that is returned by some functions to tell that the 
+     * A constant that is returned by some methods to tell that the 
      * name of the foreign key is invalid.
      * @var string 
      * @since 1.2
@@ -70,7 +93,7 @@ class ForeignKey {
      * @param string $name The name of the key. It must be a string and its not empty. 
      * Also it must not contain any spaces or any characters other than A-Z, a-z and 
      * underscore.
-     * @return boolean|string TRUE if the name of the key is set. The function will 
+     * @return boolean|string TRUE if the name of the key is set. The method will 
      * return the constant ForeignKey::INV_KEY_NAME in 
      * case if the given key name is invalid.
      * @since 1.1
@@ -83,7 +106,7 @@ class ForeignKey {
         return ForeignKey::INV_KEY_NAME;
     }
     /**
-     * A function that is used to validate the names of the key attributes (such as source column 
+     * A method that is used to validate the names of the key attributes (such as source column 
      * name or source table name).
      * @param string $name The string to validate. It must be a string and its not empty. 
      * Also it must not contain any spaces or any characters other than A-Z, a-z and 
@@ -226,7 +249,7 @@ class ForeignKey {
         return $this->onUpdateCondition;
     }
     /**
-     * Sets the value of the property <b>$onUpdateCondition</b>.
+     * Sets the value of the property $onUpdateCondition.
      * @param string $val A value from the array ForeignKey::CONDITIONS. 
      * If the given value is NULL, the condition will be set to NULL.
      * @since 1.0

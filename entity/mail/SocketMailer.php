@@ -1,9 +1,8 @@
 <?php
-
 /*
  * The MIT License
  *
- * Copyright 2018 Ibrahim.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,11 +40,13 @@ if(!defined('ROOT_DIR')){
         . '</body>'
         . '</html>');
 }
+use webfiori\entity\Logger;
+use webfiori\entity\File;
 /**
  * A class that can be used to send email messages using sockets.
  *
  * @author Ibrahim
- * @version 1.4.3
+ * @version 1.4.5
  */
 class SocketMailer {
     /**
@@ -244,7 +245,7 @@ class SocketMailer {
     }
     /**
      * Sets or gets the value of the property 'useTls'.
-     * @param boolean|NULL $bool [Optional] TRUE if the connection to the server will use TLS. 
+     * @param boolean|NULL $bool TRUE if the connection to the server will use TLS. 
      * FALSE if not. If NULL is given, the property will not updated. Default 
      * is NULL.
      * @return boolean $bool TRUE if the connection to the server will use TLS. 
@@ -271,7 +272,7 @@ class SocketMailer {
     }
     /**
      * Sets or gets the value of the property 'useSsl'.
-     * @param boolean|NULL $bool [Optional] TRUE if the connection to the server will use SSL. 
+     * @param boolean|NULL $bool TRUE if the connection to the server will use SSL. 
      * FALSE if not. If NULL is given, the property will not updated. Default 
      * is NULL.
      * @return boolean $bool TRUE if the connection to the server will use SSL. 
@@ -297,8 +298,8 @@ class SocketMailer {
         return $this->useSsl;
     }
     /**
-     * Checks if the user is logged in or not.
-     * @return boolean The function will return TRUE if the user is 
+     * Checks if the user is logged in to mail server or not.
+     * @return boolean The method will return TRUE if the user is 
      * logged in to the mail server. FALSE if not.
      * @since 1.2
      */
@@ -306,18 +307,20 @@ class SocketMailer {
         return $this->isLoggedIn;
     }
     /**
-     * Authenticate the user given email server username and password. Authentication 
-     * must be done after connecting to the server.
-     * @param string $username The email server username.
-     * @param string $password The user password.
-     * @return boolean The function will return TRUE if the user is 
-     * logged in to the mail server. FALSE if not. The user might not be logged 
+     * Authenticate the user given email server username and password. 
+     * Note that Authentication 
+     * must be done after connecting to the server. 
+     * The user might not be logged 
      * in in 3 cases:
      * <ul>
      * <li>If the mailer is not connected to the email server.</li>
      * <li>If the sender address is not set.</li>
      * <li>If the given username and password are incorrect.</li>
      * </ul>
+     * @param string $username The email server username.
+     * @param string $password The user password.
+     * @return boolean The method will return TRUE if the user is 
+     * logged in to the mail server. FALSE if not.
      * @since 1.2
      */
     public function login($username,$password) {
@@ -421,9 +424,9 @@ class SocketMailer {
      * Adds new receiver.
      * @param string $name The name of the email receiver (such as 'Ibrahim').
      * @param string $address The email address of the receiver.
-     * @param boolean $isCC [Optional] If set to true, the receiver will receive 
+     * @param boolean $isCC If set to true, the receiver will receive 
      * a carbon copy of the message.
-     * @param boolean $isBcc [Optional] If set to true, the receiver will receive 
+     * @param boolean $isBcc If set to true, the receiver will receive 
      * a blind carbon copy of the message.
      * @since 1.0
      */
@@ -486,7 +489,7 @@ class SocketMailer {
         Logger::log('Checking if in writing mode.');
         if($this->isInWritingMode()){
             Logger::log('In writing mode.');
-            $this->sendC($msg);
+            $this->sendC(trim($msg,"\t\n\r\0\x0B"));
             Logger::log('Checking if message must be sent.');
             if($sendMessage === TRUE){
                 Logger::log('Must be sent. Appending attachments (if any).');
@@ -533,16 +536,16 @@ class SocketMailer {
                 $this->sendC('Content-Transfer-Encoding: quoted-printable');
                 $this->sendC('Importance: '.$importanceHeaderVal);
                 $this->sendC('From: "'.$this->getSenderName().'" <'.$this->getSenderAddress().'>');
-                $this->sendC('To: '.$this->getTo());
-                $this->sendC('CC: '.$this->getCC());
-                $this->sendC('BCC: '.$this->getBcc());
+                $this->sendC('To: '.$this->getReceiversStr());
+                $this->sendC('CC: '.$this->getCCStr());
+                $this->sendC('BCC: '.$this->getBCCStr());
                 $this->sendC('Date:'. date('r (T)'));
                 $this->sendC('Subject:'. $this->subject);
                 $this->sendC('MIME-Version: 1.0');
                 $this->sendC('Content-Type: multipart/mixed; boundary="'.$this->boundry.'"'.self::NL);
                 $this->sendC('--'.$this->boundry);
                 $this->sendC('Content-Type: text/html; charset="UTF-8"'.self::NL);
-                $this->sendC($msg);
+                $this->sendC(trim($msg,"\t\n\r\0\x0B"));
                 Logger::log('Checking if message must be sent.');
                 if($sendMessage === TRUE){
                     Logger::log('Must be sent. Appending attachments (if any).');
@@ -562,44 +565,72 @@ class SocketMailer {
         Logger::logFuncReturn(__METHOD__);
     }
     /**
-     * A function that is used to include email attachments.
+     * A method that is used to include email attachments.
      * @since 1.3
      */
     private function _appendAttachments(){
         Logger::logFuncCall(__METHOD__);
         if(count($this->attachments) != 0){
             foreach ($this->attachments as $file){
-                if($file->read()){
-                    $fileSize = $file->getSize();
-                    $content = $file->getRawData();
-                    $contentChunk = chunk_split(base64_encode($content));
-                    $this->sendC('--'.$this->boundry);
-                    $this->sendC('Content-Type: '.$file->getFileMIMEType().'; name="'.$file->getName().'"');
-                    $this->sendC('Content-Transfer-Encoding: base64');
-                    $this->sendC('Content-Disposition: attachment; filename="'.$file->getName().'"'.self::NL);
-                    $this->sendC($contentChunk);
+                if($file->getRawData() === NULL){
+                    $file->read();
                 }
-                else{
-                    $content = $file->getRawData();
-                    $fileSize = strlen($content);
-                    $contentChunk = chunk_split(base64_encode($content));
-                    $this->sendC('--'.$this->boundry);
-                    $this->sendC('Content-Type: '.$file->getFileMIMEType().'; name="'.$file->getName().'"');
-                    $this->sendC('Content-Transfer-Encoding: base64');
-                    $this->sendC('Content-Disposition: attachment; filename="'.$file->getName().'"'.self::NL);
-                    $this->sendC($contentChunk);
-                }
+                $content = $file->getRawData();
+                $contentChunk = chunk_split(base64_encode($content));
+                $this->sendC('--'.$this->boundry);
+                $this->sendC('Content-Type: '.$file->getFileMIMEType().'; name="'.$file->getName().'"');
+                $this->sendC('Content-Transfer-Encoding: base64');
+                $this->sendC('Content-Disposition: attachment; filename="'.$file->getName().'"'.self::NL);
+                $this->sendC($contentChunk);
             }
             $this->sendC('--'.$this->boundry.'--');
         }
         Logger::logFuncReturn(__METHOD__);
     }
     /**
-     * 
-     * @return string
+     * Returns an associative array that contains the names and the addresses 
+     * of message receivers.
+     * The indices of the array will act as the addresses of the receivers and 
+     * the value of each index will contain the name of the receiver. The array 
+     * will only contain the addresses of the people who will receive an original 
+     * copy of the message.
+     * @return array An array that contains receivers information.
+     * @since 1.4.4
+     */
+    public function getReceivers() {
+        return $this->receivers;
+    }
+    /**
+     * Returns an associative array that contains the names and the addresses 
+     * of people who will receive a blind carbon copy of the message.
+     * The indices of the array will act as the addresses of the receivers and 
+     * the value of each index will contain the name of the receiver.
+     * @return array An array that contains receivers information.
+     * @since 1.4.4
+     */
+    public function getBCC(){
+        return $this->bcc;
+    }
+    /**
+     * Returns an associative array that contains the names and the addresses 
+     * of people who will receive a carbon copy of the message.
+     * The indices of the array will act as the addresses of the receivers and 
+     * the value of each index will contain the name of the receiver.
+     * @return array An array that contains receivers information.
+     * @since 1.4.4
+     */
+    public function getCC(){
+        return $this->cc;
+    }
+    /**
+     * Returns a string that contains the names and the addresses 
+     * of people who will receive a blind carbon copy of the message.
+     * The format of the string will be as follows:
+     * <p>NAME_1 &lt;ADDRESS_1&gt;, NAME_2 &lt;ADDRESS_2&gt; ...</p>
+     * @return string A string that contains receivers information.
      * @since 1.0
      */
-    private function getBcc(){
+    public function getBCCStr(){
         $arr = array();
         foreach ($this->bcc as $address => $name){
             array_push($arr, $name.' <'.$address.'>');
@@ -607,11 +638,14 @@ class SocketMailer {
         return implode(',', $arr);
     }
     /**
-     * 
-     * @return string
+     * Returns a string that contains the names and the addresses 
+     * of people who will receive a carbon copy of the message.
+     * The format of the string will be as follows:
+     * <p>NAME_1 &lt;ADDRESS_1&gt;, NAME_2 &lt;ADDRESS_2&gt; ...</p>
+     * @return string A string that contains receivers information.
      * @since 1.0
      */
-    private function getCC(){
+    public function getCCStr(){
         $arr = array();
         foreach ($this->cc as $address => $name){
             array_push($arr, $name.' <'.$address.'>');
@@ -619,11 +653,14 @@ class SocketMailer {
         return implode(',', $arr);
     }
     /**
-     * 
-     * @return string
+     * Returns a string that contains the names and the addresses 
+     * of people who will receive an original copy of the message.
+     * The format of the string will be as follows:
+     * <p>NAME_1 &lt;ADDRESS_1&gt;, NAME_2 &lt;ADDRESS_2&gt; ...</p>
+     * @return string A string that contains receivers information.
      * @since 1.0
      */
-    private function getTo(){
+    public function getReceiversStr(){
         $arr = array();
         foreach ($this->receivers as $address => $name){
             array_push($arr, $name.' <'.$address.'>');
@@ -657,8 +694,9 @@ class SocketMailer {
         Logger::logFuncReturn(__METHOD__);
     }
     /**
-     * 
-     * @return int
+     * Returns the time at which the connection will timeout if no response 
+     * was received in minutes.
+     * @return int Timeout time in minutes.
      * @since 1.0
      */
     public function getTimeout(){
@@ -679,8 +717,10 @@ class SocketMailer {
     }
     /**
      * Sends a command to the mail server.
-     * @param type $command
-     * @return boolean
+     * @param string $command Any SMTP command.
+     * @return boolean The method will return always TRUE if the command was 
+     * sent. The only case that the method will return FALSE is when it is not 
+     * connected to the server.
      * @since 1.0
      */
     public function sendC($command){
@@ -699,7 +739,7 @@ class SocketMailer {
                 Logger::log('Sending the command \''.$command.'\'.');
                 fwrite($this->conn, $command.self::NL);
                 $response = trim($this->read());
-                Logger::log('Server response: '.$response);
+                Logger::log('Server response: \''.$response.'\'.');
                 $this->lastResponse = $response;
                 Logger::log('Checking if the command is \'DATA\'.');
                 if($command == 'DATA'){
@@ -721,7 +761,7 @@ class SocketMailer {
         Logger::logFuncReturn(__METHOD__);
     }
     /**
-     * 
+     * Read server response after sending a command to the server.
      * @return string
      * @since 1.0
      */
@@ -742,9 +782,11 @@ class SocketMailer {
     }
     /**
      * Connect to the mail server.
+     * Before calling this method, the developer must make sure that he set 
+     * connection information correctly (server address and port number).
      * @return boolean TRUE if the connection established or already 
      * connected. FALSE if not. Once the connection is established, the 
-     * function will send the command 'EHLO' to the server. 
+     * method will send the command 'EHLO' to the server. 
      * @since 1.0
      */
     public function connect() {

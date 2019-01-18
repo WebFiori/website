@@ -1,9 +1,8 @@
 <?php
-
 /*
  * The MIT License
  *
- * Copyright 2018 ibrah.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +23,23 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity;
+if(!defined('ROOT_DIR')){
+    header("HTTP/1.1 403 Forbidden");
+    die(''
+        . '<!DOCTYPE html>'
+        . '<html>'
+        . '<head>'
+        . '<title>Forbidden</title>'
+        . '</head>'
+        . '<body>'
+        . '<h1>403 - Forbidden</h1>'
+        . '<hr>'
+        . '<p>'
+        . 'Direct access not allowed.'
+        . '</p>'
+        . '</body>'
+        . '</html>');
+}
 use phMysql\MySQLLink;
 /**
  * A factory class that is used to create connections to different types of 
@@ -75,7 +91,7 @@ class DBConnectionFactory {
     const DB_CONNECTION_ERR = 'unable_to_connect_to_db';
     /**
      * Create a link to MySQL database.
-     * This function uses the class DatabaseLink which in turns uses mysqli. 
+     * This method uses the class DatabaseLink which in turns uses mysqli. 
      * This means mysqli must be installed first.
      * @param array $connectionParams An associative array that contains 
      * database connection parameters. The indices are: 
@@ -87,7 +103,7 @@ class DBConnectionFactory {
      * <li><b>'db-name'</b>: The name of the database (Schema name).</li>
      * </ul>
      * @return array|DatabaseLink If the connection to the database was 
-     * established, the function will return an instance of 'DatabaseLink'. 
+     * established, the method will return an instance of 'DatabaseLink'. 
      * If something went wrong while attempting to connect, an associative 
      * array is returned which contains error details. The array has two 
      * indices: 

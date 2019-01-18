@@ -1,9 +1,8 @@
 <?php
-
 /*
  * The MIT License
  *
- * Copyright 2018 ibrah.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,9 +23,27 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity\router;
+if(!defined('ROOT_DIR')){
+    header("HTTP/1.1 403 Forbidden");
+    die(''
+        . '<!DOCTYPE html>'
+        . '<html>'
+        . '<head>'
+        . '<title>Forbidden</title>'
+        . '</head>'
+        . '<body>'
+        . '<h1>403 - Forbidden</h1>'
+        . '<hr>'
+        . '<p>'
+        . 'Direct access not allowed.'
+        . '</p>'
+        . '</body>'
+        . '</html>');
+}
 /**
- * A class that only has a function to create API routes.
- *
+ * A class that only has one method to initiate some of system routes.
+ * The class is meant to only initiate the routes which uses the method 
+ * Router::api().
  * @author Ibrahim
  * @version 1.0
  */

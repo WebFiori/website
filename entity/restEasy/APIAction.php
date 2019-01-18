@@ -3,7 +3,7 @@
 /* 
  * The MIT License
  *
- * Copyright 2018 Ibrahim BinAlshikh.
+ * Copyright 2019 Ibrahim BinAlshikh, restEasy library.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -142,7 +142,7 @@ class APIAction implements JsonI{
     /**
      * Returns the description of the action.
      * @return string|NULL The description of the action. If the description is 
-     * not set, the function will return NULL.
+     * not set, the method will return NULL.
      * @since 1.2
      */
     public final function getDescription() {
@@ -150,8 +150,8 @@ class APIAction implements JsonI{
     }
     /**
      * Sets the version number at which the action was added to the API.
-     * This function is called automatically when an action is added to any object of 
-     * type WebAPI. The developer does not have to use this function.
+     * This method is called automatically when an action is added to any object of 
+     * type WebAPI. The developer does not have to use this method.
      * @param string The version number at which the action was added to the API.
      * @since 1.2
      */
@@ -175,17 +175,17 @@ class APIAction implements JsonI{
      */
     public function addParameter($param){
         if($param instanceof RequestParameter){
-            array_push($this->parameters, $param);
+            $this->parameters[] = $param;
         }
     }
     /**
      * Adds new action request method.
-     * The value that will be passed to this function can be any string 
+     * The value that will be passed to this method can be any string 
      * that represents HTTP request method (e.g. 'get', 'post', 'options' ...). It 
      * can be in upper case or lower case.
      * @param string $method The request method.
      * @return boolean TRUE in case the request method is added. If the given 
-     * request method is already added or the method is unknown, the function 
+     * request method is already added or the method is unknown, the method 
      * will return FALSE.
      * @since 1.1
      */
@@ -193,7 +193,7 @@ class APIAction implements JsonI{
         $uMethod = strtoupper($method);
         if(in_array($uMethod, self::METHODS)){
             if(!in_array($uMethod, $this->reqMethods)){
-                array_push($this->reqMethods, $uMethod);
+                $this->reqMethods[] = $uMethod;
                 return TRUE;
             }
         }
@@ -201,7 +201,7 @@ class APIAction implements JsonI{
     }
     /**
      * Returns an array that contains all action request methods.
-     * Request methods can be added using the function APIAction::addRequestMethod().
+     * Request methods can be added using the method APIAction::addRequestMethod().
      * @return array An array that contains all action request methods.
      * @see APIAction::addRequestMethod($method)
      * @since 1.1
@@ -214,8 +214,8 @@ class APIAction implements JsonI{
      * Removes a request method from the previously added ones. 
      * @param string $method The request method (e.g. 'get', 'post', 'options' ...). It 
      * can be in upper case or lower case.
-     * @return string|NULL The function will return the removed request method. 
-     * In case nothing has changed, the function will return NULL.
+     * @return string|NULL The method will return the removed request method. 
+     * In case nothing has changed, the method will return NULL.
      * @since 1.1
      */
     public function removeRequestMethod($method){
@@ -240,7 +240,7 @@ class APIAction implements JsonI{
      * <li>It can have the character '-' and the character '_'.</li>
      * </ul>
      * @param string $name The name of the action.
-     * @return boolean If the given name is valid, the function will return 
+     * @return boolean If the given name is valid, the method will return 
      * TRUE once the name is set. FALSE is returned if the given 
      * name is invalid.
      * @since 1.0
@@ -327,6 +327,5 @@ class APIAction implements JsonI{
         $json->add('responses', $this->getResponsesDescriptions());
         return $json;
     }
-
 }
 

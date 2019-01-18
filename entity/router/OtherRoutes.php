@@ -2,7 +2,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Ibrahim, JsonX library.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace jsonx;
+namespace webfiori\entity\router;
+if(!defined('ROOT_DIR')){
+    header("HTTP/1.1 403 Forbidden");
+    die(''
+        . '<!DOCTYPE html>'
+        . '<html>'
+        . '<head>'
+        . '<title>Forbidden</title>'
+        . '</head>'
+        . '<body>'
+        . '<h1>403 - Forbidden</h1>'
+        . '<hr>'
+        . '<p>'
+        . 'Direct access not allowed.'
+        . '</p>'
+        . '</body>'
+        . '</html>');
+}
 /**
- * An interface for the objects that can be added to an instance of JsonX.
- * @author Ibrahim 
+ * A class that only has one method to initiate some of system routes.
+ * The class is meant to only initiate the routes which uses the method 
+ * Router::other().
+ * @author Ibrahim
  * @version 1.0
- * @see JsonX
  */
-interface JsonI {
+class OtherRoutes {
     /**
-     * Returns an object of type JsonX.
-     * This method can be implemented by any class that will be added  
-     * to any JsonX instance. It is used to customize the generated 
-     * JSON string.
-     * @return JsonX An instance of JsonX.
+     * Create all other routes. Include your own here.
      * @since 1.0
      */
-    public function toJSON();
+    public static function create(){
+        //Router::other('my-custom/view-something', 'my-folder/file.php');
+    }
 }

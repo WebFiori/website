@@ -1,9 +1,8 @@
 <?php
-
 /*
  * The MIT License
  *
- * Copyright 2018 Ibrahim.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -107,17 +106,27 @@ class Language {
     public static function &loadTranslation($langCode='EN'){
         $uLangCode = strtoupper($langCode);
         $langClassName = 'webfiori\entity\langs\Language'.$uLangCode;
-        $class = new $langClassName();
-        if($class instanceof Language){
-            if(isset(self::$loadedLangs[$uLangCode])){
-                return self::$loadedLangs[$uLangCode];
+        if(class_exists($langClassName)){
+            if(!isset(self::$loadedLangs[$langCode])){
+                $class = new $langClassName();
+                if($class instanceof Language){
+                    if(isset(self::$loadedLangs[$uLangCode])){
+                        return self::$loadedLangs[$uLangCode];
+                    }
+                    else{
+                        throw new Exception('The translation file was found. But no object of type \'Language\' is stored.');
+                    }
+                }
+                else{
+                    throw new Exception('A language class for the language \''.$langCode.'\' was found. But it is not a sub class of \'Language\'.');
+                }
             }
             else{
-                throw new Exception('The translation file was found. But no object of type \'Language\' is stored.');
+                return self::$loadedLangs[$uLangCode];
             }
         }
         else{
-            throw new Exception('A language class for the language \''.$langCode.'\' was found. But it is not a sub class of \'Language\'.');
+            throw new Exception('No language class was found for the language \''.$langCode.'\'.');
         }
     }
     /**
@@ -133,10 +142,10 @@ class Language {
     }
     /**
      * Creates new instance of the class.
-     * @param string $dir [Optional] 'ltr' or 'rtl'. Default is 'ltr'.
-     * @param string $code [Optional] Language code (such as 'AR'). Default is 'XX'
-     * @param array $initials [Optional] An initial array of directories.
-     * @param boolean $addtoLoadedAfterCreate [Optional] If set to TRUE, the language object that 
+     * @param string $dir 'ltr' or 'rtl'. Default is 'ltr'.
+     * @param string $code Language code (such as 'AR'). Default is 'XX'
+     * @param array $initials An initial array of directories.
+     * @param boolean $addtoLoadedAfterCreate If set to TRUE, the language object that 
      * will be created will be added to the set of loaded languages. Default is TRUE.
      * @since 1.0
      */

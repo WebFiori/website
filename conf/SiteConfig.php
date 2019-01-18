@@ -1,5 +1,29 @@
 <?php
-namespace webfiori;
+/*
+ * The MIT License
+ *
+ * Copyright 2019 Ibrahim, WebFiori Framework.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+namespace webfiori\conf;
 if(!defined('ROOT_DIR')){
     header("HTTP/1.1 403 Forbidden");
     die(''
@@ -17,6 +41,21 @@ if(!defined('ROOT_DIR')){
         . '</body>'
         . '</html>');
 }
+use webfiori\entity\Util;
+/** 
+ * Website configuration class.
+ * This class is used to control the following settings:
+ * <ul>
+ * <li>The base URL of the website.</li>
+ * <li>The primary language of the website.</li>
+ * <li>The name of the website in different languages.</li>
+ * <li>The general description of the website in different languages.</li>
+ * <li>The character that is used to separate the name of the website from page title.</li>
+ * <li>The theme of the website.</li>
+ * <li>Admin theme of the website (if uses one).</li>
+ * <li>The home page of the website.</li>
+ * </ul>
+ */
 class SiteConfig{
     /**
      * An array which contains all website names in different languages.
@@ -91,12 +130,12 @@ class SiteConfig{
     private function __construct() {
         $this->configVision = '1.2.1';
         $this->webSiteNames = array('AR'=>'ويب فيوري','EN'=>'WebFiori Framework',);
-        $this->baseUrl = entity\Util::getBaseURL();
+        $this->baseUrl = Util::getBaseURL();
         $this->titleSep = ' | ';
         $this->primaryLang = 'EN';
         $this->baseThemeName = 'Greeny By Ibrahim Ali';
         $this->adminThemeName = 'Greeny By Ibrahim Ali';
-        $this->homePage = $this->baseUrl.'docs/webfiori/WebFiori';
+        $this->homePage = $this->baseUrl;
         $this->descriptions = array('AR'=>'','EN'=>'',);
     }
     
@@ -153,7 +192,7 @@ class SiteConfig{
     }
     /**
      * Returns the base URL that is used to fetch resources.
-     * The return value of this function is usually used by the tag 'base' 
+     * The return value of this method is usually used by the tag 'base' 
      * of web site pages.
      * @return string the base URL.
      * @since 1.0
@@ -181,7 +220,7 @@ class SiteConfig{
     }
     /**
      * Returns the character (or string) that is used to separate page title from website name.
-     * @return string A string such as ' - ' or ' | '. Note that the function 
+     * @return string A string such as ' - ' or ' | '. Note that the method 
      * will add the two spaces by default.
      * @since 1.0
      */

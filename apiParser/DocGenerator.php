@@ -79,7 +79,6 @@ class DocGenerator {
                             $options['site-name'] : 'Docs';
                     $this->createRoutesFile($options['output-to']);
                     foreach ($this->apiReadersArr as $reader){
-                        Util::print_r($reader->getParsedInfo());
                         Page::lang('EN');
                         Page::dir('ltr');
                         $theme = Page::theme($options['theme']);

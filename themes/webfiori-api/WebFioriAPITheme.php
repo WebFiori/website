@@ -8,12 +8,9 @@ use phpStructs\html\HeadNode;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
-use webfiori\SiteConfig;
-use webfiori\Config;
 use webfiori\apiParser\APITheme;
 use webfiori\apiParser\NameSpaceAPI;
 use phpStructs\html\Label;
-use webfiori\entity\Util;
 
 class WebFioriAPITheme extends APITheme{
     public function __construct() {
@@ -40,7 +37,7 @@ class WebFioriAPITheme extends APITheme{
             }
         });
         $this->setAfterLoaded(function(){
-            Page::lang(WebsiteFunctions::get()->getSession()->getLang(TRUE));
+            Page::lang('EN');
             Page::document()->getChildByID('main-content-area')->setClassName('pa-'.Page::dir().'-col-10');
             Page::document()->getChildByID('side-content-area')->setClassName('pa-'.Page::dir().'-col-2');
             Page::document()->getChildByID('page-body')->setClassName('pa-row');
@@ -59,12 +56,12 @@ class WebFioriAPITheme extends APITheme{
             $mainMenu->addChild($item1);
 
             $item2 = new ListItem();
-            $link2 = new LinkNode(SiteConfig::getBaseURL().'docs/webfiori', $translation->get('menus/main-menu/menu-item-2'));
+            $link2 = new LinkNode($this->getBaseURL().'docs/webfiori', $translation->get('menus/main-menu/menu-item-2'));
             $item2->addChild($link2);
             $mainMenu->addChild($item2);
 
             $item3 = new ListItem();
-            $link3 = new LinkNode(SiteConfig::getBaseURL().'learn', $translation->get('menus/main-menu/menu-item-3'));
+            $link3 = new LinkNode($this->getBaseURL().'learn', $translation->get('menus/main-menu/menu-item-3'));
             $item3->addChild($link3);
             $mainMenu->addChild($item3);
 
@@ -164,14 +161,14 @@ class WebFioriAPITheme extends APITheme{
         $div = new HTMLNode('div');
         $div->setAttribute('class', 'pa-ltr-col-twelve');
         $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
-                . 'target="_blank">WebFiori Framework</a> v'.Config::get()->getVersion().' ('.Config::get()->getVersionType().')</b>');
+                . 'target="_blank">WebFiori Framework</a> v'.WebFiori::getConfig()->getVersion().' ('.WebFiori::getConfig()->getVersionType().')</b>');
         $node->addChild($div);
         return $node;
     }
 
     public function getHeadNode() {
         $headTag = new HeadNode();
-        $headTag->setBase(SiteConfig::get()->getBaseURL());
+        $headTag->setBase(WebFiori::getSiteConfig()->getBaseURL());
         $headTag->addLink('icon', Page::imagesDir().'/favicon.png');
         $js = new HTMLNode('script');
         $js->setAttribute('async', '');
@@ -204,12 +201,12 @@ class WebFioriAPITheme extends APITheme{
         $img->setClassName('pa-'.Page::dir().'-col-1-np-nm');
         $img->setID('logo');
         $img->setWritingDir(Page::dir());
-        $link = new LinkNode(SiteConfig::get()->getHomePage(), '');
+        $link = new LinkNode(WebFiori::getSiteConfig()->getHomePage(), '');
         $link->addChild($img);
         $headerSec->addChild($link);
-        $langCode = WebsiteFunctions::get()->getSession()->getLang(TRUE);
+        $langCode = 'EN';
         $p = new PNode();
-        $siteNames = SiteConfig::get()->getWebsiteNames();
+        $siteNames = WebFiori::getSiteConfig()->getWebsiteNames();
         if(isset($siteNames[$langCode])){
             $p->addText('WebFiori Framework APIs', array('bold'=>TRUE));
         }

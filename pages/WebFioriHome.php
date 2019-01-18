@@ -11,8 +11,9 @@ use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
-use \phpStructs\html\UnorderedList;
+use phpStructs\html\UnorderedList;
 use phpStructs\html\ListItem;
+use webfiori\WebFiori;
 /**
  * Description of WebFioriHome
  *
@@ -46,7 +47,7 @@ class WebFioriHome extends WebFioriPage{
         $hNode->addTextNode('Downloading The Framework');
         $sec->addChild($hNode);
         $parag1 = new PNode();
-        $parag1->addText('Please go to <a href="'.\webfiori\SiteConfig::getBaseURL().'download">downloads page</a> to check the available '
+        $parag1->addText('Please go to <a href="'.WebFiori::getSiteConfig()->getBaseURL().'download">downloads page</a> to check the available '
                 . 'download options.');
         $sec->addChild($parag1);
         Page::insert($sec);

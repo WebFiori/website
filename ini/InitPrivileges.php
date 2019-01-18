@@ -2,7 +2,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 Ibrahim, JsonX library.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,21 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace jsonx;
+namespace webfiori\ini;
+use webfiori\entity\Access;
 /**
- * An interface for the objects that can be added to an instance of JsonX.
- * @author Ibrahim 
+ * A class that has one method which is used to initialize privileges.
+ * 
+ * @author Ibrahim
  * @version 1.0
- * @see JsonX
  */
-interface JsonI {
+class InitPrivileges {
     /**
-     * Returns an object of type JsonX.
-     * This method can be implemented by any class that will be added  
-     * to any JsonX instance. It is used to customize the generated 
-     * JSON string.
-     * @return JsonX An instance of JsonX.
+     * Initialize user groups and privileges.
+     * The developer can modify the body of this method to create user groups 
+     * and assign privileges to each group. To create new group, use the 
+     * method Access::newGroup(). To create a privilege in a group, use the 
+     * method Access::newPrivilege().
      * @since 1.0
      */
-    public function toJSON();
+    public static function init() {
+        //Access::newGroup('MY_GROUP');
+        //Access::newPrivilege('MY_GROUP', 'MY_PR');
+    }
 }

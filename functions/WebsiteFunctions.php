@@ -1,9 +1,8 @@
 <?php
-
 /*
  * The MIT License
  *
- * Copyright 2018 Ibrahim.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,11 +41,10 @@ if(!defined('ROOT_DIR')){
         . '</html>');
 }
 use webfiori\entity\Logger;
-use webfiori\WebFiori;
 use webfiori\entity\FileHandler;
-use SiteConfig;
+use webfiori\conf\SiteConfig;
 /**
- * A class that can be used to modify basic settings of the website and 
+ * A class that can be used to modify basic settings of the web site and 
  * save them to the file 'SiteConfig.php'
  *
  * @author Ibrahim
@@ -115,11 +113,11 @@ class WebsiteFunctions extends Functions{
     }
     /**
      * Creates new instance of the class.
-     * It is not recommended to use this function. Instead, 
+     * It is not recommended to use this method. Instead, 
      * use WebsiteFunctions::get().
      */
     public function __construct() {
-        parent::__construct(WebFiori::MAIN_SESSION_NAME);
+        parent::__construct();
     }
     /**
      * Creates the file 'SiteConfig.php' if it does not exist.
@@ -127,7 +125,7 @@ class WebsiteFunctions extends Functions{
      */
     public function createSiteConfigFile() {
         Logger::logFuncCall(__METHOD__);
-        if(!class_exists('webfiori\SiteConfig')){
+        if(!class_exists('webfiori\conf\SiteConfig')){
             Logger::log('Creating Configuration File \'SiteConfig.php\'');
             $initCfg = $this->getSiteConfigVars();
             $this->writeSiteConfig($initCfg);
@@ -203,7 +201,7 @@ class WebsiteFunctions extends Functions{
      */
     public function getSiteConfigVars(){
         $cfgArr = WebsiteFunctions::INITIAL_WEBSITE_CONFIG_VARS;
-        if(class_exists('webfiori\SiteConfig')){
+        if(class_exists('webfiori\conf\SiteConfig')){
             $SC = SiteConfig::get();
             $cfgArr['website-names'] = $SC->getWebsiteNames();
             $cfgArr['base-url'] = $SC->getBaseURL();
@@ -217,7 +215,7 @@ class WebsiteFunctions extends Functions{
         return $cfgArr;
     }
     /**
-     * A function to save changes to web site configuration file.
+     * A method to save changes to web site configuration file.
      * @param array $configArr An array that contains system configuration 
      * variables.
      * @since 1.0
@@ -234,9 +232,34 @@ class WebsiteFunctions extends Functions{
                 Logger::log($k.' => '.$v, 'debug');
             }
         }
-        $fh = new FileHandler(ROOT_DIR.'/entity/SiteConfig.php');
+        $fh = new FileHandler(ROOT_DIR.'/conf/SiteConfig.php');
         $fh->write('<?php', TRUE, TRUE);
-        $fh->write('namespace webfiori;',TRUE,TRUE);
+        $fh->write('/*
+ * The MIT License
+ *
+ * Copyright 2019 Ibrahim, WebFiori Framework.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+ 
+');
+        $fh->write('namespace webfiori\conf;',TRUE,TRUE);
         $fh->write('if(!defined(\'ROOT_DIR\')){
     header("HTTP/1.1 403 Forbidden");
     die(\'\'
@@ -254,6 +277,21 @@ class WebsiteFunctions extends Functions{
         . \'</body>\'
         . \'</html>\');
 }', TRUE, TRUE);
+        $fh->write('use webfiori\entity\Util;', TRUE, TRUE);
+        $fh->write('/** 
+ * Website configuration class.
+ * This class is used to control the following settings:
+ * <ul>
+ * <li>The base URL of the website.</li>
+ * <li>The primary language of the website.</li>
+ * <li>The name of the website in different languages.</li>
+ * <li>The general description of the website in different languages.</li>
+ * <li>The character that is used to separate the name of the website from page title.</li>
+ * <li>The theme of the website.</li>
+ * <li>Admin theme of the website (if uses one).</li>
+ * <li>The home page of the website.</li>
+ * </ul>
+ */', TRUE, TRUE);
         $fh->write('class SiteConfig{', TRUE, TRUE);
         $fh->addTab();
         $fh->write('/**
@@ -327,7 +365,6 @@ class WebsiteFunctions extends Functions{
         return self::$siteCfg;
     }', TRUE, TRUE);
         $names = 'array(';
-        $configArr['website-names'];
         foreach ($configArr['website-names'] as $k => $v){
             $names .= '\''.$k.'\'=>\''.$v.'\',';
         }
@@ -340,12 +377,12 @@ class WebsiteFunctions extends Functions{
         $fh->write('private function __construct() {
         $this->configVision = \''.$configArr['config-file-version'].'\';
         $this->webSiteNames = '.$names.';
-        $this->baseUrl = \''.$configArr['base-url'].'\';
+        $this->baseUrl = Util::getBaseURL();
         $this->titleSep = \' '. trim($configArr['title-separator']).' \';
         $this->primaryLang = \''. trim($configArr['primary-language']).'\';
         $this->baseThemeName = \''.$configArr['theme-name'].'\';
         $this->adminThemeName = \''.$configArr['admin-theme-name'].'\';
-        $this->homePage = \''.$configArr['home-page'].'\';
+        $this->homePage = Util::getBaseURL();
         $this->descriptions = '.$descriptions.';
     }', TRUE, TRUE);
         $fh->write('
@@ -402,7 +439,7 @@ class WebsiteFunctions extends Functions{
     }
     /**
      * Returns the base URL that is used to fetch resources.
-     * The return value of this function is usually used by the tag \'base\' 
+     * The return value of this method is usually used by the tag \'base\' 
      * of web site pages.
      * @return string the base URL.
      * @since 1.0
@@ -430,7 +467,7 @@ class WebsiteFunctions extends Functions{
     }
     /**
      * Returns the character (or string) that is used to separate page title from website name.
-     * @return string A string such as \' - \' or \' | \'. Note that the function 
+     * @return string A string such as \' - \' or \' | \'. Note that the method 
      * will add the two spaces by default.
      * @since 1.0
      */
