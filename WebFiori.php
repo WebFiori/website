@@ -1,29 +1,61 @@
 <?php
+/*
+ * The MIT License
+ *
+ * Copyright 2019 Ibrahim, WebFiori Framework.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 namespace webfiori;
-use webfiori\entity\AutoLoader;
-use webfiori\entity\Logger;
-use webfiori\entity\Util;
+use webfiori\conf\Config;
+use webfiori\conf\SiteConfig;
+use webfiori\conf\MailConfig;
+use webfiori\ini\InitPrivileges;
+use webfiori\ini\InitAutoLoad;
+use webfiori\ini\InitCron;
 use webfiori\functions\SystemFunctions;
 use webfiori\functions\WebsiteFunctions;
 use webfiori\functions\BasicMailFunctions;
+use webfiori\entity\AutoLoader;
+use webfiori\entity\Logger;
+use webfiori\entity\Util;
 use webfiori\entity\router\APIRoutes;
 use webfiori\entity\router\ViewRoutes;
 use webfiori\entity\router\ClosureRoutes;
-use webfiori\entity\cron\Cron;
+use webfiori\entity\router\OtherRoutes;
 use webfiori\entity\router\Router;
-use webfiori\apiParser\DocGenerator;
+use jsonx\JsonX;
+use Exception;
 /**
  * The instance of this class is used to control basic settings of 
  * the framework. Also, it is the entry point of any request.
  * @author Ibrahim
- * @version 1.3.2
+ * @version 1.3.3
  */
 class WebFiori{
     /**
-     * The name of the session that will be used by the core logic files.
-     * @since 1.3.2
+     * An associative array that contains database connection error that might 
+     * happen during initialization.
+     * @var array|NULL 
+     * @since 1.3.3
      */
-    const MAIN_SESSION_NAME = 'main';
+    private $dbErrDetails;
     /**
      * A variable to store system status. The variable will be set to TRUE 
      * if everything is Ok.
@@ -70,6 +102,25 @@ class WebFiori{
     /**
      * Initiate the framework and return a single instance of the class that can 
      * be used to update some settings.
+     * The stages for initializing the framework are as follows:
+     * <ul>
+     * <li>Setting the encoding to UTF-8 for the 'mb' functions.</li>
+     * <li>Setting memory limit to 2GB. Developer can change this if he wants.</li>
+     * <li>Setting time zone. Default is set to 'Asia/Riyadh' For supported 
+     * time zones, see <a target="_blank" href="http://php.net/manual/en/timezones.php">http://php.net/manual/en/timezones.php</a>.</li>
+     * <li>Creating the constant ROOT_DIR.</li>
+     * <li>Loading the auto loder class.</li>
+     * <li>Initializing user-defined autoload directories.</li>
+     * <li>Creating an instance of SystemFunctions, WebsiteFunctions and BasicMailFunctions.</li>
+     * <li>Initializing routes.</li>
+     * <li>Checking system status (database connection and configuration status)</li>
+     * <li>Initializing CRON jobs.</li>
+     * <li>Initializing privileges.</li>
+     * <li>Setting a custom errors and exceptions handler.</li>
+     * <li>Finally, routing if system configuration status is not 
+     * equal to FALSE. If it is FALSE, A message will be displayed to tell 
+     * the developer how do configure it.</li>
+     * </ul>
      * @return WebFiori An instance of the class.
      * @since 1.0
      */
@@ -131,59 +182,171 @@ class WebFiori{
             define('PHP_INT_MIN', ~PHP_INT_MAX);
         }
 
-        /**
-         * A folder used to hold system resources (such as images).
-         */
-        define('RES_FOLDER','res');
+        
         /**
          * Initialize autoloader.
          */
         require_once ROOT_DIR.'/entity/AutoLoader.php';
         $this->AU = AutoLoader::get();
-        $this->setAutoloadDirectories();
+        $this->initAutoloadDirectories();
         
         //uncomment next line to show runtime errors and warnings
         //also enable logging for info, warnings and errors 
         Logger::logName('initialization-log');
-        Logger::section();
+        Logger::enabled(TRUE);
+        Logger::clear();
         
         //display PHP warnings and errors
         Util::displayErrors();
-        
-        //enable logging.
-        Logger::enabled(FALSE);
-        //set log file name
-        Logger::logName('initialization-log');
+
         //enable logging of debug info.
-        define('DEBUG', '');
+        //define('DEBUG', '');
         
         $this->SF = SystemFunctions::get();
         $this->WF = WebsiteFunctions::get();
         $this->BMF = BasicMailFunctions::get();
         
-        $this->sysStatus = Util::checkSystemStatus();
+        $this->sysStatus = Util::checkSystemStatus(TRUE);
+        
         $this->initRoutes();
         if($this->sysStatus == Util::MISSING_CONF_FILE || $this->sysStatus == Util::MISSING_SITE_CONF_FILE){
             Logger::log('One or more configuration file is missing. Attempting to create all configuration files.', 'warning');
             $this->SF->createConfigFile();
             $this->WF->createSiteConfigFile();
             $this->BMF->createEmailConfigFile();
-            $this->sysStatus = Util::checkSystemStatus();
+            $this->sysStatus = Util::checkSystemStatus(TRUE);
         }
-        if(!$this->SF->isSetupFinished()){
-            $this->firstUse();
+        if(gettype($this->sysStatus) == 'array'){
+            $this->dbErrDetails = $this->sysStatus;
+            $this->sysStatus = Util::DB_NEED_CONF;
         }
-        
         //initialize some settings...
+        Logger::log('Initializing cron jobs...');
         $this->initCron();
+        Logger::log('Initializing permissions...');
         $this->initPermissions();
-              
+        Logger::log('Setting Error Handler...');
+        set_error_handler(function($errno, $errstr, $errfile, $errline){
+            header("HTTP/1.1 500 Server Error");
+            if(defined('API_CALL')){
+                $j = new JsonX();
+                $j->add('message',$errstr);
+                $j->add('type','error');
+                $j->add('error-number',$errno);
+                $j->add('file',$errfile);
+                $j->add('line',$errline);
+                header('content-type: application/json');
+                die($j);
+            }
+            //let php handle the error since it is not API call.
+            return FALSE;
+        });
+        Logger::log('Setting exceptions handler...');
+        set_exception_handler(function($ex){
+            header("HTTP/1.1 500 Server Error");
+            if(defined('API_CALL')){
+                $j = new JsonX();
+                $j->add('message','500 - Server Error: Uncaught Exception.');
+                $j->add('type','error');
+                $j->add('exception-message',$ex->getMessage());
+                $j->add('exception-code',$ex->getMessage());
+                $j->add('file',$ex->getFile());
+                $j->add('line',$ex->getLine());
+                $stackTrace = new JsonX();
+                $index = 0;
+                $trace = $ex->getTrace();
+                foreach ($trace as $arr){
+                    $stackTrace->add('#'.$index,$arr['file'].' (Line '.$arr['line'].')');
+                    $index++;
+                }
+                $j->add('stack-trace',$stackTrace);
+                header('content-type: application/json');
+                die($j);
+            }
+            else{
+                die(''
+                . '<!DOCTYPE html>'
+                . '<html>'
+                . '<head>'
+                . '<title>Uncaught Exception</title>'
+                . '</head>'
+                . '<body>'
+                . '<h1>500 - Server Error: Uncaught Exception.</h1>'
+                . '<hr>'
+                . '<p>'
+                .'<b>Exception Message:</b> '.$ex->getMessage()."<br/>"
+                .'<b>Exception Code:</b> '.$ex->getCode()."<br/>"
+                .'<b>File:</b> '.$ex->getFile()."<br/>"
+                .'<b>Line:</b> '.$ex->getLine()."<br>"
+                .'<b>Stack Trace:</b> '."<br/>"
+                . '</p>'
+                . '<pre>'.$ex->getTraceAsString().'</pre>'
+                . '</body>'
+                . '</html>');
+            }
+        });
         Logger::log('Initializing completed.');
         
-        //switch to the log file 'system-log.txt'.
-        Logger::logName('system-log');
-        Logger::section();
         self::$classStatus = 'INITIALIZED';
+    }
+    /**
+     * Returns an instance of the class 'Config'.
+     * The class will contain some of framework settings in addition to 
+     * database connection information.
+     * @return Config|NULL If class file is exist and the class is loaded, 
+     * an object of type 'Config' is returned. Other than that, the method 
+     * will return NULL.
+     * @since 1.3.3
+     */
+    public static function &getConfig() {
+        if(class_exists('webfiori\conf\Config')){
+            return Config::get();
+        }
+        $n = NULL;
+        return $n;
+    }
+    /**
+     * Returns an instance of the class 'SiteConfig'.
+     * The class will contain website settings such as main language and theme.
+     * @return SiteConfig|NULL If class file is exist and the class is loaded, 
+     * an object of type 'SiteConfig' is returned. Other than that, the method 
+     * will return NULL.
+     * @since 1.3.3
+     */
+    public static function &getSiteConfig() {
+        if(class_exists('webfiori\conf\SiteConfig')){
+            return SiteConfig::get();
+        }
+        $n = NULL;
+        return $n;
+    }
+    /**
+     * Returns an instance of the class 'MailConfig'.
+     * The class will contain SMTP accounts information.
+     * @return MailConfig|NULL If class file is exist and the class is loaded, 
+     * an object of type 'MailConfig' is returned. Other than that, the method 
+     * will return NULL.
+     * @since 1.3.3
+     */
+    public static function &getMailConfig() {
+        if(class_exists('webfiori\conf\MailConfig')){
+            return MailConfig::get();
+        }
+        $n = NULL;
+        return $n;
+    }
+    /**
+     * Returns an associative array that contains database connection error 
+     * information.
+     * If an error happens while connecting with the database at initialization 
+     * stage, this method can be used to get error details. The array will 
+     * have two indices: 'error-code' and 'error-message'.
+     * @return array|NULL An associative array that contains database connection error 
+     * information. If no errors, the method will return NULL.
+     * @since 1.3.3
+     */
+    public static function getDBErrDetails(){
+        return self::getAndStart()->dbErrDetails;
     }
     /**
      * Returns a reference to an instance of 'AutoLoader'.
@@ -219,19 +382,21 @@ class WebFiori{
     }
     /**
      * Returns the current status of the system.
-     * @return boolean|string If the system is configured correctly, the function 
-     * will return TRUE. If the file 'Config.php' was not found, The function will return 
-     * 'Util::MISSING_CONF_FILE'. If the file 'SiteConfig.php' was not found, The function will return 
-     * 'Util::MISSING_CONF_FILE'. If the system is not configured yet, the function 
+     * @return boolean|string If the system is configured correctly, the method 
+     * will return TRUE. If the file 'Config.php' was not found, The method will return 
+     * 'Util::MISSING_CONF_FILE'. If the file 'SiteConfig.php' was not found, The method will return 
+     * 'Util::MISSING_CONF_FILE'. If the system is not configured yet, the method 
      * will return 'Util::NEED_CONF'. If the system is unable to connect to 
-     * the database, the function will return 'Util::DB_NEED_CONF'.
+     * the database, the method will return an associative array with two 
+     * indices which gives more details about the error. The first index is 
+     * 'error-code' and the second one is 'error-message'.
      * @since 1.0
      */
     public static function sysStatus(){
         Logger::logFuncCall(__METHOD__);
         $retVal = self::$classStatus;
         if(self::getClassStatus() == 'INITIALIZED'){
-            $retVal = self::getAndStart()->getSystemStatus(TRUE);
+            $retVal = self::getAndStart()->_getSystemStatus(TRUE);
         }
         Logger::logReturnValue($retVal);
         Logger::logFuncReturn(__METHOD__);
@@ -243,176 +408,84 @@ class WebFiori{
      * @return boolean|string
      * @since 1.0
      */
-    private function getSystemStatus($refresh=true,$testDb=false) {
+    private function _getSystemStatus($refresh=true,$testDb=true) {
         Logger::logFuncCall(__METHOD__);
         Logger::log('Refresh status = '.$refresh, 'debug');
         if($refresh === TRUE){
             Logger::log('Updating system status.');
             $this->sysStatus = Util::checkSystemStatus($testDb);
+            if(gettype($this->sysStatus) == 'array'){
+                $this->dbErrDetails = $this->sysStatus;
+                $this->sysStatus = Util::DB_NEED_CONF;
+            }
         }
         Logger::logReturnValue($this->sysStatus);
         Logger::logFuncReturn(__METHOD__);
         return $this->sysStatus;
     }
     /**
-     * Initiate routes.
+     * Initialize routes.
+     * This method will call 4 methods in 4 classes:
+     * <ul>
+     * <li>APIRoutes::create()</li>
+     * <li>ViewRoutes::create()</li>
+     * <li>ClosureRoutes::create()</li>
+     * <li>OtherRoutes::create()</li>
+     * </ul>
+     * The developer can create routes inside the body of any of the 4 methods.
      * @since 1.0
      */
-    private function initRoutes(){
-        Logger::log('Initializing routes...', 'info', 'initialization-log');
-        APIRoutes::create();
-        ViewRoutes::create();
-        ClosureRoutes::create();
-        \docGenerator\DocGeneratorRoutes::createRoutes();
-        Logger::log('Routes initialization completed.', 'info', 'initialization-log');
-    }
-    /**
-     * This function is called when the status of the system does not equal 
-     * to TRUE. It is used to configure some of the basic settings in case 
-     * of first use. Modify the content of this function as needed.
-     * @since 1.0
-     */
-    private function firstUse(){
-        Logger::logFuncCall(__METHOD__, 'initialization-log');
-        //in this part, you can configure the ststem. 
-        
-        //the first thing you might need to do is to update basic website
-        //attributes. 
-        $this->setWebsiteAttributes();
-
-        //After that, if your app uses MySQL database, you can set connection 
-        //parameters here. If it does not, skip this step by commenting 
-        //the next line.
-        //$this->setDatabaseConnection();
-
-
-        //Also, you can add SMTP email account that you can use to send email 
-        //messages if your system uses this functionality.
-        $this->addSMTPAccounts();
-        
-        //once configuration is finished, call the function SystemFunctions::configured()
-        $this->SF->configured();
-        
-        //do not remove next lines of code.
-        //Used to show error message in case the 
-        //system is not configured.
-        if(!$this->SF->isSetupFinished()){
-            Logger::log('Initialization faild.','error','initialization-log');
-            $this->needConfigration();
+    public function initRoutes(){
+        Logger::logFuncCall(__METHOD__);
+        if(self::getClassStatus() == 'INITIALIZING'){
+            Logger::log('Initializing routes...', 'info', 'initialization-log');
+            APIRoutes::create();
+            ViewRoutes::create();
+            ClosureRoutes::create();
+            OtherRoutes::create();
+            Logger::log('Routes initialization completed.', 'info', 'initialization-log');
         }
-        Logger::logFuncReturn(__METHOD__, 'initialization-log');
+        Logger::logFuncReturn(__METHOD__);
     }
     /**
-     * Adds SMTP accounts during initialization.
-     * @since 1.1
-     */
-    private function addSMTPAccounts() {
-        //$account = new EmailAccount();
-        //$account->setName('no-replay');
-        //$account->setAddress('myAddress@example.com');
-        //$account->setPassword('xxx');
-        //$account->setUsername('hello@example.com');
-        //$account->setPort(25);
-        //$account->setServerAddress('mail.example.com');
-        //$this->BMF->updateOrAddEmailAccount($account);
-    }
-    /**
-     * Updates basic settings of the web site.
-     * @since 1.1
-     */
-    private function setWebsiteAttributes() {
-        $siteInfoArr = $this->WF->getSiteConfigVars();
-        $siteInfoArr['base-url'] = Util::getBaseURL();
-        $siteInfoArr['primary-language'] = 'EN';
-        $siteInfoArr['theme-name'] = 'Greeny By Ibrahim Ali';
-        $siteInfoArr['title-separator'] = '|';
-        $siteInfoArr['site-descriptions'] = array('AR'=>'','EN'=>'');
-        $siteInfoArr['website-names'] = array('AR'=>'أكاديميا البرمجة','EN'=>'Programming Academia');
-        $this->WF->updateSiteInfo($siteInfoArr);
-    }
-    /**
-     * Add your own custom search folders in here. The autoloader will search 
-     * inside them for classes.
+     * Initialize the directories at which the framework will try to load 
+     * classes from. 
+     * If the user has created new folder inside the root framework directory, 
+     * this method will add the directories to include in search directories.
      * @since 1.2.1
      */
-    private function setAutoloadDirectories(){
-        $this->AU->addSearchDirectory('apiParser');
-        //$this->AU->addSearchDirectory('my-system/entities');
-        //$this->AU->addSearchDirectory('my-system/logic');
-        //$this->AU->addSearchDirectory('my-system/apis');
+    public function initAutoloadDirectories(){
+        Logger::logFuncCall(__METHOD__);
+        if(self::getClassStatus()== 'INITIALIZING'){
+            InitAutoLoad::init();
+            Logger::log('Autoload directories initialized.');
+        }
+        Logger::logFuncReturn(__METHOD__);
     }
     /**
-     * Updates database settings.
-     * @since 1.1
-     */
-    private function setDatabaseConnection() {
-        //only change the values of the following 4 variables.
-        $dbHost = 'localhost';
-        $dbUser = 'root';
-        $dbPass = '';
-        $dbName = '';
-        
-        if($this->SF->updateDBAttributes($dbHost, $dbUser, $dbPass, $dbName) === TRUE){
-            
-            //since this is the first use, we need to initialize database schema.
-            //create any query object to use it for executing SQL statements that 
-            //is used to build the database.
-            Logger::log('Initializing database...','info','initialization-log');
-            $schema = DatabaseSchema::get();
-            Logger::log('Database Schema: ', 'debug','initialization-log');
-            Logger::log($schema->getSchema(), 'debug','initialization-log');
-            $query = new ExampleQuery();
-            $query->setQuery($schema->getSchema(), 'update');
-            if($this->SF->excQ($query) !== TRUE){
-                Logger::log('Initialization faild.', 'error','initialization-log');
-                Logger::requestCompleted();
-                header('HTTP/1.1 503 Service Unavailable');
-                die($this->SF->getDBLink()->toJSON().'');
-            }
-        }
-        else{
-            Logger::log('Initialization faild.', 'error','initialization-log');
-            $dbLink = $this->SF->getDBLink();
-            Logger::requestCompleted();
-            header('HTTP/1.1 503 Service Unavailable');
-            die($dbLink->toJSON().'');
-        }
-    }
-    /**
-     * Initialize access control class.
+     * Initialize user groups and permissions.
+     * This method will call the method InitPermissions::init() to initialize  
+     * user groups and privileges.
      * @since 1.3.1
      */
-    private function initPermissions(){
+    public function initPermissions(){
         Logger::logFuncCall(__METHOD__);
-        
-        //create new group.
-        //$AD = 'ADMIN_GROUP';
-        //Access::newGroup($AD);
-        //add permissions to the group.
-        //Access::newPrivilege($AD, 'LOGIN');
-        
+        if(self::getClassStatus() == 'INITIALIZING'){
+            InitPrivileges::init();
+        }
         Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Initialize cron jobs.
+     * This method will call the method InitCron::init() to initialize cron 
+     * Jobs.
      * @since 1.3
      */
-    private function initCron(){
+    public function initCron(){
         Logger::logFuncCall(__METHOD__);
-        //initialize cron job manager
-        
-        //set access password
-        //the password must be kept in order to disallow any 
-        //unauthorized call to run cron jobs.
-        Cron::password('123456');
-        
-        //add jobs
-        //$job = new CronJob('*/5,*/3 * * * *');
-        //$job->setOnExecution(function($params){
-        //    $file = fopen('cron.txt', 'a+');
-        //    fwrite($file, 'Job \''.$params[0]->getJobName().'\' executed at '.date(DATE_RFC1123)."\r\n");
-        //},array($job));
-        //Cron::scheduleJob($job);
+        if(self::getClassStatus()== 'INITIALIZING'){
+            InitCron::init();
+        }
         Logger::logFuncReturn(__METHOD__);
     }
     /**
@@ -420,37 +493,55 @@ class WebFiori{
      * configure it.
      * @since 1.0
      */
-    private function needConfigration(){
+    private function _needConfigration(){
         Logger::logFuncCall(__METHOD__, 'initialization-log');
         Logger::requestCompleted();
         header('HTTP/1.1 503 Service Unavailable');
-        die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Service Unavailable</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>503 - Service Unavailable</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'This error means that the system is not configured yet or this is the first run.'
-        . 'If you think that your system is configured, then refresh this page and the '
-        . 'error should be gone. If you did not configure the system yet, then do the following:'
-        . '</p>'
-        . '<ul>'
-        . '<li>Open the file \'index.php\' in any editor.</li>'
-        . '<li>Inside the class \'WebFiori\', go to the body of the function \'firstUse()\'.</li>'
-        . '<li>Modify the body of the function as instructed.</li>'
-        . '</ul>'
-        . '<p>'
-        . 'Once you do that, you are ready to go and use the system.'
-        . '</p>'
-        . '<p>System Powerd By: <a href="https://github.com/usernane/webfiori" target="_blank"><b>'
-                . 'WebFiori Framework v'.Config::get()->getVersion().' ('.Config::get()->getVersionType().')'
-                . '</b></a></p>'
-        . '</body>'
-        . '</html>');
+        if(defined('API_CALL')){
+            header('content-type:application/json');
+            $j = new JsonX();
+            $j->add('message', '503 - Service Unavailable');
+            $j->add('type', 'error');
+            $j->add('description','This error means that the system is not configured yet. '
+                    . 'Make sure to make the method Config::isConfig() return TRUE. '
+                    . 'One way is to go to the file "ini/Config.php". Change attribute value at line 87 to TRUE. '
+                    . 'Or Use the method SystemFunctions::configured(TRUE). You must supply \'TRUE\' as an attribute. '
+                    . 'If you want to make the system do something else if the return value of the '
+                    . 'given method is FALSE, go to the end of the file \'WebFiori.php\' and '
+                    . 'change the code in the \'else\' code block.');
+            $j->add('powered-by', 'WebFiori Framework v'.Config::getVersion().' ('.Config::getVersionType().')');
+            die($j);
+        }
+        else{
+            die(''
+            . '<!DOCTYPE html>'
+            . '<html>'
+            . '<head>'
+            . '<title>Service Unavailable</title>'
+            . '</head>'
+            . '<body>'
+            . '<h1>503 - Service Unavailable</h1>'
+            . '<hr>'
+            . '<p>'
+            . 'This error means that the system is not configured yet. '
+            . 'Make sure to make the method Config::isConfig() return TRUE. There are two ways '
+            . 'to change return value of this method:'
+            . '</p>'
+            . '<ul>'
+            . '<li>Go to the file "ini/Config.php". Change attribute value at line 87 to TRUE.</li>'
+            . '<li>Use the method SystemFunctions::configured(TRUE). You must supply \'TRUE\' as an attribute.</li>'
+            . '</ul>'
+            . '<p>'
+            . 'If you want to make the system do something else if the return value of the '
+            . 'given method is FALSE, go to the end of the file \'WebFiori.php\' and '
+            . 'change the code in the \'else\' code block.'
+            . '</p>'
+            . '<p>System Powerd By: <a href="https://github.com/usernane/webfiori" target="_blank"><b>'
+                    . 'WebFiori Framework v'.Config::getVersion().' ('.Config::getVersionType().')'
+                    . '</b></a></p>'
+            . '</body>'
+            . '</html>');
+        }
     }
     /**
      * Show an error message that tells the user about system status and how to 
@@ -458,7 +549,7 @@ class WebFiori{
      * @since 1.0
      */
     public static function configErr() {
-        WebFiori::getAndStart()->needConfigration();
+        WebFiori::getAndStart()->_needConfigration();
     }
 }
 
@@ -466,31 +557,31 @@ class WebFiori{
 WebFiori::getAndStart();
 define('INITIAL_SYS_STATUS',WebFiori::sysStatus());
 Logger::log('INITIAL_SYS_STATUS = '.INITIAL_SYS_STATUS, 'debug');
-Router::closure('/testx', function(){
-//    $r = new APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
-//    Util::print_r($r->getParsedInfo());
-    Logger::enabled(FALSE);
-    $reader = new DocGenerator(array(
-        'path'=>'C:\Server\apache2\htdocs\webfiori',
-        'exclude-path'=>array(
-            'C:\Server\apache2\htdocs\webfiori\themes'
-        ),
-        'base-url'=> 'https://programmingacademia.com/webfiori/docs',
-        'theme'=>'WebFiori API Theme',
-        'site-name'=>'WebFiori API Docs',
-        'output-to'=>'C:\\Server\\apache2\\htdocs\\webfiori-website\\pages\\apis-1.0.1',
-        'route-root-folder'=>'apis-1.0.1',
-        'is-dynamic'=>TRUE
-    ));
-});
 if(INITIAL_SYS_STATUS === TRUE){
+    //switch to the log file 'system-log.txt'.
+    Logger::logName('system-log');
+    Logger::section();
     Router::route(Util::getRequestedURL());
 }
 else if(INITIAL_SYS_STATUS == Util::DB_NEED_CONF){
     Logger::log('Unable to connect to database.', 'warning');
+    $err = WebFiori::getDBErrDetails();
+    Logger::log('Database Error Code: '.$err['error-code']);
+    Logger::log('Database Error Message: '.$err['error-message']);
+    //switch to the log file 'system-log.txt'.
+    Logger::logName('system-log');
+    Logger::section();
     Router::route(Util::getRequestedURL());
     Logger::requestCompleted();
 }
 else{
+    //you can modify this part to make 
+    //it do something else in case system 
+    //configuration is not equal to TRUE
+    
+    //change system config status to configured.
+    //WebFiori::getSysFunctions()->configured(TRUE);
+    
+    //show error message to tell the developer how to configure the system.
     WebFiori::configErr();
 }
