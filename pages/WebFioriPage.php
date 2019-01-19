@@ -8,13 +8,48 @@
 
 namespace webfiori\views;
 use webfiori\entity\Page;
+use webfiori\WebFiori;
 /**
  * Description of WebFioriPage
  *
  * @author Ibrahim
  */
 class WebFioriPage {
-    public function __construct() {
+    public function __construct($options=array()) {
         Page::theme('WebFiori Theme');
+        if(isset($options['title'])){
+            Page::title($options['title']);
+        }
+        else{
+            Page::title('WebFiori Page');
+        }
+        if(isset($options['description'])){
+            Page::description($options['description']);
+        }
+        else{
+            Page::description(WebFiori::getSiteConfig()->getDescriptions()['EN']);
+        }
+        if(isset($options['canonical'])){
+            Page::canonical($options['canonical']);
+        }
+        if(isset($options['site-name'])){
+            Page::siteName($options['site-name']);
+        }
+        else{
+            Page::siteName(WebFiori::getSiteConfig()->getWebsiteNames()['EN']);
+        }
+        Page::lang('EN');
+    }
+    /**
+     * 
+     * @param type $link
+     * @param type $label
+     * @return ListItem
+     */
+    public function createLinkListItem($link,$label) {
+        $li00 = new ListItem();
+        $link00 = new LinkNode($link, $label);
+        $li00->addChild($link00);
+        return $li00;
     }
 }

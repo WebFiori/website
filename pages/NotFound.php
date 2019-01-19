@@ -9,6 +9,7 @@ namespace webfiori\views;
 use webfiori\views\WebFioriPage;
 use webfiori\entity\Page;
 use phpStructs\html\PNode;
+use WebFioriGUI;
 /**
  * Description of NotFound
  *
@@ -20,6 +21,7 @@ class NotFound extends WebFioriPage{
         Page::title('404 - Not Found');
         Page::siteName('WebFiori');
         Page::description('Not found.');
+        WebFioriGUI::createTitleNode('404 - Not Found');
         $parag1 = new PNode();
         $parag1->addText('The page that you are looking for was not found. '
                 . 'Sorry about that.');
@@ -28,3 +30,4 @@ class NotFound extends WebFioriPage{
         Page::render();
     }
 }
+new NotFound();

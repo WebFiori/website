@@ -43,6 +43,7 @@ if(!defined('ROOT_DIR')){
 use webfiori\entity\Logger;
 use webfiori\apiParser\DocGenerator;
 use webfiori\entity\File;
+use webfiori\WebFiori;
 /**
  * A class that only has one method to initiate some of system routes.
  * The class is meant to only initiate the routes which uses the method 
@@ -73,11 +74,20 @@ class ClosureRoutes {
                 'is-dynamic'=>TRUE
             ));
         });
-        Router::closure('/dounloads/webfiori-v1.0.0', function(){
-            
+        Router::closure('/downloads/webfiori-v1.0.0-beta-1', function(){
+            $f = new File();
+            $f->setName('webfiori-1.0.0-beta-1.zip');
+            $f->setPath(ROOT_DIR.'/res/release');
+            $f->view(TRUE);
+        });
+        Router::closure('/downloads/webfiori-v1.0.0-beta-2', function(){
+            $f = new File();
+            $f->setName('webfiori-1.0.0-beta-2.zip');
+            $f->setPath(ROOT_DIR.'/res/release');
+            $f->view(TRUE);
         });
         Router::get()->setOnNotFound(function(){
-            new \webfiori\views\NotFound();
+            header('location: '.WebFiori::getSiteConfig()->getBaseURL().'404');
         });
     }
 }
