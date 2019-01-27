@@ -21,6 +21,8 @@ use WebFioriGUI;
  * @author Ibrahim
  */
 class LearnView extends WebFioriPage{
+    private $nextTopicLink;
+    private $prevTopicLink;
     public function __construct($title='Learnning Center',$desc='Here you will find a list of topics that you might '
                 . 'need to learn in order to use WebFiori Framework in the most '
                 . 'effictive way.') {
@@ -31,7 +33,26 @@ class LearnView extends WebFioriPage{
         Page::document()->getChildByID('side-content-area')->addChild(LearningAsideMenu::createAsideNav());
     }
     public function display() {
+        $div = new HTMLNode();
+        $div->setID('next-prev-container');
+        if($this->prevTopicLink !== NULL){
+            $this->prevTopicLink->setClassName('prev-button');
+            $div->addChild($this->prevTopicLink);
+        }
+        if($this->nextTopicLink !== NULL){
+            $this->nextTopicLink->setClassName('next-button');
+            $div->addChild($this->nextTopicLink);
+        }
+        if($div->childrenCount() != 0){
+            Page::insert($div);
+        }
         Page::render();
+    }
+    public function setNextTopicLink($link,$title) {
+        $this->nextTopicLink = new LinkNode($link, $title);
+    }
+    public function setPrevTopicLink($link,$title) {
+        $this->prevTopicLink = new LinkNode($link, $title);
     }
     public function createHeaderSection($array){
         $headerContainer = new HTMLNode();

@@ -58,10 +58,18 @@ class ViewRoutes {
         Router::view('/webfiori', '/WebFioriHome.php');
         Router::view('/docs', '/apis-1.0.0/webfiori/NSIndexView.php');
         Router::view('/learn', '/learning/Index.php');
-        Router::view('/learn/topics/themes', '/learning/themes/Index.php');
         Router::view('/download', '/DownloadView.php');
         Router::view('/learn/topics/cron', '/learning/cron/Index.php');
+        self::createHelpTopicsRoutes();
         \docGenerator\DocGeneratorRoutes::createRoutes();
+    }
+    public static function createHelpTopicsRoutes() {
+        Router::view('/learn/topics/themes', '/learning/themes/Index.php');
+        Router::view('/learn/topics/themes/class-Theme', '/learning/themes/ClassThemeView.php');
+        Router::view('/learn/topics/themes/class-Page', '/learning/themes/ClassPageView.php');
+        Router::view('/learn/topics/themes/class-HTMLNode', '/learning/themes/ClassHTMLNodeView.php');
+        Router::view('/learn/topics/themes/class-HeadNode', '/learning/themes/ClassHeadNodeView.php');
+        Router::view('/learn/topics/themes/create-simple-theme', '/learning/themes/CreateSimpleThemeView.php');
     }
     /**
      * A test for creating a site map from views URIs

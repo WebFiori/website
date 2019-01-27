@@ -9,6 +9,8 @@
 namespace webfiori\views;
 use webfiori\entity\Page;
 use webfiori\WebFiori;
+use phpStructs\html\ListItem;
+use phpStructs\html\LinkNode;
 /**
  * Description of WebFioriPage
  *
@@ -51,5 +53,8 @@ class WebFioriPage {
         $link00 = new LinkNode($link, $label);
         $li00->addChild($link00);
         return $li00;
+    }
+    public function displayView() {
+        Page::render();
     }
 }

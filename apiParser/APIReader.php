@@ -17,6 +17,8 @@ class APIReader {
     private $textLength;
     private $parsedClassInfo;
     private $lastParsedDocBlock;
+    private $lastStmType;
+
     const DEFS = array(
         'function'=>array(
             'function',
@@ -26,6 +28,13 @@ class APIReader {
             'public static function',
             'protected static function',
             'private static function'
+        ),
+        'abstract function'=>array(
+            'abstract function',
+            'public abstract function',
+            'abstract public function',
+            'protected abstract function',
+            'abstract protected function',
         ),
         'class-attribute'=>array(
             'public $',
@@ -141,6 +150,7 @@ class APIReader {
                     else{
                         Logger::log('Checking constructed string type...');
                         $stmType = self::getStatementType($str);
+                        $this->lastStmType = $stmType;
                         switch ($stmType['type']){
                             case 'namespace':{
                                 $namespace = $this->_extractNameSpace($charIndex);
@@ -213,7 +223,7 @@ class APIReader {
                                 $str = '';
                                 break;
                             }
-                            case 'function':{
+                            case 'function' || 'abstract function':{
                                 Logger::log('It is a function.');
                                 $fAttrs = $this->_extractFunctionAttrs($charIndex);
                                 $fAttrs['access-modifier'] = $stmType['statement'];
@@ -541,19 +551,21 @@ class APIReader {
             }
             $charIndex++;
         }
-        Logger::log('Skipping till character \'{\'...');
-        $string = '';
-        while ($charIndex < $this->getFileSize() && $char != '{'){
-            $char = $this->getFileText()[$charIndex];
-            Logger::log('Character = \''.$char.'\'.','debug');
-            $string .= $char;
-            Logger::log($string);
-            $charIndex++;
+        if($this->lastStmType['type'] == 'function'){
+            Logger::log('Skipping till character \'{\'...');
+            $string = '';
+            while ($charIndex < $this->getFileSize() && $char != '{'){
+                $char = $this->getFileText()[$charIndex];
+                Logger::log('Character = \''.$char.'\'.','debug');
+                $string .= $char;
+                Logger::log($string);
+                $charIndex++;
+            }
+            Logger::log('Done.');
+            Logger::log('Skipping function code block...');
+            $this->_skipFunctionBlock($charIndex);
+            Logger::log('Done.');
         }
-        Logger::log('Done.');
-        Logger::log('Skipping function code block...');
-        $this->_skipFunctionBlock($charIndex);
-        Logger::log('Done.');
         Logger::logReturnValue($retVal);
         Logger::logFuncReturn(__METHOD__);
         return $retVal;

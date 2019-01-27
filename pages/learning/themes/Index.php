@@ -40,12 +40,15 @@ class Index extends WebFioriPage{
         $sec = new HTMLNode('section');
         $h = new HTMLNode('h1');
         $h->addTextNode('Topics:');
+        $sec->addChild($h);
+        Page::insert($sec);
         $ul = new UnorderedList();
         $ul->addChild($this->createLinkListItem('learn/topics/themes/class-Theme', 'The class \'Theme\''));
         $ul->addChild($this->createLinkListItem('learn/topics/themes/class-Page', 'The class \'Page\''));
         $ul->addChild($this->createLinkListItem('learn/topics/themes/class-HTMLNode', 'The class \'HTMLNode\''));
         $ul->addChild($this->createLinkListItem('learn/topics/themes/class-HeadNode', 'The class \'HeadNode\''));
-         $ul->addChild($this->createLinkListItem('learn/topics/themes/create-simple-theme', 'Creating a Simple Theme'));
+        $ul->addChild($this->createLinkListItem('learn/topics/themes/create-simple-theme', 'Creating a Simple Theme'));
+        $sec->addChild($ul);
         Page::render();
     }
 }
