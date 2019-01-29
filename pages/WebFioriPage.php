@@ -11,6 +11,7 @@ use webfiori\entity\Page;
 use webfiori\WebFiori;
 use phpStructs\html\ListItem;
 use phpStructs\html\LinkNode;
+use phpStructs\html\PNode;
 /**
  * Description of WebFioriPage
  *
@@ -48,11 +49,16 @@ class WebFioriPage {
      * @param type $label
      * @return ListItem
      */
-    public function createLinkListItem($link,$label) {
+    public function createLinkListItem($link,$label,$target='_self') {
         $li00 = new ListItem();
-        $link00 = new LinkNode($link, $label);
+        $link00 = new LinkNode($link, $label,$target);
         $li00->addChild($link00);
         return $li00;
+    }
+    public function createParagraph($text) {
+        $p = new PNode();
+        $p->addText($text);
+        Page::insert($p);
     }
     public function displayView() {
         Page::render();
