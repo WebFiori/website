@@ -861,7 +861,7 @@ class HTMLNode {
      */
     private function _pushNodeAsCode(&$node,$FO) {
         if($node->isTextNode()){
-            $this->codeString .= $this->_getTab().$node->getText().$this->nl;
+            $this->codeString .= $this->_getTab(). str_replace('<', '&lt;', str_replace('>', '&gt;', $node->getText())).$this->nl;
         }
         else if($node->isComment()){
             if($FO['with-colors'] === TRUE){
