@@ -32,41 +32,48 @@ class ClassThemeView extends WebFioriPage{
         $p2 = new PNode();
         $p2->addText(''
                 . 'In addition to that, the class has 5 abstract methods that the '
-                . 'developer must implement. The 5 methodsare:');
+                . 'developer must implement. The 5 methods are:');
         Page::insert($p2);
-        $this->createMethodsUL();
+        $this->createThemeMainMethodsUL();
         $p3 = new PNode();
         $p3->addText('4 of the 5 are used to create page '
-                . 'header, footer and the side content area. The fourth one is used '
+                . 'header, footer and the side content area. The fifth one is used '
                 . 'to create custom HTML nodes by passing an array of options.');
         Page::insert($p3);
         $p4 = new PNode();
         Page::insert($p4);
         $p4->addText(''
                 . 'Also, the developer can assign callbacks to call before the '
-                . 'theme is loaded or after the theme is loaded. The callback which '
+                . 'theme is loaded or after the theme is loaded. There are two methods to create '
+                . 'callbacks for the theme:');
+        $this->createThemeCallbacksMethodUL();
+        $p5 = new PNode();
+        Page::insert($p5);
+        $p5->setText('=The callback which '
                 . 'is set before loading the theme can be used to set some attributes '
                 . 'of the web page including the language, writing direction or any other '
                 . 'attribute. The callback which is set to be called after the theme is '
                 . 'loaded can be used to change the structure of the page by '
-                . 'adding or removing HTML nodes.'
-                . ''
-                . '');
-        
-        
+                . 'adding or removing HTML nodes.');
         $this->displayView();
         
     }
-
-    private function createMethodsUL() {
+    private function createThemeCallbacksMethodUL() {
         $ul = new UnorderedList();
         Page::insert($ul);
         $base = WebFiori::getSiteConfig()->getBaseURL();
-        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getHeadNode', 'Theme::getHeadNode()'));
-        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getHeadrNode', 'Theme::getHeadrNode()'));
-        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getAsideNode', 'Theme::getAsideNode()'));
-        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getFooterNode', 'Theme::getFooterNode()'));
-        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#createHTMLNode', 'Theme::createHTMLNode()'));
+        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#setBeforeLoaded', 'Theme::setBeforeLoaded()','_blank'));
+        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#setAfterLoaded', 'Theme::setAfterLoaded()','_blank'));
+    }
+    private function createThemeMainMethodsUL() {
+        $ul = new UnorderedList();
+        Page::insert($ul);
+        $base = WebFiori::getSiteConfig()->getBaseURL();
+        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getHeadNode', 'Theme::getHeadNode()','_blank'));
+        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getHeadrNode', 'Theme::getHeadrNode()','_blank'));
+        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getAsideNode', 'Theme::getAsideNode()','_blank'));
+        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getFooterNode', 'Theme::getFooterNode()','_blank'));
+        $ul->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#createHTMLNode', 'Theme::createHTMLNode()','_blank'));
     }
     private function themeInfoUL() {
         $ul = new UnorderedList();
