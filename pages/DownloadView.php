@@ -36,8 +36,9 @@ class DownloadView extends WebFioriPage{
         $h->addTextNode('Stable Releases');
         $sec->addChild($h);
         $p1 = new PNode();
-        $p1->addText('Currently, there are no stable releases of the framework. '
-                . 'Version 1.0.0 will be released soon.');
+        $p1->addText('The latest release of the framework is version '
+                . '1.0.0. You can click <a href="downloads/webfiori-v1.0.0-stable">here</a> in order to start the '
+                . 'download process.');
         $sec->addChild($p1);
         Page::insert($sec);
     }
