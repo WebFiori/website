@@ -20,19 +20,19 @@ use WebFioriGUI;
  *
  * @author Ibrahim
  */
-class LearnView extends WebFioriPage{
+abstract class LearnView extends WebFioriPage{
     private $nextTopicLink;
     private $prevTopicLink;
-    public function __construct($title='Learnning Center',$desc='Here you will find a list of topics that you might '
+    public function __construct($x=array(
+        'title'=>'Learnning Center',
+        'description'=>'Here you will find a list of topics that you might '
                 . 'need to learn in order to use WebFiori Framework in the most '
-                . 'effictive way.') {
-        parent::__construct();
-        Page::title($title);
-        WebFioriGUI::createTitleNode($title);
-        Page::description($desc);
-        Page::document()->getChildByID('side-content-area')->addChild(LearningAsideMenu::createAsideNav());
+                . 'effictive way.')) {
+        parent::__construct($x);
+        WebFioriGUI::createTitleNode(Page::title());
+        $this->createAsidNav();
     }
-    public function display() {
+    public function displayView() {
         $div = new HTMLNode();
         $div->setID('next-prev-container');
         if($this->prevTopicLink !== NULL){
@@ -46,29 +46,19 @@ class LearnView extends WebFioriPage{
         if($div->childrenCount() != 0){
             Page::insert($div);
         }
-        Page::render();
+        parent::displayView();
     }
     public function setNextTopicLink($link,$title) {
-        $this->nextTopicLink = new LinkNode($link, $title);
+        $this->nextTopicLink = new HTMLNode();
+        $linkNode = new LinkNode($link,$title);
+        $this->nextTopicLink->addTextNode('<b>Next:</b>');
+        $this->nextTopicLink->addChild($linkNode);
     }
     public function setPrevTopicLink($link,$title) {
-        $this->prevTopicLink = new LinkNode($link, $title);
+        $this->prevTopicLink = new HTMLNode();
+        $linkNode = new LinkNode($link,$title);
+        $this->prevTopicLink->addTextNode('<b>Previous:</b>');
+        $this->prevTopicLink->addChild($linkNode);
     }
-    public function createHeaderSection($array){
-        $headerContainer = new HTMLNode();
-        $headerContainer->setClassName('header-container');
-        $pageUrl = Util::getRequestedURL();
-        $p = new PNode();
-        $p->addText('<b class="header-title">Content of the page:</b>');
-        $headerContainer->addChild($p);
-        $header = new HTMLNode('header');
-        $headerContainer->addChild($header);
-        foreach ($array as $elId => $text){
-            $link = new LinkNode($pageUrl.'#'.$elId, $text);
-            $h = new HTMLNode('h2');
-            $h->addChild($link);
-            $header->addChild($h);
-        }
-        Page::insert($headerContainer);
-    }
+    public abstract function createAsidNav();
 }

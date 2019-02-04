@@ -16,7 +16,7 @@ class ClassThemeView extends WebFioriPage{
             'description'=>'',
             'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/create-simple-theme'
         ));
-        WebFioriGUI::createTitleNode(Page::title());
+        
         $this->displayView();
     }
 }

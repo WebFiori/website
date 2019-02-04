@@ -18,12 +18,13 @@ use WebFioriGUI;
  *
  * @author Ibrahim
  */
-class Index extends WebFioriPage{
+class Index extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
             'title'=>'Themes',
             'description'=>'Learn about how to create themes using '
-            . 'WebFiori Framework.'
+            . 'WebFiori Framework.',
+            'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes'
         ));
         WebFioriGUI::createTitleNode('Themes');
         $p1 = new PNode();
@@ -33,23 +34,48 @@ class Index extends WebFioriPage{
                 . 'additional functionality.');
         Page::insert($p1);
         $p2 = new PNode();
-        $p2->addText('After finishing the next list of topics, you will be '
+        $p2->addText('The first thing that you need to know are the classes that you will intract with as '
+                . 'a theme designer. Once you know about them, we will start by building a simple theme that will '
+                . 'only show the areas of a web page. After that, we will start by customizing the '
+                . 'theme using JS, CSS and any extra tools needed.');
+        Page::insert($p2);
+        $p3 = new PNode();
+        $p3->addText('After finishing the next list of topics, you will be '
                 . 'able to create custom web pages using PHP or any front end '
                 . 'framework or tool.');
-        Page::insert($p2);
+        Page::insert($p3);
         $sec = new HTMLNode('section');
         $h = new HTMLNode('h1');
         $h->addTextNode('Topics:');
         $sec->addChild($h);
         Page::insert($sec);
         $ul = new UnorderedList();
-        $ul->addChild($this->createLinkListItem('learn/topics/themes/class-Theme', 'The class \'Theme\''));
-        $ul->addChild($this->createLinkListItem('learn/topics/themes/class-Page', 'The class \'Page\''));
-        $ul->addChild($this->createLinkListItem('learn/topics/themes/class-HTMLNode', 'The class \'HTMLNode\''));
-        $ul->addChild($this->createLinkListItem('learn/topics/themes/class-HeadNode', 'The class \'HeadNode\''));
-        $ul->addChild($this->createLinkListItem('learn/topics/themes/create-simple-theme', 'Creating a Simple Theme'));
+        $li1 = new ListItem();
+        $li1->addTextNode('Classes:');
+        $subUl1 = new UnorderedList();
+        $li1->addChild($subUl1);
+        $ul->addChild($li1);
+        $subUl1->addChild($this->createLinkListItem('learn/topics/themes/class-HTMLNode', 'The class \'HTMLNode\''));
+        $subUl1->addChild($this->createLinkListItem('learn/topics/themes/class-HTMLDoc', 'The class \'HTMLDoc\''));
+        $subUl1->addChild($this->createLinkListItem('learn/topics/themes/class-HeadNode', 'The class \'HeadNode\''));
+        $subUl1->addChild($this->createLinkListItem('learn/topics/themes/class-Page', 'The class \'Page\''));
+        $subUl1->addChild($this->createLinkListItem('learn/topics/themes/class-Theme', 'The class \'Theme\''));
+        $li2 = new ListItem();
+        $li2->addTextNode('Start Creating Themes:');
+        $subUl2 = new UnorderedList();
+        $li2->addChild($subUl2);
+        $ul->addChild($li2);
+        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/create-simple-theme', 'Creating a Simple Theme'));
+        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-head-tag', 'Adding JS, CSS and Other &lt;head&gt; Tag Elements.'));
+        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-header', 'Customizing Page Header.'));
+        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-footer', 'Customizing Page Footer.'));
+        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-aside', 'Customizing Page Aside Area.'));
+        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/custom-html-nodes', 'Adding Support For Custom HTML Elements.'));
+        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/before-after-load-events', 'Before and After Loaded Events.'));
         $sec->addChild($ul);
-        Page::render();
+        
+        $this->setNextTopicLink('learn/topics/themes/class-HTMLNode', 'The class \'HTMLNode\'');
+        $this->display();
     }
 }
 new Index();

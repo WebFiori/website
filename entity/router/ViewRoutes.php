@@ -66,6 +66,7 @@ class ViewRoutes {
     public static function createHelpTopicsRoutes() {
         Router::view('/learn/topics/themes', '/learning/themes/Index.php');
         Router::view('/learn/topics/themes/class-Theme', '/learning/themes/ClassThemeView.php');
+        Router::view('/learn/topics/themes/class-HTMLDoc', '/learning/themes/ClassHTMLDocView.php');
         Router::view('/learn/topics/themes/class-Page', '/learning/themes/ClassPageView.php');
         Router::view('/learn/topics/themes/class-HTMLNode', '/learning/themes/ClassHTMLNodeView.php');
         Router::view('/learn/topics/themes/class-HeadNode', '/learning/themes/ClassHeadNodeView.php');

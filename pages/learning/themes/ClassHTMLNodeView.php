@@ -13,15 +13,13 @@ use WebFioriGUI;
  *
  * @author Ibrahim
  */
-class ClassThemeView extends WebFioriPage{
+class ClassThemeView extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
             'title'=>'The Class \'HTMLNode\'',
             'description'=>'',
             'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-HTMLNode'
         ));
-        WebFioriGUI::createTitleNode(Page::title());
-        
         $this->createParagraph('This class acts as an interface between the framework and HTML. It represents any '
                 . 'HTML element you can think of. The class <a href="'.WebFiori::getSiteConfig()->getBaseURL()
                 .'docs/docs/phpStructs/html/HTMLNode" target="_blank">HTMLNode</a> provide the following utilites to '
@@ -29,6 +27,9 @@ class ClassThemeView extends WebFioriPage{
         $this->classUtilitiesUL();
         $this->createParagraph('The developer can create sub-classes of this class to create different types of '
                 . 'HTML elements or add extra functionality.');
+        
+        $this->setPrevTopicLink('learn/topics/themes/class-HTMLNode', 'The class \'HTMLNode\'');
+        $this->setNextTopicLink('learn/topics/themes/class-HTMLDoc', 'The class \'HTMLDoc\'');
         $this->displayView();
     }
     

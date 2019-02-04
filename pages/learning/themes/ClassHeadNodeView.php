@@ -16,12 +16,11 @@ class ClassThemeView extends WebFioriPage{
             'description'=>'',
             'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-HeadNode'
         ));
-        WebFioriGUI::createTitleNode(Page::title());
-        
         $this->createParagraph('The class <a>HeadNode</a> represents <span style="font-family:monospace">&lt;head&gt;</span> tag of the page. '
                 . 'It is used to add CSS, JavaScript files and to include any other resources which the '
                 . 'page depends on. Also, it can be used to add any extra META tags that the page needs.');
-        
+        $this->setPrevTopicLink('learn/topics/themes/class-HTMLDoc', 'The class \'HTMLDoc\'');
+        $this->setNextTopicLink('learn/topics/themes/class-Page', 'The class \'Page\'');
         $this->displayView();
     }
 }

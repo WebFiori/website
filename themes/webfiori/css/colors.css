@@ -56,6 +56,10 @@ html{
 #page-header{
     background-color: #71b280;
 }
+#next-prev-container{
+    border: 7px #ae2153;
+}
+
 #pa-side-nav{
     background-color: white;
 }

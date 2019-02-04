@@ -19,7 +19,6 @@ class ClassThemeView extends WebFioriPage{
             'description'=>'',
             'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-Theme'
         ));
-        WebFioriGUI::createTitleNode(Page::title());
         $p1 = new PNode();
         $p1->addText(''
                 . 'Themes in WebFiori framework are represented by classes. In order to create '
@@ -55,6 +54,8 @@ class ClassThemeView extends WebFioriPage{
                 . 'attribute. The callback which is set to be called after the theme is '
                 . 'loaded can be used to change the structure of the page by '
                 . 'adding or removing HTML nodes.');
+        $this->setPrevTopicLink('learn/topics/themes/class-Page', 'The class \'Page\'');
+        $this->setNextTopicLink('learn/topics/themes/create-simple-theme', 'Creating a Simple Theme');
         $this->displayView();
         
     }

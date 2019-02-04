@@ -20,8 +20,6 @@ class ClassThemeView extends WebFioriPage{
             'description'=>'',
             'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-Page'
         ));
-        WebFioriGUI::createTitleNode(Page::title());
-        
         $p1 = new PNode();
         Page::insert($p1);
         $p1->addText('The class <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Page" target="_blank">Page</a> represents a web page. It is used to alter some of the '
@@ -59,7 +57,8 @@ class ClassThemeView extends WebFioriPage{
         
         $p5 = new PNode();
         Page::insert($p5);
-        
+        $this->setPrevTopicLink('learn/topics/themes/class-HeadNode', 'The class \'HeadNode\'');
+        $this->setNextTopicLink('learn/topics/themes/class-Theme', 'The class \'Theme\'');
         $this->displayView();
     }
     

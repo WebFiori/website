@@ -97,7 +97,7 @@ class WebFioriHome extends WebFioriPage{
                 . 'the framework, I (The developer of the framework) learned many '
                 . 'new concepts which I did not know about while I was student '
                 . 'at university. Building new something from scratch was a good '
-                . 'chance to learn new thingsand to put my skills into something that can help me and others.');
+                . 'chance to learn new things and to put my skills into something that can help me and others.');
         $sec->addChild($parag3);
         Page::insert($sec);
     }

@@ -86,6 +86,12 @@ class ClosureRoutes {
             $f->setPath(ROOT_DIR.'/res/release');
             $f->view(TRUE);
         });
+        Router::closure('/downloads/webfiori-v1.0.0-stable', function (){
+            $f = new File();
+            $f->setName('webfiori-1.0.0-stable.zip');
+            $f->setPath(ROOT_DIR.'/res/release');
+            $f->view(TRUE);
+        });
         Router::get()->setOnNotFound(function(){
             header('location: '.WebFiori::getSiteConfig()->getBaseURL().'404');
         });
