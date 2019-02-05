@@ -11,7 +11,7 @@ use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use phpStructs\html\ListItem;
 use phpStructs\html\HTMLNode;
-use phpStructs\html\LinkNode;
+use webfiori\WebFiori;
 use WebFioriGUI;
 /**
  * Description of Index
@@ -26,7 +26,6 @@ class Index extends ThemesLearnView{
             . 'WebFiori Framework.',
             'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes'
         ));
-        WebFioriGUI::createTitleNode('Themes');
         $p1 = new PNode();
         $p1->addText('Themes in WebFiori Framework are used to create different '
                 . 'custom user interfaces for your website or web application. '
@@ -75,7 +74,7 @@ class Index extends ThemesLearnView{
         $sec->addChild($ul);
         
         $this->setNextTopicLink('learn/topics/themes/class-HTMLNode', 'The class \'HTMLNode\'');
-        $this->display();
+        $this->displayView();
     }
 }
 new Index();
