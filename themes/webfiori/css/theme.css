@@ -96,8 +96,9 @@ THE SOFTWARE.
 li{
     line-height: 35px;
 }
-*{
-    font-family: Tahoma, Arial, sans-serif
+p,li{
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 11pt;
 }
 #social-media-container{
     float: right;
