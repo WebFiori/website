@@ -1,0 +1,75 @@
+/*
+ *  Copyright 2017 Ibrahim.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+/* 
+    Created on : Aug 23, 2017, 7:20:17 PM
+    Author     : Ibrahim
+*/
+
+@media screen and (max-width: 768px){
+    div.code-output > p, div.code-snippet > p{
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+    code, samp{
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+}
+code span.syn-err{
+    color:red !important;
+}
+code span.html-tag{
+    color: #ad7dad;
+}
+code span.hex-num{
+    color: #771ef0;
+}
+code span.keyword{
+    color: #779ef0;
+}
+code span.css-rule{
+    color: #5fae41;
+}
+code span.attribute{
+    color: #6ddd8d;
+}
+code span.method{
+    font-weight: bold;
+    /*color: darkkhaki;*/
+}
+code span.string{
+    color: #9a5130;
+}
+code span.operator{
+    color: #066252;
+}
+code span.comment{
+    color: #16761b;
+}
+code span.number{
+    color: #a6a99b;
+}
+code span.class-name{
+    font-weight: bold;
+    color: rgb(128, 128, 128);
+    /*color: rgb(217, 140, 177);*/
+}
+code span.tag{
+    color: #ad7dad;
+}
+.code-snippet *{
+    font-family: monospace;
+}
