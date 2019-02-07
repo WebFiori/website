@@ -196,5 +196,10 @@ class WebFioriTheme extends Theme{
         return $headerSec;
     }
 
+    public function createHTMLNode($options = array()) {
+        $node = new HTMLNode();
+        return $node;
+    }
+
 }
 

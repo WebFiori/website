@@ -44,6 +44,7 @@ use webfiori\entity\Logger;
 use webfiori\apiParser\DocGenerator;
 use webfiori\entity\File;
 use webfiori\WebFiori;
+use webfiori\entity\Page;
 /**
  * A class that only has one method to initiate some of system routes.
  * The class is meant to only initiate the routes which uses the method 
@@ -57,6 +58,9 @@ class ClosureRoutes {
      * @since 1.0
      */
     public static function create() {
+        Router::closure('/test', function (){
+            echo Page::document()->asCode(array('use-pre'=>TRUE));
+        });
         Router::closure('/testx', function(){
         //    $r = new APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
         //    Util::print_r($r->getParsedInfo());

@@ -439,6 +439,9 @@ class WebFioriAPITheme extends APITheme{
             return $node;
         }
     }
-
+    public function createHTMLNode($options = array()) {
+        $node = new HTMLNode();
+        return $node;
+    }
 }
 

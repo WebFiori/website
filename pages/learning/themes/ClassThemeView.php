@@ -12,43 +12,33 @@ use WebFioriGUI;
  *
  * @author Ibrahim
  */
-class ClassThemeView extends WebFioriPage{
+class ClassThemeView extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
             'title'=>'The Class \'Theme\'',
             'description'=>'',
             'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-Theme'
         ));
-        $p1 = new PNode();
-        $p1->addText(''
+        $this->createParagraph(''
                 . 'Themes in WebFiori framework are represented by classes. In order to create '
                 . 'new theme, the class \'Theme\' must be extended.'
                 . 'The class <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Theme" target="_blank">Theme</a> '
                 . 'is the core class for creating website UI. The class is used to '
                 . 'identify some of basic theme information including:');
-        Page::insert($p1);
         $this->themeInfoUL();
-        $p2 = new PNode();
-        $p2->addText(''
+        $this->createParagraph(''
                 . 'In addition to that, the class has 5 abstract methods that the '
                 . 'developer must implement. The 5 methods are:');
-        Page::insert($p2);
         $this->createThemeMainMethodsUL();
-        $p3 = new PNode();
-        $p3->addText('4 of the 5 are used to create page '
+        $this->createParagraph('4 of the 5 are used to create page '
                 . 'header, footer and the side content area. The fifth one is used '
                 . 'to create custom HTML nodes by passing an array of options.');
-        Page::insert($p3);
-        $p4 = new PNode();
-        Page::insert($p4);
-        $p4->addText(''
+        $this->createParagraph(''
                 . 'Also, the developer can assign callbacks to call before the '
                 . 'theme is loaded or after the theme is loaded. There are two methods to create '
                 . 'callbacks for the theme:');
         $this->createThemeCallbacksMethodUL();
-        $p5 = new PNode();
-        Page::insert($p5);
-        $p5->setText('=The callback which '
+        $this->createParagraph('The callback which '
                 . 'is set before loading the theme can be used to set some attributes '
                 . 'of the web page including the language, writing direction or any other '
                 . 'attribute. The callback which is set to be called after the theme is '

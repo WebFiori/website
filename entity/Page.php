@@ -605,7 +605,7 @@ class Page{
      * @since 1.9
      */
     public static function render() {
-        echo Page::get()->getDocument()->toHTML();
+        echo Page::get()->getDocument()->toHTML(TRUE);
     }
     /**
      * Loads and returns translation based on page language code.

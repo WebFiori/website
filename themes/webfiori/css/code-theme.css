@@ -73,3 +73,9 @@ code span.tag{
 .code-snippet *{
     font-family: monospace;
 }
+.snippit-title{
+    background-color: #71b280;
+}
+.code-snippt{
+    background-color: rgb(21, 18, 33);
+}
