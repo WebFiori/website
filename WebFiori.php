@@ -189,42 +189,6 @@ class WebFiori{
         require_once ROOT_DIR.'/entity/AutoLoader.php';
         $this->AU = AutoLoader::get();
         $this->initAutoloadDirectories();
-        
-        //uncomment next line to show runtime errors and warnings
-        //also enable logging for info, warnings and errors 
-        Logger::logName('initialization-log');
-        Logger::enabled(TRUE);
-        Logger::clear();
-        
-        //display PHP warnings and errors
-        Util::displayErrors();
-
-        //enable logging of debug info.
-        //define('DEBUG', '');
-        
-        $this->SF = SystemFunctions::get();
-        $this->WF = WebsiteFunctions::get();
-        $this->BMF = BasicMailFunctions::get();
-        
-        $this->sysStatus = Util::checkSystemStatus(TRUE);
-        
-        $this->initRoutes();
-        if($this->sysStatus == Util::MISSING_CONF_FILE || $this->sysStatus == Util::MISSING_SITE_CONF_FILE){
-            Logger::log('One or more configuration file is missing. Attempting to create all configuration files.', 'warning');
-            $this->SF->createConfigFile();
-            $this->WF->createSiteConfigFile();
-            $this->BMF->createEmailConfigFile();
-            $this->sysStatus = Util::checkSystemStatus(TRUE);
-        }
-        if(gettype($this->sysStatus) == 'array'){
-            $this->dbErrDetails = $this->sysStatus;
-            $this->sysStatus = Util::DB_NEED_CONF;
-        }
-        //initialize some settings...
-        Logger::log('Initializing cron jobs...');
-        $this->initCron();
-        Logger::log('Initializing permissions...');
-        $this->initPermissions();
         Logger::log('Setting Error Handler...');
         set_error_handler(function($errno, $errstr, $errfile, $errline){
             header("HTTP/1.1 500 Server Error");
@@ -285,6 +249,42 @@ class WebFiori{
                 . '</html>');
             }
         });
+        //uncomment next line to show runtime errors and warnings
+        //also enable logging for info, warnings and errors 
+        Logger::logName('initialization-log');
+        Logger::enabled(TRUE);
+        Logger::clear();
+        
+        //display PHP warnings and errors
+        Util::displayErrors();
+
+        //enable logging of debug info.
+        //define('DEBUG', '');
+        
+        $this->SF = SystemFunctions::get();
+        $this->WF = WebsiteFunctions::get();
+        $this->BMF = BasicMailFunctions::get();
+        
+        $this->sysStatus = Util::checkSystemStatus(TRUE);
+        
+        $this->initRoutes();
+        if($this->sysStatus == Util::MISSING_CONF_FILE || $this->sysStatus == Util::MISSING_SITE_CONF_FILE){
+            Logger::log('One or more configuration file is missing. Attempting to create all configuration files.', 'warning');
+            $this->SF->createConfigFile();
+            $this->WF->createSiteConfigFile();
+            $this->BMF->createEmailConfigFile();
+            $this->sysStatus = Util::checkSystemStatus(TRUE);
+        }
+        if(gettype($this->sysStatus) == 'array'){
+            $this->dbErrDetails = $this->sysStatus;
+            $this->sysStatus = Util::DB_NEED_CONF;
+        }
+        //initialize some settings...
+        Logger::log('Initializing cron jobs...');
+        $this->initCron();
+        Logger::log('Initializing permissions...');
+        $this->initPermissions();
+        
         Logger::log('Initializing completed.');
         
         self::$classStatus = 'INITIALIZED';
@@ -504,7 +504,7 @@ class WebFiori{
             $j->add('type', 'error');
             $j->add('description','This error means that the system is not configured yet. '
                     . 'Make sure to make the method Config::isConfig() return TRUE. '
-                    . 'One way is to go to the file "ini/Config.php". Change attribute value at line 87 to TRUE. '
+                    . 'One way is to go to the file "conf/Config.php". Change attribute value at line 87 to TRUE. '
                     . 'Or Use the method SystemFunctions::configured(TRUE). You must supply \'TRUE\' as an attribute. '
                     . 'If you want to make the system do something else if the return value of the '
                     . 'given method is FALSE, go to the end of the file \'WebFiori.php\' and '
@@ -528,7 +528,7 @@ class WebFiori{
             . 'to change return value of this method:'
             . '</p>'
             . '<ul>'
-            . '<li>Go to the file "ini/Config.php". Change attribute value at line 87 to TRUE.</li>'
+            . '<li>Go to the file "conf/Config.php". Change attribute value at line 87 to TRUE.</li>'
             . '<li>Use the method SystemFunctions::configured(TRUE). You must supply \'TRUE\' as an attribute.</li>'
             . '</ul>'
             . '<p>'

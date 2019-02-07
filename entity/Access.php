@@ -44,7 +44,7 @@ if(!defined('ROOT_DIR')){
  * A class to manage user groups and privileges.
  *
  * @author Ibrahim
- * @version 1.0.2
+ * @version 1.0.3
  */
 class Access {
     /**
@@ -55,7 +55,7 @@ class Access {
     private static $access;
     /**
      * An array which contains an objects of type UsersGroup.
-     * @var UsersGroup
+     * @var PrivilegesGroup
      * @since 1.0 
      */
     private $userGroups;
@@ -79,8 +79,8 @@ class Access {
         return self::$access;
     }
     /**
-     * Returns an array which contains all privileges or privileges 
-     * in a specific user group.
+     * Returns an array which contains all privileges 
+     * in a specific group.
      * @param string|NULL $groupId The ID of the group which its 
      * privileges will be returned. If NULL is given, all privileges will be 
      * returned. Default is NULL.
@@ -146,16 +146,71 @@ class Access {
         }
     }
     /**
+     * Returns an array that represents all privileges groups and privileges.
+     * The returned array will be indexed array. At each index, there will be 
+     * an associative array that represents a privileges group. 
+     * The array will contain the following indices:
+     * <ul>
+     * <li>group-id</li>
+     * <li>given-title</li>
+     * <li>child-groups</li>
+     * <li>privileges</li>
+     * </ul>
+     * The index 'child-groups' will contain an indexed array of all child groups 
+     * of a parent group. The index 'privileges' will contain an indexed array that contains 
+     * all the privileges within a group. Each index of the array will contain 
+     * an associative array that represents a privilege. The array will have 
+     * two indices:
+     * <ul>
+     * <li>privilege-id</li>
+     * <li>given-title</li>
+     * </ul>
+     * @return array An array that contains all privileges and groups info.
+     */
+    public static function asArray() {
+        return self::get()->_asArray();
+    }
+    private function _asArray() {
+        $retVal = array();
+        foreach ($this->userGroups as $group){
+            $retVal[] = $this->_asArrayHelper($group);
+        }
+        return $retVal;
+    }
+    /**
+     * 
+     * @param PrivilegesGroup $group
+     */
+    private function _asArrayHelper($group) {
+        $retVal = array(
+            'group-id'=>$group->getID(),
+            'given-title'=>$group->getName(),
+            'child-groups'=>array(),
+            'privileges'=>array()
+        );
+        foreach ($group->childGroups() as $groupX){
+            $retVal['child-groups'][] = $this->_asArrayHelper($groupX);
+        }
+        foreach ($group->privileges() as $pr){
+            $retVal['privileges'][] = array(
+                'privilege-id'=>$pr->getID(),
+                'given-title'=>$pr->getName()
+            );
+        }
+        return $retVal;
+    }
+    /**
      * Creates a string of permissions given a user.
      * This method can be handy in case the developer would like to store 
      * user privileges in a database. The method might return a string which 
      * might looks like the following string:
      * <p>'PRIVILEGE_1-1;PRIVILEGE_2-1;G-A_GROUP'</p>  
      * where 'PRIVILEGE_1' and 'PRIVILEGE_2' are IDs of privileges and 
-     * 'A_GROUP' is the ID of a group that the user belongs to. The number 
+     * 'A_GROUP' is the ID of a group that the user has all its privileges. The number 
      * that comes after the dash is the status of the privilege. Each privilege 
      * or a group will be separated from the other by a semicolon. 
-     * Also the group will have the letter 'G' at the start.
+     * Also the group will have the letter 'G' at the start. Note that if the group 
+     * has sub-groups, this means the user will have the privileges of the sub-groups.
      * @param User $user The user which the permissions string will be created from.
      * @return string A string of user privileges and the groups that he belongs to 
      * (if any).
@@ -170,14 +225,10 @@ class Access {
      */
     private function _createPermissionsStr($user) {
         if($user instanceof User){
-            $groups = Access::groups();
             $str = '';
             $groupsBelongsTo = array();
-            foreach ($groups as $group){
-                if($user->inGroup($group->getID())){
-                    $groupsBelongsTo[] = $group;
-                    $str .= 'G-'.$group->getID().';';
-                }
+            foreach ($this->userGroups as $group){
+                $this->__createPermissionsStrHelper($user, $group, $groupsBelongsTo, $str);
             }
             $userPrivileges = $user->privileges();
             if(count($groupsBelongsTo) != 0){
@@ -203,70 +254,61 @@ class Access {
         }
         return '';
     }
-    private function _clone($groupId,$newGroup,$newPermissions){
-        if($this->_hasGroup($groupId)){
-            if(!$this->hasGroup($newGroup)){
-                if(self::newGroup($newGroup)){
-                    $oldGroupPermissions = self::getGroup($groupId)->privileges();
-                    foreach ($oldGroupPermissions as $p){
-                        self::newPrivilege($newGroup, $p->getID());
-                    }
-                    foreach ($newPermissions as $p){
-                        self::newPrivilege($newGroup, $p);
-                    }
-                    return TRUE;
+    /**
+     * @param User $user Description
+     * @param PrivilegesGroup $group
+     * @param type $arr
+     */
+    private function __createPermissionsStrHelper($user,$group,&$arr,&$str){
+        if($user->inGroup($group->getID())){
+            $arr[] = $group;
+            $str .= 'G-'.$group->getID().';';
+        }
+        else{
+            foreach ($group->childGroups() as $groupX){
+                if($user->inGroup($groupX->getID())){
+                    $arr[] = $groupX;
+                    $str .= 'G-'.$groupX->getID().';';
+                }
+                else{
+                    $this->__createPermissionsStrHelper($user, $groupX, $arr, $str);
                 }
             }
         }
-        return FALSE;
-    }
-    /**
-     * Creates a clone of a group given its ID.
-     * The clone group will contain all the privileges which where added to 
-     * the original group. Also, it is possible to add extra privileges by 
-     * suppling an array that contains the IDs of the new privileges.
-     * @param string $groupId The ID of the group that will be cloned. 
-     * @param type $newGroupId The ID of the new group. It must be unique.
-     * @param type $newPermissions An optional array of new privileges array.
-     * @return boolean If the group was cloned, the method will return 
-     * TRUE. The method will return FALSE if one of the following conditions 
-     * is met:
-     * <ul>
-     * <li>The group which will be cloned does not exist.</li>
-     * <li>A group which has the ID of the new group is already exist.</li>
-     * <li>If the new group was not created for some reason.</li>
-     * </ul>
-     */
-    public static function cloneGroup($groupId,$newGroupId,$newPermissions=array()){
-        return self::get()->_clone($groupId, $newGroupId, $newPermissions);
     }
 
     private function _privileges($groupId=null){
-        if($groupId != NULL){
-            foreach ($this->userGroups as $group){
-                if($group->getID() == $groupId){
-                    return $group->privileges();
-                }
+        $prArr = array();
+        foreach ($this->userGroups as $group){
+            $this->_privilegesHelper($group, $prArr, $groupId);
+        }
+        return $prArr;
+    }
+    /**
+     * 
+     * @param PrivilegesGroup $group
+     * @param type $array
+     */
+    private function _privilegesHelper($group,&$array,$groupId=null) {
+        if($groupId === NULL){
+            foreach ($group->privileges() as $pr){
+                $array[] = $pr;
             }
-            return array();
+            foreach ($group->childGroups() as $g){
+                $this->_privilegesHelper($g, $array,$groupId);
+            }
+            return;
         }
         else{
-            $prArr = array();
-            foreach ($this->userGroups as $group){
+            if($group->getID() == $groupId){
                 foreach ($group->privileges() as $pr){
-                    $alreadyAdded = FALSE;
-                    foreach ($prArr as $pr2){
-                        if($pr2->getID() == $pr->getID()){
-                            $alreadyAdded = TRUE;
-                            break;
-                        }
-                    }
-                    if(!$alreadyAdded){
-                        $prArr[] = $pr;
-                    }
+                    $array[] = $pr;
                 }
+                return;
             }
-            return $prArr;
+        }
+        foreach ($group->childGroups() as $g){
+            $this->_privilegesHelper($g, $array,$groupId);
         }
     }
     /**
@@ -289,7 +331,7 @@ class Access {
     /**
      * 
      * @param string $groupId
-     * @return UsersGroup|NULL
+     * @return PrivilegesGroup|NULL
      * @since 1.0
      */
     private function &_getGroup($groupId) {
@@ -297,10 +339,34 @@ class Access {
             if($g->getID() == $groupId){
                 return $g;
             }
+            else{
+                $g = $this->_getGroupHelper($g, $groupId);
+                if($g instanceof PrivilegesGroup){
+                    return $g;
+                }
+            }
         }
         $g = NULL;
         return $g;
     }
+    /**
+     * 
+     * @param PrivilegesGroup $group
+     */
+    private function &_getGroupHelper(&$group,$groupId){
+        if($groupId == $group->getID()){
+            return $group;
+        }
+        foreach ($group->childGroups() as $groupX){
+            $g = $this->_getGroupHelper($groupX, $groupId);
+            if($g instanceof PrivilegesGroup){
+                return $g;
+            }
+        }
+        $null = NULL;
+        return $null;
+    }
+
     /**
      * Returns a privilege object given privilege ID. 
      * This method will search all created groups for a privilege which has the 
@@ -324,10 +390,29 @@ class Access {
      */
     private function &_getPrivilege($privId) {
         foreach ($this->userGroups as $g){
-            foreach ($g->privileges() as $p){
-                if($p->getID() == $privId){
-                    return $p;
-                }
+            $p = $this->_getPrivilegeH($privId, $g);
+            if($p !== NULL){
+                return $p;
+            }
+        }
+        return $p;
+    }
+    /**
+     * 
+     * @param type $privId
+     * @param PrivilegesGroup $group
+     * @return type
+     */
+    private function &_getPrivilegeH($privId,$group){
+        foreach ($group->privileges() as $p){
+            if($p->getID() == $privId){
+                return $p;
+            }
+        }
+        foreach ($group->childGroups() as $g){
+            $p = $this->_getPrivilegeH($privId, $g);
+            if($p !== NULL){
+                return $p;
             }
         }
         $p = NULL;
@@ -338,18 +423,61 @@ class Access {
      * The method will search all created groups for a privilege with the 
      * given ID.
      * @param string $id The ID of the privilege.
+     * @param string $groupId If it is provided, the search for the privilege 
+     * will be limited to the group which has the given ID.
+     * @param boolean $searchChildern If set to TRUE and group ID is specified, 
+     * the search for the privilege will include child groups.
      * @return boolean The method will return TRUE if a privilege 
      * with the given ID was found. FALSE if not.
      * @since 1.0
      */
-    public static function hasPrivilege($id) {
-        return Access::get()->_hasPrivilege($id);
+    public static function hasPrivilege($id,$groupId=null) {
+        return Access::get()->_hasPrivilege($id,$groupId);
     }
     
-    private function _hasPrivilege($privilegId) {
+    private function _hasPrivilege($privilegId,$groupId) {
+        $retVal = FALSE;
         foreach ($this->userGroups as $g){
-            foreach ($g->privileges() as $p){
-                if($p->getID() == $privilegId){
+            $retVal = $this->_hasPrivilegeHelper($privilegId, $groupId, $g);
+            if($retVal === TRUE){
+                break;
+            }
+        }
+        return $retVal;
+    }
+    /**
+     * 
+     * @param type $prId
+     * @param type $groupId
+     * @param type $searchCh
+     * @param PrivilegesGroup $group
+     */
+    private function _hasPrivilegeHelper($prId,$groupId,$group) {
+        if($groupId !== NULL && $group->getID() == $groupId){
+            foreach ($group->privileges() as $p){
+                if($p->getID() == $prId){
+                    return TRUE;
+                }
+            }
+            return FALSE;
+        }
+        else if($groupId == NULL){
+            foreach ($group->privileges() as $p){
+                if($p->getID() == $prId){
+                    return TRUE;
+                }
+            }
+            foreach ($group->childGroups() as $g){
+                $b = $this->_hasPrivilegeHelper($prId, $groupId, $g);
+                if($b === TRUE){
+                    return TRUE;
+                }
+            }
+        }
+        else{
+            foreach ($group->childGroups() as $g){
+                $b = $this->_hasPrivilegeHelper($prId, $groupId, $g);
+                if($b === TRUE){
                     return TRUE;
                 }
             }
@@ -371,7 +499,7 @@ class Access {
      * This method can be used to check if a group is exist or not. If 
      * the method has returned NULL, this means the group does not exist.
      * @param string $groupId The ID of the group.
-     * @return UsersGroup|NULL If a users group with the given ID was found, 
+     * @return PrivilegesGroup|NULL If a users group with the given ID was found, 
      * It will be returned. If not, the method will return NULL.
      * @since 1.0
      */
@@ -386,12 +514,7 @@ class Access {
      * @since 1.0
      */
     private function _hasGroup($groupId){
-        foreach ($this->userGroups as $group){
-            if($groupId == $group->getID()){
-                return TRUE;
-            }
-        }
-        return FALSE;
+        return self::getGroup($groupId) !== NULL;
     }
     /**
      * Creates new users group using specific ID.
@@ -406,21 +529,30 @@ class Access {
      * If not, the method will return FALSE.
      * @since 1.0
      */
-    public static function newGroup($groupId) {
-        return Access::get()->_createGroup($groupId);
+    public static function newGroup($groupId,$parentGroupId=null) {
+        return Access::get()->_createGroup($groupId,$parentGroupId);
     }
     
-    private function _createGroup($groupId){
+    private function _createGroup($groupId,$parentGroupID=null){
         if($this->_validateId($groupId)){
             foreach ($this->userGroups as $g){
                 if($g->getID() == $groupId){
                     return FALSE;
                 }
             }
-            $group = new UsersGroup();
+            $group = new PrivilegesGroup();
             $group->setID($groupId);
-            $this->userGroups[] = $group;
-            return TRUE;
+            if($parentGroupID !== NULL){
+                $parentG = &$this->getGroup($parentGroupID);
+                if($parentG instanceof PrivilegesGroup){
+                    $group->setParentGroup($parentG);
+                    return TRUE;
+                }
+            }
+            else{
+                $this->userGroups[] = $group;
+                return TRUE;
+            }
         }
         return FALSE;
     }
@@ -438,6 +570,8 @@ class Access {
     }
     /**
      * Creates new privilege in a specific group given its ID.
+     * The method will add the privilege only if it does not exist in any of 
+     * the created groups.
      * @param string $groupId The ID of the group that the privilege will be 
      * added to. It must be a group in the groups array of the access class.
      * @param string $privilegeId The ID of the privilege. The ID must not contain 
@@ -480,12 +614,16 @@ class Access {
      */
     private function _createPrivilege($groupId,$privilegeId){
         if($this->_validateId($privilegeId)){
-            if($this->_hasGroup($groupId)){
-                $g = $this->_getGroup($groupId);
-                $p = new Privilege();
-                $p->setID($privilegeId);
-                if(!$g->hasPrivilege($p)){
-                    return $this->_getGroup($groupId)->addPrivilage($p);
+            $pr = self::getPrivilege($privilegeId);
+            if($pr === NULL){
+                $g = &$this->_getGroup($groupId);
+                if(($g instanceof PrivilegesGroup) && $groupId == $g->getID()){
+                    $p = new Privilege();
+                    $p->setID($privilegeId);
+                    if(!$g->hasPrivilege($p)){
+                        $g->addPrivilage($p);
+                        return TRUE;
+                    }
                 }
             }
         }
