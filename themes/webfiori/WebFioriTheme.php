@@ -47,7 +47,7 @@ class WebFioriTheme extends Theme{
             $session = WebsiteFunctions::get()->getSession();
             Page::lang($session->getLang(TRUE));
             Page::document()->getChildByID('main-content-area')->setClassName('pa-'.Page::dir().'-col-10');
-            Page::document()->getChildByID('side-content-area')->setClassName('pa-'.Page::dir().'-col-2');
+            Page::document()->getChildByID('side-content-area')->setClassName('pa-'.Page::dir().'-col-2-np');
             Page::document()->getChildByID('page-body')->setClassName('pa-row');
             Page::document()->getChildByID('page-header')->setClassName('pa-row-np');
             Page::document()->getChildByID('page-footer')->setClassName('pa-row');
@@ -197,7 +197,31 @@ class WebFioriTheme extends Theme{
     }
 
     public function createHTMLNode($options = array()) {
-        $node = new HTMLNode();
+        if(isset($options['type'])){
+            if($options['type'] == 'section'){
+                $node = new HTMLNode('section');
+                if(isset($options['h-level']) && $options['h-level'] > 0 && $options['h-level'] < 7){
+                    $h = new HTMLNode('h'.$options['h-level']);
+                }
+                else{
+                    $h = new HTMLNode('h1');
+                }
+                $h->addTextNode($options['title']);
+                $node->addChild($h);
+            }
+            else if($options['type'] == 'p'){
+                $node = new PNode();
+                if(isset($options['text'])){
+                    $node->addText($options['text']);
+                }
+            }
+            else{
+                $node = new HTMLNode();
+            }
+        }
+        else{
+            $node = new HTMLNode();
+        }
         return $node;
     }
 

@@ -23,6 +23,7 @@ use WebFioriGUI;
 abstract class LearnView extends WebFioriPage{
     private $nextTopicLink;
     private $prevTopicLink;
+    private $activeAside;
     public function __construct($x=array(
         'title'=>'Learnning Center',
         'description'=>'Here you will find a list of topics that you might '
@@ -30,7 +31,8 @@ abstract class LearnView extends WebFioriPage{
                 . 'effictive way.')) {
         parent::__construct($x);
         WebFioriGUI::createTitleNode(Page::title());
-        $this->createAsidNav();
+        $active = isset($x['active-aside']) ? $x['active-aside'] : -1;
+        $this->setAsideActiveLinkNum($active);
     }
     public function displayView() {
         $div = new HTMLNode();
@@ -46,6 +48,7 @@ abstract class LearnView extends WebFioriPage{
         if($div->childrenCount() != 0){
             Page::insert($div);
         }
+        $this->createAsidNav();
         parent::displayView();
     }
     public function setNextTopicLink($link,$title) {
@@ -59,6 +62,12 @@ abstract class LearnView extends WebFioriPage{
         $linkNode = new LinkNode($link,$title);
         $this->prevTopicLink->addTextNode('<b>Previous:</b>');
         $this->prevTopicLink->addChild($linkNode);
+    }
+    public function getAsideActiveLinkNum() {
+        return $this->activeAside;
+    }
+    public function setAsideActiveLinkNum($num) {
+        $this->activeAside = $num;
     }
     public abstract function createAsidNav();
 }

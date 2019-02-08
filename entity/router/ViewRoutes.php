@@ -55,6 +55,7 @@ class ViewRoutes {
     public static function create(){
         Router::view('/', '/WebFioriHome.php');
         Router::view('/404', '/NotFound.php');
+        Router::view('/example', '/ExamplePage.php');
         Router::view('/webfiori', '/WebFioriHome.php');
         Router::view('/docs', '/apis-1.0.0/webfiori/NSIndexView.php');
         Router::view('/learn', '/learning/Index.php');

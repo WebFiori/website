@@ -15,6 +15,7 @@ use WebFioriGUI;
 class ClassThemeView extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
+            'active-aside'=>4,
             'title'=>'The Class \'Theme\'',
             'description'=>'',
             'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-Theme'

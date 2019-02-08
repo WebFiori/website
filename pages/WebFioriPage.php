@@ -60,7 +60,16 @@ class WebFioriPage {
         $p->addText($text);
         Page::insert($p);
     }
+    /**
+     * 
+     * @param type $options
+     * @return HTMLNode
+     */
+    public function createNode($options) {
+        return Page::theme()->createHTMLNode($options);
+    }
     public function displayView() {
         Page::render();
     }
+    
 }

@@ -11,6 +11,7 @@ use phpStructs\html\UnorderedList;
 class ClassThemeView extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
+            'active-aside'=>2,
             'title'=>'The Class \'HeadNode\'',
             'description'=>'',
             'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-HeadNode'

@@ -19,6 +19,7 @@ use phpStructs\html\CodeSnippet;
 class ClassHTMLDocView extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
+            'active-aside'=>1,
             'title'=>'The Class \'HTMLDoc\'',
             'description'=>'',
             'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-HTMLDoc'

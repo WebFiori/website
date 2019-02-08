@@ -93,6 +93,27 @@ THE SOFTWARE.
     width: 48%;
     float: left;
 }
+.aside-nav{
+    padding: 10px;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+}
+.aside-nav-item{
+    line-height: 25px;
+    padding-left: 5px;
+    border: 1px solid whitesmoke;
+    font-size: 7.5pt;
+}
+.aside-nav-item:hover{
+    background-color: burlywood;
+}
+.active-aside-item{
+    background-color: #71b280;
+}
+.active-aside-item > a{
+    color: white;
+}
 li{
     line-height: 35px;
 }
