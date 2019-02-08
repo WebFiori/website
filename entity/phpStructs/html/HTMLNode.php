@@ -597,7 +597,7 @@ class HTMLNode {
      */
     public function addChild($node) {
         if(!$this->isTextNode() && !$this->isComment() && $this->mustClose()){
-            if($node instanceof HTMLNode){
+            if(($node instanceof HTMLNode) && $node !== $this){
                 $node->_setParent($this);
                 $this->childrenList->add($node);
             }

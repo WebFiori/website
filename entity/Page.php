@@ -1034,7 +1034,10 @@ class Page{
             $tmpHead = $this->getTheme()->getHeadNode();
             if($tmpHead instanceof HTMLNode){
                 $headNode->setTitle($this->getTitle().$this->getTitleSep().$this->getWebsiteName());
-                $headNode->setBase($tmpHead->getBase()->getAttributeValue('href'));
+                $baseNode = $tmpHead->getBase();
+                if($baseNode !== NULL){
+                    $headNode->setBase($tmpHead->getBase()->getAttributeValue('href'));
+                }
                 $headNode->setCanonical($this->getCanonical());
                 $descNode = new HTMLNode('meta', FALSE);
                 $descNode->setAttribute('name', 'description');
