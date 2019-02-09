@@ -154,6 +154,19 @@ class CustomTheme extends Theme{
             'title'=>'Step 4: Implementing The Theme'
         ));
         Page::insert($sec);
+        $sec->addChild($this->createNode(array(
+            'type'=>'p',
+            'text'=>'At this step, we will start by writing the code which will '
+            . 'make the theme functional. At minimum level, we need to do the '
+            . 'following:'
+            )
+        ));
+        $ul = new UnorderedList();
+        $ul->addListItem('Set the name of the theme.');
+        $ul->addListItem('Set the name of the directory at which the theme exist.');
+        $ul->addListItem('Set the names of theme resource directories (CSS, JS and Images).');
+        $ul->addListItem('Implementing the abstract methods of the class \'Theme\'.');
+        $sec->addChild($ul);
     }
     private function step5() {
         $sec = $this->createNode(array(
