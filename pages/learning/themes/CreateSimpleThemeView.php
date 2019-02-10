@@ -41,7 +41,7 @@ class ClassThemeView extends ThemesLearnView{
         $ul->addListItem('Creating resources folders inside (JavaScript, CSS and Images).');
         $ul->addListItem('Adding theme resources as needed.');
         $ul->addListItem('Creating new PHP class inside theme directory.');
-        $ul->addListItem('Extending the class <a href="'.WebFiori::getSiteConfig()->getBaseThemeName().'docs/webfiori/entity/Theme" target="_blank">Theme</a>.');
+        $ul->addListItem('Extending the class <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Theme" target="_blank">Theme</a>.');
         $ul->addListItem('Implementing abstract methods as needed.');
         Page::insert($ul);
     }
@@ -226,9 +226,9 @@ class CustomTheme extends Theme{
         $sec->addChild($this->createNode(array(
             'type'=>'p',
             'text'=>'Each method of the mentioned must return an object of type '
-            . '<a href="'.WebFiori::getSiteConfig()->getBaseURL().'/docs/phpStructs/html/HTMLNode" target="_blank">HTMLNode</a> '
-            . 'except for the method <a href="'.WebFiori::getSiteConfig()->getBaseURL().'/docs/webfiori/entity/Theme#getHeadNode" target="_blank">Theme::getHeadNode()</a>. '
-            . 'It must return an object of type <a href="'.WebFiori::getSiteConfig()->getBaseURL().'/docs/phpStructs/html/HeadNode" target="_blank">HeadNode</a>. '
+            . '<a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/phpStructs/html/HTMLNode" target="_blank">HTMLNode</a> '
+            . 'except for the method <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Theme#getHeadNode" target="_blank">Theme::getHeadNode()</a>. '
+            . 'It must return an object of type <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/phpStructs/html/HeadNode" target="_blank">HeadNode</a>. '
             . 'The last method is used to create custom HTML nodes by supplying an '
             . 'array of options. The developer can specify how the method will '
             . 'use the options array.'
@@ -238,7 +238,8 @@ class CustomTheme extends Theme{
             'type'=>'p',
             'text'=>'For now, we will allow each method to return '
             . 'a &lt;div&gt; element with a text that descripes which part '
-            . 'of the page the div represents.'
+            . 'of the page the div represents. First, we need to import the class \'HTMLNode\' and '
+            . 'the class \'HeadNode\' since we are going to use them.'
             )
         ));
         $code2 = new CodeSnippet();
@@ -246,6 +247,8 @@ class CustomTheme extends Theme{
         $code2->setCode('
 &lt;?php
 use webfiori\entity\Theme;
+use phpStructs\html\HTMLNode;
+use phpStructs\html\HTMLNode;
 class CustomTheme extends Theme{
     public function __construct() {
         parent::__construct();
@@ -285,6 +288,69 @@ class CustomTheme extends Theme{
     }
 }');
         $sec->addChild($code2);
+        $sec->addChild($this->createNode(array(
+            'type'=>'p',
+            'text'=>'If we test the theme as it is, it would not show any colors '
+            . 'for different page areas since we did not include the CSS file that '
+            . 'we have created. The last step for now is to load the CSS file that '
+            . 'we have created. In order to add any reasource file, we have to include '
+            . 'it inside the body of the method <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Theme#getHeadNode" target="_blank">Theme::getHeadNode()</a>.'
+            . 'To do that, we use the method <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/phpStructs/html/HeadNode#addCSS" target="_blank">HeadNode::addCSS()</a>. In '
+            . 'addition to using this method, we use the method <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Page#cssDir" target="_blank">Page::cssDir()</a> to get '
+            . 'the correct CSS directory of the theme. After performing '
+            . 'this step, the theme will be ready for testing.'
+            )
+        ));
+        $code3 = new CodeSnippet();
+        $code3->setTitle('PHP Code');
+        $code3->setCode('
+&lt;?php
+use webfiori\entity\Theme;
+use phpStructs\html\HTMLNode;
+use phpStructs\html\HTMLNode;
+class CustomTheme extends Theme{
+    public function __construct() {
+        parent::__construct();
+        $this->setName(\'Custom Theme\');
+        $this->setDirectoryName(\'custom-theme\');
+        $this->setCssDirName(\'css\');
+        $this->setJsDirName(\'js\');
+        $this->setImagesDirName(\'images\');
+    }
+    public function createHTMLNode($options = array()) {
+        $node = new HTMLNode();
+        $node->addTextNode(\'Custom Node\');
+        return $node;
+    }
+
+    public function getAsideNode() {
+        $aside = new HTMLNode();
+        $aside->addTextNode(\'Aside Section\');
+        return $aside;
+    }
+
+    public function getFooterNode() {
+        $footer = new HTMLNode();
+        $footer->addTextNode(\'Footer Section\');
+        return $footer;
+    }
+
+    public function getHeadNode() {
+        $head = new HeadNode();
+        //getting CSS directory
+        $cssDir = Page::cssDir();
+        //adding the CSS file to theme resource files set
+        $head->addCSS($cssDir.\'/theme.css\');
+        return $head;
+    }
+
+    public function getHeadrNode() {
+        $header = new HTMLNode();
+        $header->addTextNode(\'Header Section\');
+        return $header;
+    }
+}');
+        $sec->addChild($code3);
     }
     private function step5() {
         $sec = $this->createNode(array(
@@ -292,6 +358,23 @@ class CustomTheme extends Theme{
             'title'=>'Step 5: Testing The Theme'
         ));
         Page::insert($sec);
+        $b = WebFiori::getSiteConfig()->getBaseURL();
+        $sec->addChild($this->createNode(array(
+            'type'=>'p',
+            'text'=>'After creating our new theme, we need to see the result. '
+            . 'What we will be doing is to create new PHP class in the '
+            . '\'/pages\' directory and load the theme in the file. Let\'s give '
+            . 'the file the name \'ThemeTestPage.php\'. First of all, we will '
+            . 'be going to include the class <a href="'.$b.'docs/webfiori/entity/Page" target="_blank">Page</a> since we will be using it. '
+            . 'After that, we will '
+            . 'load the theme using the static method <a href="'.$b.'docs/webfiori/entity/Page#usingTheme" target="_blank">Page::usingTheme()</a>. '
+            . 'The name of the theme will be passed to this method in order to load it. After that, '
+            . 'we will give our page a title using the static method <a href="'.$b.'docs/webfiori/entity/Page#title" target="_blank">Page::title()</a> '
+            . 'and a short description using the static method <a href="'.$b.'docs/webfiori/entity/Page#description" target="_blank">Page::description()</a>. '
+            . 'Finally, we will add a paragraph to the body in order to add some '
+            . 'text and make it clear.'
+            )
+        ));
     }
 }
 new ClassThemeView();
