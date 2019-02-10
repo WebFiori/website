@@ -167,6 +167,124 @@ class CustomTheme extends Theme{
         $ul->addListItem('Set the names of theme resource directories (CSS, JS and Images).');
         $ul->addListItem('Implementing the abstract methods of the class \'Theme\'.');
         $sec->addChild($ul);
+        $sec->addChild($this->createNode(array(
+            'type'=>'p',
+            'text'=>'The name of the theme is used to load it. For that reason, '
+            . 'each theme must have a <b>unique name</b>. To set the name of the '
+            . 'theme, the method <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Theme#setName" target="_blank">Theme::setName()</a> '
+            . 'can be used. The name of theme directory '
+            . 'is used along side resource directories names to load theme '
+            . 'resource files. The method <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Theme#setDirectoryName" target="_blank">Theme::setDirectoryName()</a> '
+            . 'can be used. Also, there are 3 more methods for setting resource '
+            . 'directories names, <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Theme#setCssDirName" target="_blank">Theme::setCssDirName()</a>, '
+            . '<a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Theme#setJsDirName" target="_blank">Theme::setJsDirName()</a> and '
+            . '<a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Theme#setImagesDirName" target="_blank">Theme::setImagesDirName()</a>.'
+            )
+        ));
+        $code = new CodeSnippet();
+        $code->setTitle('PHP Code');
+        $code->setCode('
+&lt;?php
+use webfiori\entity\Theme;
+class CustomTheme extends Theme{
+    public function __construct() {
+        parent::__construct();
+        $this->setName(\'Custom Theme\');
+        $this->setDirectoryName(\'custom-theme\');
+        $this->setCssDirName(\'css\');
+        $this->setJsDirName(\'js\');
+        $this->setImagesDirName(\'images\');
+    }
+}');
+        $sec->addChild($code);
+        $sec->addChild($this->createNode(array(
+            'type'=>'p',
+            'text'=>'After that, we will start the actual theme implementation. '
+            . 'In the <a href="'.WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-Page" target="_blank">lesson</a> '
+            . 'which we talked about the class <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Page">Page</a>, '
+            . 'we said that the page has multiple sections. In many cases, '
+            . 'the header, footer and the side content of a web page are common '
+            . 'between all pages of the website. This also applies to the tags '
+            . 'which are inside the &lt;head&gt; tag.'
+            )
+        ));
+        $sec->addChild($this->createNode(array(
+            'type'=>'p',
+            'text'=>'The given sections of the page can be controlled by the theme. '
+            . 'In order to customize the content of each part, there are 5 abstract '
+            . 'methods that we need to implement:'
+            )
+        ));
+        $ul2 = new UnorderedList();
+        $base = WebFiori::getSiteConfig()->getBaseURL();
+        $ul2->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getHeadNode', 'Theme::getHeadNode()','_blank'));
+        $ul2->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getHeadrNode', 'Theme::getHeadrNode()','_blank'));
+        $ul2->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getAsideNode', 'Theme::getAsideNode()','_blank'));
+        $ul2->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#getFooterNode', 'Theme::getFooterNode()','_blank'));
+        $ul2->addChild($this->createLinkListItem($base.'/docs/webfiori/entity/Theme#createHTMLNode', 'Theme::createHTMLNode()','_blank'));
+        $sec->addChild($ul2);
+        $sec->addChild($this->createNode(array(
+            'type'=>'p',
+            'text'=>'Each method of the mentioned must return an object of type '
+            . '<a href="'.WebFiori::getSiteConfig()->getBaseURL().'/docs/phpStructs/html/HTMLNode" target="_blank">HTMLNode</a> '
+            . 'except for the method <a href="'.WebFiori::getSiteConfig()->getBaseURL().'/docs/webfiori/entity/Theme#getHeadNode" target="_blank">Theme::getHeadNode()</a>. '
+            . 'It must return an object of type <a href="'.WebFiori::getSiteConfig()->getBaseURL().'/docs/phpStructs/html/HeadNode" target="_blank">HeadNode</a>. '
+            . 'The last method is used to create custom HTML nodes by supplying an '
+            . 'array of options. The developer can specify how the method will '
+            . 'use the options array.'
+            )
+        ));
+        $sec->addChild($this->createNode(array(
+            'type'=>'p',
+            'text'=>'For now, we will allow each method to return '
+            . 'a &lt;div&gt; element with a text that descripes which part '
+            . 'of the page the div represents.'
+            )
+        ));
+        $code2 = new CodeSnippet();
+        $code2->setTitle('PHP Code');
+        $code2->setCode('
+&lt;?php
+use webfiori\entity\Theme;
+class CustomTheme extends Theme{
+    public function __construct() {
+        parent::__construct();
+        $this->setName(\'Custom Theme\');
+        $this->setDirectoryName(\'custom-theme\');
+        $this->setCssDirName(\'css\');
+        $this->setJsDirName(\'js\');
+        $this->setImagesDirName(\'images\');
+    }
+    public function createHTMLNode($options = array()) {
+        $node = new HTMLNode();
+        $node->addTextNode(\'Custom Node\');
+        return $node;
+    }
+
+    public function getAsideNode() {
+        $aside = new HTMLNode();
+        $aside->addTextNode(\'Aside Section\');
+        return $aside;
+    }
+
+    public function getFooterNode() {
+        $footer = new HTMLNode();
+        $footer->addTextNode(\'Footer Section\');
+        return $footer;
+    }
+
+    public function getHeadNode() {
+        $head = new HeadNode();
+        return $head;
+    }
+
+    public function getHeadrNode() {
+        $header = new HTMLNode();
+        $header->addTextNode(\'Header Section\');
+        return $header;
+    }
+}');
+        $sec->addChild($code2);
     }
     private function step5() {
         $sec = $this->createNode(array(
