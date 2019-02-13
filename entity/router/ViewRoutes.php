@@ -55,7 +55,7 @@ class ViewRoutes {
     public static function create(){
         Router::view('/', '/WebFioriHome.php');
         Router::view('/404', '/NotFound.php');
-        Router::view('/example', '/ExamplePage.php');
+        Router::view('/test-theme', '/ThemeTestPage.php');
         Router::view('/webfiori', '/WebFioriHome.php');
         Router::view('/docs', '/apis-1.0.0/webfiori/NSIndexView.php');
         Router::view('/learn', '/learning/Index.php');
@@ -65,6 +65,9 @@ class ViewRoutes {
         \docGenerator\DocGeneratorRoutes::createRoutes();
     }
     public static function createHelpTopicsRoutes() {
+        Router::view('/learn/topics/routing', '/learning/routing/Index.php');
+        //Router::view('/learn/topics/routing', '/learning/routing/Index.php');
+        //theme creation tutorials
         Router::view('/learn/topics/themes', '/learning/themes/Index.php');
         Router::view('/learn/topics/themes/class-Theme', '/learning/themes/ClassThemeView.php');
         Router::view('/learn/topics/themes/class-HTMLDoc', '/learning/themes/ClassHTMLDocView.php');

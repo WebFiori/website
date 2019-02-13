@@ -375,6 +375,48 @@ class CustomTheme extends Theme{
             . 'text and make it clear.'
             )
         ));
+        $code = new CodeSnippet();
+        $code->setTitle('PHP Code');
+        $code->setCode('<pre>&lt;?php
+namespace examples\views;
+use webfiori\entity\Page;
+use phpStructs\html\PNode;
+class ExamplePage{
+    public function __construct() {
+        //loading the theme using its name
+        Page::theme(\'Custom Theme\');
+        //setting page title
+        Page::title(\'Example Page\');
+        //setting the description of the page
+        Page::description(\'An example page.\');
+        
+        //adding paragraph to main-content-area
+        $p = new PNode();
+        $p->addText(\'Main Content Area\');
+        Page::insert($p);
+        
+        //adding a paragraph to page-body
+        $p2 = new PNode();
+        $p2->addText(\'Page Body\');
+        Page::insert($p2,\'page-body\');
+        
+        Page::render();
+    }
+}
+//initialize the view
+new ExamplePage();</pre>');
+        $sec->addChild($code);
+        $sec->addChild($this->createNode(array(
+            'type'=>'p',
+            'text'=>'The final step is to add a <a>route</a> to the view that we have '
+             . 'created then navigate using the browser to the view URL.'
+            )
+        ));
+        $sec->addChild($this->createNode(array(
+            'type'=>'p',
+            'text'=>'You can find the full source code in <a href="https://github.com/usernane/webfiori-examples/tree/master/creating-theme" target="_blank">GitHub</a>'
+            )
+        ));
     }
 }
 new ClassThemeView();
