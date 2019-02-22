@@ -1,11 +1,8 @@
 <?php
 namespace webfiori\views\learn\routing;
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
+use phpStructs\html\HTMLNode;
+use phpStructs\html\UnorderedList;
+use webfiori\entity\Page;
 /**
  * Description of Index
  *
@@ -24,7 +21,16 @@ class Index extends RoutingLearnView{
         $this->createParagraph('After finishing the following set of topics, you will '
                 . 'be able to understand how routing sub-system works and create '
                 . 'your own custom routes.');
-        
+        $sec = new HTMLNode('section');
+        $h = new HTMLNode('h1');
+        $h->addTextNode('Topics:');
+        $sec->addChild($h);
+        Page::insert($sec);
+        $ul = new UnorderedList();
+        $sec->addChild($ul);
+        $ul->addListItem('<a href="learn/topics/routing/how-it-works" >How Routing System Works.</a>');
+        $ul->addListItem('<a href="learn/topics/routing/class-Router" >The Class \'Router\'.</a>');
+        $this->setNextTopicLink('learn/topics/routing/how-it-works', 'How Routing System Works');
         $this->displayView();
     }
 }

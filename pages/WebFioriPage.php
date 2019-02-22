@@ -11,6 +11,7 @@ use webfiori\entity\Page;
 use webfiori\WebFiori;
 use phpStructs\html\ListItem;
 use phpStructs\html\LinkNode;
+use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
 /**
  * Description of WebFioriPage
@@ -42,6 +43,18 @@ class WebFioriPage {
             Page::siteName(WebFiori::getSiteConfig()->getWebsiteNames()['EN']);
         }
         Page::lang('EN');
+    }
+    /**
+     * Creates HTML node of type 'img'
+     * @param string $src The value of the attribute 'src'.
+     * @param string $alt The value of the attribute 'alt'.
+     * @return HTMLNode
+     */
+    public function createImag($src,$alt='') {
+        $img = new HTMLNode('img', FALSE);
+        $img->setAttribute('src', $src);
+        $img->setAttribute('alt', $alt);
+        return $img;
     }
     /**
      * 
