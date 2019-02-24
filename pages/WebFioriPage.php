@@ -68,14 +68,20 @@ class WebFioriPage {
         $li00->addChild($link00);
         return $li00;
     }
+    /**
+     * Creates new paragraph node.
+     * @param string $text The text that will be shown in the paragraph body.
+     * @return PNode An object of type 'PNode'.
+     */
     public function createParagraph($text) {
         $p = new PNode();
         $p->addText($text);
-        Page::insert($p);
+        return $p;
     }
     /**
-     * 
-     * @param type $options
+     * Creates a generic HTMLNode based on the loaded theme.
+     * @param array $options An array of options. The options depends on the 
+     * loaded theme.
      * @return HTMLNode
      */
     public function createNode($options) {

@@ -14,7 +14,7 @@ class ClassRouterView extends RoutingLearnView{
             'description'=>'Learn about the class \'Router\' and how to use it.'
         ));
         $this->createParagraph('The class <a href="docs/webfiori/entity/router/Router" target="_blank">Router</a> '
-                . 'is one of the core classes. The main aim of this '
+                . 'is one of the core framework classes. The main aim of this '
                 . 'class is to direct client request to the correct '
                 . 'resource. In addition to that, this class is used to create '
                 . 'routes to different resources.');
@@ -27,8 +27,12 @@ class ClassRouterView extends RoutingLearnView{
                 . '4 types of routes that can be created using this '
                 . 'class:');
         Page::insert($this->typesOfRoutes());
+        $this->createParagraph('For each type of route, there is a '
+                . 'specific static method in the class \'Router\' that can be used to '
+                . 'create it. The 4 methods that corresponds to each type are:');
+        Page::insert($this->typesOfRoutesMethods());
         $this->setPrevTopicLink('learn/topics/routing/how-it-works', 'How Routing System Works');
-    
+        $this->setNextTopicLink('learn/topics/routing/types-of-routes', 'Types of Routes');
         $this->displayView();
     }
     
@@ -38,6 +42,14 @@ class ClassRouterView extends RoutingLearnView{
         $ul->addListItem('API Route.');
         $ul->addListItem('Closure Route.');
         $ul->addListItem('Custom Route.');
+        return $ul;
+    }
+    private function typesOfRoutesMethods(){
+        $ul = new UnorderedList();
+        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#view" target="_blank">Router::view()</a>');
+        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#api" target="_blank">Router::api()</a>');
+        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#closure" target="_blank">Router::closure()</a>');
+        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#other" target="_blank">Router::other()</a>');
         return $ul;
     }
 }

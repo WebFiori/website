@@ -68,6 +68,8 @@ class ViewRoutes {
         Router::view('/learn/topics/routing', '/learning/routing/Index.php');
         Router::view('/learn/topics/routing/how-it-works', '/learning/routing/HowItWorksView.php');
         Router::view('/learn/topics/routing/class-Router', '/learning/routing/ClassRouterView.php');
+        Router::view('/learn/topics/routing/types-of-routes', '/learning/routing/TypesOfRoutesView.php');
+        Router::view('/learn/topics/routing/examples', '/learning/routing/RoutingExamplesView.php');
         //theme creation tutorials
         Router::view('/learn/topics/themes', '/learning/themes/Index.php');
         Router::view('/learn/topics/themes/class-Theme', '/learning/themes/ClassThemeView.php');
