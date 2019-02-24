@@ -13,24 +13,26 @@ class ClassRouterView extends RoutingLearnView{
             'title'=>'The Class \'Router\'',
             'description'=>'Learn about the class \'Router\' and how to use it.'
         ));
-        $this->createParagraph('The class <a href="docs/webfiori/entity/router/Router" target="_blank">Router</a> '
+        $sec = $this->createSection('The Basics');
+        Page::insert($sec);
+        $sec->addChild($this->createParagraph('The class <a href="docs/webfiori/entity/router/Router" target="_blank">Router</a> '
                 . 'is one of the core framework classes. The main aim of this '
                 . 'class is to direct client request to the correct '
                 . 'resource. In addition to that, this class is used to create '
-                . 'routes to different resources.');
-        $this->createParagraph('A resource can be simply a file such as '
+                . 'routes to different resources.'));
+        $sec->addChild($this->createParagraph('A resource can be simply a file such as '
                 . 'a text file, an image or web page or a complex report '
                 . 'that was generated dynamically by gathering data '
-                . 'and representing it in a good looking way.');
-        $this->createParagraph('Most of the time, this class will '
+                . 'and representing it in a good looking way.'));
+        $sec->addChild($this->createParagraph('Most of the time, this class will '
                 . 'be used to create routes. In general, there are '
                 . '4 types of routes that can be created using this '
-                . 'class:');
-        Page::insert($this->typesOfRoutes());
-        $this->createParagraph('For each type of route, there is a '
+                . 'class:'));
+        $sec->addChild($this->typesOfRoutes());
+        $sec->addChild($this->createParagraph('For each type of route, there is a '
                 . 'specific static method in the class \'Router\' that can be used to '
-                . 'create it. The 4 methods that corresponds to each type are:');
-        Page::insert($this->typesOfRoutesMethods());
+                . 'create it. The 4 methods that corresponds to each type are:'));
+        $sec->addChild($this->typesOfRoutesMethods());
         $this->setPrevTopicLink('learn/topics/routing/how-it-works', 'How Routing System Works');
         $this->setNextTopicLink('learn/topics/routing/types-of-routes', 'Types of Routes');
         $this->displayView();

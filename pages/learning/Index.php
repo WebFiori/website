@@ -25,35 +25,21 @@ class Index extends WebFioriPage{
         Page::render();
     }
     private function _welcome(){
-        $sec = new HTMLNode('section');
-        $h = new HTMLNode('h1');
-        $h->addTextNode('Welcome');
-        $sec->addChild($h);
-        $p1 = new PNode();
-        $p1->addText('Welcome to WebFiori learning center. In here, you will '
+        $sec = $this->createSection('Welcome');
+        $sec->addChild($this->createParagraph('Welcome to WebFiori learning center. In here, you will '
                 . 'be abble to learn how to use the framework in the most '
-                . 'effective way. You can find all the topics bellow.');
-        $sec->addChild($p1);
+                . 'effective way. You can find all the topics bellow.'));
         Page::insert($sec);
     }
 
     private function _whatToLearn() {
-        $sec = new HTMLNode('section');
-        $h = new HTMLNode('h1');
-        $h->addTextNode('I want to learn about:');
-        $sec->addChild($h);
+        $sec = $this->createSection('I want to learn about:');
         $ul = new UnorderedList();
         $sec->addChild($ul);
-        $ul->addListItem($this->_createListItem('learn/topics/basics', 'The basics.'));
-        $ul->addListItem($this->_createListItem('learn/topics/routing', 'Routing.'));
-        $ul->addListItem($this->_createListItem('learn/topics/themes', 'Creating themes.'));
+        $ul->addChild($this->createLinkListItem('learn/topics/basics', 'The basics.'));
+        $ul->addChild($this->createLinkListItem('learn/topics/routing', 'Routing.'));
+        $ul->addChild($this->createLinkListItem('learn/topics/themes', 'Creating themes.'));
         Page::insert($sec);
-    }
-    private function _createListItem($link,$label) {
-        $li00 = new ListItem();
-        $link00 = new LinkNode($link, $label);
-        $li00->addChild($link00);
-        return $li00;
     }
 }
 new Index();

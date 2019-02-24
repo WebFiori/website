@@ -79,6 +79,21 @@ class WebFioriPage {
         return $p;
     }
     /**
+     * Creates HTMLNode of type 'section' with a heading.
+     * @param string $title The title that will be in the heading node.
+     * @param int $hLevel Heading level. The method will only accepts 
+     * 1 up to 6 as value. If invalid value is provided, 1 is used as default.
+     * @return HTMLNode
+     */
+    public function createSection($title,$hLevel=1) {
+        $sec = new HTMLNode('section');
+        $hLevelX = $hLevel > 0 && $hLevel < 7 ? $hLevel : 1;
+        $h = new HTMLNode('h'.$hLevelX);
+        $h->addTextNode($title);
+        $sec->addChild($h);
+        return $sec;
+    }
+    /**
      * Creates a generic HTMLNode based on the loaded theme.
      * @param array $options An array of options. The options depends on the 
      * loaded theme.
