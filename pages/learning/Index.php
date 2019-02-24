@@ -36,7 +36,7 @@ class Index extends WebFioriPage{
         $sec = $this->createSection('I want to learn about:');
         $ul = new UnorderedList();
         $sec->addChild($ul);
-        $ul->addChild($this->createLinkListItem('learn/topics/basics', 'The basics.'));
+        $ul->addChild($this->createLinkListItem('learn/topics/introduction', 'Introduction.'));
         $ul->addChild($this->createLinkListItem('learn/topics/routing', 'Routing.'));
         $ul->addChild($this->createLinkListItem('learn/topics/themes', 'Creating themes.'));
         Page::insert($sec);

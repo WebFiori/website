@@ -23,31 +23,31 @@ class Index extends ThemesLearnView{
         parent::__construct(array(
             'title'=>'Themes',
             'description'=>'Learn about how to create themes using '
-            . 'WebFiori Framework.',
-            'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes'
+            . 'WebFiori Framework.'
         ));
-        $p1 = new PNode();
-        $p1->addText('Themes in WebFiori Framework are used to create different '
+        $sec = $this->createSection('Introduction');
+        Page::insert($sec);
+        $sec->addChild($this->createParagraph(''
+                . 'A web application or a website which provide useful content '
+                . 'isn\'t good enough if it does not proved good and easy to '
+                . 'use user interface. User interface is one of the important factors that '
+                . 'can be used to mesure how good a website is. For that reason, '
+                . 'WebFiori Framework provide the needed tools to create a '
+                . 'custom UIs for your website or web application.'
+                . ''));
+        $sec->addChild($this->createParagraph('Themes in WebFiori Framework are used to create different '
                 . 'custom user interfaces for your website or web application. '
-                . 'In addition, they work like a plug in and can provide '
-                . 'additional functionality.');
-        Page::insert($p1);
-        $p2 = new PNode();
-        $p2->addText('The first thing that you need to know are the classes that you will intract with as '
+                . 'In addition, they work like a plug-ins and can provide '
+                . 'additional functionality.'));
+        $sec->addChild($this->createParagraph('The first thing that you need to know are the classes that you will intract with as '
                 . 'a theme designer. Once you know about them, we will start by building a simple theme that will '
                 . 'only show the areas of a web page. After that, we will start by customizing the '
-                . 'theme using JS, CSS and any extra tools needed.');
-        Page::insert($p2);
-        $p3 = new PNode();
-        $p3->addText('After finishing the next list of topics, you will be '
+                . 'theme using JS, CSS and any extra tools needed.'));
+        $sec->addChild($this->createParagraph('After finishing the next list of topics, you will be '
                 . 'able to create custom web pages using PHP or any front end '
-                . 'framework or tool.');
-        Page::insert($p3);
-        $sec = new HTMLNode('section');
-        $h = new HTMLNode('h1');
-        $h->addTextNode('Topics:');
-        $sec->addChild($h);
-        Page::insert($sec);
+                . 'framework or tool.'));
+        $sec2 = $this->createSection('Topics Covered:');
+        Page::insert($sec2);
         $ul = new UnorderedList();
         $li1 = new ListItem();
         $li1->addTextNode('Classes:');
@@ -71,7 +71,7 @@ class Index extends ThemesLearnView{
         $subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-aside', 'Customizing Page Aside Area.'));
         $subUl2->addChild($this->createLinkListItem('learn/topics/themes/custom-html-nodes', 'Adding Support For Custom HTML Elements.'));
         $subUl2->addChild($this->createLinkListItem('learn/topics/themes/before-after-load-events', 'Before and After Loaded Events.'));
-        $sec->addChild($ul);
+        $sec2->addChild($ul);
         
         $this->setNextTopicLink('learn/topics/themes/class-HTMLNode', 'The class \'HTMLNode\'');
         $this->displayView();

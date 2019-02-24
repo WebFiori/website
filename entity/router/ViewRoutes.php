@@ -65,6 +65,9 @@ class ViewRoutes {
         \docGenerator\DocGeneratorRoutes::createRoutes();
     }
     public static function createHelpTopicsRoutes() {
+        //intro topics
+        Router::view('/learn/topics/introduction', '/learning/intro/Index.php');
+        //routing
         Router::view('/learn/topics/routing', '/learning/routing/Index.php');
         Router::view('/learn/topics/routing/how-it-works', '/learning/routing/HowItWorksView.php');
         Router::view('/learn/topics/routing/class-Router', '/learning/routing/ClassRouterView.php');

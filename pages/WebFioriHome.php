@@ -118,52 +118,26 @@ class WebFioriHome extends WebFioriPage{
                 . '');
         $sec->addChild($parag1);
         $ul = new UnorderedList();
-        $feature1 = new ListItem(TRUE);
-        $feature1->setText('Theming and the ability to create multiple UIs for the same web page using any CSS or JavaScript framework.');
-        $ul->addChild($feature1);
-        $feature2 = new ListItem(TRUE);
-        $feature2->setText('Support for routing that makes the ability of creating search-'
+        $ul->addListItem('Theming and the ability to create multiple UIs for the same web page using any CSS or JavaScript framework.');
+        $ul->addListItem('Support for routing that makes the ability of creating search-'
                 . 'engine-friendly links an easy task.');
-        $ul->addChild($feature2);
-        $feature3 = new ListItem(TRUE);
-        $feature3->setText('Creation of web APIs that supports JSON, data filtering and '
+        $ul->addListItem('Creation of web APIs that supports JSON, data filtering and '
                 . 'validation.');
-        $ul->addChild($feature3);
-        $feature4 = new ListItem(TRUE);
-        $feature4->setText('Basic support for MySQL schema and query building.');
-        $ul->addChild($feature4);
-        $feature5 = new ListItem(TRUE);
-        $feature5->setText('Lightweight. The total size of framework core files is '
+        $ul->addListItem('Basic support for MySQL schema and query building.');
+        $ul->addListItem('Lightweight. The total size of framework core files is '
                 . 'less than 3 megabytes.');
-        $ul->addChild($feature5);
-        $feature6 = new ListItem(TRUE);
-        $feature6->setText('Access management by assigning system user a set '
+        $ul->addListItem('Access management by assigning system user a set '
                 . 'of privileges.');
-        $ul->addChild($feature6);
-        $feature7 = new ListItem(TRUE);
-        $feature7->setText('The ability to create and manage multiple '
+        $ul->addListItem('The ability to create and manage multiple '
                 . 'sessions at once.');
-        $ul->addChild($feature7);
-        $feature8 = new ListItem(TRUE);
-        $feature8->setText('Support for creating and sending nice-looking emails in a simple way by using SMTP '
+        $ul->addListItem('Support for creating and sending nice-looking emails in a simple way by using SMTP '
                 . 'protocol.');
-        $ul->addChild($feature8);
-        $feature9 = new ListItem(TRUE);
-        $feature9->setText('Autoloading of user defined classes.');
-        $ul->addChild($feature9);
-        $feature10 = new ListItem(TRUE);
-        $feature10->setText('The ability to create automatic tasks and let them '
+        $ul->addListItem('Autoloading of user defined classes.');
+        $ul->addListItem('The ability to create automatic tasks and let them '
                 . 'run in specific time using CRON.');
-        $ul->addChild($feature10);
-        $feature11 = new ListItem(TRUE);
-        $feature11->setText('Support for logging of system events.');
-        $ul->addChild($feature11);
-        $feature12 = new ListItem(TRUE);
-        $feature12->setText('Well-defined file upload and file handling sub-system.');
-        $ul->addChild($feature12);
-        $feature13 = new ListItem(TRUE);
-        $feature13->setText('Building and manipulating the DOM of a web page using PHP language.');
-        $ul->addChild($feature13);
+        $ul->addListItem('Support for logging of system events.');
+        $ul->addListItem('Well-defined file upload and file handling sub-system.');
+        $ul->addListItem('Building and manipulating the DOM of a web page using PHP language.');
         $sec->addChild($ul);
         Page::insert($sec);
     }

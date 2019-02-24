@@ -17,34 +17,33 @@ class ClassThemeView extends ThemesLearnView{
         parent::__construct(array(
             'active-aside'=>4,
             'title'=>'The Class \'Theme\'',
-            'description'=>'',
-            'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-Theme'
+            'description'=>'The core class for creating UI.'
         ));
-        $this->createParagraph(''
+        Page::insert($this->createParagraph(''
                 . 'Themes in WebFiori framework are represented by classes. In order to create '
                 . 'new theme, the class \'Theme\' must be extended.'
-                . 'The class <a href="'.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori/entity/Theme" target="_blank">Theme</a> '
+                . 'The class <a href="docs/webfiori/entity/Theme" target="_blank">Theme</a> '
                 . 'is the core class for creating website UI. The class is used to '
-                . 'identify some of basic theme information including:');
+                . 'identify some of basic theme information including:'));
         $this->themeInfoUL();
-        $this->createParagraph(''
+        Page::insert($this->createParagraph(''
                 . 'In addition to that, the class has 5 abstract methods that the '
-                . 'developer must implement. The 5 methods are:');
+                . 'developer must implement. The 5 methods are:'));
         $this->createThemeMainMethodsUL();
-        $this->createParagraph('4 of the 5 are used to create page '
+        Page::insert($this->createParagraph('4 of the 5 are used to create page '
                 . 'header, footer and the side content area. The fifth one is used '
-                . 'to create custom HTML nodes by passing an array of options.');
-        $this->createParagraph(''
+                . 'to create custom HTML nodes by passing an array of options.'));
+        Page::insert($this->createParagraph(''
                 . 'Also, the developer can assign callbacks to call before the '
                 . 'theme is loaded or after the theme is loaded. There are two methods to create '
-                . 'callbacks for the theme:');
+                . 'callbacks for the theme:'));
         $this->createThemeCallbacksMethodUL();
-        $this->createParagraph('The callback which '
+        Page::insert($this->createParagraph('The callback which '
                 . 'is set before loading the theme can be used to set some attributes '
                 . 'of the web page including the language, writing direction or any other '
                 . 'attribute. The callback which is set to be called after the theme is '
                 . 'loaded can be used to change the structure of the page by '
-                . 'adding or removing HTML nodes.');
+                . 'adding or removing HTML nodes.'));
         $this->setPrevTopicLink('learn/topics/themes/class-Page', 'The class \'Page\'');
         $this->setNextTopicLink('learn/topics/themes/create-simple-theme', 'Creating a Simple Theme');
         $this->displayView();

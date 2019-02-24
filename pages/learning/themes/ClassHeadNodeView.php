@@ -13,13 +13,12 @@ class ClassThemeView extends ThemesLearnView{
         parent::__construct(array(
             'active-aside'=>2,
             'title'=>'The Class \'HeadNode\'',
-            'description'=>'',
-            'canonical'=> WebFiori::getSiteConfig()->getBaseURL().'learn/topics/themes/class-HeadNode'
+            'description'=>'This class represents the &lt;head&gt; tag of HTML document.',
         ));
-        $this->createParagraph('The class <a>HeadNode</a> represents <span style="font-family:monospace">&lt;head&gt;</span> tag of the page. '
+        Page::insert($this->createParagraph('The class <a>HeadNode</a> represents <span style="font-family:monospace">&lt;head&gt;</span> tag of the page. '
                 . 'It is used to add CSS, JavaScript files and to include any other resources which the '
-                . 'page depends on. Also, it can be used to add any extra META tags that the page needs.');
-        $this->createParagraph('The following methods of the class will mostly be used:');
+                . 'page depends on. Also, it can be used to add any extra META tags that the page needs.'));
+        Page::insert($this->createParagraph('The following methods of the class will mostly be used:'));
         $this->_createMethodsUsed();
         $this->setPrevTopicLink('learn/topics/themes/class-HTMLDoc', 'The class \'HTMLDoc\'');
         $this->setNextTopicLink('learn/topics/themes/class-Page', 'The class \'Page\'');
