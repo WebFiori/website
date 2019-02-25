@@ -67,6 +67,7 @@ class ViewRoutes {
     public static function createHelpTopicsRoutes() {
         //intro topics
         Router::view('/learn/topics/introduction', '/learning/intro/Index.php');
+        Router::view('/learn/topics/basic-usage', '/learning/intro/BasicUsageView.php');
         //routing
         Router::view('/learn/topics/routing', '/learning/routing/Index.php');
         Router::view('/learn/topics/routing/how-it-works', '/learning/routing/HowItWorksView.php');
