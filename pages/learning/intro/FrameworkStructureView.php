@@ -56,7 +56,23 @@ class FrameworkStructureView extends IntroLearnView{
         $ul2->addListItem('The class <a href="docs/webfiori/ini/InitAutoLoad" target="_blank">InitAutoLoad</a>.');
         $ul2->addListItem('The class <a href="docs/webfiori/ini/InitCron" target="_blank">InitCron</a>.');
         $ul2->addListItem('The class <a href="docs/webfiori/ini/InitPrivileges" target="_blank">InitPrivileges</a>.');
-        $sec4 = $this->createSection('Initialization Files');
+        $sec4 = $this->createSection('System Entities');
+        $sec4->addChild($this->createParagraph(''
+                . 'Framework entities are classes that the framework '
+                . 'is using to function. They are located inside the folder '
+                . '<span style="font-family:monospace">\'/entity\'</span>. In addition '
+                . 'to classes, this folder contains all core libraries that '
+                . 'the framework is depending on. The libraries include the following '
+                . 'ones: '
+                . ''));
+        $ul3 = new UnorderedList();
+        $sec4->addChild($ul3);
+        $ul3->addListItem('<a href="docs/jsonx" target="_blank">JsonX Library:</a> Used to create well formatted JSON strings.');
+        $ul3->addListItem('<a href="docs/phMysql" target="_blank">PhMySQL Library:</a> Used to construct MySQL Schemas and queries in simple manner.');
+        $ul3->addListItem('<a href="docs/phpStructs" target="_blank">phpStructs Library:</a> A library that provide basic data structures in addition '
+                . 'to tools that can be used to create HTML documents using PHP.');
+        $ul3->addListItem('<a href="docs/restEasy" target="_blank">RESTEasy Library:</a> A library that can make the process of creating web '
+                . 'APIs very simple.');
         Page::insert($sec4);
         $sec5 = $this->createSection('System Entities');
         Page::insert($sec5);
