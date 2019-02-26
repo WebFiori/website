@@ -44,6 +44,7 @@ class Index extends IntroLearnView{
         $ul->addListItem('Autolading: Ability to load user-defined classes.');
         $ul->addListItem('User Access Management: A sub-system to manage user privileges.');
         $ul->addListItem('Tasks Schedualing: Run PHP commands at specific time using CRON.');
+        $this->setNextTopicLink('learn/topics/architecture', 'Framework Architecture');
         $this->displayView();
     }
 }
