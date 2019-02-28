@@ -197,13 +197,10 @@ abstract class ExtendedWebAPI extends WebAPI{
     public function databaseErr($info=''){
         $message = $this->get('general/db-error');
         if($info instanceof JsonI){
-            $this->sendResponse($message, TRUE, 404, '"err-info":'.$info->toJSON());
-        }
-        else if($info instanceof JsonX){
-            $this->sendResponse($message, TRUE, 404, '"err-info":'.$info);
+            $this->sendResponse($message, TRUE, 404, $info->toJSON());
         }
         else{
-            $this->sendResponse($message, TRUE, 404, '"err-info":"'.JsonX::escapeJSONSpecialChars($info).'"');
+            $this->sendResponse($message, TRUE, 404, $info);
         }
     }
     /**
