@@ -23,31 +23,42 @@
  * THE SOFTWARE.
  */
 namespace phpStructs\html;
+use phpStructs\html\TabelCell;
+use phpStructs\html\HTMLNode;
 /**
- * A class that represents &lt;br&gt; tag.
+ * A class that represents &lt;tr&gt; node.
  *
  * @author Ibrahim
  * @version 1.0
  */
-class Br extends HTMLNode{
+class TableRow extends HTMLNode{
     public function __construct() {
-        parent::__construct('br', FALSE);
+        parent::__construct('tr', TRUE);
     }
     /**
-     * A method that does nothing.
-     * @param type $param
-     * @param type $param2
+     * Adds new child node to the row.
+     * The node will be added only if its an instance of the class 
+     * 'TableCell'.
+     * @param TabelCell $node New table cell.
      * @since 1.0
      */
-    public function setAttribute($param,$param2='') {
-        
+    public function addChild($node) {
+        if($node instanceof TabelCell){
+            parent::addChild($node);
+        }
     }
     /**
-     * A method that does nothing.
-     * @param type $param
+     * Adds new cell to the row with a text in its body.
+     * @param string $cellText The text of cell body.
+     * @param string $type The type of the cell. This attribute 
+     * can have only one of two values, 'td' or 'th'. 'td' If the cell is 
+     * in the body of the table and 'th' if the cell is in the header. If 
+     * none of the two is given, 'td' will be used by default.
      * @since 1.0
      */
-    public function addChild($param) {
-        
+    public function addCell($cellText,$type='td') {
+        $cell = new TabelCell($type);
+        $cell->addTextNode($cellText);
+        $this->addChild($cell);
     }
 }
