@@ -20,6 +20,7 @@ class BasicUsageView extends IntroLearnView{
             'title'=>'Basic Usage',
             'description'=>'The simplest way to use the framework.'
         ));
+        Page::document()->getHeadNode()->addCSS('themes/webfiori/css/code-theme.css');
         $sec = $this->createSection('A Route and a View');
         Page::insert($sec);
         $sec->addChild($this->createParagraph('The simplest way in using the framework is to '
@@ -32,7 +33,7 @@ class BasicUsageView extends IntroLearnView{
                 . 'let\'s assume tha the page has the following code in it:'));
         $code = new CodeSnippet();
         $code->setTitle('HTML Code');
-        $code->setCode('<pre>'. str_replace('<', '&lt;', str_replace('>', '&gt;', ''
+        $code->setCode(''. str_replace('<', '&lt;', str_replace('>', '&gt;', ''
                 . '<!DOCTYPE html>
 <html>
     <head>
@@ -51,8 +52,30 @@ class BasicUsageView extends IntroLearnView{
         </div>
     </body>
 </html>'
-                . '')).'</pre>');
+                . '')).'');
         $sec->addChild($code);
+        $sec->addChild($this->createParagraph(''
+                . 'In order to view the page, we have to create a route '
+                . 'for it. Since this is a page, we can use the method '
+                . '<a href="docs/webfiori/entity/router/Router#view" target="_blank">Router::view()</a> to create its route. '
+                . 'The class <a href="docs/webfiori/entity/router/ViewRoutes" target="_blank">ViewRoutes</a> has one static method which the '
+                . 'developer can use to create routes to views. The '
+                . 'following code shows how the route is created.'
+                . ''));
+        $code2 = new CodeSnippet();
+        $code2->setTitle('PHP Code');
+        $code2->setCode("class ViewRoutes {
+    /**
+     * Create all views routes. Include your own here.
+     * @since 1.0
+     */
+    public static function create(){
+        //add a route to the index file of the website
+        Router::view('/home', '/index.html');
+    }
+}
+");
+        $sec->addChild($code2);
         $sec2 = $this->createSection('Key Features:');
         $ul = new UnorderedList();
         $sec2->addChild($ul);
