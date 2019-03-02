@@ -129,14 +129,14 @@ class SiteConfig{
     }
     private function __construct() {
         $this->configVision = '1.2.1';
-        $this->webSiteNames = array('AR'=>'ويب فيوري','EN'=>'WebFiori Framework',);
+        $this->webSiteNames = array('EN'=>'WebFiori','AR'=>'ويب فيوري',);
         $this->baseUrl = Util::getBaseURL();
         $this->titleSep = ' | ';
         $this->primaryLang = 'EN';
         $this->baseThemeName = 'Greeny By Ibrahim Ali';
         $this->adminThemeName = 'Greeny By Ibrahim Ali';
-        $this->homePage = $this->baseUrl;
-        $this->descriptions = array('AR'=>'','EN'=>'',);
+        $this->homePage = Util::getBaseURL();
+        $this->descriptions = array('EN'=>'','AR'=>'',);
     }
     
     private function _getPrimaryLanguage(){

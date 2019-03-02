@@ -196,12 +196,7 @@ abstract class ExtendedWebAPI extends WebAPI{
      */
     public function databaseErr($info=''){
         $message = $this->get('general/db-error');
-        if($info instanceof JsonI){
-            $this->sendResponse($message, TRUE, 404, $info->toJSON());
-        }
-        else{
-            $this->sendResponse($message, TRUE, 404, $info);
-        }
+        $this->sendResponse($message, TRUE, 404, $info);
     }
     /**
      * Sends a response message to indicate that a user is not authorized to 

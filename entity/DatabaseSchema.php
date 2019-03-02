@@ -43,7 +43,7 @@ if(!defined('ROOT_DIR')){
 /**
  * A class to create database schema.
  *
- * @author Ibrahim
+ * @author Ibrahim <ibinshikh@hotmail.com>
  * @version 1.2
  */
 class DatabaseSchema {

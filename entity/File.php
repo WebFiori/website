@@ -46,8 +46,8 @@ use Exception;
  * A class that represents a file.
  * This class can be used to read and write files in binary. In addition to that, 
  * it can be used to view files in web browsers.
- * @author Ibrahim <ibinshikh@hotmail.com>
- * @version 1.1.2
+ * @author Ibrahim
+ * @version 1.1.3
  */
 class File implements JsonI{
     /**
@@ -335,12 +335,12 @@ class File implements JsonI{
      * absolute path of the file.
      * @since 1.1.1
      */
-    public function read() {
+    public function read($from=-1,$to=-1) {
         $path = $this->getAbsolutePath();
         if($path != ''){
-            if(!$this->_readHelper($path)){
+            if(!$this->_readHelper($path,$from,$to)){
                 $path = str_replace('\\', '/', $this->getAbsolutePath());
-                if(!$this->_readHelper($path)){
+                if(!$this->_readHelper($path,$from,$to)){
                     throw new Exception('File not found: \''.$path.'\'.');
                 }
                 else{
@@ -353,13 +353,39 @@ class File implements JsonI{
         }
         throw new Exception('File absolute path is invalid.');
     }
-    private function _readHelper($path){
+    /**
+     * Returns memory limit of PHP.
+     * @return int A number that represents memory limit in 
+     * bytes.
+     * 
+     */
+    private function _getMemoryLimit() {
+        $memoryLimit = ini_get('memory_limit');
+        $len = strlen($memoryLimit);
+        $limit = '';
+        $unit = '';
+        for($x = 0 ; $x < $len ; $x++){
+            $ch = $memoryLimit[$x];
+            if($ch >= '0' && $ch <= '9'){
+                $limit .= $ch;
+            }
+            else{
+                $unit .= $ch;
+            }
+        }
+        return intval($limit)*1024*1024;
+    }
+    private function _readHelper($path,$from,$to){
         if(file_exists($path)){
             $this->_setSize(filesize($path));
             set_error_handler(function(){});
             $h = fopen($path, 'rb');
+            $bytesToRead = $to - $from > 0 ? $to - $from : $this->getSize();
             if(is_resource($h)){
-                $this->rawData = fread($h, $this->getSize());
+                if($bytesToRead > 0){
+                    fseek($h, $from);
+                }
+                $this->rawData = fread($h, $bytesToRead);
                 fclose($h);
                 $ext = pathinfo($this->getName(), PATHINFO_EXTENSION);
                 $mime = self::getMIMEType($ext);
@@ -451,8 +477,34 @@ class File implements JsonI{
     }
     private function _viewFileHelper($asAttachment){
         $contentType = $this->getFileMIMEType();
+        Logger::logName('View-F-Log');
         if($contentType != NULL){
+            Logger::log('Content-type: '.$contentType);
+            header("Accept-Ranges: bytes");
             header('Content-Type:'.$contentType);
+            Logger::log('Checking if range is set...');
+            if(isset($_SERVER['HTTP_RANGE'])){
+                Logger::log('It is set.');
+                $range = filter_var($_SERVER['HTTP_RANGE']);
+                Logger::log('Range = \''.$range.'\'.');
+                $rangeArr = explode('=', $range);
+                $expl = explode('-', $rangeArr[1]);
+                if(strlen($expl[1]) == 0){
+                    Logger::log('Range end not specified.');
+                    Logger::log('Setting it to file size.');
+                    Logger::log('F Size: '.$this->getSize());
+                    $expl[1] = $this->getSize(); 
+                }
+                $this->read($expl[0], $expl[1]);
+                header('HTTP/1.1 206 Partial Content');
+                header('Content-Range: bytes '.$expl[0].'-'.$expl[1].'/'.$this->getSize());
+                header('Content-Length: '.($expl[1] - $expl[0]));
+            }
+            else{
+                //header('Content-Range: bytes 0-'.$this->getSize().'/'.$this->getSize());
+                Logger::log('No Content Range header. New View.');
+                header('Content-Length: '.$this->getSize());
+            }
             if($asAttachment === TRUE){
                 header('Content-Disposition: attachment; filename="'.$this->getName().'"');
             }
@@ -460,6 +512,7 @@ class File implements JsonI{
                 header('Content-Disposition: inline; filename="'.$this->getName().'"');
             }
             echo $this->getRawData();
+            Logger::section();
         }
         else{
             throw new Exception('MIME type of raw data is not set.');
@@ -600,12 +653,17 @@ class File implements JsonI{
      * This method will set the path and name to empty string. Also, it will 
      * set the size to 0 and ID to -1. Finally, it will set MIME type to 
      * "application/octet-stream"
+     * @param string $fName The name of the file such as 'my-file.png'.
+     * @param string $fPath The path of the file such as 'C:/Images/Test'.
+     * @since 1.0
      */
-    public function __construct() {
+    public function __construct($fName='',$fPath='') {
         $this->mimeType = 'application/octet-stream';
-        $this->path = '';
+        if(!$this->setPath($fPath)){
+            $this->path = '';
+        }
+        $this->setName($fName);
         $this->id = -1;
-        $this->fileName = '';
         $this->fSize = 0;
     }
     /**

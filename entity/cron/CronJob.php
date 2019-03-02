@@ -2,6 +2,7 @@
 /*
  * The MIT License
  *
+ * Copyright 2018 Ibrahim, WebFiori Framework.
  * Copyright 2018 Ibrahim.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -45,6 +46,7 @@ if(!defined('ROOT_DIR')){
 /**
  * A class thar represents a cron job.
  *
+ * @author Ibrahim
  * @author Ibrahim <ibinshikh@hotmail.com>
  * @version 1.0.2
  */
@@ -827,7 +829,7 @@ class CronJob {
         else{
             Logger::log('Checking if the current day is in range of days...');
             $retVal = FALSE;
-            $current = intval(date('d'));
+            $current = Cron::dayOfMonth();
             Logger::log('Current day of month = \''.$current.'\'.', 'debug');
             $ranges = $monthDaysArr['at-range'];
             foreach ($ranges as $range){
@@ -870,7 +872,7 @@ class CronJob {
         else{
             $retVal = FALSE;
             Logger::log('Checking if current week day is in range of days...');
-            $current = intval(date('w'));
+            $current = Cron::dayOfWeek();
             Logger::log('Current day of week = \''.$current.'\'.', 'debug');
             $ranges = $daysArr['at-range'];
             foreach ($ranges as $range){
@@ -955,7 +957,7 @@ class CronJob {
         }
         else{
             $retVal = FALSE;
-            $current = intval(date('H'));
+            $current = Cron::hour();
             Logger::log('Current hour = \''.$current.'\'.', 'debug');
             $ranges = $hoursArr['at-range'];
             foreach ($ranges as $range){
@@ -1008,7 +1010,7 @@ class CronJob {
         else{
             Logger::log('Checking if current minute is in ranges of minutes...');
             $retVal = FALSE;
-            $current = intval(date('i'));
+            $current = Cron::minute();
             Logger::log('Current minute = \''.$current.'\'.', 'debug');
             $ranges = $minuteArr['at-range'];
             foreach ($ranges as $range){

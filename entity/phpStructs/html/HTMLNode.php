@@ -29,7 +29,7 @@ use phpStructs\Stack;
  * A class that represents HTML element.
  *
  * @author Ibrahim
- * @version 1.7.2
+ * @version 1.7.3
  */
 class HTMLNode {
     private $isFormated;
