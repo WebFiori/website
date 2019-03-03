@@ -69,6 +69,7 @@ class ViewRoutes {
         Router::view('/learn/topics/introduction', '/learning/intro/Index.php');
         Router::view('/learn/topics/architecture', '/learning/intro/FrameworkStructureView.php');
         Router::view('/learn/topics/basic-usage', '/learning/intro/BasicUsageView.php');
+        Router::view('/learn/topics/more-about-views', '/learning/intro/MoreAboutViewsView.php');
         //routing
         Router::view('/learn/topics/routing', '/learning/routing/Index.php');
         Router::view('/learn/topics/routing/how-it-works', '/learning/routing/HowItWorksView.php');

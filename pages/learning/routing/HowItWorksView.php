@@ -9,7 +9,8 @@ class HowItWorksView extends RoutingLearnView{
                     'title'=>'How Routing System Works',
                     'description'=>'A guide that will let you '
                     . 'know how routing sub-system works in '
-                    . 'WebFiori Framework.'
+                    . 'WebFiori Framework.',
+                    'active-aside'=>1
                 )
         );
         Page::document()->getHeadNode()->addCSS('themes/webfiori/css/code-theme.css');

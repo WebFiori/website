@@ -11,9 +11,10 @@ use webfiori\entity\Page;
 class Index extends RoutingLearnView{
     public function __construct() {
         parent::__construct(array(
-            'title'=>'Routing',
+            'title'=>'Introduction to Routing',
             'description'=>'Learn about the basics of routing in '
-            . 'WebFiori Framework.'
+            . 'WebFiori Framework.',
+            'active-aside'=>0
         ));
         $sec = $this->createSection('Introduction');
         $sec->addChild($this->createParagraph(''

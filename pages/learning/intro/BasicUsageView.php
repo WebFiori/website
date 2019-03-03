@@ -18,13 +18,14 @@ class BasicUsageView extends IntroLearnView{
     public function __construct() {
         parent::__construct(array(
             'title'=>'Basic Usage',
-            'description'=>'The simplest way to use the framework.'
+            'description'=>'The simplest way to use the framework.',
+            'active-aside'=>2
         ));
         Page::document()->getHeadNode()->addCSS('themes/webfiori/css/code-theme.css');
         $sec = $this->createSection('A Route and a View');
         Page::insert($sec);
         $sec->addChild($this->createParagraph('The simplest way in using the framework is to '
-                . 'create HTML web pages and add routes to each page. Pages in WebFiori Framework '
+                . 'create HTML web pages and add <a href="learn/topics/routing">routes</a> to each page. Pages in WebFiori Framework '
                 . 'must be created inside the folder <span style="font-family:monospace">\'/pages\'</span>. '
                 . 'It is possible to create your pages in different place but leave this '
                 . 'for later.'));
@@ -75,11 +76,8 @@ class BasicUsageView extends IntroLearnView{
     }
 }
 ");
-        $sec->addChild($code2);
-        $sec2 = $this->createSection('Key Features:');
-        $ul = new UnorderedList();
-        $sec2->addChild($ul);
-        Page::insert($sec2);
+        $this->setPrevTopicLink('learn/topics/architecture', 'Framework Architecture');
+        $this->setNextTopicLink('learn/topics/more-about-views', 'More About Views');
         $this->displayView();
     }
 }

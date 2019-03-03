@@ -11,7 +11,8 @@ class TypesOfRoutesView extends RoutingLearnView{
     public function __construct() {
         parent::__construct(array(
             'title'=>'Types of Routes',
-            'description'=>'Learn about types of routes in WebFiori Framework.'
+            'description'=>'Learn about types of routes in WebFiori Framework.',
+            'active-aside'=>3
         ));
         Page::insert($this->createParagraph('As we have said in the last lesson, there '
                 . 'are 4 different types of routes. In general, the idea of '
