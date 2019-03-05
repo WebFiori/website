@@ -35,7 +35,7 @@ class RoutingLearnView extends LearnView{
         $links->addChild($li02);
         $li03 = $this->createLinkListItem('learn/topics/routing/types-of-routes', 'Types of Routes');
         $li03->setClassName('aside-nav-item');
-        $links->addChild($li03);
+        //$links->addChild($li03);
         switch ($this->getAsideActiveLinkNum()){
             case 0:{
                $li00->setClassName('aside-nav-item active-aside-item');

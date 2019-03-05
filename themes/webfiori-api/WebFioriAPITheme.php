@@ -153,11 +153,10 @@ class WebFioriAPITheme extends APITheme{
         $contactInfo = new HTMLNode();
         $contactInfo->setClassName('pa-'.Page::dir().'-col-12');
         $p = new PNode();
-        //$p->addText('013 xxx xxxx', array('new-line'=>TRUE));
         $p->addText('webfiori@programmingacademia.com',array('new-line'=>TRUE));
         $contactInfo->addChild($p);
         $node->addChild($contactInfo);
-        $p->addText('All Rights Reserved © '.date('Y'));
+        $p->addText('WebFiori Framework, All Rights Reserved © '.date('Y'));
         $div = new HTMLNode('div');
         $div->setAttribute('class', 'pa-ltr-col-twelve');
         $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
@@ -331,14 +330,12 @@ class WebFioriAPITheme extends APITheme{
             $count = count($func->getParameters());
             for($x = 0 ; $x < $count ; $x++){
                 $param = $func->getParameters()['param-'.$x];
-                $li = new ListItem(TRUE);
                 $text = '<span style="font-family: monospace;">'.$param['var-type'].' '.$param['var-name'].'</span>';
                 if($param['is-optional'] === TRUE){
                     $text .= ' [Optional]';
                 }
                 $text .= ' '.$param['var-desc'];
-                $li->setText($text);
-                $ul->addChild($li);
+                $ul->addListItem($text);
             }
             $paramsNode->addChild($ul);
             $node->addChild($paramsNode);

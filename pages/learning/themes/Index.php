@@ -65,12 +65,12 @@ class Index extends ThemesLearnView{
         $li2->addChild($subUl2);
         $ul->addChild($li2);
         $subUl2->addChild($this->createLinkListItem('learn/topics/themes/create-simple-theme', 'Creating a Simple Theme'));
-        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-head-tag', 'Adding JS, CSS and Other &lt;head&gt; Tag Elements.'));
-        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-header', 'Customizing Page Header.'));
-        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-footer', 'Customizing Page Footer.'));
-        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-aside', 'Customizing Page Aside Area.'));
-        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/custom-html-nodes', 'Adding Support For Custom HTML Elements.'));
-        $subUl2->addChild($this->createLinkListItem('learn/topics/themes/before-after-load-events', 'Before and After Loaded Events.'));
+        //$subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-head-tag', 'Adding JS, CSS and Other &lt;head&gt; Tag Elements.'));
+        //$subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-header', 'Customizing Page Header.'));
+        //$subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-footer', 'Customizing Page Footer.'));
+        //$subUl2->addChild($this->createLinkListItem('learn/topics/themes/customizing-aside', 'Customizing Page Aside Area.'));
+        //$subUl2->addChild($this->createLinkListItem('learn/topics/themes/custom-html-nodes', 'Adding Support For Custom HTML Elements.'));
+        //$subUl2->addChild($this->createLinkListItem('learn/topics/themes/before-after-load-events', 'Before and After Loaded Events.'));
         $sec2->addChild($ul);
         
         $this->setNextTopicLink('learn/topics/themes/class-HTMLNode', 'The class \'HTMLNode\'');

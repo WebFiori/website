@@ -47,22 +47,22 @@ class ThemesLearnView extends LearnView{
         $links->addChild($li05);
         $li06 = $this->createLinkListItem('learn/topics/themes/customizing-head-tag', 'Adding JS, CSS and Other &lt;head&gt; Tag Elements.');
         $li06->setClassName('aside-nav-item');
-        $links->addChild($li06);
+        //$links->addChild($li06);
         $li07 = $this->createLinkListItem('learn/topics/themes/customizing-header', 'Customizing Page Header.');
         $li07->setClassName('aside-nav-item');
-        $links->addChild($li07);
+        //$links->addChild($li07);
         $li08 = $this->createLinkListItem('learn/topics/themes/customizing-footer', 'Customizing Page Footer.');
         $li08->setClassName('aside-nav-item');
-        $links->addChild($li08);
+        //$links->addChild($li08);
         $li09 = $this->createLinkListItem('learn/topics/themes/customizing-aside', 'Customizing Page Aside Area.');
         $li09->setClassName('aside-nav-item');
-        $links->addChild($li09);
+        //$links->addChild($li09);
         $li10 = $this->createLinkListItem('learn/topics/themes/custom-html-nodes', 'Adding Support For Custom HTML Elements.');
         $li10->setClassName('aside-nav-item');
-        $links->addChild($li10);
+        //$links->addChild($li10);
         $li11 = $this->createLinkListItem('learn/topics/themes/before-after-load-events', 'Before and After Loaded Events.');
         $li11->setClassName('aside-nav-item');
-        $links->addChild($li11);
+        //$links->addChild($li11);
         switch ($this->getAsideActiveLinkNum()){
             case 0:{
                 $li00->setClassName('aside-nav-item active-aside-item');

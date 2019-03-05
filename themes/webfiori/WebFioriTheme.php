@@ -93,7 +93,7 @@ class WebFioriTheme extends Theme{
         $facebookIcon->setAttribute('src', $page->getThemeImagesDir().'/facebook.png');
         $facebookIcon->setClassName('social-media-icon');
         $facebookLink = new HTMLNode('a');
-        $facebookLink->setAttribute('href', '');
+        $facebookLink->setAttribute('href', 'https://www.facebook.com/webfiori');
         $facebookLink->setAttribute('target', '_blank');
         $facebookLink->addChild($facebookIcon);
         $socialMedia->addChild($facebookLink);
@@ -102,7 +102,7 @@ class WebFioriTheme extends Theme{
         $twtrIcon->setAttribute('src', $page->getThemeImagesDir().'/tweeter.png');
         $twtrIcon->setClassName('social-media-icon');
         $twtrLink = new HTMLNode('a');
-        $twtrLink->setAttribute('href', '');
+        $twtrLink->setAttribute('href', 'https://twitter.com/webfiori_');
         $twtrLink->setAttribute('target', '_blank');
         $twtrLink->addChild($twtrIcon);
         $socialMedia->addChild($twtrLink);
@@ -111,45 +111,45 @@ class WebFioriTheme extends Theme{
         $linkedinIcon->setAttribute('src', $page->getThemeImagesDir().'/linkedin.png');
         $linkedinIcon->setClassName('social-media-icon');
         $linkedinLink = new HTMLNode('a');
-        $linkedinLink->setAttribute('href', '');
+        $linkedinLink->setAttribute('href', 'https://www.linkedin.com/in/ibrahim-binalshikh/');
         $linkedinLink->setAttribute('target', '_blank');
         $linkedinLink->addChild($linkedinIcon);
         $socialMedia->addChild($linkedinLink);
 
-        $snapIcon = new HTMLNode('img', FALSE);
-        $snapIcon->setAttribute('src', $page->getThemeImagesDir().'/snapchat.png');
-        $snapIcon->setClassName('social-media-icon');
-        $snapLink = new HTMLNode('a');
-        $snapLink->setAttribute('href', '');
-        $snapLink->setAttribute('target', '_blank');
-        $snapLink->addChild($snapIcon);
-        $socialMedia->addChild($snapLink);
-
+        $bloggerIcon = new HTMLNode('img', FALSE);
+        $bloggerIcon->setAttribute('src', $page->getThemeImagesDir().'/iconfinder_blogger__social_media_icon_2986189.png');
+        $bloggerIcon->setClassName('social-media-icon');
+        $bloggerLink = new HTMLNode('a');
+        $bloggerLink->setAttribute('href', 'http://ibrahim-2017.blogspot.com');
+        $bloggerLink->setAttribute('target', '_blank');
+        $bloggerLink->addChild($bloggerIcon);
+        //$socialMedia->addChild($bloggerLink);
+        
         $node->addChild($socialMedia);
         $contactInfo = new HTMLNode();
         $contactInfo->setClassName('pa-'.Page::dir().'-col-12');
         $p = new PNode();
-        $p->addText('013 xxx xxxx', array('new-line'=>TRUE));
-        $p->addText('youremail@example.com',array('new-line'=>TRUE));
+        $p->setStyle(array(
+            'font-size'=>'8pt'
+        ));
+        $p->setClassName('pa-ltr-col-six');
+        $p->addText('webfiori@programmingacademia.com',array('new-line'=>TRUE));
         $contactInfo->addChild($p);
         $node->addChild($contactInfo);
-        $p->addText('Your Copyright Notice © 2018');
-        $div = new HTMLNode('div');
-        $div->setAttribute('class', 'pa-ltr-col-twelve');
-        $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
-                . 'target="_blank">WebFiori Framework</a> v'.Config::getVersion().' ('.Config::getVersionType().')</b>'
-                . '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        $p->addText('WebFiori Framework, All Rights Reserved © '.date('Y'));
+        $contactInfo->addTextNode('<form class="pa-ltr-col-six" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 <input type="hidden" name="cmd" value="_s-xclick" />
 <input type="hidden" name="hosted_button_id" value="9VKZBY277A3JE" />
 <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
 <img alt="" border="0" src="https://www.paypal.com/en_SA/i/scr/pixel.gif" width="1" height="1" />
-</form>
-'
-                . '');
+</form>');
+        $div = new HTMLNode('div');
+        $div->setAttribute('class', 'pa-ltr-col-twelve');
+        $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
+                . 'target="_blank">WebFiori Framework</a> v'.WebFiori::getConfig()->getVersion().' ('.WebFiori::getConfig()->getVersionType().')</b>');
         $node->addChild($div);
         return $node;
     }
-
     public function getHeadNode() {
         $headTag = new HeadNode();
         $headTag->setBase(SiteConfig::getBaseURL());
@@ -158,6 +158,19 @@ class WebFioriTheme extends Theme{
         $headTag->addCSS(Page::cssDir().'/colors.css');
         $headTag->addCSS(Page::cssDir().'/theme.css');
         $headTag->addMeta('robots', 'index, follow');
+        $jsCode = new phpStructs\html\JsCode();
+        $jsCode->addCode(''
+                . 'window.dataLayer = window.dataLayer || [];'
+                . 'function gtag(){'
+                . 'dataLayer.push(arguments);'
+                . '}'
+                . 'gtag(\'js\', new Date());'
+                . 'gtag(\'config\', \'UA-91825602-1\');');
+        $headTag->addChild($jsCode);
+        $js = new HTMLNode('script');
+        $js->setAttribute('async', '');
+        $js->setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=UA-91825602-1');
+        $headTag->addChild($js);
         return $headTag;
     }
 
