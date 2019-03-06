@@ -28,7 +28,7 @@ class TypesOfRoutesView extends RoutingLearnView{
         $sec4 = $this->createSection('Custom Route');
         Page::insert($sec4);
         $this->setPrevTopicLink('learn/topics/routing/class-Router', 'The Class \'Router\'');
-        $this->setNextTopicLink('learn/topics/routing/examples', 'Routing Examples');
+        //$this->setNextTopicLink('learn/topics/routing/examples', 'Routing Examples');
         $this->displayView();
     }
 }

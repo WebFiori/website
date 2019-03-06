@@ -60,7 +60,7 @@ use webfiori\entity\Page;');
         $sec2->addChild($this->createParagraph('The next step is to '
                 . 'set the name of the website and the title of the page. '
                 . 'The static method <a href="docs/webfiori/entity/Page#title" target="_blank">Page::title()</a> is used to set the title of the page. '
-                . 'The static method <a href="docs/webfiori/entity/Page#siteName" target="_blank">Page::siteName()</a>'));
+                . 'The static method <a href="docs/webfiori/entity/Page#siteName" target="_blank">Page::siteName()</a> is used to set the name of the website. '));
         $code2 = new CodeSnippet();
         $code2->setTitle('PHP Code');
         $code2->setCode('&lt;?php
@@ -150,6 +150,10 @@ Page::render();');
 '
                 . '')));
         $sec2->addChild($code7);
+        $sec2->addChild($this->createParagraph('As you can see, the &lt;head&gt; '
+                . 'tag will have two meta tags added by default. '
+                . 'the meta \'viewport\' and the meta \'canonical\'.'));
+        $this->setPrevTopicLink('learn/topics/basic-usage', 'Basic Usage');
         $this->displayView();
     }
 }

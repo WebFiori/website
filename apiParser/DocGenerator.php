@@ -163,7 +163,6 @@ class DocGenerator {
                     . '    public function __construct(){'."\r\n"
                     . '        P::theme(\''.$options['theme'].'\');'."\r\n"
                     . '        P::document()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
-                    . '        P::canonical(\''.Page::canonical().'\');'."\r\n"
                     . '        P::description(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::description())).'\');'."\r\n"
                     . '        P::siteName(\''.Page::siteName().'\');'."\r\n"
                     . '        P::title(\''.Page::title().'\');'."\r\n"
@@ -269,13 +268,11 @@ class DocGenerator {
         $aside->addChild($nav);
         foreach ($this->classesLinksByNS as $nsName => $nsClasses){
             $packageLi = new ListItem();
-            $packageLi->setText('<a href="'.trim($this->getBaseURL(),'/').str_replace('\\','/',$nsName).'">'.$nsName.'</a>');
+            $packageLi->addTextNode('<a href="'.trim($this->getBaseURL(),'/').str_replace('\\','/',$nsName).'">'.$nsName.'</a>');
             $packageUl = new UnorderedList();
             $packageLi->addChild($packageUl);
             foreach ($nsClasses as $classLink){
-                $li = new ListItem();
-                $li->addTextNode($classLink);
-                $packageUl->addChild($li);
+                $packageUl->addListItem($classLink);
             }
             $ul->addChild($packageLi);
         }
@@ -326,7 +323,6 @@ class DocGenerator {
                     . '    public function __construct(){'."\r\n"
                     . '        P::theme(\''.$options['theme'].'\');'."\r\n"
                     . '        P::document()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
-                    . '        P::canonical(\''.Page::canonical().'\');'."\r\n"
                     . '        P::description(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::description())).'\');'."\r\n"
                     . '        P::siteName(\''.Page::siteName().'\');'."\r\n"
                     . '        P::title(\''.Page::title().'\');'."\r\n"

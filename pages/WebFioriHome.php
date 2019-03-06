@@ -23,7 +23,7 @@ class WebFioriHome extends WebFioriPage{
     public function __construct() {
         parent::__construct();
         Page::title('WebFiori Home');
-        Page::siteName('WebFiori');
+        Page::siteName('WebFiori Framework');
         Page::description('WebFiori Framework. Built to make the web blooming.');
         $parag1 = new PNode();
         

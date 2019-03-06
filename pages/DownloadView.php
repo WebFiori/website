@@ -23,7 +23,7 @@ class DownloadView extends WebFioriPage{
     public function __construct() {
         parent::__construct();
         Page::title('Download');
-        Page::siteName('WebFiori');
+        Page::siteName('WebFiori Framework');
         Page::description('Download options of WebFiori Framework.');
         $this->_stableDownloads();
         $this->_betaDownloads();

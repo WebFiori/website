@@ -19,7 +19,7 @@ class NotFound extends WebFioriPage{
     public function __construct() {
         parent::__construct();
         Page::title('404 - Not Found');
-        Page::siteName('WebFiori');
+        Page::siteName('WebFiori Framework');
         Page::description('Not found.');
         WebFioriGUI::createTitleNode('404 - Not Found');
         $parag1 = new PNode();
