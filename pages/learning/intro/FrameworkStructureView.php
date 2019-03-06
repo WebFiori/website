@@ -43,9 +43,9 @@ class FrameworkStructureView extends IntroLearnView{
         $sec2->addChild($this->createParagraph('There are 3 main configuration classes:'));
         $ul = new UnorderedList();
         $sec2->addChild($ul);
-        $ul->addListItem('The class <a href="docs/webfiori/conf/Config" target="_blank">Config</a>.');
-        $ul->addListItem('The class <a href="docs/webfiori/conf/SiteConfig" target="_blank">SiteConfig</a>.');
-        $ul->addListItem('The class <a href="docs/webfiori/conf/MailConfig" target="_blank">MailConfig</a>.');
+        $ul->addListItem('The class <a href="docs/webfiori/conf/Config" target="_blank">Config</a>.',FALSE);
+        $ul->addListItem('The class <a href="docs/webfiori/conf/SiteConfig" target="_blank">SiteConfig</a>.',FALSE);
+        $ul->addListItem('The class <a href="docs/webfiori/conf/MailConfig" target="_blank">MailConfig</a>.',FALSE);
         $sec3 = $this->createSection('Initialization Files');
         Page::insert($sec3);
         $sec3->addChild($this->createParagraph('The folder <span style="font-family:monospace">'
@@ -54,9 +54,9 @@ class FrameworkStructureView extends IntroLearnView{
                 . 'can modify the code inside the classes as he need. The classes are:'));
         $ul2 = new UnorderedList();
         $sec3->addChild($ul2);
-        $ul2->addListItem('The class <a href="docs/webfiori/ini/InitAutoLoad" target="_blank">InitAutoLoad</a>.');
-        $ul2->addListItem('The class <a href="docs/webfiori/ini/InitCron" target="_blank">InitCron</a>.');
-        $ul2->addListItem('The class <a href="docs/webfiori/ini/InitPrivileges" target="_blank">InitPrivileges</a>.');
+        $ul2->addListItem('The class <a href="docs/webfiori/ini/InitAutoLoad" target="_blank">InitAutoLoad</a>.',FALSE);
+        $ul2->addListItem('The class <a href="docs/webfiori/ini/InitCron" target="_blank">InitCron</a>.',FALSE);
+        $ul2->addListItem('The class <a href="docs/webfiori/ini/InitPrivileges" target="_blank">InitPrivileges</a>.',FALSE);
         $sec4 = $this->createSection('System Entities');
         $sec4->addChild($this->createParagraph(''
                 . 'Framework entities are classes that the framework '
@@ -68,13 +68,13 @@ class FrameworkStructureView extends IntroLearnView{
                 . ''));
         $ul3 = new UnorderedList();
         $sec4->addChild($ul3);
-        $ul3->addListItem('<a href="docs/jsonx" target="_blank">JsonX Library:</a> Used to create well formatted JSON strings.');
-        $ul3->addListItem('<a href="docs/phMysql" target="_blank">PhMySQL Library:</a> Used to construct MySQL Schemas and queries in simple manner.');
+        $ul3->addListItem('<a href="docs/jsonx" target="_blank">JsonX Library:</a> Used to create well formatted JSON strings.',FALSE);
+        $ul3->addListItem('<a href="docs/phMysql" target="_blank">PhMySQL Library:</a> Used to construct MySQL Schemas and queries in simple manner.',FALSE);
         $ul3->addListItem('<a href="docs/phpStructs" target="_blank">phpStructs Library:</a> A library that provide basic data structures such as a '
                 . 'linked list and stack in addition '
-                . 'to classes that can be used to create HTML documents using PHP.');
+                . 'to classes that can be used to create HTML documents using PHP.',FALSE);
         $ul3->addListItem('<a href="docs/restEasy" target="_blank">RESTEasy Library:</a> A library that can make the process of creating web '
-                . 'APIs very simple.');
+                . 'APIs very simple.',FALSE);
         Page::insert($sec4);
         $sec6 = $this->createSection('Themes');
         Page::insert($sec6);
@@ -128,11 +128,11 @@ class FrameworkStructureView extends IntroLearnView{
                 . ''));
         $ul4 = new UnorderedList();
         $sec10->addChild($ul4);
-        $ul4->addListItem('<a style="font-family:monospace" href="docs/webfiori/entity/mail" target="_blank">/entity/mail</a>: Provide classes for sending email messages.');
-        $ul4->addListItem('<a style="font-family:monospace" href="docs/webfiori/entity/cron" target="_blank">/entity/cron</a>: Provide classes which can be used to create CRON tasks.');
-        $ul4->addListItem('<a style="font-family:monospace" href="docs/webfiori/entity/router" target="_blank">/entity/router</a>: Provide classes for routing sub-system.');
-        $ul4->addListItem('<span style="font-family:monospace">/logs</span>: A folder that will contain text log files which is created by the class <a href="docs/webfiori/entity/Logger" target="_blank">Logger</a>.');
-        $ul4->addListItem('<span style="font-family:monospace">/res</span>: A folder that can be used to add system resource files such as JS or CSS files.');
+        $ul4->addListItem('<a style="font-family:monospace" href="docs/webfiori/entity/mail" target="_blank">/entity/mail</a>: Provide classes for sending email messages.',FALSE);
+        $ul4->addListItem('<a style="font-family:monospace" href="docs/webfiori/entity/cron" target="_blank">/entity/cron</a>: Provide classes which can be used to create CRON tasks.',FALSE);
+        $ul4->addListItem('<a style="font-family:monospace" href="docs/webfiori/entity/router" target="_blank">/entity/router</a>: Provide classes for routing sub-system.',FALSE);
+        $ul4->addListItem('<span style="font-family:monospace">/logs</span>: A folder that will contain text log files which is created by the class <a href="docs/webfiori/entity/Logger" target="_blank">Logger</a>.',FALSE);
+        $ul4->addListItem('<span style="font-family:monospace">/res</span>: A folder that can be used to add system resource files such as JS or CSS files.',FALSE);
         $this->setNextTopicLink('learn/topics/basic-usage', 'Basic Usage');
         $this->setPrevTopicLink('learn/topics/introduction', 'Introduction');
         $this->displayView();

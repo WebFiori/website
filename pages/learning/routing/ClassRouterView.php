@@ -49,10 +49,10 @@ class ClassRouterView extends RoutingLearnView{
     }
     private function typesOfRoutesMethods(){
         $ul = new UnorderedList();
-        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#view" target="_blank">Router::view()</a>');
-        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#api" target="_blank">Router::api()</a>');
-        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#closure" target="_blank">Router::closure()</a>');
-        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#other" target="_blank">Router::other()</a>');
+        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#view" target="_blank">Router::view()</a>',FALSE);
+        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#api" target="_blank">Router::api()</a>',FALSE);
+        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#closure" target="_blank">Router::closure()</a>',FALSE);
+        $ul->addListItem('<a href="docs/webfiori/entity/router/Router#other" target="_blank">Router::other()</a>',FALSE);
         return $ul;
     }
 }

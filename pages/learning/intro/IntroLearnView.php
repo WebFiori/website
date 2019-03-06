@@ -15,7 +15,7 @@ class IntroLearnView extends LearnView{
     //put your code here
     public function createAsidNav() {
         $aside = &Page::document()->getChildByID('side-content-area');
-        $aside->addTextNode('<p><b>Topics:</b></p>');
+        $aside->addTextNode('<p><b>Topics:</b></p>',FALSE);
         $aside->setAttribute('style', 'border: 1px solid;');
         $links = new UnorderedList();
         $links->setClassName('aside-nav');

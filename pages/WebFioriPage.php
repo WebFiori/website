@@ -75,7 +75,9 @@ class WebFioriPage {
      */
     public function createParagraph($text) {
         $p = new PNode();
-        $p->addText($text);
+        $p->addText($text,array(
+            'esc-entities'=>FALSE
+        ));
         return $p;
     }
     /**

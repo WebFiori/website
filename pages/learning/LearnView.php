@@ -54,13 +54,13 @@ abstract class LearnView extends WebFioriPage{
     public function setNextTopicLink($link,$title) {
         $this->nextTopicLink = new HTMLNode();
         $linkNode = new LinkNode($link,$title);
-        $this->nextTopicLink->addTextNode('<b>Next:</b>');
+        $this->nextTopicLink->addTextNode('<b>Next:</b>',FALSE);
         $this->nextTopicLink->addChild($linkNode);
     }
     public function setPrevTopicLink($link,$title) {
         $this->prevTopicLink = new HTMLNode();
         $linkNode = new LinkNode($link,$title);
-        $this->prevTopicLink->addTextNode('<b>Previous:</b>');
+        $this->prevTopicLink->addTextNode('<b>Previous:</b>',FALSE);
         $this->prevTopicLink->addChild($linkNode);
     }
     public function getAsideActiveLinkNum() {

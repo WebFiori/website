@@ -41,8 +41,8 @@ class Index extends RoutingLearnView{
         
         $ul = new UnorderedList();
         $sec2->addChild($ul);
-        $ul->addListItem('<a href="learn/topics/routing/how-it-works" >How Routing System Works.</a>');
-        $ul->addListItem('<a href="learn/topics/routing/class-Router" >The Class \'Router\'.</a>');
+        $ul->addListItem('<a href="learn/topics/routing/how-it-works" >How Routing System Works.</a>',FALSE);
+        $ul->addListItem('<a href="learn/topics/routing/class-Router" >The Class \'Router\'.</a>',FALSE);
         $this->setNextTopicLink('learn/topics/routing/how-it-works', 'How Routing System Works');
         Page::insert($sec2);
         $this->displayView();
