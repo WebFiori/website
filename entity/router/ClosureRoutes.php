@@ -97,7 +97,7 @@ class ClosureRoutes {
             $f->view(TRUE);
         });
         Router::get()->setOnNotFound(function(){
-            header('location: '.WebFiori::getSiteConfig()->getBaseURL().'404');
+            new \webfiori\views\NotFound();
         });
     }
 }

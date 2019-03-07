@@ -34,8 +34,7 @@ class BasicUsageView extends IntroLearnView{
                 . 'let\'s assume tha the page has the following code in it:'));
         $code = new CodeSnippet();
         $code->setTitle('HTML Code');
-        $code->setCode(''. str_replace('<', '&lt;', str_replace('>', '&gt;', ''
-                . '<!DOCTYPE html>
+        $code->setCode('<!DOCTYPE html>
 <html>
     <head>
         <title>Hello</title>
@@ -52,8 +51,7 @@ class BasicUsageView extends IntroLearnView{
             </p>
         </div>
     </body>
-</html>'
-                . '')).'');
+</html>');
         $sec->addChild($code);
         $sec->addChild($this->createParagraph(''
                 . 'In order to view the page, we have to create a route '

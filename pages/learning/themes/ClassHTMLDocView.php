@@ -31,7 +31,7 @@ class ClassHTMLDocView extends ThemesLearnView{
         $code = new CodeSnippet();
         $code->setTitle('HTML Code');
         $doc = new HTMLDoc();
-        $code->setCode($doc->asCode(array('use-pre'=>TRUE)));
+        $code->setCode($doc->toHTML());
         Page::insert($code);
         Page::insert($this->createParagraph('The content of the &lt;head&gt; tag can be controlled using an '
                 . 'instance of the class <a href="docs/phpStructs/html/HeadNode" target="_blank">HeadNode</a> which will be introduced later. '

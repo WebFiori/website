@@ -46,30 +46,18 @@ class ClassThemeView extends ThemesLearnView{
         Page::insert($this->createParagraph('The following HTML code shows how the'
                 . ' DOM will look like.'));
         $code = new CodeSnippet();
-        $code->setCode('<pre style="margin:0;background-color:rgb(21, 18, 33); color:gray"><span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">!DOCTYPE html</span><span style="color:rgb(204,225,70)">&gt;</span>
-<span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">html</span><span style="color:rgb(204,225,70)">&gt;</span>
-    <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">head</span><span style="color:rgb(204,225,70)">&gt;</span>
-        <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">base</span> <span style="color:rgb(0,124,0)">href</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"http://example.com/"</span><span style="color:rgb(204,225,70)">&gt;</span>
-        <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">title</span><span style="color:rgb(204,225,70)">&gt;</span>
-            Default X | My X Website
-        <span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">title</span><span style="color:rgb(204,225,70)">&gt;</span>
-        <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">link</span> <span style="color:rgb(0,124,0)">rel</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"canonical"</span> <span style="color:rgb(0,124,0)">href</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"http://example.com/test"</span><span style="color:rgb(204,225,70)">&gt;</span>
-        <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">meta</span> <span style="color:rgb(0,124,0)">name</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"viewport"</span> <span style="color:rgb(0,124,0)">content</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"</span><span style="color:rgb(204,225,70)">&gt;</span>
-    <span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">head</span><span style="color:rgb(204,225,70)">&gt;</span>
-    <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">body</span> <span style="color:rgb(0,124,0)">itemscope</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">""</span> <span style="color:rgb(0,124,0)">itemtype</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"http://schema.org/WebPage"</span><span style="color:rgb(204,225,70)">&gt;</span>
-        <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">div</span> <span style="color:rgb(0,124,0)">id</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"page-header"</span><span style="color:rgb(204,225,70)">&gt;</span>
-        <span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">div</span><span style="color:rgb(204,225,70)">&gt;</span>
-        <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">div</span> <span style="color:rgb(0,124,0)">id</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"page-body"</span><span style="color:rgb(204,225,70)">&gt;</span>
-            <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">div</span> <span style="color:rgb(0,124,0)">id</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"side-content-area"</span><span style="color:rgb(204,225,70)">&gt;</span>
-            <span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">div</span><span style="color:rgb(204,225,70)">&gt;</span>
-            <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">div</span> <span style="color:rgb(0,124,0)">id</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"main-content-area"</span><span style="color:rgb(204,225,70)">&gt;</span>
-            <span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">div</span><span style="color:rgb(204,225,70)">&gt;</span>
-        <span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">div</span><span style="color:rgb(204,225,70)">&gt;</span>
-        <span style="color:rgb(204,225,70)">&lt;</span><span style="color:rgb(204,225,70)">div</span> <span style="color:rgb(0,124,0)">id</span> <span style="color:gray">=</span> <span style="color:rgb(170,85,137)">"page-footer"</span><span style="color:rgb(204,225,70)">&gt;</span>
-        <span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">div</span><span style="color:rgb(204,225,70)">&gt;</span>
-    <span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">body</span><span style="color:rgb(204,225,70)">&gt;</span>
-<span style="color:rgb(204,225,70)">&lt;/</span><span style="color:rgb(204,225,70)">html</span><span style="color:rgb(204,225,70)">&gt;</span>
-</pre>');
+        $code->setCode('<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Default
+        </title>
+        <meta name = "viewport" content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    </head>
+    <body itemscope = "" itemtype = "http://schema.org/WebPage">
+    </body>
+</html>
+');
         Page::insert($code);
         
         $this->setPrevTopicLink('learn/topics/themes/class-HeadNode', 'The class \'HeadNode\'');
@@ -80,30 +68,14 @@ class ClassThemeView extends ThemesLearnView{
     private function defaultBodyELsUL(){
         $ul = new UnorderedList();
         Page::insert($ul);
-        
-        $li1 = new ListItem();
-        $li1->addTextNode('<span style="font-family:monospace">&lt;head&gt;</span> tag that contains CSS, JS and other meta and link tags.');
-        $ul->addChild($li1);
-        
-        $li2 = new ListItem();
-        $li2->addTextNode('A <span style="font-family:monospace">&lt;div&gt;</span> element which has the ID \'page-body\' that represents the body of the page.');
-        $ul->addChild($li2);
-        
-        $li3 = new ListItem();
-        $li3->addTextNode('A <span style="font-family:monospace">&lt;div&gt;</span> element which has the ID \'page-header\' that represents the header section of the page.');
-        $ul->addChild($li3);
-        
-        $li4 = new ListItem();
-        $li4->addTextNode('A <span style="font-family:monospace">&lt;div&gt;</span> element which has the ID \'page-footer\' that represents the footer section of the page.');
-        $ul->addChild($li4);
-        
-        $li5 = new ListItem();
-        $li5->addTextNode('A <span style="font-family: monospace">&lt;div&gt;</span> element which has the ID \'main-content-area\' that represents the area at which user content will be added to.');
-        $ul->addChild($li5);
-        
-        $li6 = new ListItem();
-        $li6->addTextNode('A <span style="font-family: monospace">&lt;div&gt;</span> element which has the ID \'side-content-area\' that represents the side section of the page.');
-        $ul->addChild($li6);
+        $ul->addListItems(array(
+            '<span style="font-family:monospace">&lt;head&gt;</span> tag that contains CSS, JS and other meta and link tags.',
+            'A <span style="font-family:monospace">&lt;div&gt;</span> element which has the ID \'page-body\' that represents the body of the page.',
+            'A <span style="font-family:monospace">&lt;div&gt;</span> element which has the ID \'page-header\' that represents the header section of the page.',
+            'A <span style="font-family:monospace">&lt;div&gt;</span> element which has the ID \'page-footer\' that represents the footer section of the page.',
+            'A <span style="font-family: monospace">&lt;div&gt;</span> element which has the ID \'main-content-area\' that represents the area at which user content will be added to.',
+            'A <span style="font-family: monospace">&lt;div&gt;</span> element which has the ID \'side-content-area\' that represents the side section of the page.'
+        ), FALSE);
     }
     
 }

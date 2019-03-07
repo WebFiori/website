@@ -12,8 +12,8 @@ class LangExt {
         $trans->setMultiple('menus/main-menu', array(
             'menu-item-1'=>'Download',
             'menu-item-2'=>'API Docs',
-            'menu-item-3'=>'Learnning Center',
-            'menu-item-4'=>'Menu Item 4'
+            'menu-item-3'=>'Learning Center',
+            'menu-item-4'=>'Contribute'
         ));
     }
 }

@@ -2,6 +2,7 @@
 namespace webfiori\views;
 use webfiori\entity\Page;
 use phpStructs\html\UnorderedList;
+use phpStructs\html\LinkNode;
 /**
  * Description of ContributeView
  *
@@ -19,8 +20,8 @@ class ContributeView extends WebFioriPage{
                 . 'the way they like. There are many ways at which any '
                 . 'person can contribute to WebFiori Framework project. '
                 . 'Here we list some of the ways.'));
-        $sec1 = $this->createSection('Useing It');
-        Page::insert($sec1);
+        $sec1 = $this->createSection('Using It');
+        //Page::insert($sec1);
         $sec1->addChild($this->createParagraph('The easiest way is to use the '
                 . 'framework as your web development framework. Since the '
                 . 'framework is licensed under MIT license, it is '
@@ -31,7 +32,7 @@ class ContributeView extends WebFioriPage{
         Page::insert($sec2);
         $sec2->addChild($this->createParagraph(''
                 . 'Another way to contribute is to create project documentation. '
-                . 'Simply, you can go to <a>documentation repo</a> in GitHub and start '
+                . 'Simply, you can go to <a href="https://github.com/usernane/webfiori-docs" target="_blank">documentation repo</a> in GitHub and start '
                 . 'by cloning the repo and create pages that describes different '
                 . 'aspects of the project.'
                 . ''));
@@ -40,22 +41,33 @@ class ContributeView extends WebFioriPage{
         $sec3->addChild($this->createParagraph('You are free to modify code base of the '
                 . 'framework as you like as long as you follow MIT license rules. '
                 . 'You can grab the source code of the framework from '
-                . 'its <a>repo</a> in GitHub.'));
+                . 'its <a href="https://github.com/usernane/webfiori" target="_blank">repo</a> in GitHub.'));
         $sec3->addChild($this->createParagraph(''
                 . 'There are many things that you can do with the code. You can create '
                 . 'your own features, customize existing ones or fix the bugs that '
                 . 'you might find.'
                 . ''));
-        $sec4 = $this->createSection('Contributers and Sponsers');
+        $sec4 = $this->createSection('Donate');
         Page::insert($sec4);
-        $sec4->addChild($this->createParagraph('Here you will find a list of all '
+        $sec4->addChild($this->createParagraph(''
+                . 'Another way to contribute is to support the development of '
+                . 'the framework through donations. You can do a one-time donation '
+                . 'using one of the following channels:'
+                . ''));
+        $payPalImg = $this->createImag('https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png', 'PayPal Image.');
+        $link = new LinkNode('https://paypal.me/IbrahimBinAlshikh', '', '_blank');
+        $link->addChild($payPalImg);
+        $sec4->addChild($link);
+        $sec5 = $this->createSection('Contributers and Sponsers');
+        Page::insert($sec5);
+        $sec5->addChild($this->createParagraph('Here you will find a list of all '
                 . 'people who have contributed to the project in any way in addition to '
                 . 'sponsers. Your name '
                 . 'will be added to the list if you contribute to the project '
                 . 'in any way ;).'));
         
         $subSec1 = $this->createSection('Contributers:', 2);
-        $sec4->addChild($subSec1);
+        $sec5->addChild($subSec1);
         $ul1 = new UnorderedList();
         $subSec1->addChild($ul1);
         $ul1->addListItems(array(
@@ -63,10 +75,10 @@ class ContributeView extends WebFioriPage{
             '&lt;YOUR NAME HERE &gt;'
         ),FALSE);
         $subSec2 = $this->createSection('Sponsers:', 2);
-        $sec4->addChild($subSec2);
+        $sec5->addChild($subSec2);
         $ul2 = new UnorderedList();
-        $subSec1->addChild($ul2);
-        $ul1->addListItems(array(
+        $subSec2->addChild($ul2);
+        $ul2->addListItems(array(
             '&lt;YOUR NAME HERE &gt;'
         ),FALSE);
         $this->displayView();

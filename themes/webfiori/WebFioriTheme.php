@@ -72,6 +72,11 @@ class WebFioriTheme extends Theme{
             $link3 = new LinkNode(SiteConfig::getBaseURL().'learn', $translation->get('menus/main-menu/menu-item-3'));
             $item3->addChild($link3);
             $mainMenu->addChild($item3);
+            
+            $item4 = new ListItem();
+            $link4 = new LinkNode(SiteConfig::getBaseURL().'contribute', $translation->get('menus/main-menu/menu-item-4'));
+            $item4->addChild($link4);
+            $mainMenu->addChild($item4);
 
         });
 
@@ -117,7 +122,7 @@ class WebFioriTheme extends Theme{
         $socialMedia->addChild($linkedinLink);
 
         $bloggerIcon = new HTMLNode('img', FALSE);
-        $bloggerIcon->setAttribute('src', $page->getThemeImagesDir().'/iconfinder_blogger__social_media_icon_2986189.png');
+        $bloggerIcon->setAttribute('src', $page->getThemeImagesDir().'/iconfinder_blogger__social_media_icon_2986189.PNG');
         $bloggerIcon->setClassName('social-media-icon');
         $bloggerLink = new HTMLNode('a');
         $bloggerLink->setAttribute('href', 'http://ibrahim-2017.blogspot.com');
@@ -137,16 +142,10 @@ class WebFioriTheme extends Theme{
         $contactInfo->addChild($p);
         $node->addChild($contactInfo);
         $p->addText('WebFiori Framework, All Rights Reserved © '.date('Y'));
-        $contactInfo->addTextNode('<form class="pa-ltr-col-six" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick" />
-<input type="hidden" name="hosted_button_id" value="9VKZBY277A3JE" />
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-<img alt="" border="0" src="https://www.paypal.com/en_SA/i/scr/pixel.gif" width="1" height="1" />
-</form>');
         $div = new HTMLNode('div');
         $div->setAttribute('class', 'pa-ltr-col-twelve');
         $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
-                . 'target="_blank">WebFiori Framework</a> v'.WebFiori::getConfig()->getVersion().' ('.WebFiori::getConfig()->getVersionType().')</b>');
+                . 'target="_blank">WebFiori Framework</a> v'.WebFiori::getConfig()->getVersion().' ('.WebFiori::getConfig()->getVersionType().')</b>',FALSE);
         $node->addChild($div);
         return $node;
     }

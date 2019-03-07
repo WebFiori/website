@@ -30,4 +30,3 @@ class NotFound extends WebFioriPage{
         Page::render();
     }
 }
-new NotFound();

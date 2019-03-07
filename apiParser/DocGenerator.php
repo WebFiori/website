@@ -169,7 +169,7 @@ class DocGenerator {
                     . '        $pageBody = new HTMLNode();'."\r\n"
                     . '        $pageBody->addTextNode(\''."\r\n"
                     . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(TRUE))).'\''."\r\n"
-                    . '        );'."\r\n"
+                    . '        ,false);'."\r\n"
                     . '        $body = P::document()->getChildByID(\'page-body\');'."\r\n"
                     . '        P::document()->getBody()->replaceChild($body, $pageBody);'."\r\n"
                     . '        P::render();'."\r\n"
@@ -260,7 +260,7 @@ class DocGenerator {
      */
     private function _createAsideNav(){
         $aside = &Page::document()->getChildByID('side-content-area');
-        $aside->addTextNode('<p class="all-classes-label">All Classes:</p>');
+        $aside->addTextNode('<p class="all-classes-label">All Classes:</p>',FALSE);
         $nav = new HTMLNode('nav');
         $ul = new UnorderedList();
         $ul->setClassName('side-ul');
@@ -268,11 +268,11 @@ class DocGenerator {
         $aside->addChild($nav);
         foreach ($this->classesLinksByNS as $nsName => $nsClasses){
             $packageLi = new ListItem();
-            $packageLi->addTextNode('<a href="'.trim($this->getBaseURL(),'/').str_replace('\\','/',$nsName).'">'.$nsName.'</a>');
+            $packageLi->addTextNode('<a href="'.trim($this->getBaseURL(),'/').str_replace('\\','/',$nsName).'">'.$nsName.'</a>',FALSE);
             $packageUl = new UnorderedList();
             $packageLi->addChild($packageUl);
             foreach ($nsClasses as $classLink){
-                $packageUl->addListItem($classLink);
+                $packageUl->addListItem($classLink,FALSE);
             }
             $ul->addChild($packageLi);
         }
@@ -329,7 +329,7 @@ class DocGenerator {
                     . '        $pageBody = new HTMLNode();'."\r\n"
                     . '        $pageBody->addTextNode(\''."\r\n"
                     . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(TRUE))).'\''."\r\n"
-                    . '        );'."\r\n"
+                    . '        ,false);'."\r\n"
                     . '        $body = P::document()->getChildByID(\'page-body\');'."\r\n"
                     . '        P::document()->getBody()->replaceChild($body, $pageBody);'."\r\n"
                     . '        P::render();'."\r\n"

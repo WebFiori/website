@@ -19,10 +19,10 @@ class WebFioriAPIGUI{
         $titleRow = self::createRowNode(FALSE,FALSE);
         $h1 = new HTMLNode('h2');
         if($title != NULL){
-            $h1->addTextNode($title);
+            $h1->addTextNode($title,FALSE);
         }
         else{
-            $h1->addTextNode(Page::title());
+            $h1->addTextNode(Page::title(),FALSE);
         }
         $h1->setClassName('pa-'.Page::dir().'-col-10-nm-np');
         $titleRow->addChild($h1);

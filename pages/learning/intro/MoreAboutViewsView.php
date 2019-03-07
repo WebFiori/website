@@ -54,7 +54,7 @@ class MoreAboutViewsView extends IntroLearnView{
                 . '<a href="docs/webfiori/entity" target="_blank">\webfiori\entity</a> as shown bellow.'));
         $code = new CodeSnippet();
         $code->setTitle('PHP Code');
-        $code->setCode('&lt;?php
+        $code->setCode('<?php
 use webfiori\entity\Page;');
         $sec2->addChild($code);
         $sec2->addChild($this->createParagraph('The next step is to '
@@ -63,7 +63,7 @@ use webfiori\entity\Page;');
                 . 'The static method <a href="docs/webfiori/entity/Page#siteName" target="_blank">Page::siteName()</a> is used to set the name of the website. '));
         $code2 = new CodeSnippet();
         $code2->setTitle('PHP Code');
-        $code2->setCode('&lt;?php
+        $code2->setCode('<?php
 use webfiori\entity\Page;
 Page::title(\'Welcome to My WebSite\');
 Page::siteName(\'My Personal Blog\');');
@@ -77,7 +77,7 @@ Page::siteName(\'My Personal Blog\');');
                 . ''));
         $code3 = new CodeSnippet();
         $code3->setTitle('PHP Code');
-        $code3->setCode('&lt;?php
+        $code3->setCode('<?php
 use webfiori\entity\Page;
 use phpStructs\html\HTMLNode;
 Page::title(\'Welcome to My WebSite\');
@@ -89,7 +89,7 @@ $textNode = HTMLNode::createTextNode(\'Welcome. This is my home page.\');');
                 . 'be used.'));
         $code4 = new CodeSnippet();
         $code4->setTitle('PHP Code');
-        $code4->setCode('&lt;?php
+        $code4->setCode('<?php
 use webfiori\entity\Page;
 use phpStructs\html\HTMLNode;
 Page::title(\'Welcome to My WebSite\');
@@ -103,7 +103,7 @@ Page::insert($textNode);');
                 . 'in order to display the view.'));
         $code5 = new CodeSnippet();
         $code5->setTitle('PHP Code');
-        $code5->setCode('&lt;?php
+        $code5->setCode('<?php
 use webfiori\entity\Page;
 use phpStructs\html\HTMLNode;
 Page::title(\'Welcome to My WebSite\');
@@ -122,8 +122,7 @@ Page::render();');
                 . '\'Page\' will have the following HTML:'));
         $code7 = new CodeSnippet();
         $code7->setTitle('PHP Code');
-        $code7->setCode(str_replace('<', '&lt;', str_replace('>', '&gt;', ''
-                . '<!DOCTYPE html>
+        $code7->setCode('<!DOCTYPE html>
 <html>
     <head>
         <base href="http://example.com/">
@@ -146,9 +145,7 @@ Page::render();');
         <div id="page-footer">
         </div>
     </body>
-</html>
-'
-                . '')));
+</html>');
         $sec2->addChild($code7);
         $sec2->addChild($this->createParagraph('As you can see, the &lt;head&gt; '
                 . 'tag will have two meta tags added by default. '

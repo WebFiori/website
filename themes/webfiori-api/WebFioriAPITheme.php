@@ -64,6 +64,11 @@ class WebFioriAPITheme extends APITheme{
             $link3 = new LinkNode($this->getBaseURL().'learn', $translation->get('menus/main-menu/menu-item-3'));
             $item3->addChild($link3);
             $mainMenu->addChild($item3);
+            
+            $item4 = new ListItem();
+            $link4 = new LinkNode($this->getBaseURL().'contribute', $translation->get('menus/main-menu/menu-item-4'));
+            $item4->addChild($link4);
+            $mainMenu->addChild($item4);
 
         });
 
@@ -160,7 +165,7 @@ class WebFioriAPITheme extends APITheme{
         $div = new HTMLNode('div');
         $div->setAttribute('class', 'pa-ltr-col-twelve');
         $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
-                . 'target="_blank">WebFiori Framework</a> v'.WebFiori::getConfig()->getVersion().' ('.WebFiori::getConfig()->getVersionType().')</b>');
+                . 'target="_blank">WebFiori Framework</a> v'.WebFiori::getConfig()->getVersion().' ('.WebFiori::getConfig()->getVersionType().')</b>',FALSE);
         $node->addChild($div);
         return $node;
     }
@@ -248,7 +253,7 @@ class WebFioriAPITheme extends APITheme{
         $attrNameNode->addTextNode($nodeText);
         $node->addChild($attrNameNode);
         $descNode = new HTMLNode();
-        $descNode->addTextNode($attr->getDescription());
+        $descNode->addTextNode($attr->getDescription(),FALSE);
         $descNode->setClassName('details-box');
         $node->addChild($descNode);
         return $node;
@@ -261,7 +266,7 @@ class WebFioriAPITheme extends APITheme{
         $attrNameNode = WebFioriAPIGUI::createColNode(12, FALSE, FALSE);
         $attrNameNode->setClassName('class-attribute');
         $nodeText = $attr->getAccessModofier().' <a class="class-attribute" href="'.$attr->getPageURL().'/'. str_replace('\\', '/', trim($attr->getOwnerClass()->getNameSpace(), '\\')).'/'.$attr->getOwnerClass()->getName().'#'.$attr->getName().'">'.$attr->getName().'</a>';
-        $attrNameNode->addTextNode($nodeText);
+        $attrNameNode->addTextNode($nodeText,FALSE);
         $node->addChild($attrNameNode);
         $descNode = new PNode();
         $descNode->addText($attr->getSummary());
@@ -276,13 +281,13 @@ class WebFioriAPITheme extends APITheme{
         $class = $this->getClass();
         $node = WebFioriAPIGUI::createRowNode();
         $packageNode = new PNode();
-        $packageNode->addText('<b class="mono">namespace '.$class->getNameSpace().'</b>');
+        $packageNode->addText('<b class="mono">namespace '.$class->getNameSpace().'</b>',array('esc-entities'=>FALSE));
         $node->addChild($packageNode);
         $titleNode = WebFioriAPIGUI::createTitleNode($class->getClassType().' '.$class->getName());
         $node->addChild($titleNode);
         $descNode = new HTMLNode();
         $descNode->setAttribute('class', 'description-box');
-        $descNode->addTextNode($class->getSummary().' '.$class->getDescription());
+        $descNode->addTextNode($class->getSummary().' '.$class->getDescription(),FALSE);
         $node->addChild($descNode);
         $classV = $class->getVersion();
         if($classV !== NULL){
@@ -315,10 +320,10 @@ class WebFioriAPITheme extends APITheme{
             }
         }
         $nodeText .= ')';
-        $methNameNode->addTextNode($nodeText);
+        $methNameNode->addTextNode($nodeText,FALSE);
         $node->addChild($methNameNode);
         $descNode = new HTMLNode();
-        $descNode->addTextNode($func->getDescription());
+        $descNode->addTextNode($func->getDescription(),FALSE);
         $descNode->setClassName('description-box');
         $node->addChild($descNode);
         if($count != 0){
@@ -335,7 +340,7 @@ class WebFioriAPITheme extends APITheme{
                     $text .= ' [Optional]';
                 }
                 $text .= ' '.$param['var-desc'];
-                $ul->addListItem($text);
+                $ul->addListItem($text,FALSE);
             }
             $paramsNode->addChild($ul);
             $node->addChild($paramsNode);
@@ -344,10 +349,10 @@ class WebFioriAPITheme extends APITheme{
         if($return !== NULL){
             $retNode = WebFioriGUI::createRowNode(FALSE,FALSE);
             $textNode = new PNode();
-            $textNode->addText('Returns: <span class="mono">'.$return.'</span>');
+            $textNode->addText('Returns: <span class="mono">'.$return.'</span>',array('esc-entities'=>FALSE));
             $retNode->addChild($textNode);
             $descNode = new HTMLNode();
-            $descNode->addTextNode($func->getMethodReturnDescription());
+            $descNode->addTextNode($func->getMethodReturnDescription(),FALSE);
             $descNode->setClassName('details-box');
             $retNode->addChild($descNode);
             $node->addChild($retNode);
@@ -377,10 +382,10 @@ class WebFioriAPITheme extends APITheme{
             }
         }
         $nodeText .= ')';
-        $methNameNode->addTextNode($nodeText);
+        $methNameNode->addTextNode($nodeText,FALSE);
         $node->addChild($methNameNode);
         $descNode = new PNode();
-        $descNode->addText($func->getSummary());
+        $descNode->addText($func->getSummary(),FALSE);
         $node->addChild($descNode);
         return $node;
     }
@@ -427,7 +432,7 @@ class WebFioriAPITheme extends APITheme{
                     $link = new LinkNode($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$class->getName(), $class->getName());
                     $cNode->addChild($link);
                     $descNode = new PNode();
-                    $descNode->addText($class->getSummary());
+                    $descNode->addText($class->getSummary(),FALSE);
                     $cNode->addChild($descNode);
                     $classesNode->addChild($cNode);
                 }
