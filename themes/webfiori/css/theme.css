@@ -46,7 +46,8 @@ THE SOFTWARE.
         margin: 0 !important;
         padding: 5px;
         border-top: 1px solid;
-        display: none;
+        font-size: 7pt;
+        line-height: 15px;
     }
     #logo{
         width: 15% !important;
@@ -61,8 +62,8 @@ THE SOFTWARE.
         width: 83% !important;
     }
     #inner-header p{
-        text-align: center;
-        display: none;
+        text-align: left;
+        padding-left: 10px;
     }
     .prev-button,
     .next-button{
