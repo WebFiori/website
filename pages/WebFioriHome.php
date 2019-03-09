@@ -9,10 +9,8 @@
 namespace webfiori\views;
 use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
-use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
-use phpStructs\html\ListItem;
 use webfiori\WebFiori;
 /**
  * Description of WebFioriHome
@@ -42,45 +40,29 @@ class WebFioriHome extends WebFioriPage{
         Page::render();
     }
     public function createSec4() {
-        $sec = new HTMLNode('section');
-        $hNode = new HTMLNode('h1');
-        $hNode->addTextNode('Downloading The Framework');
-        $sec->addChild($hNode);
-        $parag1 = new PNode();
-        $parag1->addText('Please go to <a href="'.WebFiori::getSiteConfig()->getBaseURL().'download">downloads page</a> to check the available '
-                . 'download options.');
-        $sec->addChild($parag1);
+        $sec = $this->createSection('Downloading The Framework');
+        $sec->addChild($this->createParagraph('Please go to <a href="'.WebFiori::getSiteConfig()->getBaseURL().'download">downloads page</a> to check the available '
+                . 'download options.'));
         Page::insert($sec);
     }
     public function createSec2(){
-        $sec = new HTMLNode('section');
-        $hNode = new HTMLNode('h1');
-        $hNode->addTextNode('Is it free to use it?');
-        $sec->addChild($hNode);
-        $parag1 = new PNode();
-        $parag1->addText('Yes for sure. You can use it for free of charge. In '
+        $sec = $this->createSection('Is it free to use?');
+        $sec->addChild($this->createParagraph('Yes for sure. You can use it for free of charge. In '
                 . 'addition, it is open source. This means you can modify the '
                 . 'source code of the framework the way you like as long as you '
-                . 'follow MIT license regarding open source software modifications.');
-        $sec->addChild($parag1);
+                . 'follow MIT license regarding open source software modifications.'));
         Page::insert($sec);
     }
     public function createSec3(){
-        $sec = new HTMLNode('section');
-        $hNode = new HTMLNode('h1');
-        $hNode->addTextNode('Why did you build such framework since there are many '
+        $sec = $this->createSection('Why did you build such framework since there are many '
                 . 'good ones already out there?');
-        $sec->addChild($hNode);
-        $parag1 = new PNode();
-        $parag1->addText('One of the reasons is <b>simplicity</b>. '
+        $sec->addChild($this->createParagraph('One of the reasons is <b>simplicity</b>. '
                 . 'Some of the available frameworks makes it difficult for you '
                 . 'to develop your website or web application by overwhelming you '
                 . 'with many features which you don\'t actually need. WebFiori Framework '
                 . 'gives you the simplest set of tools that you would need to setup a '
-                . 'website, web application or web APIs.');
-        $sec->addChild($parag1);
-        $parag2 = new PNode();
-        $parag2->addText('Another reason is the <b>ease of use</b>. '
+                . 'website, web application or web APIs.'));
+        $sec->addChild($this->createParagraph('Another reason is the <b>ease of use</b>. '
                 . 'Many of the available frameworks aren\'t easy to master in '
                 . 'short time. While developing the framework, one of the things that '
                 . 'we put in mind is how to help developers learn how to use the '
@@ -90,33 +72,23 @@ class WebFioriHome extends WebFioriPage{
                 . 'If you want to create a nice looking pages, You need to learn '
                 . 'about the basics of theming in the framework. If you want to '
                 . 'develop web APIs, Then you need to learn about routing plus creating '
-                . 'API classes.');
-        $sec->addChild($parag2);
-        $parag3 = new PNode();
-        $parag3->addText('The final reason is <b>learning</b>. While building '
+                . 'API classes.'));
+        $sec->addChild('The final reason is <b>learning</b>. While building '
                 . 'the framework, I (The developer of the framework) learned many '
                 . 'new concepts which I did not know about while I was student '
-                . 'at university. Building new something from scratch was a good '
+                . 'at university. Building something new from scratch was a good '
                 . 'chance to learn new things and to put my skills into something that can help me and others.');
-        $sec->addChild($parag3);
         Page::insert($sec);
     }
     private function createSec1(){
-        $sec = new HTMLNode('section');
-        $hNode = new HTMLNode('h1');
-        $hNode->addTextNode('What is WebFiori Framework?');
-        $sec->addChild($hNode);
-        $parag1 = new PNode();
-        $parag1->addText(''
-                . 'WebFiori Framework is new web framework which is built using '
+        $sec = $this->createParagraph('What is WebFiori Framework?');
+        $sec->addChild($this->createParagraph('WebFiori Framework is new web framework which is built using '
                 . 'PHP language. The framework is fully object oriented (OOP). '
                 . 'It allows the use of the famous model-view-controller (MVC) model '
                 . 'but it does not '
                 . 'force it. The framework comes with many features which can '
                 . 'help in making your website or web application up and running '
-                . 'in no time. Some of the key features are:'
-                . '');
-        $sec->addChild($parag1);
+                . 'in no time. Some of the key features are:'));
         $ul = new UnorderedList();
         $ul->addListItem('Theming and the ability to create multiple UIs for the same web page using any CSS or JavaScript framework.');
         $ul->addListItem('Support for routing that makes the ability of creating search-'

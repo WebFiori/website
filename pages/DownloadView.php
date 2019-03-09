@@ -22,9 +22,10 @@ use phpStructs\html\LinkNode;
 class DownloadView extends WebFioriPage{
     public function __construct() {
         parent::__construct();
-        Page::title('Download');
-        Page::siteName('WebFiori Framework');
-        Page::description('Download options of WebFiori Framework.');
+        parent::__construct(array(
+            'title'=>'Download',
+            'description'=>'Download options of WebFiori Framework.'
+        ));
         $this->_stableDownloads();
         $this->_betaDownloads();
         $this->_nextSteps();
