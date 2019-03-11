@@ -86,6 +86,7 @@ class ViewRoutes {
         Router::view('/learn/topics/themes/class-HeadNode', '/learning/themes/ClassHeadNodeView.php');
         Router::view('/learn/topics/themes/create-simple-theme', '/learning/themes/CreateSimpleThemeView.php');
         Router::view('/learn/topics/themes/before-after-loaded', '/learning/themes/BeforeAfterEventsView.php');
+        Router::view('/learn/topics/themes/the-method-createHTMLNode', '/learning/themes/MethodCreateNodeView.php');
     }
     /**
      * A test for creating a site map from views URIs
