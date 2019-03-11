@@ -63,7 +63,7 @@ class ViewRoutes {
         Router::view('/learn/topics/cron', '/learning/cron/Index.php');
         Router::view('/contribute', '/ContributeView.php');
         self::createHelpTopicsRoutes();
-        \docGenerator\DocGeneratorRoutes::createRoutes();
+        //\docGenerator\DocGeneratorRoutes::createRoutes();
     }
     public static function createHelpTopicsRoutes() {
         //intro topics

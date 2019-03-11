@@ -45,13 +45,13 @@ class ThemesLearnView extends LearnView{
         $li05 = $this->createLinkListItem('learn/topics/themes/create-simple-theme', 'Creating a Simple Theme');
         $li05->setClassName('aside-nav-item');
         $links->addChild($li05);
-        $li06 = $this->createLinkListItem('learn/topics/themes/customizing-head-tag', 'Adding JS, CSS and Other &lt;head&gt; Tag Elements.');
+        $li06 = $this->createLinkListItem('learn/topics/themes/the-method-createHTMLNode', 'Using the Method Theme::createHTMLNode()');
         $li06->setClassName('aside-nav-item');
-        //$links->addChild($li06);
-        $li07 = $this->createLinkListItem('learn/topics/themes/customizing-header', 'Customizing Page Header.');
+        $links->addChild($li06);
+        $li07 = $this->createLinkListItem('learn/topics/themes/before-after-loaded', 'Before and After Loaded Callbacks');
         $li07->setClassName('aside-nav-item');
-        //$links->addChild($li07);
-        $li08 = $this->createLinkListItem('learn/topics/themes/customizing-footer', 'Customizing Page Footer.');
+        $links->addChild($li07);
+        $li08 = $this->createLinkListItem('learn/topics/themes/before-after-loaded', '');
         $li08->setClassName('aside-nav-item');
         //$links->addChild($li08);
         $li09 = $this->createLinkListItem('learn/topics/themes/customizing-aside', 'Customizing Page Aside Area.');

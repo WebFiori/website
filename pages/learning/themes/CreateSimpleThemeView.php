@@ -33,6 +33,7 @@ class ClassThemeView extends ThemesLearnView{
         $this->step4();
         $this->step5();
         $this->setPrevTopicLink('learn/topics/themes/class-Theme', 'The Class \'Theme\'');
+        $this->setNextTopicLink('learn/topics/themes/the-method-createHTMLNode', 'Using the Method Theme::createHTMLNode()');
         $this->displayView();
     }
     private function themeCreationSteps(){

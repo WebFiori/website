@@ -18,8 +18,8 @@ class BeforeAfterEventsView extends ThemesLearnView{
         parent::__construct(array(
             'title'=>'Before and After Loaded Callbacks',
             'description'=>'Learn about the callbacks that can be used before '
-            . 'loading the theme or after loading the theme.',
-            'active-aside'=>6,
+            . 'loading the theme or after loading the theme and how to use them.',
+            'active-aside'=>7
         ));
     }
 }
