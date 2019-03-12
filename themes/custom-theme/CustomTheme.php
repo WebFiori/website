@@ -2,6 +2,7 @@
 use webfiori\entity\Theme;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\HeadNode;
+use phpStructs\html\TableRow;
 use webfiori\entity\Page;
 class CustomTheme extends Theme{
     public function __construct() {
@@ -12,10 +13,40 @@ class CustomTheme extends Theme{
         $this->setJsDirName('js');
         $this->setImagesDirName('images');
     }
+    /**
+     * Creates HTML element.
+     * @param array $options An associative array of options. The available options are: 
+     * 1- type: type of the node. The method only support the type 'table'.
+     * 2- data: An indexed array that contains table data. Used only if the 
+     * type is 'table'.
+     * @return HTMLNode
+     */
     public function createHTMLNode($options = array()) {
-        $node = new HTMLNode();
-        $node->addTextNode('Custom Node');
-        return $node;
+        if(isset($options['type'])){
+            $type = $options['type'];
+            if($type == 'table'){
+                //we create our table
+                $table = new HTMLNode('table');
+                foreach ($options['data'] as $rowData){
+                    //create table rows here
+                    $row = new TableRow();
+                    foreach ($rowData as $cellData){
+                        $row->addCell($cellData);
+                    }
+                    $table->addChild($row);
+                }
+                return $table;
+            }
+            else{
+                //unsupported node type. Return div
+                $node = new HTMLNode('div');
+                return $node;
+            }
+        }
+        else{
+            $node = new HTMLNode('div');
+            return $node;
+        }
     }
 
     public function getAsideNode() {
@@ -32,7 +63,10 @@ class CustomTheme extends Theme{
 
     public function getHeadNode() {
         $head = new HeadNode();
-        $head->addCSS(Page::cssDir().'/theme.css');
+        //getting CSS directory
+        $cssDir = Page::cssDir();
+        //adding the CSS file to theme resource files set
+        $head->addCSS($cssDir.'/theme.css');
         return $head;
     }
 
@@ -41,5 +75,4 @@ class CustomTheme extends Theme{
         $header->addTextNode('Header Section');
         return $header;
     }
-
 }

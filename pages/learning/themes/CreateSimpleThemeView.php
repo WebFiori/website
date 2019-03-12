@@ -200,7 +200,7 @@ class CustomTheme extends Theme{
 <?php
 use webfiori\entity\Theme;
 use phpStructs\html\HTMLNode;
-use phpStructs\html\HTMLNode;
+use phpStructs\html\HeadNode;
 class CustomTheme extends Theme{
     public function __construct() {
         parent::__construct();
@@ -255,7 +255,7 @@ class CustomTheme extends Theme{
 <?php
 use webfiori\entity\Theme;
 use phpStructs\html\HTMLNode;
-use phpStructs\html\HTMLNode;
+use phpStructs\html\HeadNode;
 class CustomTheme extends Theme{
     public function __construct() {
         parent::__construct();
