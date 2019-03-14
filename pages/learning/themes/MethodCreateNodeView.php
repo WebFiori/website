@@ -264,9 +264,11 @@ class CustomTheme extends Theme{
         Page::insert($this->createParagraph(''
                 . 'The only step remaining is to see the result of what we have '
                 . 'done so far. As we did last time, we will create a '
-                . 'view, add a route to it, and load our theme. The '
+                . '<a href="learn/topics/more-about-views" target="_blank">view</a>, '
+                . 'add a <a href="learn/topics/routing" target="_blank">route</a> to it, and load our theme. The '
                 . 'only different this time is that we will add some tables '
-                . 'to the body of the page. We will use the code from last lesson.'
+                . 'to the body of the page. We will use the code from last lesson and modify it a '
+                . 'little bit.'
                 . ''));
         $code5 = new CodeSnippet();
         $code5->setTitle('PHP Code');
@@ -305,7 +307,10 @@ new ExamplePage();');
                 . 'like the following.'
                 . ''));
         Page::insert($this->createImag('res/images/CustomHTMLNode.png', 'HTML Node Test'));
-        Page::insert($this->createParagraph('Source code can be found in <a>GitHub</a>.'));
+        Page::insert($this->createParagraph('As you can see, A '
+                . 'HTML table element was created for us. '
+                . 'We can now use the method to create different table sizes.'
+                . ' Full source code of the example can be found in <a target="_blank" href="https://github.com/usernane/webfiori-examples/tree/master/creating-theme-2">GitHub</a>.'));
         $this->setPrevTopicLink('learn/topics/themes/create-simple-theme', 'Creating a Simple Theme');
         $this->displayView();
     }
