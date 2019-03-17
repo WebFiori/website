@@ -27,7 +27,7 @@ class Index extends WebFioriPage{
     private function _welcome(){
         $sec = $this->createSection('Welcome');
         $sec->addChild($this->createParagraph('Welcome to WebFiori learning center. In here, you will '
-                . 'be abble to learn how to use the framework in the most '
+                . 'be able to learn how to use the framework in the most '
                 . 'effective way. You can find all the topics bellow.'));
         Page::insert($sec);
     }

@@ -129,7 +129,7 @@ class SiteConfig{
     }
     private function __construct() {
         $this->configVision = '1.2.1';
-        $this->webSiteNames = array('EN'=>'WebFiori','AR'=>'ويب فيوري',);
+        $this->webSiteNames = array('EN'=>'WebFiori Framework','AR'=>'ويب فيوري',);
         $this->baseUrl = Util::getBaseURL();
         $this->titleSep = ' | ';
         $this->primaryLang = 'EN';

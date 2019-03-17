@@ -31,7 +31,7 @@ class WebFioriHome extends WebFioriPage{
                 . 'management and database access? ');
         $parag1->addText('Do you want to build web APIs for your mobile app? ');
         $parag1->addLineBreak();
-        $parag1->addText('If this is the case, then <em>WebFiori Framework</em> is your choice.');
+        $parag1->addText('If this is the case, then <em>WebFiori Framework</em> is your choice.', array('esc-entities'=>FALSE));
         Page::insert($parag1);
         $this->createSec1();
         $this->createSec4();
@@ -42,7 +42,8 @@ class WebFioriHome extends WebFioriPage{
     public function createSec4() {
         $sec = $this->createSection('Downloading The Framework');
         $sec->addChild($this->createParagraph('Please go to <a href="'.WebFiori::getSiteConfig()->getBaseURL().'download">downloads page</a> to check the available '
-                . 'download options.'));
+                . 'download options. After completing the download process, you can '
+                . 'go to <a href="learn" >learning center</a> in order to get started.'));
         Page::insert($sec);
     }
     public function createSec2(){
@@ -73,15 +74,15 @@ class WebFioriHome extends WebFioriPage{
                 . 'about the basics of theming in the framework. If you want to '
                 . 'develop web APIs, Then you need to learn about routing plus creating '
                 . 'API classes.'));
-        $sec->addChild('The final reason is <b>learning</b>. While building '
+        $sec->addChild($this->createParagraph('The final reason is <b>learning</b>. While building '
                 . 'the framework, I (The developer of the framework) learned many '
                 . 'new concepts which I did not know about while I was student '
                 . 'at university. Building something new from scratch was a good '
-                . 'chance to learn new things and to put my skills into something that can help me and others.');
+                . 'chance to learn new things and to put my skills into something that can help me and others.'));
         Page::insert($sec);
     }
     private function createSec1(){
-        $sec = $this->createParagraph('What is WebFiori Framework?');
+        $sec = $this->createSection('What is WebFiori Framework?');
         $sec->addChild($this->createParagraph('WebFiori Framework is new web framework which is built using '
                 . 'PHP language. The framework is fully object oriented (OOP). '
                 . 'It allows the use of the famous model-view-controller (MVC) model '
