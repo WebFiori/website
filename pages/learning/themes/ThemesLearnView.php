@@ -10,6 +10,7 @@ namespace webfiori\views\learn\themes;
 use webfiori\views\learn\LearnView;
 use webfiori\entity\Page;
 use phpStructs\html\UnorderedList;
+use phpStructs\html\PNode;
 /**
  * Description of ThemesLearnView
  *
@@ -22,7 +23,13 @@ class ThemesLearnView extends LearnView{
     //put your code here
     public function createAsidNav() {
         $aside = &Page::document()->getChildByID('side-content-area');
-        $aside->addTextNode('<p><b>Topics:</b></p>',FALSE);
+        $backLink = new PNode();
+        $backLink->addText('<a href="learning">Back to Learning Center Index</a>', array(
+            'esc-entities'=>FALSE
+        ));
+        $backLink->setClassName('back-link');
+        $aside->addChild($backLink);
+        $aside->addTextNode('<p class="aside-links-title"><b>Topics:</b></p>',FALSE);
         $aside->setAttribute('style', 'border: 1px solid;');
         $links = new UnorderedList();
         $links->setClassName('aside-nav');
