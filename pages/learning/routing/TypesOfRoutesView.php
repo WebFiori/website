@@ -20,6 +20,24 @@ class TypesOfRoutesView extends RoutingLearnView{
                 . 'The only difference will be the location of the resource '
                 . 'that the route will point to.'));
         $sec1 = $this->createSection('View Route');
+        $sec1->addChild($this->createParagraph(''
+                . 'This type of route is the most common type of route. It is a '
+                . 'route that will point to a web page. The page can be '
+                . 'simple HTML page or dynamic PHP web page. Usually, the '
+                . 'folder \'/pages\' will contain all the views. The method '
+                . '<a href="docs/webfiori/entity/router/Router#view" target="_blank">Router::view()</a> '
+                . 'is used to create such route.'
+                . ''));
+        $sec1->addChild($this->createParagraph(''
+                . 'In order to make it easy for developers, they can use the class '
+                . '<a href="docs/webfiori/entity/router/ViewRoutes" target="_blank">ViewRoutes</a> '
+                . 'to create routes to all views. The developer can modify the body of '
+                . 'the method <a href="docs/webfiori/entity/router/ViewRoutes#create" target="_blank">ViewRoutes::create()</a> '
+                . 'to add new routes.'
+                . ''));
+        $sec1->addChild($this->createParagraph(''
+                . 'The following code sample shows how to create d'
+                . ''));
         Page::insert($sec1);
         $sec2 = $this->createSection('API Route');
         Page::insert($sec2);
