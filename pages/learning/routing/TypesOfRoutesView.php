@@ -36,8 +36,23 @@ class TypesOfRoutesView extends RoutingLearnView{
                 . 'to add new routes.'
                 . ''));
         $sec1->addChild($this->createParagraph(''
-                . 'The following code sample shows how to create d'
+                . 'Lets assume that we have 3 views inside the folder \'pages\' as follows:'
+                . 'The following code sample shows how to create routes to views '
+                . 'in side the body of the method '
                 . ''));
+        $ul1 = new UnorderedList();
+        $ul1->addListItem('/pages/HomeView.html');
+        $ul1->addListItem('/pages/LoginView.php');
+        $ul1->addListItem('/pages/system-views/DashboardView.php');
+        $sec1->addChild($ul1);
+        $sec1->addChild($this->createParagraph('Lets assume that the base URL of the website is '
+                . 'https://example.com/. We want the user to see the pages as follows:'));
+        $ul2 = new UnorderedList();
+        $ul2->addListItem('\'https://example.com/\' should point to the view \'HomeView.html\'');
+        $ul2->addListItem('\'https://example.com/home\' should point to the view \'HomeView.html\'');
+        $ul2->addListItem('\'https://example.com/user-login\' should point to the view \'HomeView.html\'');
+        $ul2->addListItem('\'https://example.com/dashboard\' should point to the view \'HomeView.html\'');
+        $sec1->addChild($ul2);
         Page::insert($sec1);
         $sec2 = $this->createSection('API Route');
         Page::insert($sec2);
