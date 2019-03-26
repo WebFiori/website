@@ -2,6 +2,7 @@
 namespace webfiori\views\learn\routing;
 use phpStructs\html\UnorderedList;
 use webfiori\entity\Page;
+use phpStructs\html\CodeSnippet;
 /**
  * Description of ClassRouterView
  *
@@ -14,6 +15,7 @@ class TypesOfRoutesView extends RoutingLearnView{
             'description'=>'Learn about types of routes in WebFiori Framework.',
             'active-aside'=>3
         ));
+        Page::document()->getHeadNode()->addCSS('themes/webfiori/css/code-theme.css');
         Page::insert($this->createParagraph('As we have said in the last lesson, there '
                 . 'are 4 different types of routes. In general, the idea of '
                 . 'creating route for each type will be the same. '
@@ -50,9 +52,23 @@ class TypesOfRoutesView extends RoutingLearnView{
         $ul2 = new UnorderedList();
         $ul2->addListItem('\'https://example.com/\' should point to the view \'HomeView.html\'');
         $ul2->addListItem('\'https://example.com/home\' should point to the view \'HomeView.html\'');
-        $ul2->addListItem('\'https://example.com/user-login\' should point to the view \'HomeView.html\'');
-        $ul2->addListItem('\'https://example.com/dashboard\' should point to the view \'HomeView.html\'');
+        $ul2->addListItem('\'https://example.com/user-login\' should point to the view \'LoginView.php\'');
+        $ul2->addListItem('\'https://example.com/dashboard\' should point to the view \'DashboardView.html\'');
         $sec1->addChild($ul2);
+        Page::insert($this->createParagraph('The following sample code shows how to create such a URL structre using '
+                . 'the class <a>ViewRoutes</a>'));
+        $code01 = new CodeSnippet();
+        $code01->setTitle('PHP Code');
+        $code01->setCode("class ViewRoutes {
+    public static function create(){
+        Router::view('/', '/HomeView.html');
+        Router::view('/home', '/HomeView.html');
+        Router::view('/user-login', '/ThemeTestPage.php');
+        Router::view('/dashboard', '/system-views/DashboardView.php');
+    }
+}
+    ");
+        $sec1->addChild($code01);
         Page::insert($sec1);
         $sec2 = $this->createSection('API Route');
         Page::insert($sec2);
