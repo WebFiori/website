@@ -85,14 +85,82 @@ class TypesOfRoutesView extends RoutingLearnView{
                 . ''
                 . ''));
         $ul3 = new UnorderedList();
-        $ul3->addListItem('UserAPIs.php, Has 3 actions: \'add-user\', \'update-user\' and \'delete-user\'');
-        $ul3->addListItem('writer/ArticleAPIs.php Has 2 actions: \'publish-article\' and \'\'.');
+        $ul3->addListItem('/apis/UserAPIs.php, Has 3 actions: \'add-user\', \'update-user\' and \'delete-user\'.');
+        $ul3->addListItem('/apis/writer/ArticleAPIs.php Has 2 actions: \'publish-article\' and \'revert-publish\'.');
+        $ul3->addListItem('/apis/writer/ContentAPIs.php Has 2 actions: \'add-content\' and \'remove-content\'.');
+        $sec2->addChild($this->createParagraph('Assuming that the base URL of the website is '
+                . 'https://example.com/, We want the URLs of the APIs to be like that:'));
+        $ul4 = new UnorderedList();
+        $ul4->addListItem('\'https://example.com/web-apis/user/add-user\' should point to the view \'/apis/UserAPIs.php\'');
+        $ul4->addListItem('\'https://example.com/web-apis/user/update-user\' should point to the view \'/apis/UserAPIs.php\'');
+        $ul4->addListItem('\'https://example.com/web-apis/user/delete-user\' should point to the view \'/apis/UserAPIs.php\'');
+        $ul4->addListItem('\'https://example.com/web-apis/article/publish-article\' should point to the view \'/apis/writer/ArticleAPIs.php\'');
+        $ul4->addListItem('\'https://example.com/web-apis/article/revert-publish\' should point to the view \'/apis/writer/ArticleAPIs.php\'');
+        $ul4->addListItem('\'https://example.com/web-apis/article-content/add-content\' should point to the view \'/apis/writer/ContentAPIs.php\'');
+        $ul4->addListItem('\'https://example.com/web-apis/article-content/remove-content\' should point to the view \'/apis/writer/ContentAPIs.php\'');
+        $sec2->addChild($ul4);
+        $sec2->addChild($this->createParagraph(''
+                . 'One thing to note about creating APIs is that API action must be passed '
+                . 'alongside request body as a GET or POST parameter (e.g. \'action=add-user\'). '
+                . 'as you can see from the above URLs, the action is appended to the end '
+                . 'of the URL. To let the router know that this is an API action, we '
+                . 'can use <a href="learn/routing/generic-routes" target="_blank">Generic Route</a>.'
+                . ''));
+        $sec2->addChild($this->createParagraph(''
+                . 'A generic route is a route that has some of its '
+                . '<a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax" '
+                . 'target="_blank">path parts</a> unkown. '
+                . 'They can be used to serve dynamic content pased on generic path value. '
+                . 'A generic path value is a value that is enclosed between {} while '
+                . 'creating the route. For example, the first 3 APIs can have one '
+                . 'URL in the form \'https://example.com/web-apis/user/<b>{action}</b>\'.'
+                . ''));
+        $sec2->addChild($this->createParagraph('The following sample code shows how to create such a URL structre using '
+                . 'the class <a href="docs/webfiori/entity/router/APIRoutes" target="_blank">APIRoutes</a>. You can '
+                . 'see how API action is passed. Note that the value of the generic must be \'action\' or the API call '
+                . 'will fail.'));
+        $code02 = new CodeSnippet();
+        $code02->setTitle('PHP Code');
+        $code02->setCode("class APIRoutes {
+    public static function create(){
+        Router::api('/web-apis/user/{action}', '/UserAPIs.php');
+        Router::api('/web-apis/article/{action}', '/writer/ArticleAPIs.php');
+        Router::api('/web-apis/article-content/{action}', '/writer/ContentAPIs.php');
+    }
+}
+    ");
+        $sec2->addChild($code02);
         $sec3 = $this->createSection('Closure Route');
         Page::insert($sec3);
+        $sec3->addChild($this->createParagraph(''
+                . 'A closure route is a route to a user defined code that will '
+                . 'be executed when the resource is requested. In other terms, it is a function that '
+                . 'will be called when a request is made. It is simply an <a '
+                . 'href="https://www.php.net/manual/en/functions.anonymous.php" target="_blank">Anonymous Function</a>.'
+                . 'Suppose that we would like to create a route to a function that will '
+                . 'output \'Hello Mr.{A_Name}\' When its called. The URL that will be requested '
+                . 'will have the form \'https://example.com/say-hello-to/{A_Name}\'. As you can see, we have '
+                . 'added the name as a generic path variable in the URL.'
+                . ''));
+        $sec3->addChild($this->createParagraph('Since the request method of the URL is GET, we can access the '
+                . 'name using the super global $_GET. The following code sample shows '
+                . 'how its done.'));
+        $code03 = new CodeSnippet();
+        $code03->setTitle('PHP Code');
+        $code03->setCode("class ClosureRoutes {
+    public static function create(){
+        Router::closure('/say-hello-to/{A_Name}', function(){
+            \$name = \$_GET['A_Name'];
+            echo 'Hello Mr.'.\$name;
+        });
+    }
+}
+    ");
+        $sec3->addChild($code03);
         $sec4 = $this->createSection('Custom Route');
         Page::insert($sec4);
         $this->setPrevTopicLink('learn/topics/routing/class-Router', 'The Class \'Router\'');
-        //$this->setNextTopicLink('learn/topics/routing/examples', 'Routing Examples');
+        $this->setNextTopicLink('learn/topics/routing/generic-route', 'Generic Routes');
         $this->displayView();
     }
 }
