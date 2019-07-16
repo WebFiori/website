@@ -24,21 +24,9 @@
  */
 namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 use Exception;
 /**
@@ -56,7 +44,7 @@ class FileHandler{
         $this->tapSpace = '    ';
         $ffName = str_replace('\\', '/', $fName);
         $this->file = fopen($ffName, $mode);
-        if($this->file === FALSE){
+        if($this->file === false){
             throw new Exception('Unable to open the file \''.$fName.'\' using the mode \''.$mode.'\'.');
         }
     }
@@ -72,16 +60,16 @@ class FileHandler{
      * @param type $incTab if true, a tab will be added before the content.
      * @param type $incNewLine if true, the cursor will move to the next line.
      */
-    public function write($content, $incTab = FALSE, $incNewLine = FALSE){
-        if($incTab == TRUE && $incNewLine == TRUE){
+    public function write($content, $incTab = false, $incNewLine = false){
+        if($incTab == true && $incNewLine == true){
             fwrite($this->file, $this->_getTab().$content);
             $this->newLine();
         }
-        else if($incTab == FALSE && $incNewLine == TRUE){
+        else if($incTab == false && $incNewLine == true){
             fwrite($this->file, $content);
             $this->newLine();
         }
-        else if($incTab == TRUE && $incNewLine == FALSE){
+        else if($incTab == true && $incNewLine == false){
             fwrite($this->file, $this->_getTab().$content);
         }
         else{
@@ -96,7 +84,7 @@ class FileHandler{
      * e.g. &lt;div class="a-class" style=""&gt;).
      */
     public function openTag($tagName = '<div>'){
-        $this->write($tagName,TRUE,TRUE);
+        $this->write($tagName,true,true);
         $this->addTab();
     }
     
@@ -109,7 +97,7 @@ class FileHandler{
      */
     public function closeTag($tagName = '</div>'){
         $this->reduceTab();
-        $this->write($tagName, TRUE, TRUE);
+        $this->write($tagName, true, true);
     }
 
     public function getTabCount(){

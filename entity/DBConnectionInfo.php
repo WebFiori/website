@@ -24,21 +24,9 @@
  */
 namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 /**
  * An entity that can be used to store database connection information. 
@@ -52,7 +40,7 @@ if(!defined('ROOT_DIR')){
  * </ul>
  *
  * @author Ibrahim
- * @version 1.0
+ * @version 1.0.1
  */
 class DBConnectionInfo {
     private $port;
@@ -60,6 +48,8 @@ class DBConnectionInfo {
     private $uName;
     private $pass;
     private $dbName;
+    private $connectionName;
+    
     /**
      * Creates new instance of the class.
      * @param string $user The username of the user that will be used to access 
@@ -78,6 +68,26 @@ class DBConnectionInfo {
         $this->setDBName($dbname);
         $this->setHost($host);
         $this->setPort($port);
+        $this->setConnectionName('New_Connection');
+    }
+    /**
+     * Returns the name of the connection.
+     * @return string The name of the connection. Default return value is 'New_Connection'.
+     * @since 1.0.1
+     */
+    public function getConnectionName() {
+        return $this->connectionName;
+    }
+    /**
+     * Sets the name of the connection.
+     * @param string $newName The new name. Must be non-empty string.
+     * @since 1.0.1
+     */
+    public function setConnectionName($newName) {
+        $trimmed = trim($newName);
+        if(strlen($trimmed) != 0){
+            $this->connectionName = $trimmed;
+        }
     }
     /**
      * Returns the address of database host.

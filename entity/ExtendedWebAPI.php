@@ -24,22 +24,11 @@
  */
 namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
+use webfiori\WebFiori;
 use restEasy\WebAPI;
 use webfiori\entity\langs\Language;
 use webfiori\conf\SiteConfig;
@@ -92,13 +81,13 @@ abstract class ExtendedWebAPI extends WebAPI{
     private function _setTranslation() {
         $reqMeth = $this->getRequestMethod();
         if($reqMeth == 'GET' || $reqMeth == 'DELETE'){
-            $langCode = isset($_GET['lang']) ? filter_var($_GET['lang']) : SiteConfig::getPrimaryLanguage();
+            $langCode = isset($_GET['lang']) ? filter_var($_GET['lang']) : WebFiori::getWebsiteFunctions()->getSessionLang();
         }
         else if($reqMeth == 'POST' || $reqMeth == 'PUT'){
-            $langCode = isset($_POST['lang']) ? filter_var($_POST['lang']) : SiteConfig::getPrimaryLanguage();
+            $langCode = isset($_POST['lang']) ? filter_var($_POST['lang']) : WebFiori::getWebsiteFunctions()->getSessionLang();
         }
         else{
-            $langCode = SiteConfig::getPrimaryLanguage();
+            $langCode = WebFiori::getWebsiteFunctions()->getSessionLang();
         }
         $this->translation = &Language::loadTranslation($langCode);
     }
@@ -196,7 +185,7 @@ abstract class ExtendedWebAPI extends WebAPI{
      */
     public function databaseErr($info=''){
         $message = $this->get('general/db-error');
-        $this->sendResponse($message, TRUE, 404, $info);
+        $this->sendResponse($message, 'error', 404, $info);
     }
     /**
      * Sends a response message to indicate that a user is not authorized to 
@@ -217,7 +206,7 @@ abstract class ExtendedWebAPI extends WebAPI{
      */
     public function notAuth(){
         $message = $this->get('general/http-codes/401/message');
-        $this->sendResponse($message, TRUE, 401);
+        $this->sendResponse($message, 'error', 401);
     }
     /**
      * Sends a response message to indicate that an action is not supported by the API.
@@ -237,7 +226,7 @@ abstract class ExtendedWebAPI extends WebAPI{
      */
     public function actionNotSupported(){
         $message = $this->get('general/action-not-supported');
-        $this->sendResponse($message, TRUE, 404);
+        $this->sendResponse($message, 'error', 404);
     }
     /**
      * Sends a response message to indicate that request content type is 
@@ -259,7 +248,7 @@ abstract class ExtendedWebAPI extends WebAPI{
      */
     public function contentTypeNotSupported($cType=''){
         $message = $this->get('general/content-not-supported');
-        $this->sendResponse($message, TRUE, 404,'"request-content-type":"'.$cType.'"');
+        $this->sendResponse($message, 'error', 404,'"request-content-type":"'.$cType.'"');
     }
     /**
      * Sends a response message to indicate that request method is not supported.
@@ -279,7 +268,7 @@ abstract class ExtendedWebAPI extends WebAPI{
      */
     public function requestMethodNotAllowed(){
         $message = $this->get('general/http-codes/405/message');
-        $this->sendResponse($message, TRUE, 405);
+        $this->sendResponse($message, 'error', 405);
     }
     /**
      * Sends a response message to indicate that an action is not implemented.
@@ -299,7 +288,7 @@ abstract class ExtendedWebAPI extends WebAPI{
      */
     public function actionNotImpl(){
         $message = $this->get('general/action-not-impl');
-        $this->sendResponse($message, TRUE, 404);
+        $this->sendResponse($message, 'error', 404);
     }
     /**
      * Sends a response message to indicate that a request parameter or parameters are missing.
@@ -334,7 +323,7 @@ abstract class ExtendedWebAPI extends WebAPI{
             }
         }
         $message = $this->get('general/missing-params');
-        $this->sendResponse($message.$val.'.', TRUE, 404);
+        $this->sendResponse($message.$val.'.', 'error', 404);
     }
     /**
      * Sends a response message to indicate that a request parameter(s) have invalid values.
@@ -369,6 +358,6 @@ abstract class ExtendedWebAPI extends WebAPI{
             }
         }
         $message = $this->get('general/inv-params');
-        $this->sendResponse($message.$val.'.', TRUE, 404);
+        $this->sendResponse($message.$val.'.', 'error', 404);
     }
 }

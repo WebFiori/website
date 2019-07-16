@@ -24,28 +24,17 @@
  */
 namespace webfiori\entity;
 use jsonx\JsonI;
+use jsonx\JsonX;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 /**
  * A class that represents a privilege.
  *
  * @author Ibrahim
- * @version 1.0
+ * @version 1.0.1
  */
 class Privilege implements JsonI{
     /**
@@ -65,23 +54,32 @@ class Privilege implements JsonI{
      * @param string $id The unique identifier of the privilege. Default is 
      * 'PR'.
      * @param string $name The name of the privilege. It is provided only 
-     * in case of displaying privilege in some UI view.
+     * in case of displaying privilege in some UI view. Default is empty string.
      * @since 1.0
      */
     public function __construct($id='PR',$name='') {
-        $this->setID($id);
-        $this->setName($name);
+        if(!$this->setID($id)){
+            $this->setID('PR');
+        }
+        if(!$this->setName($name)){
+            $this->setName('PR_NAME');
+        }
     }
     /**
      * Sets the name of the privilege.
      * @param string $name The name of the privilege. It is only set when 
      * the given string is not empty.
+     * @return boolean If the privilege name was set, the method will return 
+     * true. If not set, the method will return false.
      * @since 1.0
      */
     public function setName($name) {
-        if(strlen($name) > 0){
-            $this->name = $name.'';
+        $trimmed = trim($name);
+        if(strlen($trimmed) > 0){
+            $this->name = $trimmed;
+            return true;
         }
+        return false;
     }
     /**
      * Returns the name of the privilege.
@@ -107,11 +105,11 @@ class Privilege implements JsonI{
      * is not empty. In addition, The ID of the privilege can only consist 
      * of the following characters: [A-Z], [a-z], [0-9] and underscore.
      * @return boolean If the ID of the privilege is updated, the method will return 
-     * TRUE. If not updated, it will return FALSE.
+     * true. If not updated, it will return false.
      * @since 1.0
      */
     public function setID($code) {
-        $xid = ''.$code;
+        $xid = trim($code);
         $len = strlen($xid);
         for ($x = 0 ; $x < $len ; $x++){
             $ch = $xid[$x];
@@ -119,11 +117,11 @@ class Privilege implements JsonI{
 
             }
             else{
-                return FALSE;
+                return false;
             }
         }
         $this->code = $xid;
-        return TRUE;
+        return true;
     }
     /**
      * Returns an object of type JsonX that contains group info as JSON string.

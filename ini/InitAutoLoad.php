@@ -23,6 +23,11 @@
  * THE SOFTWARE.
  */
 namespace webfiori\ini;
+if(!defined('ROOT_DIR')){
+    header("HTTP/1.1 403 Forbidden");
+    die('<!DOCTYPE html><html><head><title>Forbidden</title></head><body>'
+    . '<h1>403 - Forbidden</h1><hr><p>Direct access not allowed.</p></body></html>');
+}
 use webfiori\entity\AutoLoader;
 /**
  * A class that has one method to initialize user-defined autoload directories.
@@ -39,7 +44,7 @@ class InitAutoLoad {
      */
     public static function init() {
         $AU = AutoLoader::get();
-        $AU->newSearchFolder('apiParser');
+        //$AU->newSearchFolder('my-system');
         //$AU->newSearchFolder('my-entities', FALSE);
     }
 }

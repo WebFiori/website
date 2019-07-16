@@ -25,29 +25,17 @@
  
 namespace webfiori\conf;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
-use webfiori\entity\mail\EmailAccount;
+use webfiori\entity\mail\SMTPAccount;
 /**
  * SMTP configuration class.
  * The developer can create multiple SMTP accounts and add 
  * Connection information inside the body of this class.
  * @author Ibrahim
- * @version 1.0
+ * @version 1.0.1
  */
 class MailConfig{
     private $emailAccounts;
@@ -65,7 +53,7 @@ class MailConfig{
      * @since 1.0
      */
     public static function &get(){
-        if(self::$inst === NULL){
+        if(self::$inst === null){
             self::$inst = new MailConfig();
         }
         return self::$inst;
@@ -83,21 +71,36 @@ class MailConfig{
     private function addAccount($acc,$name){
         $this->emailAccounts[$name] = $acc;
     }
+    /**
+     * Adds new SMTP connection information or updates an existing one.
+     * @param string $accName The name of the account that will be added or updated.
+     * @param SMTPAccount $smtpConnInfo An object of type 'SMTPAccount' that 
+     * will contain SMTP account information.
+     * @since 1.0.1
+     */
+    public static function addSMTPAccount($accName,$smtpConnInfo){
+        if($smtpConnInfo instanceof SMTPAccount){
+            $trimmedName = trim($accName);
+            if(strlen($trimmedName) != 0){
+                self::get()->addAccount($smtpConnInfo,$trimmedName);
+            }
+        }
+    }
     private function &_getAccount($name){
         if(isset($this->emailAccounts[$name])){
             return $this->emailAccounts[$name];
         }
-        $null = NULL;
+        $null = null;
         return $null;
     }
     /**
      * Returns an email account given its name.
      * The method will search for an account with the given name in the set 
-     * of added accounts. If no account was found, NULL is returned.
+     * of added accounts. If no account was found, null is returned.
      * @param string $name The name of the account.
-     * @return EmailAccount|null If the account is found, The method 
-     * will return an object of type EmailAccount. Else, the 
-     * method will return NULL.
+     * @return SMTPAccount|null If the account is found, The method 
+     * will return an object of type SMTPAccount. Else, the 
+     * method will return null.
      * @since 1.0
      */
     public static function &getAccount($name){

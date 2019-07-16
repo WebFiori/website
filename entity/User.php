@@ -24,21 +24,9 @@
  */
 namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 use jsonx\JsonI;
 use jsonx\JsonX;
@@ -115,11 +103,11 @@ class User implements JsonI{
      * @since 1.0
      */
     function __construct($username='',$password='',$email=''){
-        $this->email = $email;
-        $this->password = $password;
-        $this->userName = $username;
-        $this->resetPassCounts = 0;
-        $this->id = -1;
+        $this->setEmail($email);
+        $this->setPassword($password);
+        $this->setUserName($username);
+        $this->setResetCount(0);
+        $this->setID(-1);
         $this->userPrivileges = array();
     }
     /**
@@ -150,33 +138,33 @@ class User implements JsonI{
      * @param string $privilegeId The ID of the privilege. It must be exist in 
      * the class 'Access' or it won't be added. If the privilege is already 
      * added, It will be not added again. 
-     * @return boolean The method will return TRUE if the privilege is 
-     * added. FALSE if not.
+     * @return boolean The method will return true if the privilege is 
+     * added. false if not.
      * @since 1.7
      */
     public function addPrivilege($privilegeId){
         $p = &Access::getPrivilege($privilegeId);
-        if($p != NULL){
+        if($p != null){
             foreach ($this->userPrivileges as $prev){
                 if($prev->getID() == $p->getID()){
-                    return FALSE;
+                    return false;
                 }
             }
             $this->userPrivileges[] = $p;
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
     /**
      * Removes a privilege from user privileges array given its ID.
      * @param string $privilegeId The ID of the privilege.
      * @return boolean If the privilege is removed, the method will 
-     * return TRUE. Other than that, the method will return FALSE.
+     * return true. Other than that, the method will return false.
      * @since 1.7.1
      */
     public function removePrivilege($privilegeId) {
         $p = &Access::getPrivilege($privilegeId);
-        if($p != NULL){
+        if($p != null){
             $count = count($this->userPrivileges);
             for($x = 0 ; $x < $count ; $x++){
                 $privilege = $this->userPrivileges[$x];
@@ -188,11 +176,11 @@ class User implements JsonI{
                         $x++;
                     }
                     unset($this->userPrivileges[$x - 1]);
-                    return TRUE;
+                    return true;
                 }
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Reinitialize the array of user privileges.
@@ -208,7 +196,7 @@ class User implements JsonI{
      * privileges of that group. In addition, he must have all the privileges 
      * of all child groups of that group.
      * @param string $groupId The ID of the group.
-     * @return boolean The method will return TRUE if the user belongs 
+     * @return boolean The method will return true if the user belongs 
      * to the users group. The user will be considered a part of the group 
      * only if he has all the permissions in the group.
      * @since 1.7
@@ -218,7 +206,7 @@ class User implements JsonI{
         if($g instanceof PrivilegesGroup){
             return $this->_inGroup($g);
         }
-        return FALSE;
+        return false;
     }
     /**
      * 
@@ -226,17 +214,16 @@ class User implements JsonI{
      * @return type
      */
     private function _inGroup($group){
-        $inGroup = TRUE;
+        $inGroup = true;
         if(count($group->privileges()) !== 0){
             foreach ($group->privileges() as $groupPrivilege){
                 $inGroup = $inGroup && $this->hasPrivilege($groupPrivilege->getID());
             }
-            return $inGroup;
         }
         else{
-            $inGroup = FALSE;
+            $inGroup = false;
         }
-        if($inGroup === TRUE){
+        if($inGroup === true){
             foreach ($group->childGroups() as $g){
                 $inGroup = $inGroup && $this->_inGroup($g);
             }
@@ -255,21 +242,22 @@ class User implements JsonI{
     /**
      * Checks if a user has privilege or not given its ID.
      * @param string $privilegeId The ID of the privilege.
-     * @return boolean The method will return TRUE if the user has the given 
-     * privilege. FALSE if not.
+     * @return boolean The method will return true if the user has the given 
+     * privilege. false if not.
      * @since 1.7
      */
     public function hasPrivilege($privilegeId) {
         foreach ($this->userPrivileges as $p){
             if($p->getID() == $privilegeId){
-                return TRUE;
+                return true;
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Returns the value of the property '$lastLogin'.
-     * @return string Last login date.
+     * @return string|null Last login date. If not set, the method will 
+     * return null.
      * @since 1.4
      */
     public function getLastLogin(){
@@ -277,7 +265,8 @@ class User implements JsonI{
     }
     /**
      * Returns the value of the property '$regDate'.
-     * @param string $date Registration date.
+     * @param string|null $date Registration date. If not set, the method will
+     * return null.
      * @since 1.4
      */
     public function getRegDate(){
@@ -285,8 +274,8 @@ class User implements JsonI{
     }
     /**
      * Returns the date at which user password was reseted.
-     * @return string|NULL the date at which user password was reseted. 
-     * If not set, the method will return NULL.
+     * @return string|null the date at which user password was reseted. 
+     * If not set, the method will return null.
      * @since 1.6
      */
     public function getLastPasswordResetDate() {
@@ -304,7 +293,7 @@ class User implements JsonI{
      * Returns the number of times the user has requested that his password 
      * to be reseted.
      * @return int The number of times the user has requested that his password 
-     * to be reseted.
+     * to be reseted. Default value is 0.
      * @since 1.6
      */
     public function getResetCount() {
@@ -314,11 +303,11 @@ class User implements JsonI{
      * Sets the number of times the user has requested that his password 
      * to be reseted.
      * @param int $times The number of times the user has requested that his password 
-     * to be reseted.
+     * to be reseted. Must be an integer greater than -1.
      * @since 1.6
      */
     public function setResetCount($times) {
-        if(gettype($times) == 'integer'){
+        if(gettype($times) == 'integer' && $times >= 0){
             $this->resetPassCounts = $times;
         }
     }
@@ -340,7 +329,8 @@ class User implements JsonI{
     }
     /**
      * Returns the display name of the user.
-     * @return string The display name of the user.
+     * @return string|null The display name of the user. Default value is 
+     * null.
      * @since 1.2
      */
     public function getDisplayName() {
@@ -349,12 +339,14 @@ class User implements JsonI{
     /**
      * Sets the display name of the user.
      * @param string $name Display name. It will be set only if it was a string 
-     * with length that is greater than 0 (Not empty string).
+     * with length that is greater than 0 (Not empty string). Note that the method will 
+     * remove any extra spaces in the name.
      * @since 1.2
      */
     public function setDisplayName($name){
-        if(gettype($name) == 'string' && strlen($name) != 0){
-            $this->dispName = $name;
+        $trimmed = trim($name);
+        if(strlen($trimmed) != 0){
+            $this->dispName = $trimmed;
         }
     }
     /**
@@ -397,11 +389,12 @@ class User implements JsonI{
     }
     /**
      * Sets the user name of a user.
-     * @param string $username The username to set.
+     * @param string $username The username to set. Note that the method will 
+     * use the method 'trim()' in order to trim passed value.
      * @since 1.0
      */
     function setUserName($username){
-        $this->userName = $username;
+        $this->userName = trim($username);
     }
     /**
      * Sets the password of a user.
@@ -413,15 +406,17 @@ class User implements JsonI{
     }
     /**
      * Sets the value of the property '$email'.
-     * @param string $email The email to set.
+     * @param string $email The email to set. Note that the method will 
+     * use the method 'trim()' in order to trim passed value.
      * @since 1.0
      */
     public function setEmail($email){
-        $this->email = $email;
+        $this->email = trim($email);
     }
     /**
      * Returns the value of the property '$userName'.
-     * @return string The value of the property '$userName'.
+     * @return string The value of the property '$userName'. Default value is 
+     * empty string.
      * @since 1.0
      */
     function getUserName(){
@@ -429,7 +424,8 @@ class User implements JsonI{
     }
     /**
      * Returns the value of the property '$password'.
-     * @return string The value of the property '$password'.
+     * @return string The value of the property '$password'. Default value is 
+     * empty string.
      * @since 1.0
      */
     function getPassword(){
@@ -437,7 +433,8 @@ class User implements JsonI{
     }
     /**
      * Returns the value of the property '$email'.
-     * @return string The value of the property '$email'.
+     * @return string The value of the property '$email'. Default value is 
+     * empty string.
      * @since 1.0
      */
     function getEmail(){

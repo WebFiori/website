@@ -24,25 +24,12 @@
  */
 namespace webfiori\entity\mail;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 use webfiori\conf\MailConfig;
 use webfiori\entity\File;
-use webfiori\entity\Logger;
 use webfiori\functions\BasicMailFunctions;
 use phpStructs\html\HTMLDoc;
 use phpStructs\html\HTMLNode;
@@ -82,14 +69,9 @@ class EmailMessage {
      * @since 1.0
      */
     public static function &createInstance($sendAccountName=''){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if an instance of the class is already active...');
-        if(self::$em === NULL){
-            Logger::log('No instance is active. Creating new one...');
+        if(self::$em === null){
             self::$em = new EmailMessage($sendAccountName);
         }
-        Logger::log('Returning class intance.');
-        Logger::logFuncReturn(__METHOD__);
         return self::$em;
     }
     /**
@@ -100,39 +82,24 @@ class EmailMessage {
      * @since 1.0
      */
     private function __construct($sendAccountName='') {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Creating new instance of \'EmailMessage\'.', 'info');
         if(class_exists('webfiori\conf\MailConfig')){
-            Logger::log('Checking the existance of the account \''.$sendAccountName.'\'.', 'debug');
             $acc = MailConfig::getAccount($sendAccountName);
             if($acc instanceof SMTPAccount){
-                Logger::log('SMTP Account retrieved.');
-                Logger::log('Getting socket mailer ready.');
                 $this->socketMailer = BasicMailFunctions::get()->getSocketMailer($acc);
                 if($this->socketMailer == BasicMailFunctions::INV_CREDENTIALS){
-                    Logger::log('Unable to login to the email server using provided parameters. An exception is thrown.', 'error');
-                    Logger::requestCompleted();
                     throw new Exception('The account "'.$sendAccountName.'" has inalid credintials.');
                 }
                 else if($this->socketMailer == BasicMailFunctions::INV_HOST_OR_PORT){
-                    Logger::log('Unable to connect to the email server. Incorrect port or server address. An exception is thrown.', 'error');
-                    Logger::requestCompleted();
-                    throw new Exception('The account "'.$sendAccountName.'" has inalid host or port number. Port: '.$acc->getPort().', Host: '.$acc->getServerAddress().'.');
+                    throw new Exception('The account "'.$sendAccountName.'" has invalid host or port number. Port: '.$acc->getPort().', Host: '.$acc->getServerAddress().'.');
                 }
                 else{
-                    Logger::log('Instance created with no errors.');
-                    Logger::logFuncReturn(__METHOD__);
                     $this->asHtml = new HTMLDoc();
                     $this->asHtml->getHeadNode()->addMeta('charset', 'UTF-8');
                     return;
                 }
             }
-            Logger::log('No email account with the name \''.$sendAccountName.'\' was found. An exception is thrown.', 'error');
-            Logger::requestCompleted();
-            throw new Exception('The account "'.$sendAccountName.'" does not exist.');
+            throw new Exception('No SMTP account was found which has the name "'.$sendAccountName.'".');
         }
-        Logger::log('Class \'MailConfig\' is missing. An exception is thrown.', 'error');
-        Logger::requestCompleted();
         throw new Exception('Class "MailConfig" not found.');
     }
     /**
@@ -216,7 +183,7 @@ class EmailMessage {
      * @since 1.0
      */
     public static function write($text) {
-        self::createInstance()->_getDocument()->addChild(HTMLNode::createTextNode($text));
+        self::createInstance()->_getDocument()->addChild(HTMLNode::createTextNode($text,false));
     }
     /**
      * Adds a child HTML node to the body of the message.
@@ -234,7 +201,7 @@ class EmailMessage {
      * @since 1.0.1
      */
     public static function importance($imp=null) {
-        if($imp !== NULL){
+        if($imp !== null){
             self::createInstance()->_getSocketMailer()->setPriority($imp);
         }
         return self::createInstance()->_getSocketMailer()->getPriority();
@@ -242,13 +209,13 @@ class EmailMessage {
     /**
      * Sets or returns the HTML document that is associated with the email 
      * message.
-     * @param HTMLDoc $new If it is not NULL, the HTML document 
+     * @param HTMLDoc $new If it is not null, the HTML document 
      * that is associated with the message will be set to the given one.
      * @return HTMLDoc The document that is associated with the email message.
      * @since 1.0
      */
     public static function document($new=null){
-        if($new != NULL){
+        if($new != null){
             self::createInstance()->_setDocument($new);
         }
         return self::createInstance()->_getDocument();
@@ -257,9 +224,9 @@ class EmailMessage {
      * Adds new receiver address to the list of message receivers.
      * @param string $name The name of the email receiver (such as 'Ibrahim').
      * @param string $email The email address of the receiver (such as 'example@example.com').
-     * @param boolean $isCC If set to TRUE, the receiver will receive 
+     * @param boolean $isCC If set to true, the receiver will receive 
      * a carbon copy of the message (CC).
-     * @param boolean $isBcc If set to TRUE, the receiver will receive 
+     * @param boolean $isBcc If set to true, the receiver will receive 
      * a blind carbon copy of the message (Bcc).
      * @since 1.0
      */
@@ -275,18 +242,18 @@ class EmailMessage {
         self::createInstance()->_getSocketMailer()->setSubject($subject);
     }
     /**
-     * Sends the message and set message instance to NULL.
+     * Sends the message and set message instance to null.
      * @since 1.0
      */
     public static function send(){
         self::createInstance()->_sendMessage();
-        self::$em = NULL;
+        self::$em = null;
     }
     /**
      * @since 1.0
      */
     private function _sendMessage() {
-        $this->socketMailer->write($this->asHtml->toHTML(), TRUE);
+        $this->socketMailer->write($this->asHtml->toHTML(), true);
     }
     /**
      * 

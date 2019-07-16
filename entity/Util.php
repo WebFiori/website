@@ -24,21 +24,9 @@
  */
 namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 use webfiori\conf\Config;
 use webfiori\entity\DBConnectionFactory;
@@ -83,9 +71,9 @@ class Util{
     /**
      * Returns the instance of 'MySQLLink' which is used to check database 
      * connection using the method 'Util::checkDbConnection()'.
-     * @return MySQLLink|NULL The instance of 'MySQLLink' which is used to check database 
+     * @return MySQLLink|null The instance of 'MySQLLink' which is used to check database 
      * connection using the method 'Util::checkDbConnection()'. If no test was 
-     * performed, the method will return NULL.
+     * performed, the method will return null.
      * @since 1.2
      */
     public static function getDatabaseTestInstance(){
@@ -97,18 +85,21 @@ class Util{
      * @return int|float|boolean If the given string represents an integer, 
      * the value is returned as an integer. If the given string represents a float, 
      * the value is returned as a float. If the method is unable to convert 
-     * the string to its numerical value, it will return FALSE.
+     * the string to its numerical value, it will return false.
      * @since 1.3.5
      */
     public static function numericValue($str){
-        $str = trim($str);
-        $len = strlen($str);
-        $isFloat = FALSE;
-        $retVal = FALSE;
+        $strToConvert = trim($str);
+        $len = strlen($strToConvert);
+        if($len == 0 || gettype($str) != 'string'){
+            return false;
+        }
+        $isFloat = false;
+        $retVal = false;
         for($y = 0 ; $y < $len ; $y++){
-            $char = $str[$y];
+            $char = $strToConvert[$y];
             if($char == '.' && !$isFloat){
-                $isFloat = TRUE;
+                $isFloat = true;
             }
             else if($char == '-' && $y == 0){
                 
@@ -123,10 +114,10 @@ class Util{
             }
         }
         if($isFloat){
-            $retVal = floatval($str);
+            $retVal = floatval($strToConvert);
         }
         else{
-            $retVal = intval($str);
+            $retVal = intval($strToConvert);
         }
         return $retVal;
     }
@@ -134,8 +125,10 @@ class Util{
      * Returns the reverse of a string.
      * This method can be used to reverse the order of any string. 
      * For example, if the given string is '   Good Morning Buddy', the 
-     * method will return 'ydduB gninriM dooG   '. If NULL is given, the 
-     * method will return empty string.
+     * method will return 'ydduB gninriM dooG   '. If null is given, the 
+     * method will return empty string. Note that if the given string is 
+     * a unicode string, then the method needs mb_ extension to be exist for 
+     * the output to be correct.
      * @param string $str The string that will be reversed.
      * @return string The string after reversing its order.
      * @since 1.3.7
@@ -143,9 +136,21 @@ class Util{
     public static function reverse($str) {
         $strToReverse = $str.'';
         $retV = '';
-        $strLen = strlen($strToReverse);
+        if(function_exists('mb_strlen')){
+            $strLen = mb_strlen($strToReverse);
+            $usemb = true;
+        }
+        else{
+            $strLen = strlen($strToReverse);
+            $usemb = false;
+        }
         for($x = $strLen - 1 ; $x >= 0 ; $x--){
-            $retV .= $strToReverse[$x];
+            if($usemb){
+                $retV .= mb_substr($strToReverse, $x, 1);;
+            }
+            else{
+                $retV .= $strToReverse[$x];
+            }
         }
         return $retV;
     }
@@ -154,7 +159,7 @@ class Util{
      * @param int $intVal The number that will be converted.
      * @return boolean|string If the given value is an integer and it is greater 
      * than -1, a string of zeros and ones is returned. Other than that, 
-     * FALSE is returned.
+     * false is returned.
      * @since 1.3.8
      */
     public static function binaryString($intVal){
@@ -175,7 +180,7 @@ class Util{
             }
             return $retVal;
         }
-        return FALSE;
+        return false;
     }
     /**
      * Returns HTTP request headers.
@@ -221,20 +226,6 @@ class Util{
         return $retVal;
     }
     /**
-     * An alias for the method 'Util::getClientIP()'.
-     * @return string The IP address of the user who has initiated the request.
-     * @since 1.3
-     */
-    public static function getIpAddress() {
-        $ip = filter_var($_SERVER['REMOTE_ADDR'],FILTER_VALIDATE_IP);
-        if($ip == '::1'){
-            return '127.0.0.1';
-        }
-        else{
-            return $ip;
-        }
-    }
-    /**
      * Returns the IP address of the user who is connected to the server.
      * @return string The IP address of the user who is connected to the server. 
      * The value is taken from the array $_SERVER at index 'REMOTE_ADDR'.
@@ -274,53 +265,37 @@ class Util{
      * If the given parameter is not provided, the method will try to test 
      * database settings that where set in the class 'Config'.
      * @return boolean|string If the connection was established, the method will 
-     * return TRUE. If no connection was established, the method will 
+     * return true. If no connection was established, the method will 
      * return 'Util::DB_NEED_CONF'.
      * @since 1.3.2
      */
     public static function checkDbConnection($dbAttrs=array()){
-        Logger::logFuncCall(__METHOD__);
         $C = Config::get();
         $host = isset($dbAttrs['host']) ? $dbAttrs['host'] : $C->getDBHost();
         $user = isset($dbAttrs['user']) ? $dbAttrs['user'] : $C->getDBHost();
         $pass = isset($dbAttrs['pass']) ? $dbAttrs['pass'] : $C->getDBHost();
         $dbName = isset($dbAttrs['db-name']) ? $dbAttrs['db-name'] : $C->getDBHost();
-        Logger::log('Trying to connect to the database...');
-        Logger::log('DB Host: \''.$host.'\'.', 'debug');
-        Logger::log('DB User: \''.$user.'\'.', 'debug');
-        Logger::log('DB Pass: \''.$pass.'\'.', 'debug');
-        Logger::log('DB Name: \''.$dbName.'\'.', 'debug');
         self::$dbTestInstance = new DatabaseLink($host, $user, $pass);
         if(self::$dbTestInstance->isConnected()){
-            Logger::log('Connected to host. Setting database...');
             if(self::$dbTestInstance->setDB($dbName)){
-                Logger::log('Database set.');
-                $returnValue = TRUE;
+                $returnValue = true;
             }
             else{
-                Logger::log('Unable to set database.','warning');
-                Logger::log('Message: \''.self::$dbTestInstance->getErrorMessage().'\'.');
-                Logger::log('Code: \''.self::$dbTestInstance->getErrorCode().'\'.');
                 $returnValue = Util::DB_NEED_CONF;
             }
         }
         else{
-            Logger::log('Unable to connect.','warning');
-            Logger::log('Message: \''.self::$dbTestInstance->getErrorMessage().'\'.');
-            Logger::log('Code: \''.self::$dbTestInstance->getErrorCode().'\'.');
             $returnValue = Util::DB_NEED_CONF;
         }
-        Logger::logReturnValue($returnValue);
-        Logger::logFuncReturn(__METHOD__);
         return $returnValue;
     }
 
     /**
      * Check the overall status of the system.
-     * @param boolean $checkDb If set to TRUE, the method will also check 
+     * @param boolean $checkDb If set to true, the method will also check 
      * database connection status. The settings of the connection will 
-     * be taken from the class 'Config'. Default is FALSE.
-     * @return boolean|string The method will return TRUE in case everything 
+     * be taken from the class 'Config'. Default is false.
+     * @return boolean|string The method will return true in case everything 
      * was fine. If the file 'Config.php' was not found, The method will return 
      * 'Util::MISSING_CONF_FILE'. If the file 'SiteConfig.php' was not found, The method will return 
      * 'Util::MISSING_CONF_FILE'. If the system is not configured yet, the method 
@@ -331,15 +306,11 @@ class Util{
      * @since 1.2
      */
     public static function checkSystemStatus($checkDb=false,$dbName=''){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking system status...');
         $returnValue = '';
         if(class_exists('webfiori\conf\Config')){
             if(class_exists('webfiori\conf\SiteConfig')){
-                if(Config::isConfig() === TRUE || WebFiori::getClassStatus() == 'INITIALIZING'){
-                    if($checkDb === TRUE){
-                        Logger::log('Checking database connection...');
-                        Logger::log('Database to check = \''.$dbName.'\'.', 'debug');
+                if(Config::isConfig() === true || WebFiori::getClassStatus() == 'INITIALIZING'){
+                    if($checkDb === true){
                         $connInfo = Config::getDBConnection($dbName);
                         if($connInfo instanceof DBConnectionInfo){
                             $returnValue = DBConnectionFactory::mysqlLink(array(
@@ -350,40 +321,31 @@ class Util{
                                 'db-name'=>$connInfo->getDBName()
                             ));
                             if(gettype($returnValue) == 'object'){
-                                Logger::log('Connected.');
-                                $returnValue = TRUE;
+                                $returnValue = true;
                             }
                             else{
-                                Logger::log('Unable to connect to database.','error');
                                 $returnValue = self::DB_NEED_CONF;
                             }
                         }
                         else{
-                            Logger::log('No connection information was found for the given database.', 'warning');
                             $returnValue = self::DB_NEED_CONF;
                         }
                     }
                     else{
-                        Logger::log('No need to check database connection');
-                        $returnValue = TRUE;
+                        $returnValue = true;
                     }
                 }
                 else{
-                    Logger::log('The method \'Config::isConfig()\' returned FALSE or the core is still initializing.', 'warning');
                     $returnValue = Util::NEED_CONF;
                 }
             }
             else{
-                Logger::log('The file \'SiteConfig.php\' is missing.', 'warning');
                 $returnValue = Util::MISSING_SITE_CONF_FILE;
             }
         }
         else{
-            Logger::log('The file \'Config.php\' is missing.', 'warning');
             $returnValue = Util::MISSING_CONF_FILE;
         }
-        Logger::logReturnValue($returnValue);
-        Logger::logFuncReturn(__METHOD__);
         return $returnValue;
     }
     /**
@@ -398,7 +360,7 @@ class Util{
      * year number. The string must be provided in the format 'YYYY-MM-DD'.
      * @return int|boolean ISO-8601 numeric representation of the day that 
      * represents the given date in the week. 1 for Monday and 7 for Sunday. 
-     * If the method fails, it will return FALSE.
+     * If the method fails, it will return false.
      * @since 1.3.4
      */
     public static function getGWeekday($date) {
@@ -413,7 +375,7 @@ class Util{
                 //$yearIndex = array_
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Returns an array that contains the dates of current week's days in Gregorian calendar.
@@ -489,15 +451,20 @@ class Util{
     /**
      * Returns unicode code of a character.
      * Common values: 32 = space, 10 = new line, 13 = carriage return.
+     * Note that this method depends on mb_ functions.
      * @param type $u a character.
-     * @return int
+     * @return int|false The unicode code of a character. If mb_ library is not 
+     * loaded, the method will return false.
      * @since 0.2
      */
     public static function uniord($u) {
-        $k = mb_convert_encoding($u, 'UCS-2LE', 'UTF-8');
-        $k1 = ord(substr($k, 0, 1));
-        $k2 = ord(substr($k, 1, 1));
-        return $k2 * 256 + $k1;
+        if('mb_convert_encoding'){
+            $k = mb_convert_encoding($u, 'UCS-2LE', 'UTF-8');
+            $k1 = ord(substr($k, 0, 1));
+            $k2 = ord(substr($k, 1, 1));
+            return $k2 * 256 + $k1;
+        }
+        return false;
     }
     /**
      * Checks if a given character is an upper case letter or lower case letter.
@@ -506,7 +473,12 @@ class Util{
      * @since 0.1
      */
     public static function isUpper($char) {
-        return mb_strtolower($char, "UTF-8") != $char;
+        if(function_exists('mb_strtolower')){
+            return mb_strtolower($char, "UTF-8") != $char;
+        }
+        else{
+            return strtolower($char) != $char;
+        }
     }
     /**
      * Call this method to display errors and warnings.
@@ -530,16 +502,17 @@ class Util{
     public static function filterScripts($input){
         $retVal = str_replace('<script>', '&lt;script&gt;', $input);
         $retVal = str_replace('</script>', '&lt;/script&gt;', $retVal);
+        $retVal = str_replace('<?', '&lt;?', $retVal);
         $retVal = str_replace('<?php', '&lt;?php', $retVal);
         return $retVal;
     }
     /**
      * Checks if a given directory exists or not.
      * @param string $dir A string in a form of directory (Such as 'root/home/res').
-     * @param boolean $createIfNot If set to TRUE and the given directory does 
+     * @param boolean $createIfNot If set to true and the given directory does 
      * not exists, The method will try to create the directory.
-     * @return boolean In general, the method will return FALSE if the 
-     * given directory does not exists. The method will return TRUE only 
+     * @return boolean In general, the method will return false if the 
+     * given directory does not exists. The method will return true only 
      * in two cases, If the directory exits or it does not exists but was created.
      * @since 0.1
      */
@@ -547,17 +520,17 @@ class Util{
         if($dir){
             $dir = str_replace('\\', '/', $dir);
             if(!is_dir($dir)){
-                if($createIfNot === TRUE){
+                if($createIfNot === true){
                     if(mkdir($dir, 0755 , true)){
-                        return TRUE;
+                        return true;
                     }
                 }
             }
             else{
-                return TRUE;
+                return true;
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Returns the base URL of the framework.

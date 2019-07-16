@@ -24,23 +24,10 @@
  */
 namespace webfiori\functions;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
-use webfiori\entity\Logger;
 use webfiori\entity\FileHandler;
 use webfiori\entity\mail\SMTPAccount;
 use webfiori\entity\mail\SocketMailer;
@@ -48,7 +35,7 @@ use webfiori\entity\mail\SocketMailer;
  * A class for the methods that is related to mailing.
  *
  * @author Ibrahim
- * @version 1.3
+ * @version 1.3.1
  */
 class BasicMailFunctions extends Functions{
     /**
@@ -75,34 +62,40 @@ class BasicMailFunctions extends Functions{
      * @since 1.0
      */
     public static function &get(){
-        Logger::logFuncCall(__METHOD__);
-        if(self::$instance === NULL){
-            Logger::log('Initializing \'BasicMailFunctions\' instance...');
+        if(self::$instance === null){
             self::$instance = new BasicMailFunctions();
-            Logger::log('Initializing of \'BasicMailFunctions\' completed.');
         }
-        Logger::log('Returning \'BasicMailFunctions\' instance.');
-        Logger::logFuncReturn(__METHOD__);
         return self::$instance;
     }
     public function __construct() {
         parent::__construct();
     }
     /**
+     * Initialize new session or use an existing one.
+     * Note that the name of the session must be 'wf-session' in 
+     * order to initialize it.
+     * @param array $options An array of session options. See 
+     * Functions::useSettion() for more information about available options.
+     * @return boolean If session is created or resumed, the method will 
+     * return true. False otherwise.
+     * @since 1.3.1
+     */
+    public function useSession($options=[]) {
+        if(gettype($options) == 'array' && isset($options['name'])){
+            if($options['name'] == 'wf-session'){
+                return parent::useSession($options);
+            }
+        }
+        return false;
+    }
+    /**
      * Creates the file 'MailConfig.php' if it does not exist.
      * @since 1.0
      */
     public function createEmailConfigFile(){
-        Logger::logFuncCall(__METHOD__);
         if(!class_exists('webfiori\conf\MailConfig')){
-            Logger::log('Creating Configuration File \'MailConfig.php\'');
             $this->writeMailConfig(array());
-            Logger::log('Creatied.');
         }
-        else{
-            Logger::log('Configuration File \'MailConfig.php\' Already Exist.');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * A method to save changes to mail configuration file.
@@ -111,9 +104,8 @@ class BasicMailFunctions extends Functions{
      * @since 1.1
      */
     private function writeMailConfig($emailAccountsArr){
-        Logger::logFuncCall(__METHOD__);
         $fh = new FileHandler(ROOT_DIR.'/conf/MailConfig.php');
-        $fh->write('<?php', TRUE, TRUE);
+        $fh->write('<?php', true, true);
         $fh->write('/*
  * The MIT License
  *
@@ -139,33 +131,21 @@ class BasicMailFunctions extends Functions{
  */
  
 ');
-        $fh->write('namespace webfiori\conf;', TRUE, TRUE);
+        $fh->write('namespace webfiori\conf;', true, true);
         $fh->write('if(!defined(\'ROOT_DIR\')){
-    header("HTTP/1.1 403 Forbidden");
-    die(\'\'
-        . \'<!DOCTYPE html>\'
-        . \'<html>\'
-        . \'<head>\'
-        . \'<title>Forbidden</title>\'
-        . \'</head>\'
-        . \'<body>\'
-        . \'<h1>403 - Forbidden</h1>\'
-        . \'<hr>\'
-        . \'<p>\'
-        . \'Direct access not allowed.\'
-        . \'</p>\'
-        . \'</body>\'
-        . \'</html>\');
-}', TRUE, TRUE);
-        $fh->write('use webfiori\entity\mail\SMTPAccount;', TRUE, TRUE);
+    header("HTTP/1.1 404 Not Found");
+    die(\'<!DOCTYPE html><html><head><title>Not Found</title></head><body>\'
+    . \'<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>\');
+}', true, true);
+        $fh->write('use webfiori\entity\mail\SMTPAccount;', true, true);
         $fh->write('/**
  * SMTP configuration class.
  * The developer can create multiple SMTP accounts and add 
  * Connection information inside the body of this class.
  * @author Ibrahim
- * @version 1.0
- */', TRUE, TRUE);
-        $fh->write('class MailConfig{', TRUE, TRUE);
+ * @version 1.0.1
+ */', true, true);
+        $fh->write('class MailConfig{', true, true);
         $fh->addTab();
         //stat here
         $fh->write('private $emailAccounts;
@@ -183,12 +163,12 @@ class BasicMailFunctions extends Functions{
      * @since 1.0
      */
     public static function &get(){
-        if(self::$inst === NULL){
+        if(self::$inst === null){
             self::$inst = new MailConfig();
         }
         return self::$inst;
-    }', TRUE, TRUE);
-        $fh->write('private function __construct() {', TRUE, TRUE);
+    }', true, true);
+        $fh->write('private function __construct() {', true, true);
         $fh->addTab();
         $fh->reduceTab();
         //adding email accounts
@@ -201,10 +181,10 @@ class BasicMailFunctions extends Functions{
         $acc'.$index.'->setPassword(\''.$emailAcc->getPassword().'\');
         $acc'.$index.'->setName(\''.$emailAcc->getName().'\');
         $acc'.$index.'->setPort('.$emailAcc->getPort().');
-        $this->addAccount($acc'.$index.', \'no-replay\');',TRUE,TRUE);
+        $this->addAccount($acc'.$index.', \'no-replay\');',true,true);
             $index++;
         }
-        $fh->write('}', TRUE, TRUE);
+        $fh->write('}', true, true);
         $fh->reduceTab();
         $fh->write('/**
      * Adds an email account.
@@ -217,21 +197,36 @@ class BasicMailFunctions extends Functions{
     private function addAccount($acc,$name){
         $this->emailAccounts[$name] = $acc;
     }
+    /**
+     * Adds new SMTP connection information or updates an existing one.
+     * @param string $accName The name of the account that will be added or updated.
+     * @param SMTPAccount $smtpConnInfo An object of type \'SMTPAccount\' that 
+     * will contain SMTP account information.
+     * @since 1.0.1
+     */
+    public static function addSMTPAccount($accName,$smtpConnInfo){
+        if($smtpConnInfo instanceof SMTPAccount){
+            $trimmedName = trim($accName);
+            if(strlen($trimmedName) != 0){
+                self::get()->addAccount($smtpConnInfo,$trimmedName);
+            }
+        }
+    }
     private function &_getAccount($name){
         if(isset($this->emailAccounts[$name])){
             return $this->emailAccounts[$name];
         }
-        $null = NULL;
+        $null = null;
         return $null;
     }
     /**
      * Returns an email account given its name.
      * The method will search for an account with the given name in the set 
-     * of added accounts. If no account was found, NULL is returned.
+     * of added accounts. If no account was found, null is returned.
      * @param string $name The name of the account.
-     * @return EmailAccount|null If the account is found, The method 
-     * will return an object of type EmailAccount. Else, the 
-     * method will return NULL.
+     * @return SMTPAccount|null If the account is found, The method 
+     * will return an object of type SMTPAccount. Else, the 
+     * method will return null.
      * @since 1.0
      */
     public static function &getAccount($name){
@@ -249,22 +244,20 @@ class BasicMailFunctions extends Functions{
      */
     public static function getAccounts(){
         return self::get()->_getAccounts();
-    }', TRUE, TRUE);
-        $fh->write('}', TRUE, TRUE);
+    }', true, true);
+        $fh->write('}', true, true);
         $fh->close();
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Removes SMTP email account if it is exist.
      * @param string $accountName The name of the email account (such as 'no-replay').
      * @return boolean If the account is not exist or the class 'MailConfig' 
-     * does not exist, the method will return FALSE. If the account was removed, 
-     * The method will return TRUE.
+     * does not exist, the method will return false. If the account was removed, 
+     * The method will return true.
      * @since 1.3
      */
     public function removeAccount($accountName) {
-        Logger::logFuncCall(__METHOD__);
-        $retVal = FALSE;
+        $retVal = false;
         if(class_exists('webfiori\conf\MailConfig')){
             $account = &MailConfig::getAccount($accountName);
             if($account instanceof SMTPAccount){
@@ -275,27 +268,24 @@ class BasicMailFunctions extends Functions{
                     $toSave[] = $account;
                 }
                 $this->writeMailConfig($toSave);
-                $retVal = TRUE;
+                $retVal = true;
             }
         }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
      * Adds new SMTP account or Updates an existing one.
      * @param SMTPAccount $emailAccount An instance of 'EmailAccount'.
-     * @return boolean|string The method will return TRUE if the email 
+     * @return boolean|string The method will return true if the email 
      * account was updated or added. If the email account contains wrong server
      *  information, the method will return MailFunctions::INV_HOST_OR_PORT. 
      * If the given email account contains wrong login info, the method will 
      * return MailFunctions::INV_CREDENTIALS. Other than that, the method 
-     * will return FALSE.
+     * will return false.
      * @since 1.1
      */
     public function updateOrAddEmailAccount($emailAccount) {
-        Logger::logFuncCall(__METHOD__);
-        $retVal = FALSE;
+        $retVal = false;
         if($emailAccount instanceof SMTPAccount){
             $sm = $this->getSocketMailer($emailAccount);
             if($sm instanceof SocketMailer){
@@ -312,12 +302,10 @@ class BasicMailFunctions extends Functions{
                     $arr = array($emailAccount);
                     $this->writeMailConfig($arr);
                 }
-                $retVal = TRUE;
+                $retVal = true;
             }
             $retVal = $sm;
         }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
@@ -333,16 +321,8 @@ class BasicMailFunctions extends Functions{
      * @since 1.0
      */
     public function getSocketMailer($emailAcc){
-        Logger::logFuncCall(__METHOD__);
         if($emailAcc instanceof SMTPAccount){
             $retVal = BasicMailFunctions::INV_HOST_OR_PORT;
-            Logger::log('Creating new instance of \'SocketMailer\' using given email account.');
-            Logger::log('Server Address: \''.$emailAcc->getServerAddress().'\'', 'debug');
-            Logger::log('Port: \''.$emailAcc->getPort().'\'', 'debug');
-            Logger::log('Username: \''.$emailAcc->getUsername().'\'', 'debug');
-            Logger::log('Password: \''.$emailAcc->getPassword().'\'', 'debug');
-            Logger::log('Email Address: \''.$emailAcc->getAddress().'\'', 'debug');
-            Logger::log('Account Name: \''.$emailAcc->getName().'\'', 'debug');
 //            Logger::log('Using TLS = \''.$emailAcc->isTLS().'\'.','debug');
 //            Logger::log('Using SSL = \''.$emailAcc->isSSL().'\'.','debug');
             $m = new SocketMailer();
@@ -350,25 +330,17 @@ class BasicMailFunctions extends Functions{
             //$m->isTLS($emailAcc->isTLS());
             $m->setHost($emailAcc->getServerAddress());
             $m->setPort($emailAcc->getPort());
-            Logger::log('Testing connection...');
             if($m->connect()){
-                Logger::log('Connected to email server.');
-                Logger::log('Validating credentials...');
                 $m->setSender($emailAcc->getName(), $emailAcc->getAddress());
                 if($m->login($emailAcc->getUsername(), $emailAcc->getPassword())){
-                    Logger::log('Logged in to the email server.');
                     $retVal = $m;
                 }
                 else{
-                    Logger::log('Unable to login.','warning');
                     $retVal = BasicMailFunctions::INV_CREDENTIALS;
                 }
             }
-            Logger::logFuncReturn(__METHOD__);
             return $retVal;
         }
-        Logger::log('The given parameter is not an instance of \'SMTPAccount\'.', 'warning');
-        Logger::logFuncReturn(__METHOD__);
-        return FALSE;
+        return false;
     }
 }

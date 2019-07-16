@@ -32,7 +32,7 @@ use Exception;
  */
 abstract class MySQLQuery{
     /**
-     * An attribute that is set to TRUE if the query is un update or insert of 
+     * An attribute that is set to true if the query is un update or insert of 
      * blob datatype.
      * @var boolean 
      */
@@ -65,11 +65,6 @@ abstract class MySQLQuery{
      * @since 1.0
      */
     const SELECT = 'select * from ';
-    /**
-     * A constant that represents the ID column of a table.
-     * @since 1.0
-     */
-    const ID_COL = 'id';
     /**
      * A constant for the query 'insert into'.
      * @since 1.0
@@ -196,7 +191,7 @@ abstract class MySQLQuery{
     public function __construct() {
         $this->query = self::SELECT.' a_table';
         $this->queryType = 'select';
-        $this->setIsBlobInsertOrUpdate(FALSE);
+        $this->setIsBlobInsertOrUpdate(false);
     }
     /**
      * Constructs a query that can be used to alter the properties of a table
@@ -235,7 +230,7 @@ abstract class MySQLQuery{
     private function createTable($table,$inclComments=false){
         if($table instanceof MySQLTable){
             $query = '';
-            if($inclComments === TRUE){
+            if($inclComments === true){
                 $query .= '-- Structure of the table \''.$this->getStructureName().'\''.self::NL;
                 $query .= '-- Number of columns: \''.count($this->getStructure()->columns()).'\''.self::NL;
                 $query .= '-- Number of forign keys: \''.count($this->getStructure()->forignKeys()).'\''.self::NL;
@@ -259,20 +254,20 @@ abstract class MySQLQuery{
             
             $coutPk = $this->getStructure()->primaryKeyColsCount();
             if($coutPk > 1){
-                if($inclComments === TRUE){
+                if($inclComments === true){
                     $query .= '-- Primary key of the table '.self::NL;
                 }
                 $query .= $table->getCreatePrimaryKeyStatement().';'.self::NL;
             }
             //add forign keys
             $count2 = count($table->forignKeys());
-            if($inclComments === TRUE && $count2 != 0){
+            if($inclComments === true && $count2 != 0){
                 $query .= '-- Forign keys of the table '.self::NL;
             }
             for($x = 0 ; $x < $count2 ; $x++){
                 $query .= $table->forignKeys()[$x]->getAlterStatement().';'.self::NL;
             }
-            if($inclComments === TRUE){
+            if($inclComments === true){
                 $query .= '-- End of the Structure of the table \''.$this->getStructureName().'\''.self::NL;
             }
             $this->setQuery($query, 'create');
@@ -377,11 +372,10 @@ abstract class MySQLQuery{
      * <li><b>offset</b>: The 'offset' attribute of the query. Ignored if the 
      * option 'limit' is not set.</li>
      * <li><b>condition-cols-and-vals</b>: An associative array. The indices can 
-     * be values the value at each index is an objects of type 'Column'. 
-     * Or the indices can be column indices taken from MySQLTable object and 
+     * be values and the value at each index is an objects of type 'Column'. 
+     * Or the indices can be column indices or columns names taken from MySQLTable object and 
      * the values are set for each index. The second way is recommended as one 
-     * table might have two columns with the same values.
-     * will be selected based on.</li>
+     * table might have two columns with the same values.</li>
      * <li><b>conditions</b>: An array that can contains two possible values: 
      * '=' or '!='. If anything else is given at specific index, '=' will be used. In 
      * addition, If not provided or has invalid value, an array of '=' conditions 
@@ -389,15 +383,26 @@ abstract class MySQLQuery{
      * <li><b>join-operators</b>: An array that contains a set of MySQL join operators 
      * like 'and' and 'or'. If not provided or has invalid value, 
      * an array of 'and's will be used.</li>
-     * <li><b>select-max</b>: A boolean value. Set to TRUE if you want to select maximum 
+     * <li><b>select-max</b>: A boolean value. Set to true if you want to select maximum 
      * value of a column. Ignored in case the option 'columns' is set.</li>
-     * <li><b>select-min</b>: A boolean value. Set to TRUE if you want to select minimum 
+     * <li><b>select-min</b>: A boolean value. Set to true if you want to select minimum 
      * value of a column. Ignored in case the option 'columns' or 'select-max' is set.</li>
      * <li><b>column</b>: The column which contains maximum or minimum value.</li>
      * <li><b>rename-to</b>: Rename the max or min column to the given name.</li>
-     * <li><b>order-by</b>: An object of type column at which the rows will be ordered by.</li>
-     * <li><b>order-type</b>: A one character string. 'A' for ascending and 'D' 
-     * for descending. Default is 'A'. Used only if 'order-by' is set. </li>
+     * <li><b>group-by</b>: An indexed array that contains 
+     * sub associative arrays which has 'group by' columns info. The sub associative 
+     * arrays can have the following indices:
+     * <ul>
+     * <li>col: The name of the column.</li>
+     * </ul></li>
+     * <li><b>order-by</b>: An indexed array that contains 
+     * sub associative arrays which has columns 'order by' info. The sub associative 
+     * arrays can have the following indices:
+     * <ul>
+     * <li><b>col<b>: The name of the column.</li>
+     * <li>order-type: An optional string to represent the order. It can 
+     * be 'A' for ascending or 'D' for descending</li>
+     * </ul></li>
      * </ul>
      * @since 1.8.3
      */
@@ -412,9 +417,8 @@ abstract class MySQLQuery{
         'select-max'=>false,
         'column'=>'',
         'rename-to'=>'',
-        'order-by'=>NULL,
-        'order-type'=>'A',
-        'in'=>array()
+        'order-by'=>null,
+        'group-by'=>null
         )) {
         $table = $this->getStructure();
         if($table instanceof MySQLTable){
@@ -435,15 +439,13 @@ abstract class MySQLQuery{
             else{
                 $limitPart = '';
             }
+            $groupByPart = '';
+            if(isset($selectOptions['group-by']) && gettype($selectOptions['group-by']) == 'array'){
+                $groupByPart = $this->_buildGroupByCondition($selectOptions['group-by']);
+            }
             $orderByPart = '';
-            if(isset($selectOptions['order-by']) && ($selectOptions['order-by'] instanceof Column)){
-                $orderType = isset($selectOptions['order-type']) ? strtoupper($selectOptions['order-type']) : 'A';
-                if($orderType == 'D'){
-                    $orderByPart = ' order by '.$selectOptions['order-by']->getName().' desc ';
-                }
-                else{
-                    $orderByPart = ' order by '.$selectOptions['order-by']->getName().' asc ';
-                }
+            if(isset($selectOptions['order-by']) && gettype($selectOptions['order-by']) == 'array'){
+                $orderByPart = $this->_buildOrderByCondition($selectOptions['order-by']);
             }
             if(isset($selectOptions['columns']) && count($selectOptions['columns']) != 0){
                 $count = count($selectOptions['columns']);
@@ -471,7 +473,7 @@ abstract class MySQLQuery{
                     $i++;
                 }
             }
-            else if(isset ($selectOptions['select-max']) && $selectOptions['select-max'] === TRUE){
+            else if(isset ($selectOptions['select-max']) && $selectOptions['select-max'] === true){
                 $renameTo = isset($selectOptions['rename-to']) ? $selectOptions['rename-to'] : '';
                 if(strlen($renameTo) != 0){
                     $renameTo = 'as '.$renameTo;
@@ -484,10 +486,10 @@ abstract class MySQLQuery{
                     $limitPart = '';
                 }
                 else{
-                    return FALSE;
+                    return false;
                 }
             }
-            else if(isset ($selectOptions['select-min']) && $selectOptions['select-min'] === TRUE){
+            else if(isset ($selectOptions['select-min']) && $selectOptions['select-min'] === true){
                 $renameTo = isset($selectOptions['rename-to']) ? $selectOptions['rename-to'] : '';
                 if(strlen($renameTo) != 0){
                     $renameTo = 'as '.$renameTo;
@@ -500,7 +502,7 @@ abstract class MySQLQuery{
                     $limitPart = '';
                 }
                 else{
-                    return FALSE;
+                    return false;
                 }
             }
             else{
@@ -519,7 +521,13 @@ abstract class MySQLQuery{
                         $vals[] = $valOrColIndex;
                     }
                     else{
-                        $cols[] = $this->getStructure()->getColByIndex($valOrColIndex);
+                        if(gettype($valOrColIndex) == 'integer'){
+                            $testCol = $this->getStructure()->getColByIndex($valOrColIndex);
+                        }
+                        else{
+                            $testCol = $this->getStructure()->getCol($valOrColIndex);
+                        }
+                        $cols[] = $testCol;
                         $vals[] = $colOrVal;
                     }
                 }
@@ -531,11 +539,95 @@ abstract class MySQLQuery{
             if(trim($where) == 'where'){
                 $where = '';
             }
-            $this->setQuery($selectQuery.$where.$orderByPart.$limitPart.';', 'select');
-            return TRUE;
+            $this->setQuery($selectQuery.$where.$groupByPart.$orderByPart.$limitPart.';', 'select');
+            return true;
         }
-        return FALSE;
+        return false;
     }
+    /**
+     * Constructs the 'order by' part of a query.
+     * @param array $orderByArr An indexed array that contains 
+     * sub associative arrays which has columns 'order by' info. The sub associative 
+     * arrays can have the following indices:
+     * <ul>
+     * <li>col: The name of the column.</li>
+     * <li>order-type: An optional string to represent the order. It can 
+     * be 'A' for ascending or 'D' for descending</li>
+     * </ul>
+     * @return string The string that represents order by part.
+     */
+    private function _buildOrderByCondition($orderByArr){
+        $colsCount = count($orderByArr);
+        $orderByStr = 'order by ';
+        $actualColsArr = [];
+        for($x = 0 ; $x < $colsCount ; $x++){
+            $colName = isset($orderByArr[$x]['col']) ? $orderByArr[$x]['col'] : null;
+            $colObj = $this->getCol($colName);
+            if($colObj instanceof Column){
+                $orderType = isset($orderByArr[$x]['order-type']) ? strtoupper($orderByArr[$x]['order-type']) : null;
+                $actualColsArr[] = [
+                    'object'=>$colObj,
+                    'order-type'=>$orderType
+                ];
+            }
+        }
+        $actualCount = count($actualColsArr);
+        for($x = 0 ; $x < $actualCount ; $x++){
+            $colObj = $actualColsArr[$x]['object'];
+            $orderByStr .= $colObj->getName();
+            $orderType = $actualColsArr[$x]['order-type'];
+            if($orderType == 'A'){
+                $orderByStr .= ' asc';
+            }
+            else if($orderType == 'D'){
+                $orderByStr .= ' desc';
+            }
+            if($x + 1 != $actualCount){
+                $orderByStr .= ', ';
+            }
+        }
+        if($orderByStr == 'order by '){
+            return '';
+        }
+        return ' '.trim($orderByStr);
+    }
+    /**
+     * Constructs the 'group by' part of a query.
+     * @param array $groupByArr An indexed array that contains 
+     * sub associative arrays which has 'group by' columns info. The sub associative 
+     * arrays can have the following indices:
+     * <ul>
+     * <li>col: The name of the column.</li>
+     * </ul>
+     * @return string The string that represents order by part.
+     */
+    private function _buildGroupByCondition($groupByArr){
+        $colsCount = count($groupByArr);
+        $groupByStr = 'group by ';
+        $actualColsArr = [];
+        for($x = 0 ; $x < $colsCount ; $x++){
+            $colName = isset($groupByArr[$x]['col']) ? $groupByArr[$x]['col'] : null;
+            $colObj = $this->getCol($colName);
+            if($colObj !== null){
+                $actualColsArr[] = [
+                    'object'=>$colObj
+                ];
+            }
+        }
+        $actualCount = count($actualColsArr);
+        for($x = 0 ; $x < $actualCount ; $x++){
+            $colObj = $actualColsArr[$x]['object'];
+            $groupByStr .= $colObj->getName();
+            if($x + 1 != $actualCount){
+                $groupByStr .= ', ';
+            }
+        }
+        if($groupByStr == 'group by '){
+            return '';
+        }
+        return ' '.trim($groupByStr);
+    }
+
     /**
      * Constructs a 'where' condition given a date.
      * @param string $date A date or timestamp.
@@ -631,47 +723,6 @@ abstract class MySQLQuery{
         
     }
     /**
-     * Constructs a query that can be used to get table data based on a specific 
-     * column value.
-     * @param string $col The name of the column in the table.
-     * @param string $val The value that is used to filter data.
-     * @param string $cond The condition of select statement. It can be '=' or 
-     * '!='. If anything else is given, '=' will be used. Note that if 
-     * the parameter $val is equal to 'IS NULL' or 'IS NOT NULL', 
-     * This parameter is ignored. Default is '='.
-     * @param int $limit The value of the attribute 'limit' of the select statement. 
-     * If zero or a negative value is given, it will not be included in the generated 
-     * MySQL query. Default is -1.
-     * @param int $offset The value of the attribute 'offset' of the select statement. 
-     * If zero or a negative value is given, it will not be included in the generated 
-     * MySQL query. Default is -1.
-     * @since 1.0
-     * @deprecated since version 1.8.3 Use MySQLQuery::select() instead.
-     */
-    public function selectByColVal($col,$val,$cond='=',$limit=-1,$offset=-1){
-        if($limit > 0 && $offset > 0){
-            $lmit = 'limit '.$limit.' offset '.$offset;
-        }
-        else if($limit > 0 && $offset <= 0){
-            $lmit = 'limit '.$limit;
-        }
-        else{
-            $lmit = '';
-        }
-        $valUpper = strtoupper(trim($val));
-        if($valUpper == 'IS NOT NULL' || $valUpper == 'IS NULL'){
-            $this->setQuery(self::SELECT.$this->getStructureName().' where '.$col.' '.$val.' '.$lmit, 'select');
-        }
-        else{
-            if(trim($cond) == '!='){
-                $this->setQuery(self::SELECT.$this->getStructureName().' where '.$col.' != '.$val.' '.$lmit, 'select');
-            }
-            else{
-                $this->setQuery(self::SELECT.$this->getStructureName().' where '.$col.' = '.$val.' '.$lmit, 'select');
-            }
-        }
-    }
-    /**
      * Selects a values from a table given specific columns values.
      * @param array $cols An array that contains an objects of type 'Column'.
      * @param array $vals An array that contains values. 
@@ -736,15 +787,6 @@ abstract class MySQLQuery{
         $this->setQuery(self::SELECT.$this->getStructureName().' where '.$where.' '.$lmit.';', 'select');
     }
     /**
-     * Constructs a query that can be used to get table data by using ID column.
-     * @param string $id The value of the ID column.
-     * @since 1.0
-     * @deprecated since version 1.8.3
-     */
-    public function selectByID($id){
-        $this->setQuery(self::SELECT.$this->getStructureName().' where '.self::ID_COL.' = '.$id, 'select');
-    }
-    /**
      * Constructs a query that can be used to insert a new record.
      * @param array $colsAndVals An associative array. The array can have two 
      * possible structures:
@@ -783,24 +825,24 @@ abstract class MySQLQuery{
                         if(file_exists($fixedPath)){
                             $file = fopen($fixedPath, 'r');
                             $data = '';
-                            if($file !== FALSE){
+                            if($file !== false){
                                 $fileContent = fread($file, filesize($fixedPath));
-                                if($fileContent !== FALSE){
+                                if($fileContent !== false){
                                     $data = '\''. addslashes($fileContent).'\'';
                                     $vals .= $data.$comma;
-                                    $this->setIsBlobInsertOrUpdate(TRUE);
+                                    $this->setIsBlobInsertOrUpdate(true);
                                 }
                                 else{
-                                    $vals .= 'NULL'.$comma;
+                                    $vals .= 'null'.$comma;
                                 }
                                 fclose($file);
                             }
                             else{
-                                $vals .= 'NULL'.$comma;
+                                $vals .= 'null'.$comma;
                             }
                         }
                         else{
-                            $vals .= 'NULL'.$comma;
+                            $vals .= 'null'.$comma;
                         }
                     }
                     else{
@@ -808,7 +850,7 @@ abstract class MySQLQuery{
                     }
                 }
                 else{
-                    $vals .= 'NULL'.$comma;
+                    $vals .= 'null'.$comma;
                 }
             }
             else{
@@ -827,23 +869,24 @@ abstract class MySQLQuery{
                             if(file_exists($fixedPath)){
                                 $file = fopen($fixedPath, 'r');
                                 $data = '';
-                                if($file !== FALSE){
+                                if($file !== false){
                                     $fileContent = fread($file, filesize($fixedPath));
-                                    if($fileContent !== FALSE){
+                                    if($fileContent !== false){
                                         $data = '\''. addslashes($fileContent).'\'';
                                         $vals .= $data.$comma;
+                                        $this->setIsBlobInsertOrUpdate(true);
                                     }
                                     else{
-                                        $vals .= 'NULL'.$comma;
+                                        $vals .= 'null'.$comma;
                                     }
                                     fclose($file);
                                 }
                                 else{
-                                    $vals .= 'NULL'.$comma;
+                                    $vals .= 'null'.$comma;
                                 }
                             }
                             else{
-                                $vals .= 'NULL'.$comma;
+                                $vals .= 'null'.$comma;
                             }
                         }
                         else{
@@ -851,7 +894,7 @@ abstract class MySQLQuery{
                         }
                     }
                     else{
-                        $vals .= 'NULL'.$comma;
+                        $vals .= 'null'.$comma;
                     }
                 }
             }
@@ -863,40 +906,12 @@ abstract class MySQLQuery{
         $this->setQuery(self::INSERT.$this->getStructureName().$cols.' values '.$vals.';', 'insert');
     }
     /**
-     * Constructs a query that can be used to insert data into a table.
-     * @param array $Arr An associative array of keys and values. The keys will 
-     * be acting as the columns names and the values will be acting as the values 
-     * that will be inserted.
-     * @since 1.0
-     * @deprecated since version 1.8.2 Use MySQLQuery::insertRecord() instead.
-     */
-    public function insert($Arr){
-        $cols = '';
-        $vals = '';
-        $count = count($Arr);
-        $index = 0;
-        foreach($Arr as $col => $val){
-            if($index + 1 == $count){
-                $cols .= $col;
-                $vals .= $val;
-            }
-            else{
-                $cols .= $col.', ';
-                $vals .= $val.', ';
-            }
-            $index++;
-        }
-        $cols = ' ('.$cols.')';
-        $vals = ' ('.$vals.')';
-        $this->setQuery(self::INSERT.$this->getStructureName().$cols.' values '.$vals, 'insert');
-    }
-    /**
      * Constructs a query that can be used to delete a row from a table using 
      * the ID column.
      * @param string $id The value of the ID on the row.
      * @since 1.0
      */
-    public function delete($id,$idColName=self::ID_COL){
+    public function delete($id,$idColName){
         $this->setQuery(self::DELETE.$this->getStructureName().' where '.$idColName.' = '.$id, 'delete');
     }
     /**
@@ -949,7 +964,7 @@ abstract class MySQLQuery{
         $valsCount = count($vals);
         $condsCount = count($valsConds);
         $joinOpsCount = count($jointOps);
-        if($colsCount == 0 || $valsCount == 0 || $condsCount == 0){
+        if($colsCount == 0 || $valsCount == 0){
             return '';
         }
         while ($colsCount != $condsCount){
@@ -1049,30 +1064,6 @@ abstract class MySQLQuery{
         return $where;
     }
     /**
-     * Constructs a query that can be used to update the values of a table row.
-     * @param array $arr An associative array of keys and values. The keys will 
-     * be acting as the columns names and the values will be acting as the new 
-     * values for each field.
-     * @param string $id The value of the ID column.
-     * @since 1.0
-     * @deprecated since version 1.8.2 Use MySQLQuery::updateRecord() instead.
-     */
-    public function update($arr,$id,$idColName=self::ID_COL){
-        $colsStr = '';
-        $count = count($arr);
-        $index = 0;
-        foreach($arr as $colName => $newVal){
-            if($index + 1 == $count){
-                $colsStr .= $colName.' = '.$newVal;
-            }
-            else{
-                $colsStr .= $colName.' = '.$newVal.', ';
-            }
-            $index++;
-        }
-        $this->setQuery('update '.$this->getStructureName().' set '.$colsStr.' where '.$idColName.' = '.$id, 'update');
-    }
-    /**
      * Constructs a query that can be used to update a record.
      * @param array $colsAndNewVals An associative array. The key must be the 
      * new value and the value of the index is an object of type 'Column'.
@@ -1114,24 +1105,24 @@ abstract class MySQLQuery{
                         if(file_exists($fixedPath)){
                             $file = fopen($fixedPath, 'r');
                             $data = '';
-                            if($file !== FALSE){
+                            if($file !== false){
                                 $fileContent = fread($file, filesize($fixedPath));
-                                if($fileContent !== FALSE){
+                                if($fileContent !== false){
                                     $data = '\''. addslashes($fileContent).'\'';
                                     $colsStr .= $data.$comma;
-                                    $this->setIsBlobInsertOrUpdate(TRUE);
+                                    $this->setIsBlobInsertOrUpdate(true);
                                 }
                                 else{
-                                    $colsStr .= 'NULL'.$comma;
+                                    $colsStr .= 'null'.$comma;
                                 }
                                 fclose($file);
                             }
                             else{
-                                $colsStr .= 'NULL'.$comma;
+                                $colsStr .= 'null'.$comma;
                             }
                         }
                         else{
-                            $colsStr .= 'NULL'.$comma;
+                            $colsStr .= 'null'.$comma;
                         }
                     }
                     else{
@@ -1139,7 +1130,7 @@ abstract class MySQLQuery{
                     }
                 }
                 else{
-                    $colsStr .= ' '.$colObjOrNewVal->getName().' = NULL'.$comma;
+                    $colsStr .= ' '.$colObjOrNewVal->getName().' = null'.$comma;
                 }
             }
             else{
@@ -1156,24 +1147,24 @@ abstract class MySQLQuery{
                             if(file_exists($fixedPath)){
                                 $file = fopen($fixedPath, 'r');
                                 $data = '';
-                                if($file !== FALSE){
+                                if($file !== false){
                                     $fileContent = fread($file, filesize($fixedPath));
-                                    if($fileContent !== FALSE){
+                                    if($fileContent !== false){
                                         $data = '\''. addslashes($fileContent).'\'';
                                         $colsStr .= $data.$comma;
-                                        $this->setIsBlobInsertOrUpdate(TRUE);
+                                        $this->setIsBlobInsertOrUpdate(true);
                                     }
                                     else{
-                                        $colsStr .= 'NULL'.$comma;
+                                        $colsStr .= 'null'.$comma;
                                     }
                                     fclose($file);
                                 }
                                 else{
-                                    $colsStr .= 'NULL'.$comma;
+                                    $colsStr .= 'null'.$comma;
                                 }
                             }
                             else{
-                                $colsStr .= 'NULL'.$comma;
+                                $colsStr .= 'null'.$comma;
                             }
                         }
                         else{
@@ -1181,7 +1172,7 @@ abstract class MySQLQuery{
                         }
                     }
                     else{
-                        $colsStr .= ' '.$column->getName().' = NULL'.$comma;
+                        $colsStr .= ' '.$column->getName().' = null'.$comma;
                     }
                 }
             }
@@ -1205,8 +1196,8 @@ abstract class MySQLQuery{
      * Checks if the query represents a blob insert or update.
      * The aim of this method is to fix an issue with setting the collation 
      * of the connection while executing a query.
-     * @return boolean The Function will return TRUE if the query represents an 
-     * insert or un update of blob datatype. FALSE if not.
+     * @return boolean The Function will return true if the query represents an 
+     * insert or un update of blob datatype. false if not.
      * @since 1.8.5
      */
     public function isBlobInsertOrUpdate(){
@@ -1217,12 +1208,12 @@ abstract class MySQLQuery{
      * or an update of a blob datatype.
      * The attribute is used to fix an issue with setting the collation 
      * of the connection while executing a query.
-     * @param boolean $boolean TRUE if the query represents an insert or an update 
-     * of a blob datatype. FALSE if not.
+     * @param boolean $boolean true if the query represents an insert or an update 
+     * of a blob datatype. false if not.
      * @since 1.8.5
      */
     public function setIsBlobInsertOrUpdate($boolean) {
-        $this->isFileInsert = $boolean === TRUE ? TRUE : FALSE;
+        $this->isFileInsert = $boolean === true ? true : false;
     }
     /**
      * Updates a table columns that has a datatype of blob from source files.
@@ -1232,7 +1223,7 @@ abstract class MySQLQuery{
      * @param string $id  the ID of the record that will be updated.
      * @since 1.2
      */
-    public function updateBlobFromFile($arr,$id,$idColName=self::ID_COL){
+    public function updateBlobFromFile($arr,$id,$idColName){
         $cols = '';
         $count = count($arr);
         $index = 0;
@@ -1240,11 +1231,11 @@ abstract class MySQLQuery{
             $fixedPath = str_replace('\\', '/', $val);
             $file = fopen($fixedPath, 'r');
             $data = '\'\'';
-            if($file !== FALSE){
+            if($file !== false){
                 $fileContent = fread($file, filesize($fixedPath));
-                if($fileContent !== FALSE){
+                if($fileContent !== false){
                     $data = '\''. addslashes($fileContent).'\'';
-                    $this->setIsBlobInsertOrUpdate(TRUE);
+                    $this->setIsBlobInsertOrUpdate(true);
                 }
             }
             if($index + 1 == $count){
@@ -1269,7 +1260,7 @@ abstract class MySQLQuery{
     public function selectMax($col,$rename='max'){
         return $this->select(array(
             'column'=> $col,
-            'select-max'=>TRUE,
+            'select-max'=>true,
             'rename-to'=>$rename
         ));
     }
@@ -1285,17 +1276,17 @@ abstract class MySQLQuery{
     public function selectMin($col,$rename='min'){
         return $this->select(array(
             'column'=>$col,
-            'select-min'=>TRUE,
+            'select-min'=>true,
             'rename-to'=>$rename
         ));
     }
     /**
      * Constructs a query that can be used to create the table which is linked 
      * with the query class.
-     * @param boolean $inclComments If set to TRUE, the generated MySQL 
+     * @param boolean $inclComments If set to true, the generated MySQL 
      * query will have basic comments explaining the structure.
      * @return boolean Once the query is structured, the method will return 
-     * TRUE. If the query is not created, the method will return FALSE. 
+     * true. If the query is not created, the method will return false. 
      * The query will not constructed if the method 'MySQLQuery::getStructure()' 
      * did not return an object of type 'Table'.
      * @since 1.5
@@ -1304,9 +1295,9 @@ abstract class MySQLQuery{
         $t = $this->getStructure();
         if($t instanceof MySQLTable){
             $this->createTable($t,$inclComments);
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
     /**
      * Returns the name of the column from the table given its key.

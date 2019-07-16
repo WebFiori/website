@@ -23,26 +23,14 @@
  * THE SOFTWARE.
  */
 namespace webfiori\ini;
+if(!defined('ROOT_DIR')){
+    header("HTTP/1.1 403 Forbidden");
+    die('<!DOCTYPE html><html><head><title>Forbidden</title></head><body>'
+    . '<h1>403 - Forbidden</h1><hr><p>Direct access not allowed.</p></body></html>');
+}
 use webfiori\entity\cron\Cron;
 use webfiori\entity\cron\CronJob;
 
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
-}
 /**
  * A class that has one method to initialize cron jobs.
  *
@@ -61,14 +49,11 @@ class InitCron {
         Cron::password('123456');
         
         //enable job execution log
-        Cron::execLog(TRUE);
+        Cron::execLog(true);
         
         //add jobs
-        //$job = new CronJob('*/5,*/3 * * * *');
-        //$job->setOnExecution(function($params){
-        //    $file = fopen('cron.txt', 'a+');
-        //    fwrite($file, 'Job \''.$params[0]->getJobName().'\' executed at '.date(DATE_RFC1123)."\r\n");
-        //},array($job));
-        //Cron::scheduleJob($job);
+        //Cron::dailyJob("13:00", "Test Job", function (){
+        //
+        //});
     }
 }

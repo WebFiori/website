@@ -26,7 +26,7 @@ THE SOFTWARE.
     Author     : Ibrahim
 */
 @media screen and (max-width: 768px){
-    #pa-side-nav {
+    #wf-side-nav {
 	position: fixed;
 	overflow: auto;
 	width: 85% !important;
@@ -35,19 +35,6 @@ THE SOFTWARE.
 	left: -440px;
         border-bottom-width: 0 !important;
         border-top-width: 0 !important;
-    }
-    #mobile-menu{
-        left: 0;
-        right: 0;
-        top: 0;
-    }
-    ul#main-menu > li{
-        width: 100%;
-        margin: 0 !important;
-        padding: 10px;
-        border-top: 1px solid;
-        font-size: 8pt;
-        line-height: 15px;
     }
     #logo{
         width: 15% !important;
@@ -62,65 +49,46 @@ THE SOFTWARE.
         width: 83% !important;
     }
     #inner-header p{
-        text-align: left;
-        padding-left: 10px;
+        text-align: center;
+        display: none;
     }
-    .prev-button,
-    .next-button{
-        width: 100%;
+    ul#menu-items-container{
+        display: none
+    }
+    ul#menu-items-container li{
+        float: none !important;
+        margin-top: 10px;
+        border-bottom-style: double;
+        border-color: whitesmoke;
+    }
+    li.sub-menu{
+        display: none;
+    }
+    #main-navigation-menu:hover ul, ul#menu-items-container.sub-menu{
+        display: block;
+    }
+    #main-navigation-menu::before{
+        content: "\2630";
+        font-size: 18pt;
+        color: white;
     }
 }
-#next-prev-container{
-    padding: 1%;
-    border-top-style: none;
-    border-right-style: none;
-    border-bottom-style: none;
-    border-left-style: none;
-    border-style: inset;
-    float: left;
-    width: 100% !important;
+#page-header{
+    position: fixed;
+    top: 0;
+    margin-top: 0;
 }
-.prev-button,
-.next-button{
-    margin: 5px;
-    border-style: double;
-    border-top-style: double;
-    border-right-style: double;
-    border-bottom-style: double;
-    border-top: none;
-    border-bottom: none;
-    border-right: none;
-    border-radius: 5px;
-    width: 48%;
-    float: left;
+#page-body{
+    top: 100px;
+    position: relative;
+    z-index: -1;
 }
-.aside-nav{
-    padding: 10px !important;
-    list-style: none;
-    margin: 0;
-    padding-left: 0;
+#page-footer{
+    position: relative;
+    top: 100px;
 }
-.aside-nav-item{
-    line-height: 25px;
-    padding-left: 5px;
-    border: 1px solid whitesmoke;
-    font-size: 7.5pt;
-}
-.aside-nav-item:hover{
-    background-color: burlywood;
-}
-.active-aside-item{
-    background-color: #71b280;
-}
-.active-aside-item > a{
-    color: white;
-}
-li{
-    line-height: 35px;
-}
-p,li{
-    font-family: Tahoma, Arial, sans-serif;
-    font-size: 11pt;
+*{
+    font-family: Tahoma, Arial, sans-serif
 }
 #social-media-container{
     float: right;
@@ -139,26 +107,10 @@ p,li{
 #page-footer{
     font-size: 8pt;
 }
-ul#main-menu > li:hover{
-    background-color: #61e290;
-}
 .social-media-icon{
     width: 25px;
     height: 25px;
     margin: 5px;
-}
-#main-nav ul{
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-#main-nav ul li{
-    margin-left: 25px;
-    margin-right: 25px;
-    float: left;
-}
-#main-nav ul[dir=rtl] li{
-    float: right;
 }
 h1#page-title{
     font-weight: bold;
@@ -184,36 +136,52 @@ h2#post-title{
 .show-border[dir=rtl]{
     border-right: 3px solid black;
 }
-#pa-side-nav{
+#wf-side-nav{
     border: solid 1px black;
     padding: 0;
     font-weight: bold;
 }
-#pa-side-nav[dir=ltr]{
+#wf-side-nav[dir=ltr]{
     border-left-width: 10px;
 }
-#pa-side-nav[dir=rtl]{
+#wf-side-nav[dir=rtl]{
     border-right-width: 10px;
 }
-.header-title{
-    font-size: 14pt;
+#logo{
+    max-width: 100px;
 }
-header *{
-    font-size: 11pt;
+ul#menu-items-container li{
+    list-style: none;
+    list-style-type: none;
+    margin-left: 20px;
+    margin-right: 20px;
 }
-.page-title{
-    font-size: 20pt;
-    margin-bottom: 20px !important;
-    border-left: 4px solid;
-    border-bottom: 4px solid;
-    padding: 10px !important;
-    border-radius: 5px;
-    background-color: aliceblue;
+ul#menu-items-container[dir=ltr] li{
+    float: left;
 }
-.aside-links-title{
-    padding-left: 10px;
+ul#menu-items-container[dir=rtl] li{
+    float: right;
 }
-.back-link{
-    padding-left:10px;
-    background-color:azure;
+ul#menu-items-container li:hover{
+    background-color: #61e290;
+}
+ul#menu-items-container li{
+    transition: 0.5s;
+}
+#main-navigation-menu li:hover > .sub-menu{
+    display: block;
+}
+ul#menu-items-container .sub-menu{
+    display: none;
+    padding: 0;
+    background-color: #333;
+    position: fixed;
+}
+ul#menu-items-container .sub-menu li{
+    float: none;
+}
+#main-navigation-menu{
+    top: 0;
+    left: 0.5%;
+    margin: 0;
 }

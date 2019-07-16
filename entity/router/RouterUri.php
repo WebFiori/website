@@ -24,22 +24,11 @@
  */
 namespace webfiori\entity\router;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
+use webfiori\entity\Util;
 /**
  * A class that is used to split URIs and get their parameters.
  * The main aim of this class is to extract URI parameters including:
@@ -84,7 +73,7 @@ class RouterUri {
      */
     private $closureParams = array();
     /**
-     * A boolean value that is set to TRUE if the URI will be included in 
+     * A boolean value that is set to true if the URI will be included in 
      * generated site map.
      * @var boolean 
      * @since 1.3
@@ -101,12 +90,13 @@ class RouterUri {
         $this->setRoute($routeTo);
         $this->uriBroken = self::splitURI($requestedUri);
         $this->setClosureParams($closureParams);
-        $this->incInSiteMap = FALSE;
+        $this->incInSiteMap = false;
+        $this->setType(Router::CUSTOMIZED);
     }
     /**
      * Checks if the URI will be included in auto-generated site map or not.
      * @return boolean If the URI will be included, the method will return 
-     * TRUE. Default is FALSE.
+     * true. Default is false.
      * @since 1.3
      */
     public function isInSiteMap(){
@@ -114,12 +104,12 @@ class RouterUri {
     }
     /**
      * Sets the value of the property '$incInSiteMap'.
-     * @param boolean $bool If TRUE is given, the URI will be included 
+     * @param boolean $bool If true is given, the URI will be included 
      * in site map.
      * @since 1.3
      */
     public function setIsInSiteMap($bool) {
-        $this->incInSiteMap = $bool === TRUE ? TRUE : FALSE;
+        $this->incInSiteMap = $bool === true ? true : false;
     }
     /**
      * Returns the type of element that the URI will route to.
@@ -130,7 +120,8 @@ class RouterUri {
      * <li>Router::CLOSURE_ROUTE</li>
      * <li>Router::CUSTOMIZED</li>
      * </ul>
-     * @return string The type of element that the URI will route to.
+     * @return string The type of element that the URI will route to. Default 
+     * return value is Router::CUSTOMIZED.
      * @since 1.1
      */
     public function getType() {
@@ -145,11 +136,15 @@ class RouterUri {
      * <li>Router::CLOSURE_ROUTE</li>
      * <li>Router::CUSTOMIZED</li>
      * </ul>
+     * If any thing else is given, it won't update.
      * @param string $type The type of element that the URI will route to.
      * @since 1.1
      */
     public function setType($type) {
-        $this->type = $type;
+        if($type == Router::API_ROUTE || $type == Router::CLOSURE_ROUTE || 
+                $type == Router::CUSTOMIZED || $type == Router::VIEW_ROUTE){
+            $this->type = $type;
+        }
     }
     /**
      * Sets the array of closure parameters.
@@ -173,14 +168,14 @@ class RouterUri {
     }
     /**
      * Checks if all URI variables has values or not.
-     * @return boolean The function will return TRUE if all URI 
-     * variables have a value other than NULL.
+     * @return boolean The function will return true if all URI 
+     * variables have a value other than null.
      * @since 1.0
      */
     public function isAllVarsSet() {
-        $canRoute = TRUE;
+        $canRoute = true;
         foreach ($this->getUriVars() as $key => $val){
-            $canRoute = $canRoute && $val != NULL;
+            $canRoute = $canRoute && $val != null;
         }
         return $canRoute;
     }
@@ -294,18 +289,18 @@ class RouterUri {
      * @return string The host name such as 'www.programmingacademia.com'.
      * @since 1.0
      */
-    public function geHost() {
+    public function getHost() {
         return $this->uriBroken['host'];
     }
     /**
      * Returns the original requested URI.
-     * @param boolean $incQueryStr If set to TRUE, the query string part 
+     * @param boolean $incQueryStr If set to true, the query string part 
      * will be included in the URL.
      * @return string The original requested URI.
      * @since 1.0
      */
     public function getUri($incQueryStr=false) {
-        if($incQueryStr === TRUE){
+        if($incQueryStr === true){
             return $this->uriBroken['uri'];
         }
         else{
@@ -318,7 +313,7 @@ class RouterUri {
      * it is name is included between '{}'.
      * @param string $varName The name of the variable.
      * @return boolean If the given variable name is exist, the function will 
-     * return TRUE. Other than that, the function will return FALSE.
+     * return true. Other than that, the function will return false.
      * @since 1.0
      */
     public function hasUriVar($varName) {
@@ -330,39 +325,39 @@ class RouterUri {
      * it is name is included between '{}'.
      * @param string $varName The name of the variable.
      * @param string $value The value of the variable.
-     * @return boolean The function will return TRUE if the variable 
-     * was set. If the variable does not exist, the function will return FALSE.
+     * @return boolean The function will return true if the variable 
+     * was set. If the variable does not exist, the function will return false.
      * @since 1.0
      */
     public function setUriVar($varName,$value) {
         if($this->hasUriVar($varName)){
             $this->uriBroken['uri-vars'][$varName] = $value;
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
     /**
      * Returns the value of URI variable given its name.
      * A variable is a string which is defined while creating the route. 
      * it is name is included between '{}'.
      * @param string $varName The name of the variable.
-     * @return string|NULL The function will return the value of the 
+     * @return string|null The function will return the value of the 
      * variable if found. If the variable is not set or the variable 
-     * does not exist, the function will return NULL.
+     * does not exist, the function will return null.
      * @since 1.0
      */
     public function getUriVar($varName) {
         if($this->hasUriVar($varName)){
             return $this->uriBroken['uri-vars'][$varName];
         }
-        return NULL;
+        return null;
     }
     /**
      * Checks if the URI has any variables or not.
      * A variable is a string which is defined while creating the route. 
      * it is name is included between '{}'.
      * @return boolean If the URI has any variables, the function will 
-     * return TRUE.
+     * return true.
      * @since 1.0
      */
     public function hasVars() {
@@ -403,7 +398,8 @@ class RouterUri {
     /**
      * Breaks a URI into its basic components.
      * @param string $uri The URI that will be broken.
-     * @return array The function will return an associative array that 
+     * @return array|boolean If the given URI is not valid, 
+     * the Method will return false. Other than that, The function will return an associative array that 
      * contains the components of the URI. The array will have the 
      * following indices:
      * <ul>
@@ -421,6 +417,10 @@ class RouterUri {
      * @since 1.0
      */
     public static function splitURI($uri) {
+        $validate = filter_var($uri,FILTER_VALIDATE_URL);
+        if($validate === false){
+            return false;
+        }
         $retVal = array(
             'uri'=>$uri,
             'authority'=>'',
@@ -464,9 +464,9 @@ class RouterUri {
         for($x = 3 ; $x < count($split4) ; $x++){
             $dirName = $split4[$x];
             if($dirName != ''){
-                $retVal['path'][] = $dirName;
+                $retVal['path'][] = utf8_decode(urldecode($dirName));
                 if($dirName[0] == '{' && $dirName[strlen($dirName) - 1] == '}'){
-                    $retVal['uri-vars'][trim($split4[$x], '{}')] = NULL;
+                    $retVal['uri-vars'][trim($split4[$x], '{}')] = null;
                 }
             }
         }
@@ -482,7 +482,7 @@ class RouterUri {
 //            $var = $retVal['query-string-vars'][$split7[0]];
 //            if(strlen($var) > 0){
 //                if($var[0] == '{' && $var[strlen($var) - 1] == '}'){
-//                    $retVal['uri-vars'][trim($var, '{}')] = NULL;
+//                    $retVal['uri-vars'][trim($var, '{}')] = null;
 //                }
 //            }
         }
@@ -493,13 +493,13 @@ class RouterUri {
      * Two URIs are considered equal if they have the same authority and the 
      * same path name.
      * @param RouterUri $otherUri The URI which 'this' URI will be checked against. 
-     * @return boolean The function will return TRUE if the URIs are 
+     * @return boolean The function will return true if the URIs are 
      * equal.
      * @since 1.0
      */
     public function equals($otherUri) {
         if($otherUri instanceof RouterUri){
-            $isEqual = TRUE;
+            $isEqual = true;
             if($this->getAuthority() == $otherUri->getAuthority()){
                 $thisPathNames = $this->getPathArray();
                 $otherPathNames = $otherUri->getPathArray();
@@ -516,6 +516,6 @@ class RouterUri {
                 return $isEqual;
             }
         }
-        return FALSE;
+        return false;
     }
 }

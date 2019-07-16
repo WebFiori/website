@@ -24,23 +24,10 @@
  */
 namespace webfiori\functions;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
-use webfiori\entity\Logger;
 use webfiori\entity\FileHandler;
 use webfiori\conf\SiteConfig;
 /**
@@ -48,7 +35,7 @@ use webfiori\conf\SiteConfig;
  * save them to the file 'SiteConfig.php'
  *
  * @author Ibrahim
- * @version 1.0
+ * @version 1.0.1
  */
 class WebsiteFunctions extends Functions{
     /**
@@ -101,14 +88,9 @@ class WebsiteFunctions extends Functions{
      * @since 1.0
      */
     public static function &get(){
-        Logger::logFuncCall(__METHOD__);
-        if(self::$singleton === NULL){
-            Logger::log('Initializing \'WebsiteFunctions\' instance...');
+        if(self::$singleton === null){
             self::$singleton = new WebsiteFunctions();
-            Logger::log('Initializing of \'WebsiteFunctions\' completed.');
         }
-        Logger::log('Returning \'WebsiteFunctions\' instance.');
-        Logger::logFuncReturn(__METHOD__);
         return self::$singleton;
     }
     /**
@@ -120,21 +102,32 @@ class WebsiteFunctions extends Functions{
         parent::__construct();
     }
     /**
+     * Initialize new session or use an existing one.
+     * Note that the name of the session must be 'wf-session' in 
+     * order to initialize it.
+     * @param array $options An array of session options. See 
+     * Functions::useSettion() for more information about available options.
+     * @return boolean If session is created or resumed, the method will 
+     * return true. False otherwise.
+     * @since 1.0.1
+     */
+    public function useSession($options=[]) {
+        if(gettype($options) == 'array' && isset($options['name'])){
+            if($options['name'] == 'wf-session'){
+                return parent::useSession($options);
+            }
+        }
+        return false;
+    }
+    /**
      * Creates the file 'SiteConfig.php' if it does not exist.
      * @since 1.0
      */
     public function createSiteConfigFile() {
-        Logger::logFuncCall(__METHOD__);
         if(!class_exists('webfiori\conf\SiteConfig')){
-            Logger::log('Creating Configuration File \'SiteConfig.php\'');
             $initCfg = $this->getSiteConfigVars();
             $this->writeSiteConfig($initCfg);
-            Logger::log('Creatied.');
         }
-        else{
-            Logger::log('Configuration File \'SiteConfig.php\' Already Exist.');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Updates web site configuration based on some attributes.
@@ -164,7 +157,6 @@ class WebsiteFunctions extends Functions{
      * @since 1.0
      */
     public function updateSiteInfo($websiteInfoArr){
-        Logger::logFuncCall(__METHOD__);
         $confArr = $this->getSiteConfigVars();
         foreach ($confArr as $k=>$v){
             if(isset($websiteInfoArr[$k])){
@@ -172,7 +164,6 @@ class WebsiteFunctions extends Functions{
             }
         }
         $this->writeSiteConfig($confArr);
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Returns an associative array that contains web site configuration 
@@ -221,19 +212,8 @@ class WebsiteFunctions extends Functions{
      * @since 1.0
      */
     private function writeSiteConfig($configArr){
-        Logger::logFuncCall(__METHOD__);
-        foreach ($configArr as $k => $v){
-            if(gettype($v) == 'array'){
-                foreach ($v as $lCode => $text){
-                    Logger::log($k.' => ['.$lCode.' => '.$text.']', 'debug');
-                }
-            }
-            else{
-                Logger::log($k.' => '.$v, 'debug');
-            }
-        }
         $fh = new FileHandler(ROOT_DIR.'/conf/SiteConfig.php');
-        $fh->write('<?php', TRUE, TRUE);
+        $fh->write('<?php', true, true);
         $fh->write('/*
  * The MIT License
  *
@@ -259,25 +239,13 @@ class WebsiteFunctions extends Functions{
  */
  
 ');
-        $fh->write('namespace webfiori\conf;',TRUE,TRUE);
+        $fh->write('namespace webfiori\conf;',true,true);
         $fh->write('if(!defined(\'ROOT_DIR\')){
-    header("HTTP/1.1 403 Forbidden");
-    die(\'\'
-        . \'<!DOCTYPE html>\'
-        . \'<html>\'
-        . \'<head>\'
-        . \'<title>Forbidden</title>\'
-        . \'</head>\'
-        . \'<body>\'
-        . \'<h1>403 - Forbidden</h1>\'
-        . \'<hr>\'
-        . \'<p>\'
-        . \'Direct access not allowed.\'
-        . \'</p>\'
-        . \'</body>\'
-        . \'</html>\');
-}', TRUE, TRUE);
-        $fh->write('use webfiori\entity\Util;', TRUE, TRUE);
+    header("HTTP/1.1 404 Not Found");
+    die(\'<!DOCTYPE html><html><head><title>Not Found</title></head><body>\'
+    . \'<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>\');
+}', true, true);
+        $fh->write('use webfiori\entity\Util;', true, true);
         $fh->write('/** 
  * Website configuration class.
  * This class is used to control the following settings:
@@ -291,8 +259,8 @@ class WebsiteFunctions extends Functions{
  * <li>Admin theme of the website (if uses one).</li>
  * <li>The home page of the website.</li>
  * </ul>
- */', TRUE, TRUE);
-        $fh->write('class SiteConfig{', TRUE, TRUE);
+ */', true, true);
+        $fh->write('class SiteConfig{', true, true);
         $fh->addTab();
         $fh->write('/**
      * An array which contains all website names in different languages.
@@ -358,12 +326,12 @@ class WebsiteFunctions extends Functions{
      * @since 1.0
      */
     public static function &get(){
-        if(self::$siteCfg != NULL){
+        if(self::$siteCfg != null){
             return self::$siteCfg;
         }
         self::$siteCfg = new SiteConfig();
         return self::$siteCfg;
-    }', TRUE, TRUE);
+    }', true, true);
         $names = 'array(';
         foreach ($configArr['website-names'] as $k => $v){
             $names .= '\''.$k.'\'=>\''.$v.'\',';
@@ -384,7 +352,7 @@ class WebsiteFunctions extends Functions{
         $this->adminThemeName = \''.$configArr['admin-theme-name'].'\';
         $this->homePage = Util::getBaseURL();
         $this->descriptions = '.$descriptions.';
-    }', TRUE, TRUE);
+    }', true, true);
         $fh->write('
     private function _getPrimaryLanguage(){
         return $this->primaryLang;
@@ -498,10 +466,9 @@ class WebsiteFunctions extends Functions{
     public static function getWebsiteNames(){
         return self::get()->_getWebsiteNames();
     }
-    ', TRUE, TRUE);
+    ', true, true);
         $fh->reduceTab();
-        $fh->write('}', TRUE, TRUE);
+        $fh->write('}', true, true);
         $fh->close();
-        Logger::logFuncReturn(__METHOD__);
     }
 }

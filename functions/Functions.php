@@ -1,5 +1,4 @@
 <?php
-
 /*
  * The MIT License
  *
@@ -25,30 +24,16 @@
  */
 namespace webfiori\functions;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 use phMysql\MySQLLink;
 use webfiori\entity\SessionManager;
-use webfiori\entity\Logger;
 use webfiori\entity\DBConnectionFactory;
 use webfiori\entity\DBConnectionInfo;
 use phMysql\MySQLQuery;
 use webfiori\conf\Config;
-use Exception;
 /**
  * The base class for creating application logic.
  * This class provides the basic utilities to connect to database and manage 
@@ -56,7 +41,7 @@ use Exception;
  * the system uses any. The developer can extend this class to add his own 
  * logic to the application that he is creating.
  * @author Ibrahim
- * @version 1.3.5
+ * @version 1.3.7
  */
 class Functions {
     /**
@@ -82,7 +67,13 @@ class Functions {
      * @var type 
      * @since 1.3.4
      */
-    private $connErrDetails;
+    private $dbErrDetails;
+    /**
+     * The default query object which is used to construct SQL queries.
+     * @var MySQLQuery
+     * @since 1.3.6
+     */
+    private $defaultQueryObj;
     /**
      * A constant that indicates a user is not authorized to perform specific 
      * actions.
@@ -101,21 +92,34 @@ class Functions {
      * session options where provided while initiating a new session.
      * The array have the following values:
      * <ul>
-     * <li>duration: 120 </li>
-     * <li>refresh: TRUE </li>
-     * <li>name: '' </li>
-     * <li>user: NULL </li>
+     * <li>duration: 10080 (one week) </li>
+     * <li>refresh: true </li>
+     * <li>name: 'wf-session' </li>
+     * <li>create-new: true</li>
+     * <li>user: null </li>
      * <li>variables: empty array. </li>
      * </ul>
      * @since 1.3.4
      */
     const DEFAULT_SESSTION_OPTIONS = array(
-        'duration'=>120,
+        'duration'=>10080,
         'refresh'=>true,
-        'name'=>'',
+        'name'=>'wf-session',
+        'create-new'=>true,
         'user'=>null,
         'variables'=>array()
     );
+    /**
+     * A constant that indicates a given database connection was 
+     * not found.
+     * @since 1.3.6
+     */
+    const NO_SUCH_CONNECTION = 'no_such_conn';
+    /**
+     * A constant that indicates no query object is set.
+     * @since 1.3.6
+     */
+    const NO_QUERY = 'no_query';
     /**
      * A default database to connect to.
      * @var type 
@@ -123,22 +127,51 @@ class Functions {
     private $defaultConn;
     /**
      * Sets a default connection information.
-     * @param string $dbName The name of the database.
-     * @throws Exception If no connection information was found in the class 
-     * 'Config' for the given database, an exception with the message 
-     * 'No connection information was found for the database 'db_name'.' will be thrown.
+     * @param string $connName The name of database connection. It 
+     * should be a key name taken from the array of database connections 
+     * which is stored in the class 'Config'.
+     * @return boolean|string If a connection was found which has the given 
+     * name, the method will return true. If If no connection information was found in the class 
+     * 'Config' for the given database, the method will return 
+     * Functions::NO_SUCH_CONNECTION.
      * @since 1.3.5
      */
-    public function setDefaultDB($dbName) {
-        $connInfo = Config::getDBConnection($dbName);
+    public function setConnection($connName) {
+        $connInfo = Config::getDBConnection($connName);
         if($connInfo instanceof DBConnectionInfo){
             $this->defaultConn = $connInfo;
-            return;
+            return true;
         }
-        throw new Exception('No connection information was found for the database \''.$dbName.'\'.');
+        return self::NO_SUCH_CONNECTION;
+    }
+    /**
+     * Returns the linked query object which is used to create MySQL quires.
+     * @return MySQLQuery|null If the query object is set, the method will 
+     * return an object of type 'MySQLQuery'. If not set, the method will return 
+     * null.
+     * @since 1.3.6
+     */
+    public function getQueryObject() {
+        return $this->defaultQueryObj;
+    }
+    /**
+     * Sets the linked query object which is used to create MySQL quires.
+     * @param MySQLQuery $qObj An instance of the class 'MySQLQuery'.
+     * @return boolean If the query object is set, the method will return 
+     * true. Other than that, it will return false.
+     * @since 1.3.6
+     */
+    public function setQueryObject($qObj) {
+        if($qObj instanceof MySQLQuery){
+            $this->defaultQueryObj = $qObj;
+            return true;
+        }
+        return false;
     }
     /**
      * Creates new instance of the class.
+     * When a new instance of the class is created, a session with name 'wf-sesstion' 
+     * will be linked with it by default.
      * @param string $linkedSessionName The name of the session that will 
      * be linked with the class instance. The name can consist of any character 
      * other than space, comma, semi-colon and equal sign. If the name has one 
@@ -146,15 +179,11 @@ class Functions {
      * @since 1.0
      */
     public function __construct() {
-        Logger::logFuncCall(__METHOD__);
-        if(self::$sessions === NULL){
-            Logger::log('Initializing sessions array...');
+        if(self::$sessions === null){
             self::$sessions = array();
         }
-        $this->connErrDetails = array();
-        $this->connErrDetails['error-code'] = '';
-        $this->connErrDetails['error-message'] = '';
-        Logger::logFuncReturn(__METHOD__);
+        $this->_setDBErrDetails(0, 'NO_ERR');
+        $this->useSession(self::DEFAULT_SESSTION_OPTIONS);
     }
     /**
      * Initiate database connection.
@@ -163,52 +192,50 @@ class Functions {
      * Another option is to set a default database name using the method Functions::setDefaultDB(). 
      * Note that the connection information of the database must exist in the 
      * class 'Config'.
-     * @param string $dbName The name of the database. The connection information 
+     * @param string $connName The name of database connection. The connection information 
      * will be taken from the class 'Config'.
-     * @return boolean If the connection is established, the method will 
-     * return TRUE. If not, the method will return FALSE.
+     * @return boolean|string If the connection is established, the method will 
+     * return true. If not, the method will return false. Note that the method will return 
+     * false in case the connection was established but the database is not set. 
+     * In this case, error code will be 1046 for 'No database selected' or 1049 
+     * for 'Unknown database'. If a connection name 
+     * is given but its information is not found, the method will return 
+     * Functions::NO_SUCH_CONNECTION.
      * @since 1.1
      */
-    public function useDatabase($dbName=null) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Database name = \''.$dbName.'\'.', 'debug');
-        Logger::log('Checking if already connected to a database...');
-        $retVal = FALSE;
+    public function useDatabase($connName=null) {
+        $retVal = false;
         $dbLink = &$this->getDBLink();
+        $dbConn = Config::getDBConnection($connName);
         if($dbLink instanceof MySQLLink){
-            Logger::log('Already connected to database.');
-            Logger::log('Checking if connected to same database...');
-            if($dbName !== null && $dbName != $dbLink->getDBName()){
-                Logger::log('Different database. Trying to connect to the database...');
-                Logger::log('Getting database connection info...');
-                $conInfo = Config::getDBConnection($dbName);
-                if($conInfo instanceof DBConnectionInfo){
-                    $retVal = $this->_connect($conInfo);
-                }
-                else{
-                    Logger::log('No connection info was found for a database with the given name.', 'warning');
-                }
+            if($dbConn instanceof DBConnectionInfo){
+                $retVal = $this->_connect($dbConn);
             }
             else{
-                Logger::log('Same database or null is given.');
-                $retVal = TRUE;
+                $this->_setDBErrDetails(-1, 'No database connection was found which has the name \''.$connName.'\'.');
+                $retVal = self::NO_SUCH_CONNECTION;
             }
         }
         else{
-            Logger::log('Not connected.');
-            Logger::log('Getting database connection info...');
-            $conInfo = Config::getDBConnection($dbName);
-            if($conInfo instanceof DBConnectionInfo){
-                $retVal = $this->_connect($conInfo);
+            if($dbConn instanceof DBConnectionInfo){
+                $retVal = $this->_connect($dbConn);
             }
             else{
-                Logger::log('No connection info was found for a database with the given name.', 'warning');
-                Logger::log('Trying to use default connection info...');
-                $retVal = $this->_connect($this->defaultConn);
+                if($this->defaultConn !== null){
+                    $retVal = $this->_connect($this->defaultConn);
+                }
+                else{
+                    if($connName !== null){
+                        $this->_setDBErrDetails(-1, 'No database connection was found which has the name \''.$connName.'\'.');
+                        $retVal = self::NO_SUCH_CONNECTION;
+                    }
+                    else{
+                        $this->_setDBErrDetails(-2, 'No database connection was set.');
+                        $retVal = false;
+                    }
+                }
             }
         }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
@@ -216,32 +243,31 @@ class Functions {
      * @param DBConnectionInfo $connParams An object of type DBConnectionInfo 
      * that contains connection parameters.
      * @return boolean If the connection is established, the method will 
-     * return TRUE. If not, It will return FALSE.
+     * return true. If not, It will return false. Note that the method will return 
+     * false in case the connection was established but the database is not set. 
+     * In this case, error code will be 1046 for 'No database selected' or 1049 
+     * for 'Unknown database'.
      */
     private function _connect($connParams){
-        Logger::logFuncCall(__METHOD__);
-        if($connParams instanceof DBConnectionInfo){
-            $result = DBConnectionFactory::mysqlLink(array(
-                'host'=>$connParams->getHost(),
-                'user'=>$connParams->getUsername(),
-                'pass'=>$connParams->getPassword(),
-                'db-name'=>$connParams->getDBName(),
-                'port'=>$connParams->getPort()
-            ));
-            if($result instanceof MySQLLink){
-                Logger::log('Connected to database.');
-                $this->databaseLink = $result;
-                Logger::logFuncReturn(__METHOD__);
-                return TRUE;
+        $result = DBConnectionFactory::mysqlLink(array(
+            'host'=>$connParams->getHost(),
+            'user'=>$connParams->getUsername(),
+            'pass'=>$connParams->getPassword(),
+            'db-name'=>$connParams->getDBName(),
+            'port'=>$connParams->getPort()
+        ));
+        if($result instanceof MySQLLink){
+            $this->databaseLink = $result;
+            if($result->getErrorCode() == 0){
+                return true;
             }
-            else{
-                $this->connErrDetails = $result;
-                Logger::log('Unable to connect to the database while in setup mode.', 'warning');
-                Logger::log('Error Code: '.$result['error-code'], 'error');
-                Logger::log('Error Message: '.$result['error-message'], 'error');
-                Logger::logFuncReturn(__METHOD__);
-                return FALSE;
-            }
+            //might be connected but database is not set.
+            $this->_setDBErrDetails($this->getDBLink()->getErrorCode(), $this->getDBLink()->getErrorMessage());
+            return false;
+        }
+        else{
+            $this->_setDBErrDetails($result['error-code'], $result['error-message']);
+            return false;
         }
     }
     /**
@@ -250,95 +276,122 @@ class Functions {
      * indices: 
      * <ul>
      * <li><b>error-code</b>: Error code.</li>
-     * <li><b>error-code</b>: A message that tells more information about 
+     * <li><b>error-message</b>: A message that tells more information about 
      * the error.</li>
-     * If no errors, the indices will have empty strings.
+     * If no errors, the first index will have the value 0 and 
+     * the second index will have the value 'NO_ERR'. If the error was a result 
+     * of executing SQL query, there will be extra index which contains the 
+     * query. The index name will be 'query'.
      * @since 1.3.4
      */
     public function getDBErrDetails() {
-        $dbLink = $this->getDBLink();
-        if($dbLink !== NULL){
-            $this->connErrDetails['error-code'] = $dbLink->getErrorCode();
-            $this->connErrDetails['error-message'] = $dbLink->getErrorMessage();
-        }
-        return $this->connErrDetails;
+        return $this->dbErrDetails;
     }
     /**
      * Execute a database query.
-     * @param MySQLQuery $qObj An object of type 'MySQLQuery'. Note that 
-     * this method will call the method 'Functions::useDatabase()' by 
-     * default.
-     * @param string $dbName An optional database. The query will be executed 
+     * The method will use the given query object and connection information 
+     * if provided. If not given, the method will attempt to use the database 
+     * connection which was set by the method Functions::setConnection() and 
+     * the query which was set by the method Functions::setQueryObject().
+     * @param MySQLQuery|null $qObj An optional object of type 'MySQLQuery'.
+     * @param string $connName An optional connection name. The query will be executed 
      * against it if provided.
-     * @return boolean 'TRUE' if no errors occur while executing the query.
-     * FAlSE in case of error.
+     * @return boolean 'true' if no errors occur while executing the query.
+     * false in case of error. To access database error information, the developer can 
+     * use the method Functions::getDBErrDetails().
      * @since 1.0
      */
-    public function excQ($qObj,$dbName=null){
-        Logger::logFuncCall(__METHOD__);
-        $retVal = FALSE;
+    public function excQ($qObj=null,$connName=null){
+        $retVal = false;
+        if(!($qObj instanceof MySQLQuery)){
+            $qObj = $this->getQueryObject();
+            if($qObj === null){
+                $this->_setDBErrDetails(self::NO_QUERY, 'No query object was set to execute.');
+                return false;
+            }
+        }
         if($qObj instanceof MySQLQuery){
-            if($this->useDatabase($dbName)){
-                $dbLink = &$this->getDBLink();
-                Logger::log('Query = \''.$qObj->getQuery().'\'.', 'debug');
-                Logger::log('Executing database query...');
-                $result = $dbLink->executeQuery($qObj);
-                if($result !== TRUE){
-                    Logger::log('An error has occured while executing the query.', 'error');
-                    Logger::log('Error Code: '.$dbLink->getErrorCode(), 'error');
-                    Logger::log('Error Message: '.$dbLink->getErrorMessage(), 'error');
+            if($connName !== null){
+                $connectResult = $this->useDatabase($connName);
+                if($connectResult === true){
+                    $retVal = $this->_runQuery($qObj);
                 }
-                $retVal = $result;
+                else if($connectResult == self::NO_SUCH_CONNECTION){
+                    return self::NO_SUCH_CONNECTION;
+                }
+                else{
+                    return false;
+                }
             }
             else{
-                Logger::log('Unable to use database connection.', 'warning');
+                if($this->getDBLink() !== null){
+                    $retVal = $this->_runQuery($qObj);
+                }
+                else{
+                    $retVal = $this->useDatabase();
+                    if($retVal === true){
+                        $retVal = $this->_runQuery($qObj);
+                    }
+                }
             }
         }
-        else{
-            Logger::log('The given instance is not a sub-class of \'MySQLQuery\'.', 'warning');
-        }
-        if($retVal === TRUE){
-            Logger::log('Query execited.');
-        }
-        else{
-            Logger::log('Query did not execute.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
+    }
+    /**
+     * 
+     * @param type $errCode
+     * @param type $errMessage
+     * @since 1.3.6
+     */
+    private function _setDBErrDetails($errCode,$errMessage) {
+        $this->dbErrDetails = array(
+            'error-message'=>$errMessage,
+            'error-code'=>$errCode
+        );
+    }
+    /**
+     * 
+     * @param MySQLQuery $query
+     * @return type
+     */
+    private function _runQuery($query) {
+        $link = $this->getDBLink();
+        $result = $link->executeQuery($query);
+        if($result !== true){
+            $this->_setDBErrDetails($link->getErrorCode(),$link->getErrorMessage());
+            $this->dbErrDetails['query'] = $query->getQuery();
+        }
+        return $result;
     }
     /**
      * Checks if the current session user has a privilege or not given privilege 
      * ID.
      * @param string $pId The ID of the privilege.
      * @return boolean If the user has the given privilege, the method will 
-     * return TRUE. If the user does not have the privilege, the method will 
-     * return FALSE.
+     * return true. If the user does not have the privilege, the method will 
+     * return false.
      * @since 1.2
      */
     public function hasPrivilege($pId){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Prevalege ID = \''.$pId.'\'.', 'debug');
-        $retVal = FALSE;
+        $retVal = false;
         if($this->getUserID() != -1){
             $retVal = $this->getSession()->getUser()->hasPrivilege($pId);
         }
-        else{
-            Logger::log('Invalid user in session variable.', 'warning');
-        }
-        Logger::logReturnValue($retVal);
         return $retVal;
     }
     /**
-     * Initiate new session or use a session which is already initiated.
+     * Initiate new session or use a session which is already initialized.
+     * Note that sessions cannot be used when running the framework through CLI.
      * @param array $options An associative array of options. The available options 
      * are: 
      * <ul>
-     * <li>name: The name of the session that will be used or created.</li>
+     * <li>name: (Required) The name of the session that will be used or created.</li>
      * <li>create-new: If no session was found which has the given name and 
-     * this index is set to TRUE, new session will be created.</li>
+     * this index is set to true, new session will be created. Ignored if 
+     * a session which has the given name is already created.</li>
      * <li>duration: The duration of the session in minutes (optional). Used only if 
      * the session is new.</li>
-     * <li>refresh: An optional boolean variable. If set to TRUE, the session timeout time 
+     * <li>refresh: An optional boolean variable. If set to true, the session timeout time 
      * will be refreshed with every request. Used only if the session is new.</li>
      * <li>user: An optional object of type user that represents session user. Used only if 
      * the session is new.</li>
@@ -346,26 +399,29 @@ class Functions {
      * the session is new.</li>
      * </ul>
      * @return boolean If the session is exist or created, the method will 
-     * return TRUE. Other than that, the method will return FALSE.
+     * return true. Other than that, the method will return false.
      */
     public function useSession($options=array()){
-        if(gettype($options) == 'array'){
-            if(isset($options['name'])){
-                $sessionName = $options['name'];
-                if(isset(self::$sessions[$sessionName])){
-                    $this->sessionName = $sessionName;
-                    return TRUE;
-                }
-                else{
-                    if(isset($options['create-new']) && $options['create-new'] === TRUE){
+        if(php_sapi_name() == 'cli'){
+            return false;
+        }
+        else{
+            if(gettype($options) == 'array'){
+                if(isset($options['name'])){
+                    $sessionName = trim($options['name']);
+                    if(isset(self::$sessions[$sessionName])){
+                        $this->sessionName = $sessionName;
+                        return true;
+                    }
+                    else{
                         $mngr = new SessionManager($sessionName);
-                        
+
                         $sTime = isset($options['duration']) ? $options['duration'] : self::DEFAULT_SESSTION_OPTIONS['duration'];
                         $mngr->setLifetime($sTime);
-                        
+
                         $isRef = isset($options['refresh']) ? $options['refresh'] : self::DEFAULT_SESSTION_OPTIONS['refresh'];
                         $mngr->setIsRefresh($isRef);
-                        
+
                         if($mngr->initSession($isRef)){
                             $this->sessionName = $sessionName;
                             $sUser = isset($options['user']) ? $options['user'] : self::DEFAULT_SESSTION_OPTIONS['user'];
@@ -376,62 +432,87 @@ class Functions {
                                     $mngr->setSessionVar($k,$v);
                                 }
                             }
-                            return TRUE;
+                            return true;
                         }
                     }
                 }
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Returns the instance of 'SessionManager' that is used by the class.
      * Before trying to get a session manager, the name of the session must 
      * be supplied to the method Functions::useSession().
-     * @return SessionManager|NULL An instance of 'SessionManager'. If no 
-     * session is running, the method will return NULL.
+     * @return SessionManager|null An instance of 'SessionManager'. If no 
+     * session is running, the method will return null.
      * @since 1.3
      */
     public function &getSession() {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Session name = \''.$this->sessionName.'\'.', 'debug');
-        $retVal = NULL;
-        if($this->sessionName !== NULL){
+        $retVal = null;
+        if($this->sessionName !== null){
             $retVal = &self::$sessions[$this->sessionName];
         }
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
+    }
+    /**
+     * Returns session variable given its name.
+     * @param string $varName The name of session variable.
+     * @return mixed If the session is running and the variable is set, its 
+     * value is returned. If no session is running or the variable is not set, 
+     * the method will return null.
+     * @since 1.3.7
+     */
+    public function getSessionVar($varName) {
+        $session = $this->getSession();
+        if($session !== null){
+            return $session->getSessionVar($varName);
+        }
+    }
+    /**
+     * Adds or updates the value of a session variable.
+     * @param string $varName The name of session variable. Must be non-empty 
+     * string.
+     * @param mixed $varVal The value of session variable.
+     * @return boolean If the variable is set, the method will return true. 
+     * Other than that, the method will return false.
+     * @since 1.3.7
+     */
+    public function setSessionVar($varName,$varVal) {
+        $trimmedName = trim($varName);
+        if(strlen($trimmedName) != 0){
+            $sesstion = &$this->getSession();
+            if($sesstion !== null){
+                return $sesstion->setSessionVar($trimmedName, $varVal);
+            }
+        }
+        return false;
     }
     /**
      * Returns language code from the currently used session manager.
      * Note that if the name of the session is not set, the method will 
-     * return NULL.
-     * @param boolean $forceUpdate If set to TRUE, language code will 
+     * return null.
+     * @param boolean $forceUpdate If set to true, language code will 
      * be forced to update based on the value of the attribute 'lang' 
      * of a GET or POST request or a cookie.
-     * @return string|NULL A two characters  that represents language code.
+     * @return string|null A two characters  that represents language code.
      * @since 1.2
      */
     public final function getSessionLang($forceUpdate=true){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Force Update = \''.$forceUpdate.'\'', 'debug');
         $session = $this->getSession();
-        if($session !== NULL){
+        if($session !== null){
             return $session->getLang($forceUpdate);
         }
-        Logger::logFuncReturn(__METHOD__);
-        return NULL;
+        return null;
     }
     /**
      * Returns the link that is used to connect to the database.
-     * @return MySQLLink|NULL The link that is used to connect to the database. 
+     * @return MySQLLink|null The link that is used to connect to the database. 
      * If no link is established with the database, the method will return 
-     * NULL.
+     * null.
      * @since 1.2
      */
     public function &getDBLink() {
-        Logger::logFuncCall(__METHOD__);
-        Logger::logFuncReturn(__METHOD__);
         return $this->databaseLink;
     }
     /**
@@ -442,19 +523,11 @@ class Functions {
      * @since 1.0
      */
     public function rows(){
-        Logger::logFuncCall(__METHOD__);
         $retVal = -1;
-        Logger::log('Getting Database link...');
         $dbLink = &$this->getDBLink();
-        Logger::log('Checking if database link is not null...');
-        if($dbLink !== NULL){
+        if($dbLink !== null){
             $retVal = $dbLink->rows();
         }
-        else{
-            Logger::log('Database link is NULL.', 'warning');
-        }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
@@ -465,66 +538,42 @@ class Functions {
      * @since 1.3.2
      */
     public function getRows(){
-        Logger::logFuncCall(__METHOD__);
         $retVal = array();
-        Logger::log('Getting Database link...');
         $dbLink = &$this->getDBLink();
-        Logger::log('Checking if database link is not null...');
-        if($dbLink !== NULL){
+        if($dbLink !== null){
             $retVal = $dbLink->getRows();
         }
-        else{
-            Logger::log('Database link is NULL.', 'warning');
-        }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
    /**
      * Returns the first that is resulted from executing a query.
-     * @return array|NULL An array that contains row info. The 
-     * method will return NULL in case no connection was established to 
+     * @return array|null An array that contains row info. The 
+     * method will return null in case no connection was established to 
      * the database.
      * @since 1.0
      */
     public function getRow(){
-        Logger::logFuncCall(__METHOD__);
-        $retVal = NULL;
-        Logger::log('Getting Database link...');
+        $retVal = null;
         $dbLink = $this->getDBLink();
-        Logger::log('Checking if database link is not null...');
-        if($dbLink !== NULL){
+        if($dbLink !== null){
             $retVal = $dbLink->getRow();
         }
-        else{
-            Logger::log('Database link is NULL.', 'warning');
-        }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
      * Returns the next row in the result set that was generated from executing 
      * a query.
-     * @return array|NULL An associative array that represents the row. If 
+     * @return array|null An associative array that represents the row. If 
      * there was no result set generated from executing the query or the 
-     * result has no rows, the method will return NULL.
+     * result has no rows, the method will return null.
      * @since 1.3.1
      */
     public function nextRow() {
-        Logger::logFuncCall(__METHOD__);
-        $retVal = NULL;
-        Logger::log('Getting Database link...');
+        $retVal = null;
         $dbLink = &$this->getDBLink();
-        Logger::log('Checking if database link is not null...');
-        if($dbLink !== NULL){
+        if($dbLink !== null){
             $retVal = $dbLink->nextRow();
         }
-        else{
-            Logger::log('Database link is NULL.', 'warning');
-        }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
@@ -535,22 +584,14 @@ class Functions {
      * @since 1.0
      */
     public function getUserID(){
-        Logger::logFuncCall(__METHOD__);
         $retVal = -1;
-        Logger::log('Getting user from session manager...');
         $sesstion = $this->getSession();
-        if($sesstion !== NULL){
+        if($sesstion !== null){
             $user = &$this->getSession()->getUser();
-            Logger::log('Checking if session user is null or not...');
-            if($user !== NULL){
+            if($user !== null){
                 $retVal = intval($user->getID());
             }
-            else{
-                Logger::log('Session user is NULL.', 'warning');
-            }
         }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
 }

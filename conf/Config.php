@@ -25,21 +25,9 @@
  
 namespace webfiori\conf;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 use webfiori\entity\DBConnectionInfo;
 /**
@@ -47,7 +35,7 @@ use webfiori\entity\DBConnectionInfo;
  * Used by the server part and the presentation part. It contains framework version 
  * information and database connection settings.
  * @author Ibrahim
- * @version 1.3.3
+ * @version 1.3.4
  */
 class Config{
     /**
@@ -84,11 +72,11 @@ class Config{
      * Initialize configuration.
      */
     private function __construct() {
-        $this->isConfigured = TRUE;
-        $this->releaseDate = '2019-02-01';
-        $this->version = '1.0.0';
+        $this->isConfigured = false;
+        $this->releaseDate = '2019-07-16';
+        $this->version = '1.0.1';
         $this->versionType = 'Stable';
-        $this->configVision = '1.3.3';
+        $this->configVision = '1.3.4';
         $this->dbConnections = array(
         );
     }
@@ -104,11 +92,22 @@ class Config{
      * @since 1.0
      */
     public static function &get(){
-        if(self::$cfg != NULL){
+        if(self::$cfg != null){
             return self::$cfg;
         }
         self::$cfg = new Config();
         return self::$cfg;
+    }
+    /**
+     * Adds new database connection or updates an existing one.
+     * @param DBConnectionInfo $connectionInfo an object of type 'DBConnectionInfo' 
+     * that will contain connection information.
+     * @since 1.3.4
+     */
+    public static function addDbConnection($connectionInfo){
+        if($connectionInfo instanceof DBConnectionInfo){
+            self::get()->dbConnections[$connectionInfo->getConnectionName()] = $connectionInfo;
+        }
     }
     private function _getConfigVersion(){
         return $this->configVision;
@@ -130,7 +129,7 @@ class Config{
      * Checks if the system is configured or not.
      * This method is helpful in case the developer would like to create some 
      * kind of a setup wizard for the web application.
-     * @return boolean TRUE if the system is configured.
+     * @return boolean true if the system is configured.
      * @since 1.0
      */
     public static function isConfig(){
@@ -177,7 +176,7 @@ class Config{
     }
     /**
      * Returns an associative array that contain the information of database connections.
-     * The keys of the array will be the names of databases and the value of 
+     * The keys of the array will be the name of database connection and the value of 
      * each key will be an object of type DBConnectionInfo.
      * @return array An associative array.
      * @since 1.3.3
@@ -186,18 +185,19 @@ class Config{
         return self::get()->dbConnections;
     }
     /**
-     * Returns database connection information given database name.
-     * @param string $dbName The name of the database.
-     * @return DBConnectionInfo|NULL The method will return an object of type 
-     * DBConnectionInfo if a connection info was found for the given database. 
-     * Other than that, the method will return NULL.
+     * Returns database connection information given connection name.
+     * @param string $conName The name of the connection.
+     * @return DBConnectionInfo|null The method will return an object of type 
+     * DBConnectionInfo if a connection info was found for the given connection name. 
+     * Other than that, the method will return null.
      * @since 1.3.3
      */
-    public static function getDBConnection($dbName){
+    public static function getDBConnection($conName){
         $conns = self::getDBConnections();
-        if(isset($conns[$dbName])){
-            return $conns[$dbName];
+        $trimmed = trim($conName);
+        if(isset($conns[$trimmed])){
+            return $conns[$trimmed];
         }
-        return NULL;
+        return null;
     } 
 }

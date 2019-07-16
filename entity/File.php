@@ -24,23 +24,12 @@
  */
 namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 use jsonx\JsonI;
+use jsonx\JsonX;
 use Exception;
 /**
  * A class that represents a file.
@@ -245,30 +234,36 @@ class File implements JsonI{
      * use forward slashes or backward slashes.
      * @param string $path The folder which will contain the file. It must 
      * be non-empty string in order to set.
-     * @return boolean The method will return TRUE if the path is set. Other 
-     * than that, the method will return FALSE.
+     * @return boolean The method will return true if the path is set. Other 
+     * than that, the method will return false.
      * @since 1.0
      */
     public function setPath($path){
-        $retVal = FALSE;
-        $len = strlen($path);
+        $retVal = false;
+        $pathV = self::_validatePath($path);
+        $len = strlen($pathV);
+        $DS = DIRECTORY_SEPARATOR;
         if($len > 0){
-            while($path[$len - 1] == '/' || $path[$len - 1] == '\\'){
-                $tmpDir = trim($path,'/');
-                $path = trim($tmpDir,'\\');
-                $len = strlen($path);
-            }
-            while($path[0] == '/' || $path[0] == '\\'){
-                $tmpDir = trim($path,'/');
-                $path = trim($tmpDir,'\\');
-            }
-            if(strlen($path) > 0){
-                $path = str_replace('/', '\\', $path);
-                $this->path = !Util::isDirectory($path) ? '\\'.$path : $path;
-                $retVal = TRUE;
-            }
+            $this->path = !Util::isDirectory($pathV) ? $DS.$pathV : $pathV;
+            $retVal = true;
         }
         return $retVal;
+    }
+    private static function _validatePath($path) {
+        $trimmedPath = trim($path);
+        $len = strlen($trimmedPath);
+        if($len != 0){
+            while($trimmedPath[$len - 1] == '/' || $trimmedPath[$len - 1] == '\\'){
+                $tmpDir = trim($trimmedPath,'/');
+                $trimmedPath = trim($tmpDir,'\\');
+                $len = strlen($trimmedPath);
+            }
+            while($trimmedPath[0] == '/' || $trimmedPath[0] == '\\'){
+                $tmpDir = trim($trimmedPath,'/');
+                $trimmedPath = trim($tmpDir,'\\');
+            }
+        }
+        return str_replace('/', DIRECTORY_SEPARATOR, str_replace('\\', DIRECTORY_SEPARATOR, $trimmedPath));
     }
     /**
      * Returns the full path to the file.
@@ -284,8 +279,8 @@ class File implements JsonI{
     public function getAbsolutePath() {
         $path = $this->getPath();
         $name = $this->getName();
-        if(strlen($path) != 0 && strlen($name)){
-            return $path.'\\'.$name;
+        if(strlen($path) != 0 && strlen($name) != 0){
+            return $path.DIRECTORY_SEPARATOR.$name;
         }
         return '';
     }
@@ -293,15 +288,15 @@ class File implements JsonI{
      * Returns MIME type of a file type.
      * The method will try to find MIME type based on its extension. If 
      * @param string $ext File extension without the suffix (such as 'jpg').
-     * @return string|NULL If the extension MIME type is found, it will be 
-     * returned. If not, the method will return NULL.
+     * @return string|null If the extension MIME type is found, it will be 
+     * returned. If not, the method will return null.
      * @since 1.1.1
      */
     public static function getMIMEType($ext){
         $lowerCase = strtolower($ext);
-        $retVal = NULL;
+        $retVal = null;
         $x = self::MIME_TYPES[$lowerCase];
-        if($x !== NULL){
+        if($x !== null){
             $retVal = $x;
         }
         return $retVal;
@@ -353,28 +348,6 @@ class File implements JsonI{
         }
         throw new Exception('File absolute path is invalid.');
     }
-    /**
-     * Returns memory limit of PHP.
-     * @return int A number that represents memory limit in 
-     * bytes.
-     * 
-     */
-    private function _getMemoryLimit() {
-        $memoryLimit = ini_get('memory_limit');
-        $len = strlen($memoryLimit);
-        $limit = '';
-        $unit = '';
-        for($x = 0 ; $x < $len ; $x++){
-            $ch = $memoryLimit[$x];
-            if($ch >= '0' && $ch <= '9'){
-                $limit .= $ch;
-            }
-            else{
-                $unit .= $ch;
-            }
-        }
-        return intval($limit)*1024*1024;
-    }
     private function _readHelper($path,$from,$to){
         if(file_exists($path)){
             $this->_setSize(filesize($path));
@@ -389,15 +362,15 @@ class File implements JsonI{
                 fclose($h);
                 $ext = pathinfo($this->getName(), PATHINFO_EXTENSION);
                 $mime = self::getMIMEType($ext);
-                $mimeSet = $mime === NULL ? 'application/octet-stream' : $mime;
+                $mimeSet = $mime === null ? 'application/octet-stream' : $mime;
                 $this->setMIMEType($mimeSet);
                 restore_error_handler();
-                return TRUE;
+                return true;
             }
             restore_error_handler();
             throw new Exception('Unable to open the file \''.$path.'\'.');
         }
-        return FALSE;
+        return false;
     }
     /**
      * Write raw binary data into a file.
@@ -419,7 +392,7 @@ class File implements JsonI{
      * @since 1.1.1
      */
     public function write($path=null) {
-        if($path === NULL){
+        if($path === null){
             $path = $this->getAbsolutePath();
             if($path != ''){
                 $this->_writeHelper($path);
@@ -430,8 +403,10 @@ class File implements JsonI{
         else{
             $fName = $this->getName();
             if(strlen($fName) > 0){
-                if(strlen($path) > 0){
-                    $this->_writeHelper($path.'\\'.$fName);
+                $pathV = self::_validatePath($path);
+                if(strlen($pathV) > 0){
+                    $pathV2 = !Util::isDirectory($pathV) ? DIRECTORY_SEPARATOR.$pathV : $pathV;
+                    $this->_writeHelper($pathV2.DIRECTORY_SEPARATOR.$fName);
                     return;
                 }
                 throw new Exception('Path cannot be empty string.');
@@ -440,7 +415,7 @@ class File implements JsonI{
         }
     }
     private function _writeHelper($path){
-        if($this->getRawData() === NULL){
+        if($this->getRawData() === null){
             $this->read();
         }
         $h = fopen($path, 'wb');
@@ -455,11 +430,11 @@ class File implements JsonI{
     }
     /**
      * Display the file. 
-     * If the raw data of the file is NULL, the method will 
+     * If the raw data of the file is null, the method will 
      * try to read the file that was specified by the name and its path. If 
      * the method is unable to read the file, an exception is thrown.
      * @param boolean $asAttachment If this parameter is set to 
-     * TRUE, the header 'content-disposition' will have the attribute 'attachment' 
+     * true, the header 'content-disposition' will have the attribute 'attachment' 
      * set instead of 'inline'. This will trigger 'save as' dialog to appear.
      * @throws Exception An exception with the message "MIME type of raw data is not set." 
      * If MIME type of the file is not set.
@@ -467,7 +442,7 @@ class File implements JsonI{
      */
     public function view($asAttachment=false){
         $raw = $this->getRawData();
-        if($raw !== NULL){
+        if($raw !== null){
             $this->_viewFileHelper($asAttachment);
         }
         else{
@@ -477,22 +452,14 @@ class File implements JsonI{
     }
     private function _viewFileHelper($asAttachment){
         $contentType = $this->getFileMIMEType();
-        Logger::logName('View-F-Log');
-        if($contentType != NULL){
-            Logger::log('Content-type: '.$contentType);
+        if($contentType !== null){
             header("Accept-Ranges: bytes");
             header('Content-Type:'.$contentType);
-            Logger::log('Checking if range is set...');
             if(isset($_SERVER['HTTP_RANGE'])){
-                Logger::log('It is set.');
                 $range = filter_var($_SERVER['HTTP_RANGE']);
-                Logger::log('Range = \''.$range.'\'.');
                 $rangeArr = explode('=', $range);
                 $expl = explode('-', $rangeArr[1]);
                 if(strlen($expl[1]) == 0){
-                    Logger::log('Range end not specified.');
-                    Logger::log('Setting it to file size.');
-                    Logger::log('F Size: '.$this->getSize());
                     $expl[1] = $this->getSize(); 
                 }
                 $this->read($expl[0], $expl[1]);
@@ -502,17 +469,15 @@ class File implements JsonI{
             }
             else{
                 //header('Content-Range: bytes 0-'.$this->getSize().'/'.$this->getSize());
-                Logger::log('No Content Range header. New View.');
                 header('Content-Length: '.$this->getSize());
             }
-            if($asAttachment === TRUE){
+            if($asAttachment === true){
                 header('Content-Disposition: attachment; filename="'.$this->getName().'"');
             }
             else{
                 header('Content-Disposition: inline; filename="'.$this->getName().'"');
             }
             echo $this->getRawData();
-            Logger::section();
         }
         else{
             throw new Exception('MIME type of raw data is not set.');
@@ -615,8 +580,8 @@ class File implements JsonI{
      * Returns the raw data of the file.
      * The raw data is simply a string. It can be binary string or any basic 
      * string.
-     * @return string|NULL Raw data of the file. If no data is set, the method 
-     * will return NULL.
+     * @return string|null Raw data of the file. If no data is set, the method 
+     * will return null.
      * @since 1.0
      */
     public function getRawData(){
@@ -671,15 +636,15 @@ class File implements JsonI{
      * Before calling this method, the name of the file and its path must 
      * be specified.
      * @return boolean If the file was removed, the method will return 
-     * TRUE. Other than that, the method will return FALSE.
+     * true. Other than that, the method will return false.
      * @since 1.1.2
      */
     public function remove() {
         if(file_exists($this->getAbsolutePath())){
             unlink($this->getAbsolutePath());
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
 }
 

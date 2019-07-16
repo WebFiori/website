@@ -24,21 +24,9 @@
  */
 namespace webfiori\entity;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 use jsonx\JsonI;
 use webfiori\conf\SiteConfig;
@@ -141,8 +129,6 @@ abstract class Theme implements JsonI{
      * </ul>
      */
     public function __construct() {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Initializing theme...');
         $this->themeMeta = array(
             'name'=>'',
             'url'=>'',
@@ -162,7 +148,6 @@ abstract class Theme implements JsonI{
         $this->afterLoadedParams = array();
         $this->beforeLoaded = function(){};
         $this->beforeLoadedParams = array();
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Returns the base URL that will be used by the theme.
@@ -172,7 +157,7 @@ abstract class Theme implements JsonI{
      * @return string The base URL that will be used by the theme.
      */
     public function getBaseURL(){
-        if($this->baseUrl !== NULL){
+        if($this->baseUrl !== null){
             return $this->baseUrl;
         }
         else{
@@ -186,8 +171,9 @@ abstract class Theme implements JsonI{
      * @param string $url The base URL that will be used by the theme.
      */
     public function setBaseURL($url) {
-        if(strlen(trim($url)) > 0){
-            $this->baseUrl = $url;
+        $trimmed = trim($url);
+        if(strlen($trimmed) > 0){
+            $this->baseUrl = $trimmed;
         }
     }
     /**
@@ -200,12 +186,9 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function addComponents($arr) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Adding set of theme components...');
         foreach ($arr as $component){
             $this->addComponent($component);
         }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Returns an array which contains the names of theme components files.
@@ -225,23 +208,14 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function addComponent($componentName) {
-        Logger::logFuncCall(__METHOD__);
         $trimmed = trim($componentName);
-        Logger::log('Checking if component is already added or not...');
-        Logger::log('Component file name = \''.$trimmed.'\'.', 'debug');
         if(strlen($trimmed) != 0 && !in_array($trimmed, $this->themeComponents)){
-            Logger::log('Adding the component...');
             $this->themeComponents[] = $trimmed;
-            Logger::log('Component Added.');
         }
-        else{
-            Logger::log('Already added.');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Loads a theme given its name.
-     * If the given name is NULL, the method will load the default theme as 
+     * If the given name is null, the method will load the default theme as 
      * specified by the method SiteConfig::getBaseThemeName().
      * @param string $themeName The name of the theme. 
      * @return Theme The method will return an object of type Theme once the 
@@ -251,58 +225,36 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public static function usingTheme($themeName=null) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Theme name = \''.$themeName.'\' ('. gettype($themeName).').', $themeName);
-        Logger::log('Validating theme name...');
-        if($themeName === NULL){
+        if($themeName === null){
             $themeName = SiteConfig::getBaseThemeName();
-            Logger::log('Given name is NULL. Using the theme \''.$themeName.'\'.', 'warning');
         }
-        $themeToLoad = NULL;
-        Logger::log('Checking if theme is already loaded...');
+        $themeToLoad = null;
         if(self::isThemeLoaded($themeName)){
-            Logger::log('Theme is already loaded.');
             $themeToLoad = self::$loadedThemes[$themeName];
         }
         else{
-            Logger::log('No theme is loaded. Checking available themes...');
             $themes = self::getAvailableThemes();
             if(isset($themes[$themeName])){
                 $themeToLoad = $themes[$themeName];
-                Logger::log('Theme found. Added to the set of loaded themes.');
                 self::$loadedThemes[$themeName] = $themeToLoad;
             }
             else{
-                Logger::log('No theme was found which has the given name. An exception is thrown.', 'error');
-                Logger::requestCompleted();
                 throw new Exception('No such theme: \''.$themeName.'\'.');
             }
         }
         if(isset($themeToLoad)){
             $themeToLoad->invokeBeforeLoaded();
-            Logger::log('Loading theme meta and components...');
             $themeDir = ROOT_DIR.'/'.self::THEMES_DIR.'/'.$themeToLoad->getDirectoryName();
-            Logger::log('Theme directory: \''.$themeDir.'\'.', $themeName);
-            Logger::log('Loading theme components...');
             foreach ($themeToLoad->getComponents() as $component){
-                Logger::log('Checking if file \''.$component.'\' exist...');
                 if(file_exists($themeDir.'/'.$component)){
-                    Logger::log('Loading file using require_once...');
                     require_once $themeDir.'/'.$component;
-                    Logger::log('Component loaded.');
                 }
                 else{
-                    Logger::log('No file was found which represents the component. An exception is thrown.', 'error');
-                    Logger::requestCompleted();
                     throw new Exception('Component \''.$component.'\' of the theme not found. Eather define it or remove it from the array of theme components.');
                 }
             }
-            Logger::log('Theme loaded.');
-            Logger::logFuncReturn(__METHOD__);
             return $themeToLoad;
         }
-        Logger::log('No theme was found which has the given name. An exception is thrown.','error');
-        Logger::requestCompleted();
         throw new Exception('No such theme: \''.$themeName.'\'.');
     }
     /**
@@ -313,19 +265,12 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setAfterLoaded($function,$params=array()) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if first parameter is callable...');
         if(is_callable($function)){
-            Logger::log('It is callable. Callable updated.');
             $this->afterLoaded = $function;
             if(gettype($params) == 'array'){
                 $this->afterLoadedParams = $params;
             }
         }
-        else{
-            Logger::log('It is not callable.');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Sets the value of the callback which will be called before theme is loaded.
@@ -335,19 +280,12 @@ abstract class Theme implements JsonI{
      * @since 1.2.1
      */
     public function setBeforeLoaded($function,$params=array()){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if first parameter is callable...');
         if(is_callable($function)){
-            Logger::log('It is callable. Callable updated.');
             $this->beforeLoaded = $function;
             if(gettype($params) == 'array'){
                 $this->beforeLoadedParams = $params;
             }
         }
-        else{
-            Logger::log('It is not callable.');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Fire the callback function which should be called before loading the theme.
@@ -356,10 +294,7 @@ abstract class Theme implements JsonI{
      * @since 1.2.1
      */
     public function invokeBeforeLoaded(){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Firing before loaded event...');
         call_user_func($this->beforeLoaded, $this->beforeLoadedParams);
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Fire the callback function which should be called after loading the theme.
@@ -368,45 +303,44 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function invokeAfterLoaded(){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Firing after loaded event...');
         call_user_func($this->afterLoaded, $this->afterLoadedParams);
-        Logger::logFuncReturn(__METHOD__);
     }
 
     /**
      * Checks if a theme is loaded or not given its name.
      * @param string $themeName The name of the theme.
-     * @return boolean The method will return TRUE if 
-     * the theme was found in the array of loaded themes. FALSE
+     * @return boolean The method will return true if 
+     * the theme was found in the array of loaded themes. false
      * if not.
      * @since 1.0
      */
     public static function isThemeLoaded($themeName) {
-        return isset(self::$loadedThemes[$themeName]) === TRUE;
+        return isset(self::$loadedThemes[$themeName]) === true;
     }
     /**
      * Returns an array that contains the meta data of all available themes. 
      * This method will return an associative array. The key is the theme 
      * name and the value is an object of type Theme that contains theme info.
-     * @return array An associative array that contains all themes information.
+     * @return array An associative array that contains all themes information. The name 
+     * of the theme will be the key and the value is an object of type 'Theme'.
      * @since 1.1 
      */
     public static function getAvailableThemes(){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Building an array of available themes...');
         $themes = array();
-        $themesDirs = array_diff(scandir(ROOT_DIR.'/'. self::THEMES_DIR), array('..', '.'));
+        $DS = DIRECTORY_SEPARATOR;
+        $themesDirs = array_diff(scandir(ROOT_DIR.$DS.self::THEMES_DIR), array('..', '.'));
         foreach ($themesDirs as $dir){
-            $pathToScan = ROOT_DIR.'/'.self::THEMES_DIR.'/'.$dir;
-            Logger::log('Path to scan: \''.$pathToScan.'\'.', 'debug');
+            $pathToScan = ROOT_DIR.$DS.self::THEMES_DIR.$DS.$dir;
             $filesInDir = array_diff(scandir($pathToScan), array('..', '.'));
             foreach ($filesInDir as $fileName){
                 $fileExt = substr($fileName, -4);
                 if($fileExt == '.php'){
                     $cName = str_replace('.php', '', $fileName);
-                    if(class_exists($cName)){
-                        $instance = new $cName();
+                    $ns = require_once $pathToScan.$DS.$fileName;
+                    $aNs = $ns != 1 ? $ns.'\\' : '';
+                    $aCName = $aNs.$cName;
+                    if(class_exists($aCName)){
+                        $instance = new $aCName();
                         if($instance instanceof Theme){
                             $themes[$instance->getName()] = $instance;
                         }
@@ -414,7 +348,6 @@ abstract class Theme implements JsonI{
                 }
             }
         }
-        Logger::logFuncReturn(__METHOD__);
         return $themes;
     }
     /**
@@ -424,18 +357,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setName($name) {
-        Logger::logFuncCall(__METHOD__);
         $trimmed = trim($name);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$trimmed.'\'.', 'debug');
         if(strlen($trimmed) != 0){
-            $this->themeMeta['name'] = $trimmed.'';
-            Logger::log('Theme name updated.');
+            $this->themeMeta['name'] = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Returns the name of the theme.
@@ -453,18 +378,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setUrl($url) {
-        Logger::logFuncCall(__METHOD__);
         $trimmed = trim($url);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$trimmed.'\'.', 'debug');
         if(strlen($trimmed) > 0){
-            Logger::log('Theme URL updated.');
-            $this->themeMeta['url'] = $trimmed.'';
+            $this->themeMeta['url'] = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Sets the name of theme author.
@@ -472,18 +389,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setAuthor($author) {
-        Logger::logFuncCall(__METHOD__);
         $trimmed = trim($author);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$trimmed.'\'.', 'debug');
         if(strlen($trimmed) > 0){
-            Logger::log('Author name updated.');
-            $this->themeMeta['author'] = $trimmed.'';
+            $this->themeMeta['author'] = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Sets the URL to the theme author. It can be the same as Theme URL.
@@ -491,18 +400,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setAuthorUrl($authorUrl) {
-        Logger::logFuncCall(__METHOD__);
         $trimmed = trim($authorUrl);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$trimmed.'\'.', 'debug');
         if(strlen($trimmed) > 0){
-            Logger::log('Author URL updated.');
-            $this->themeMeta['author-url'] = $trimmed.'';
+            $this->themeMeta['author-url'] = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Sets the version number of the theme.
@@ -511,17 +412,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setVersion($vNum) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$vNum.'\'.', 'debug');
-        if(strlen($vNum) != 0){
-            $this->themeMeta['version'] = $vNum.'';
-            Logger::log('Version updated.');
+        $trimmed = trim($vNum);
+        if(strlen($trimmed) != 0){
+            $this->themeMeta['version'] = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Sets the name of theme license.
@@ -529,17 +423,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setLicenseName($text) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$text.'\'.', 'debug');
-        if(strlen($text) != 0){
-            $this->themeMeta['license'] = $text.'';
-            Logger::log('License name updated.');
+        $trimmed = trim($text);
+        if(strlen($trimmed) != 0){
+            $this->themeMeta['license'] = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Sets a URL to the license where people can find more details about it.
@@ -547,17 +434,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setLicenseUrl($url) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$url.'\'.', 'debug');
-        if(strlen($url) > 0){
-            $this->themeMeta['license-url'] = $url.'';
-            Logger::log('License URL updated.');
+        $trimmed = trim($url);
+        if(strlen($trimmed) > 0){
+            $this->themeMeta['license-url'] = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Sets the description of the theme.
@@ -566,17 +446,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setDescription($desc) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$desc.'\'.', 'debug');
-        if(strlen($desc) > 0){
-            $this->themeMeta['description'] = $desc.'';
-            Logger::log('Theme description updated.');
+        $trimmed = trim($desc);
+        if(strlen($trimmed) > 0){
+            $this->themeMeta['description'] = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Sets the name of the directory where all theme files are kept.
@@ -585,17 +458,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setDirectoryName($name) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$name.'\'.', 'debug');
-        if(strlen($name) != 0){
-            $this->themeMeta['directory'] = $name.'';
-            Logger::log('Theme directory updated.');
+        $trimmed = trim($name);
+        if(strlen($trimmed) != 0){
+            $this->themeMeta['directory'] = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Returns the name of the directory where all theme files are kept.
@@ -613,17 +479,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setImagesDirName($name) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$name.'\'.', 'debug');
-        if(strlen($name) != 0){
-            $this->imagesDir = $name;
-            Logger::log('Images directory updated.');
+        $trimmed = trim($name);
+        if(strlen($trimmed) != 0){
+            $this->imagesDir = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Returns the name of the directory where theme images are kept.
@@ -642,17 +501,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setJsDirName($name) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$name.'\'.', 'debug');
-        if(strlen($name) != 0){
-            $this->jsDir = $name;
-            Logger::log('JavaScript directory updated.');
+        $trimmed = trim($name);
+        if(strlen($trimmed) != 0){
+            $this->jsDir = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Returns the name of the directory where JavaScript files are kept.
@@ -671,17 +523,10 @@ abstract class Theme implements JsonI{
      * @since 1.0
      */
     public function setCssDirName($name) {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if given value is not empty string...');
-        Logger::log('Given Value = \''.$name.'\'.', 'debug');
-        if(strlen($name) != 0){
-            $this->cssDir = $name;
-            Logger::log('CSS directory updated.');
+        $trimmed = trim($name);
+        if(strlen($trimmed) != 0){
+            $this->cssDir = $trimmed;
         }
-        else{
-            Logger::log('Given string is empty.', 'warning');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Returns the name of the directory where CSS files are kept.
@@ -813,9 +658,9 @@ abstract class Theme implements JsonI{
      * main navigation icon, web site name and web site logo. More complex 
      * layout can include other things such as a search bar, notifications 
      * area and user profile picture. If the page does not have a header 
-     * section, the developer can make this method return NULL.
-     * @return HTMLNode|NULL An object of type HTMLNode. If the theme has no header 
-     * section, the method might return NULL.
+     * section, the developer can make this method return null.
+     * @return HTMLNode|null An object of type HTMLNode. If the theme has no header 
+     * section, the method might return null.
      * @since 1.2.2
      */
     public abstract function getHeadrNode();
@@ -827,7 +672,7 @@ abstract class Theme implements JsonI{
      * it might contain copyright notice and contact information. More complex 
      * layouts can have more items in the footer.
      * @return HTMLNode An object of type HTMLNode. If the theme has no footer 
-     * section, the method might return NULL.
+     * section, the method might return null.
      * @since 1.2.2
      */
     public abstract function getFooterNode();
@@ -838,7 +683,7 @@ abstract class Theme implements JsonI{
      * contains advertisements. Sometimes, it can contain aside menu for 
      * the web site or widgets.
      * @return HTMLNode An object of type HTMLNode. If the theme has no aside 
-     * section, the method might return NULL.
+     * section, the method might return null.
      * @since 1.2.2
      */
     public abstract function getAsideNode();

@@ -23,27 +23,14 @@
  * THE SOFTWARE.
  */
 namespace webfiori\functions;
-use webfiori\entity\Logger;
 use webfiori\entity\FileHandler;
 use webfiori\entity\DBConnectionInfo;
 use webfiori\conf\Config;
 use Exception;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 /**
  * A class that can be used to modify basic configuration settings of 
@@ -52,7 +39,7 @@ if(!defined('ROOT_DIR')){
  * save them to the file 'Config.php'.
  *
  * @author Ibrahim
- * @version 1.4.3
+ * @version 1.4.4
  */
 class SystemFunctions extends Functions{
     /**
@@ -79,7 +66,7 @@ class SystemFunctions extends Functions{
      * An array that contains initial system configuration variables.
      * This array has the following indices and values:
      * <ul>
-     * <li>is-config = 'FALSE'</li>
+     * <li>is-config = 'false'</li>
      * <li>release-date = '01-01-2019 (DD-MM-YYYY)'</li>
      * <li>version = '1.0.1'</li>
      * <li>version-type = 'Stable'</li>
@@ -89,11 +76,11 @@ class SystemFunctions extends Functions{
      * @since 1.0
      */
     const INITIAL_CONFIG_VARS = array(
-        'is-config'=>'FALSE',
-        'release-date'=>'2019-02-01',
-        'version'=>'1.0.0',
+        'is-config'=>'false',
+        'release-date'=>'2019-07-16',
+        'version'=>'1.0.1',
         'version-type'=>'Stable',
-        'config-file-version'=>'1.3.3',
+        'config-file-version'=>'1.3.4',
         'databases'=>array()
     );
     /**
@@ -108,14 +95,9 @@ class SystemFunctions extends Functions{
      * @since 1.0
      */
     public static function &get(){
-        Logger::logFuncCall(__METHOD__);
-        if(self::$singleton === NULL){
-            Logger::log('Initializing \'SystemFunctions\' instance...');
+        if(self::$singleton === null){
             self::$singleton = new SystemFunctions();
-            Logger::log('Initializing of \'SystemFunctions\' completed.');
         }
-        Logger::log('Returning \'SystemFunctions\' instance.');
-        Logger::logFuncReturn(__METHOD__);
         return self::$singleton;
     }
     /**
@@ -123,17 +105,10 @@ class SystemFunctions extends Functions{
      * @since 1.0
      */
     public function createConfigFile() {
-        Logger::logFuncCall(__METHOD__);
         if(!class_exists('webfiori\conf\Config')){
-            Logger::log('Creating Configuration File \'Config.php\'');
             $cfg = $this->getConfigVars();
             $this->writeConfig($cfg);
-            Logger::log('Created.');
         }
-        else{
-            Logger::log('Configuration File \'Config.php\' Already Exist.');
-        }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Creates new instance of the class.
@@ -144,17 +119,31 @@ class SystemFunctions extends Functions{
         parent::__construct();
     }
     /**
+     * Initialize new session or use an existing one.
+     * Note that the name of the session must be 'wf-session' in 
+     * order to initialize it.
+     * @param array $options An array of session options. See 
+     * Functions::useSettion() for more information about available options.
+     * @return boolean If session is created or resumed, the method will 
+     * return true. False otherwise.
+     * @since 1.4.4
+     */
+    public function useSession($options=[]) {
+        if(gettype($options) == 'array' && isset($options['name'])){
+            if($options['name'] == 'wf-session'){
+                return parent::useSession($options);
+            }
+        }
+        return false;
+    }
+    /**
      * Adds new database connections information or update existing connections.
      * The information of the connections will be stored in the file 'Config.php'.
      * @param array $dbConnectionsInfo An array that contains objects of type DBConnectionInfo. 
      * @since 1.4.3
      */
     public function addOrUpdateDBConnections($dbConnectionsInfo){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if given parameter is an array...');
         if(gettype($dbConnectionsInfo) == 'array'){
-            Logger::log('An array is given.');
-            Logger::log('Adding connections...');
             $confVars = $this->getConfigVars();
             foreach ($dbConnectionsInfo as $con){
                 if($con instanceof DBConnectionInfo){
@@ -163,61 +152,50 @@ class SystemFunctions extends Functions{
                        strlen($con->getUsername()) > 0 && 
                        strlen($con->getPassword()) > 0 && 
                        strlen($con->getDBName()) > 0){  
-                        $confVars['databases'][$con->getDBName()] = $con;
+                        $confVars['databases'][$con->getConnectionName()] = $con;
                     }
                 }
             }
             $this->writeConfig($confVars);
-            Logger::log('Finished.');
         }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Removes a set of database connections.
      * This method will search for a connection which has the given database 
      * name. Once it found, it will remove the connection and save the updated 
      * information to the file 'Config.php'.
-     * @param array $dbNames An array that contains the names of databases.
+     * @param array $connectionsNames An array that contains the names of database connections.
      * @since 1.4.3
      */
-    public function removeDBConnections($dbNames){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if given parameter is an array...');
-        if(gettype($dbNames) == 'array'){
-            Logger::log('An array is given.');
-            Logger::log('Removing connections...');
+    public function removeDBConnections($connectionsNames){
+        if(gettype($connectionsNames) == 'array'){
             $confVars = $this->getConfigVars();
-            foreach ($dbNames as $dbName){  
+            foreach ($connectionsNames as $dbName){  
                 unset($confVars['databases'][$dbName]);
             }
             $this->writeConfig($confVars);
-            Logger::log('Finished.');
         }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Updates system configuration status.
      * This method is useful when the developer would like to create some 
      * kind of a setup wizard for his web application. This method is used 
      * to update the value which is returned by the method  Config::isConfig().
-     * @param boolean $isConfig TRUE to set system as configured. 
-     * FALSE to make it not configured.
+     * @param boolean $isConfig true to set system as configured. 
+     * false to make it not configured.
      * @since 1.3
      */
     public function configured($isConfig=true){
-        Logger::logFuncCall(__METHOD__);
         $confVars = $this->getConfigVars();
-        $confVars['is-config'] = $isConfig === TRUE ? 'TRUE' : 'FALSE';
-        Logger::log('Is Configured = '.$confVars['is-config'], 'debug');
+        $confVars['is-config'] = $isConfig === true ? 'true' : 'false';
         $this->writeConfig($confVars);
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Returns an associative array that contains system configuration 
      * info.
      * The array that will be returned will have the following information: 
      * <ul>
-     * <li>is-config: A string. 'TRUE' or 'FALSE'</li>
+     * <li>is-config: A string. 'true' or 'false'</li>
      * <li>release-date: The release date of WebFiori Framework.</li>
      * <li>version: Version number of WebFiori Framework.</li>
      * <li>version-type: Type of WebFiori Framework version.</li>
@@ -233,7 +211,7 @@ class SystemFunctions extends Functions{
     public function getConfigVars(){
         $cfgArr = SystemFunctions::INITIAL_CONFIG_VARS;
         if(class_exists('webfiori\conf\Config')){
-            $cfgArr['is-config'] = Config::isConfig() === TRUE ? 'TRUE' : 'FALSE';
+            $cfgArr['is-config'] = Config::isConfig() === true ? 'true' : 'false';
             $cfgArr['databases'] = Config::getDBConnections();
         }
         return $cfgArr;
@@ -245,11 +223,9 @@ class SystemFunctions extends Functions{
      * @since 1.0
      */
     private function writeConfig($configArr){
-        Logger::logFuncCall(__METHOD__);
         $configFileLoc = ROOT_DIR.'/conf/Config.php';
-        Logger::log('Saving configuration variables to the file \''.$configFileLoc.'\'.');
         $fh = new FileHandler($configFileLoc);
-        $fh->write('<?php', TRUE, TRUE);
+        $fh->write('<?php', true, true);
         $fh->write('/*
  * The MIT License
  *
@@ -275,33 +251,21 @@ class SystemFunctions extends Functions{
  */
  
 ');
-        $fh->write('namespace webfiori\conf;', FALSE, TRUE);
+        $fh->write('namespace webfiori\conf;', false, true);
         $fh->write('if(!defined(\'ROOT_DIR\')){
-    header("HTTP/1.1 403 Forbidden");
-    die(\'\'
-        . \'<!DOCTYPE html>\'
-        . \'<html>\'
-        . \'<head>\'
-        . \'<title>Forbidden</title>\'
-        . \'</head>\'
-        . \'<body>\'
-        . \'<h1>403 - Forbidden</h1>\'
-        . \'<hr>\'
-        . \'<p>\'
-        . \'Direct access not allowed.\'
-        . \'</p>\'
-        . \'</body>\'
-        . \'</html>\');
-}', TRUE, TRUE);
-        $fh->write('use webfiori\entity\DBConnectionInfo;', TRUE, TRUE);
+    header("HTTP/1.1 404 Not Found");
+    die(\'<!DOCTYPE html><html><head><title>Not Found</title></head><body>\'
+    . \'<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>\');
+}', true, true);
+        $fh->write('use webfiori\entity\DBConnectionInfo;', true, true);
         $fh->write('/**
  * Global configuration class. 
  * Used by the server part and the presentation part. It contains framework version 
  * information and database connection settings.
  * @author Ibrahim
- * @version 1.3.3
- */', TRUE, TRUE);
-        $fh->write('class Config{', TRUE, TRUE);
+ * @version 1.3.4
+ */', true, true);
+        $fh->write('class Config{', true, true);
         $fh->addTab();
         //stat here
         $fh->write('/**
@@ -333,7 +297,7 @@ class SystemFunctions extends Functions{
      * @var type 
      */
     private $dbConnections;
-    ',TRUE,TRUE);
+    ',true,true);
         $fh->write('/**
      * Initialize configuration.
      */
@@ -343,12 +307,12 @@ class SystemFunctions extends Functions{
         $this->version = \''.$configArr['version'].'\';
         $this->versionType = \''.$configArr['version-type'].'\';
         $this->configVision = \''.$configArr['config-file-version'].'\';
-        $this->dbConnections = array(', TRUE, TRUE);
+        $this->dbConnections = array(', true, true);
         $count = count($configArr['databases']);
         $i = 0;
-        foreach ($configArr['databases'] as $dbName => $dbConn){
+        foreach ($configArr['databases'] as $dbConn){
             if($i + 1 == $count){
-                $fh->write('        \''.$dbName.'\'=> new DBConnectionInfo(\''
+                $fh->write('        \''.$dbConn->getConnectionName().'\'=> new DBConnectionInfo(\''
                     .$dbConn->getUsername()
                     .'\',\''
                     .$dbConn->getPassword()
@@ -357,10 +321,10 @@ class SystemFunctions extends Functions{
                     .'\',\''
                     .$dbConn->getHost().'\','
                     . ''
-                    .$dbConn->getPort().')', TRUE, TRUE);
+                    .$dbConn->getPort().')', true, true);
             }
             else{
-                $fh->write('        \''.$dbName.'\'=> new DBConnectionInfo(\''
+                $fh->write('        \''.$dbConn->getConnectionName().'\'=> new DBConnectionInfo(\''
                     .$dbConn->getUsername()
                     .'\',\''
                     .$dbConn->getPassword()
@@ -369,12 +333,15 @@ class SystemFunctions extends Functions{
                     .'\',\''
                     .$dbConn->getHost().'\','
                     . ''
-                    .$dbConn->getPort().'),', TRUE, TRUE);
+                    .$dbConn->getPort().'),', true, true);
             }
             $i++;
         }
-        $fh->write('    );', TRUE, TRUE);
-        $fh->write('}', TRUE, TRUE);
+        $fh->write('    );', true, true);
+        foreach ($configArr['databases'] as $dbConn){
+            $fh->write('$this->dbConnections[\''.$dbConn->getConnectionName().'\']->setConnectionName(\''.$dbConn->getConnectionName().'\');', true, true);
+        }
+        $fh->write('}', true, true);
         $fh->write('/**
      * An instance of Config.
      * @var Config 
@@ -387,11 +354,22 @@ class SystemFunctions extends Functions{
      * @since 1.0
      */
     public static function &get(){
-        if(self::$cfg != NULL){
+        if(self::$cfg != null){
             return self::$cfg;
         }
         self::$cfg = new Config();
         return self::$cfg;
+    }
+    /**
+     * Adds new database connection or updates an existing one.
+     * @param DBConnectionInfo $connectionInfo an object of type \'DBConnectionInfo\' 
+     * that will contain connection information.
+     * @since 1.3.4
+     */
+    public static function addDbConnection($connectionInfo){
+        if($connectionInfo instanceof DBConnectionInfo){
+            self::get()->dbConnections[$connectionInfo->getConnectionName()] = $connectionInfo;
+        }
     }
     private function _getConfigVersion(){
         return $this->configVision;
@@ -413,7 +391,7 @@ class SystemFunctions extends Functions{
      * Checks if the system is configured or not.
      * This method is helpful in case the developer would like to create some 
      * kind of a setup wizard for the web application.
-     * @return boolean TRUE if the system is configured.
+     * @return boolean true if the system is configured.
      * @since 1.0
      */
     public static function isConfig(){
@@ -460,7 +438,7 @@ class SystemFunctions extends Functions{
     }
     /**
      * Returns an associative array that contain the information of database connections.
-     * The keys of the array will be the names of databases and the value of 
+     * The keys of the array will be the name of database connection and the value of 
      * each key will be an object of type DBConnectionInfo.
      * @return array An associative array.
      * @since 1.3.3
@@ -469,56 +447,47 @@ class SystemFunctions extends Functions{
         return self::get()->dbConnections;
     }
     /**
-     * Returns database connection information given database name.
-     * @param string $dbName The name of the database.
-     * @return DBConnectionInfo|NULL The method will return an object of type 
-     * DBConnectionInfo if a connection info was found for the given database. 
-     * Other than that, the method will return NULL.
+     * Returns database connection information given connection name.
+     * @param string $conName The name of the connection.
+     * @return DBConnectionInfo|null The method will return an object of type 
+     * DBConnectionInfo if a connection info was found for the given connection name. 
+     * Other than that, the method will return null.
      * @since 1.3.3
      */
-    public static function getDBConnection($dbName){
+    public static function getDBConnection($conName){
         $conns = self::getDBConnections();
-        if(isset($conns[$dbName])){
-            return $conns[$dbName];
+        $trimmed = trim($conName);
+        if(isset($conns[$trimmed])){
+            return $conns[$trimmed];
         }
-        return NULL;
-    } ', TRUE, TRUE);
+        return null;
+    } ', true, true);
         $fh->reduceTab();
-        $fh->write('}', TRUE, TRUE);
+        $fh->write('}', true, true);
         $fh->close();
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Checks if the application setup is completed or not.
      * Note that the method will throw an exception in case one of the 3 main 
      * configuration files is missing.
      * @return boolean If the system is configured, the method will return 
-     * TRUE. If it is not configured, It will return FALSE.
+     * true. If it is not configured, It will return false.
      * @throws Exception If one of configuration files is missing. The format 
      * of exception message will be 'XX.php is missing.' where XX is the name 
      * of the configuration file.
      * @since 1.0
      */
     public function isSetupFinished(){
-        Logger::logFuncCall(__METHOD__);
         if(class_exists('webfiori\conf\Config')){
             if(class_exists('webfiori\conf\MailConfig')){
                 if(class_exists('webfiori\conf\SiteConfig')){
                     $retVal = Config::isConfig();
-                    Logger::logReturnValue($retVal);
-                    Logger::logFuncReturn(__METHOD__);
                     return $retVal;
                 }
-                Logger::log('The file \'SiteConfig.php\' is missing. An exception is thrown.', 'error');
-                Logger::requestCompleted();
                 throw new Exception('SiteConfig.php is missing.');
             }
-            Logger::log('The file \'MailConfig.php\' is missing. An exception is thrown.', 'error');
-            Logger::requestCompleted();
             throw new Exception('MailConfig.php is missing.');
         }
-        Logger::log('The file \'Config.php\' is missing. An exception is thrown.', 'error');
-        Logger::requestCompleted();
         throw new Exception('Config.php is missing.');
     }
 }

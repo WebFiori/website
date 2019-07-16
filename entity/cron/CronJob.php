@@ -24,31 +24,17 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity\cron;
-use webfiori\entity\Logger;
 use Exception;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 /**
  * A class thar represents a cron job.
  *
  * @author Ibrahim
- * @author Ibrahim <ibinshikh@hotmail.com>
- * @version 1.0.2
+ * @version 1.0.3
  */
 class CronJob {
     /**
@@ -127,8 +113,6 @@ class CronJob {
      * @since 1.0
      */
     public function __construct($when='* * * * *') {
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Initializing cron job...');
         $this->jobName = 'CRON-JOB';
         $this->jobDetails = array(
             'minutes'=>array(),
@@ -143,23 +127,14 @@ class CronJob {
                 'params'=>array()
             )
         );
-        Logger::log('Checking if a cron expression is given...');
-        if($when !== NULL){
-            Logger::log('Checking if cron expression is valid...');
-            if($this->cron($when) === FALSE){
-                Logger::log('The given cron expression is invalid. An exception is thrown.', 'error');
-                Logger::requestCompleted();
+        if($when !== null){
+            if($this->cron($when) === false){
                 throw new Exception('Invalid cron expression.');
-            }
-            else{
-                Logger::log('Valid expression.');
             }
         }
         else{
-            Logger::log('No expression is given. Using default.');
             $this->cron();
         }
-        Logger::logFuncReturn(__METHOD__);
     }
     /**
      * Sets an optional name for the job.
@@ -204,8 +179,8 @@ class CronJob {
      * 12:00 AM and 23 means at 11:00 PM. Default is 0.
      * @param int $minute A number between 0 and 59 inclusive. Represents the 
      * minute part of an hour. Default is 0.
-     * @return boolean If job time is set, the method will return TRUE. If 
-     * not set, the method will return FALSE. It will not set only if the 
+     * @return boolean If job time is set, the method will return true. If 
+     * not set, the method will return false. It will not set only if the 
      * given time is not correct.
      * @since 1.0
      */
@@ -215,7 +190,7 @@ class CronJob {
                 return $this->cron($minute.' '.$hour.' * * *');
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Schedules a cron job to run every hour.
@@ -232,7 +207,7 @@ class CronJob {
      * between 0 and 23 inclusive. mm can have any value between 0 and 59 inclusive. 
      * default is '00:00'.
      * @return boolean If the time for the cron job is set, the method will 
-     * return TRUE. If not, it will return FALSE.
+     * return true. If not, it will return false.
      * @since 1.0
      */
     public function weeklyOn($dayNameOrNum=0,$time='00:00'){
@@ -245,7 +220,7 @@ class CronJob {
                 return $this->_weeklyOn($dayNameOrNum, $time);
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Schedules a job to run at specific day and time in a specific month.
@@ -257,7 +232,7 @@ class CronJob {
      * between 0 and 23 inclusive. mm can have any value btween 0 and 59 inclusive. 
      * default is '00:00'.
      * @return boolean If the time for the cron job is set, the method will 
-     * return TRUE. If not, it will return FALSE.
+     * return true. If not, it will return false.
      * @since 1.0
      */
     public function onMonth($monthNameOrNum='jan',$dayNum=1,$time='00:00'){
@@ -280,7 +255,7 @@ class CronJob {
                 }
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Schedules a cron job to run every month on specific day and time.
@@ -288,7 +263,7 @@ class CronJob {
      * 1 and 31 inclusive.
      * @param string $time A day time string in the form 'hh:mm' in 24 hours mode.
      * @return boolean If the time for the cron job is set, the method will 
-     * return TRUE. If not, it will return FALSE.
+     * return true. If not, it will return false.
      * @since 1.0.1
      */
     public function everyMonthOn($dayNum=1,$time='00:00'){
@@ -302,7 +277,7 @@ class CronJob {
                 }
             }
         }
-        return FALSE;
+        return false;
     }
     private function _weeklyOn($day,$time){
         $timeSplit = explode(':', $time);
@@ -313,7 +288,7 @@ class CronJob {
                 return $this->cron($minute.' '.$hour.' * * '.$day);
             }
         }
-        return FALSE;
+        return false;
     }
     /**
      * Schedules a job using specific cron expression.
@@ -325,30 +300,25 @@ class CronJob {
      * is '* * * * *' which means run the job every minute.
      * @return boolean If the given cron expression is valid, the method will 
      * set the time of cron job as specified by the expression and return 
-     * TRUE. If the expression is invalid, the method will return FALSE.
+     * true. If the expression is invalid, the method will return false.
      * @since 1.0
      */
     public function cron($when='* * * * *'){
-        Logger::logFuncCall(__METHOD__);
-        $retVal = FALSE;
+        $retVal = false;
         $trimmed = trim($when);
-        Logger::log('Splitting cron exepression...');
         $split = explode(' ', $trimmed);
-        Logger::log('Chcking excepression fields count...');
         $count = count($split);
-        Logger::log('Fields count = \''.$count.'\'.', 'debug');
         if(count($split) == 5){
             $minutesValidity = $this->_checkMinutes($split[0]);
             $hoursValidity = $this->_checkHours($split[1]);
             $daysOfMonthValidity = $this->_dayOfMonth($split[2]);
             $monthValidity = $this->_checkMonth($split[3]);
             $daysOfWeekValidity = $this->_checkDayOfWeek($split[4]);
-            if($minutesValidity === FALSE || 
-               $hoursValidity === FALSE || 
-               $daysOfMonthValidity === FALSE ||
-               $monthValidity === FALSE || 
-               $daysOfWeekValidity === FALSE){
-                Logger::log('Once of thefields has invalid expression.', 'warning');
+            if($minutesValidity === false || 
+               $hoursValidity === false || 
+               $daysOfMonthValidity === false ||
+               $monthValidity === false || 
+               $daysOfWeekValidity === false){
             }
             else{
                 $this->jobDetails = array(
@@ -358,16 +328,10 @@ class CronJob {
                     'months'=>$monthValidity,
                     'days-of-week'=>$daysOfWeekValidity
                 );
-                $retVal = TRUE;
+                $retVal = true;
                 $this->cronExpr = $when;
-                Logger::log('Cron job time is set.');
             }
         }
-        else{
-            Logger::log('Number of filds is not 5. Fields count must be 5.', 'warning');
-        }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
@@ -377,55 +341,40 @@ class CronJob {
      * @since 1.0
      */
     private function _getSubExprType($expr){
-        Logger::logFuncCall(__METHOD__);
         $retVal = self::ANY_VAL;
-        Logger::log('Checking if given expression is any value...');
         if($expr != '*'){
-            Logger::log('Checking if given expression is step value...');
             $split = explode('/', $expr);
             $count = count($split);
             if($count == 2){
-                Logger::log('It is a step value.');
                 if(strlen($split[0]) != 0 && strlen($split[1]) != 0){
                     $retVal = self::STEP_VAL;
                 }
                 else{
-                    Logger::log('Empty string in step.', 'warning');
                     $retVal = self::INV_VAL;
                 }
             }
             else{
-                Logger::log('Checking if given expression is range...');
                 $split = explode('-', $expr);
                 $count = count($split);
                 if($count == 2){
-                    Logger::log('It is a range.');
                     if(strlen($split[0]) != 0 && strlen($split[1]) != 0){
                         $retVal = self::RANGE_VAL;
                     }
                     else{
-                        Logger::log('Empty string in range.', 'warning');
                         $retVal = self::INV_VAL;
                     }
                 }
                 else{
                     //it can be invalid value
-                    Logger::log('It is specific value.');
                     if(strlen($expr) != 0){
                         $retVal = self::SPECIFIC_VAL;
                     }
                     else{
-                        Logger::log('Empty string is given as parameter.', 'warning');
                         $retVal = self::INV_VAL;
                     }
                 }
             }
         }
-        else{
-            Logger::log('It is any value.');
-        }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
@@ -435,98 +384,71 @@ class CronJob {
      * @since 1.0
      */
     private function _checkMinutes($minutesField){
-        Logger::logFuncCall(__METHOD__);
-        $isValidExpr = TRUE;
+        $isValidExpr = true;
         $split = explode(',', $minutesField);
         $minuteAttrs = array(
-            'every-minute'=>FALSE,
+            'every-minute'=>false,
             'every-x-minutes'=>array(),
             'at-every-x-minute'=>array(),
             'at-range'=>array()
         );
-        Logger::log('Validating sub expressions...');
         foreach ($split as $subExpr){
-            Logger::log('Sub Expression = \''.$subExpr.'\'.', 'debug');
-            Logger::log('Getting excepression type...');
             $exprType = $this->_getSubExprType($subExpr);
-            Logger::log('Expression type = \''.$exprType.'\'.', 'debug');
             if($exprType == self::ANY_VAL){
-                Logger::log('The expression means that the job will be executed every minute.');
-                $minuteAttrs['every-minute'] = TRUE;
+                $minuteAttrs['every-minute'] = true;
             }
             else if($exprType == self::INV_VAL){
-                Logger::log('Invalid value in expression.', 'warning');
-                $isValidExpr = FALSE;
+                $isValidExpr = false;
                 break;
             }
             else if($exprType == self::RANGE_VAL){
-                Logger::log('The expression means that thejob will be executed between specific range of menutes.');
-                Logger::log('Checking range validity...');
                 $range = explode('-', $subExpr);
                 $start = intval($range[0]);
                 $end = intval($range[1]);
-                Logger::log('$start = \''.$start.'\'.', 'debug');
-                Logger::log('$end = \''.$end.'\'.', 'debug');
                 if($start < $end){
                     if($start >= 0 && $start <= 59){
                         if($end >= 0 && $end <= 59){
-                            Logger::log('Valid range. New minute attribute added.');
                             $minuteAttrs['at-range'][] = array($start,$end);
                         }
                         else{
-                            Logger::log('Invalid range.', 'warning');
-                            $isValidExpr = FALSE;
+                            $isValidExpr = false;
                             break;
                         }
                     }
                     else{
-                        Logger::log('Invalid range.', 'warning');
-                        $isValidExpr = FALSE;
+                        $isValidExpr = false;
                         break;
                     }
                 }
                 else{
-                    Logger::log('Invalid range.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
             else if($exprType == self::STEP_VAL){
-                Logger::log('The expression means that the job will be executed every x minute(s).');
-                Logger::log('Checking step validity...');
                 $stepVal = intval(explode('/', $subExpr)[1]);
-                Logger::log('$stepVal = \''.$stepVal.'\'.', 'debug');
                 if($stepVal >= 0 && $stepVal <= 59){
-                    Logger::log('Valid step value. New minute attribute added.');
                     $minuteAttrs['every-x-minutes'][] = $stepVal;
                 }
                 else{
-                    Logger::log('Invalid value.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
             else if($exprType == self::SPECIFIC_VAL){
-                Logger::log('The expression means that the job will be executed at specific minute.');
                 $value = intval($subExpr);
-                Logger::log('Checking minute validity...');
-                Logger::log('$value = \''.$value.'\'.', 'debug');
                 if($value >= 0 && $value <= 59){
                     $minuteAttrs['at-every-x-minute'][] = $value;
-                    Logger::log('Valid value. New minute attribute added.');
                 }
                 else{
-                    Logger::log('Invalid value.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
         }
-        if($isValidExpr !== TRUE){
-            Logger::log('Invalid minutes expression.', 'warning');
-            $minuteAttrs = FALSE;
+        if($isValidExpr !== true){
+            $minuteAttrs = false;
         }
-        Logger::logFuncReturn(__METHOD__);
         return $minuteAttrs;
     }
     /**
@@ -536,98 +458,71 @@ class CronJob {
      * @since 1.0
      */
     private function _checkHours($hoursField){
-        Logger::logFuncCall(__METHOD__);
-        $isValidExpr = TRUE;
+        $isValidExpr = true;
         $split = explode(',', $hoursField);
         $hoursAttrs = array(
-            'every-hour'=>FALSE,
+            'every-hour'=>false,
             'every-x-hours'=>array(),
             'at-every-x-hour'=>array(),
             'at-range'=>array()
         );
-        Logger::log('Validating sub expressions...');
         foreach ($split as $subExpr){
-            Logger::log('Sub Expression = \''.$subExpr.'\'.', 'debug');
-            Logger::log('Getting excepression type...');
             $exprType = $this->_getSubExprType($subExpr);
-            Logger::log('Expression type = \''.$exprType.'\'.', 'debug');
             if($exprType == self::ANY_VAL){
-                Logger::log('The expression means that the job will be executed every hour.');
-                $hoursAttrs['every-hour'] = TRUE;
+                $hoursAttrs['every-hour'] = true;
             }
             else if($exprType == self::INV_VAL){
-                Logger::log('Invalid value in expression.', 'warning');
-                $isValidExpr = FALSE;
+                $isValidExpr = false;
                 break;
             }
             else if($exprType == self::RANGE_VAL){
-                Logger::log('The expression means that the job will be executed between specific range of hours.');
-                Logger::log('Checking range validity...');
                 $range = explode('-', $subExpr);
                 $start = intval($range[0]);
                 $end = intval($range[1]);
-                Logger::log('$start = \''.$start.'\'.', 'debug');
-                Logger::log('$end = \''.$end.'\'.', 'debug');
                 if($start < $end){
                     if($start >= 0 && $start < 24){
                         if($end >= 0 && $end < 24){
-                            Logger::log('Valid range. New hours attribute added.');
                             $hoursAttrs['at-range'][] = array($start,$end);
                         }
                         else{
-                            Logger::log('Invalid range.', 'warning');
-                            $isValidExpr = FALSE;
+                            $isValidExpr = false;
                             break;
                         }
                     }
                     else{
-                        Logger::log('Invalid range.', 'warning');
-                        $isValidExpr = FALSE;
+                        $isValidExpr = false;
                         break;
                     }
                 }
                 else{
-                    Logger::log('Invalid range.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
             else if($exprType == self::STEP_VAL){
-                Logger::log('The expression means that the job will be executed every x hours(s).');
-                Logger::log('Checking step validity...');
                 $stepVal = intval(explode('/', $subExpr)[1]);
-                Logger::log('$stepVal = \''.$stepVal.'\'.', 'debug');
                 if($stepVal >= 0 && $stepVal < 24){
-                    Logger::log('Valid step value. New hours attribute added.');
                     $hoursAttrs['every-x-hours'][] = $stepVal;
                 }
                 else{
-                    Logger::log('Invalid value.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
             else if($exprType == self::SPECIFIC_VAL){
-                Logger::log('The expression means that the job will be executed at specific hour.');
                 $value = intval($subExpr);
-                Logger::log('Checking hour validity...');
-                Logger::log('$value = \''.$value.'\'.', 'debug');
                 if($value >= 0 && $value <= 23){
                     $hoursAttrs['at-every-x-hour'][] = $value;
-                    Logger::log('Valid value. New hours attribute added.');
                 }
                 else{
-                    Logger::log('Invalid value.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
         }
-        if($isValidExpr !== TRUE){
-            Logger::log('Invalid hours expression.', 'warning');
-            $hoursAttrs = FALSE;
+        if($isValidExpr !== true){
+            $hoursAttrs = false;
         }
-        Logger::logFuncReturn(__METHOD__);
         return $hoursAttrs;
     }
     /**
@@ -637,87 +532,64 @@ class CronJob {
      * @since 1.0
      */
     private function _dayOfMonth($dayOfMonthField){
-        Logger::logFuncCall(__METHOD__);
-        $isValidExpr = TRUE;
+        $isValidExpr = true;
         $split = explode(',', $dayOfMonthField);
         $monthDaysAttrs = array(
-            'every-day'=>FALSE,
+            'every-day'=>false,
             'at-every-x-day'=>array(),
             'at-range'=>array()
         );
-        Logger::log('Validating sub expressions...');
         foreach ($split as $subExpr){
-            Logger::log('Sub Expression = \''.$subExpr.'\'.', 'debug');
-            Logger::log('Getting excepression type...');
             $exprType = $this->_getSubExprType($subExpr);
-            Logger::log('Expression type = \''.$exprType.'\'.', 'debug');
             if($exprType == self::ANY_VAL){
-                Logger::log('The expression means that the job will be executed every day.');
-                $monthDaysAttrs['every-day'] = TRUE;
+                $monthDaysAttrs['every-day'] = true;
             }
             else if($exprType == self::INV_VAL){
-                Logger::log('Invalid value in expression.', 'warning');
-                $isValidExpr = FALSE;
+                $isValidExpr = false;
                 break;
             }
             else if($exprType == self::RANGE_VAL){
-                Logger::log('The expression means that the job will be executed between specific range of days.');
-                Logger::log('Checking range validity...');
                 $range = explode('-', $subExpr);
                 $start = intval($range[0]);
                 $end = intval($range[1]);
-                Logger::log('$start = \''.$start.'\'.', 'debug');
-                Logger::log('$end = \''.$end.'\'.', 'debug');
                 if($start < $end){
                     if($start >= 1 && $start < 32){
                         if($end >= 1 && $end < 32){
-                            Logger::log('Valid range. New month days attribute added.');
                             $monthDaysAttrs['at-range'][] = array($start,$end);
                         }
                         else{
-                            Logger::log('Invalid range.', 'warning');
-                            $isValidExpr = FALSE;
+                            $isValidExpr = false;
                             break;
                         }
                     }
                     else{
-                        Logger::log('Invalid range.', 'warning');
-                        $isValidExpr = FALSE;
+                        $isValidExpr = false;
                         break;
                     }
                 }
                 else{
-                    Logger::log('Invalid range.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
             else if($exprType == self::STEP_VAL){
-                Logger::log('Step values in month days expression are not allowed.');
-                $isValidExpr = FALSE;
+                $isValidExpr = false;
                 break;
             }
             else if($exprType == self::SPECIFIC_VAL){
-                Logger::log('The expression means that the job will be executed at specific month day.');
                 $value = intval($subExpr);
-                Logger::log('Checking hour validity...');
-                Logger::log('$value = \''.$value.'\'.', 'debug');
                 if($value >= 1 && $value <= 31){
                     $monthDaysAttrs['at-every-x-day'][] = $value;
-                    Logger::log('Valid value. New month days attribute added.');
                 }
                 else{
-                    Logger::log('Invalid value.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
         }
-        if($isValidExpr !== TRUE){
-            Logger::log('Invalid month days expression.', 'warning');
-            $monthDaysAttrs = FALSE;
+        if($isValidExpr !== true){
+            $monthDaysAttrs = false;
         }
-        Logger::logFuncReturn(__METHOD__);
         return $monthDaysAttrs;
     }
     /**
@@ -727,321 +599,227 @@ class CronJob {
      * @since 1.0
      */
     private function _checkMonth($monthField){
-        Logger::logFuncCall(__METHOD__);
-        $isValidExpr = TRUE;
+        $isValidExpr = true;
         $split = explode(',', $monthField);
         $monthAttrs = array(
-            'every-month'=>FALSE,
+            'every-month'=>false,
             'at-x-month'=>array(),
             'at-range'=>array()
         );
-        Logger::log('Validating sub expressions...');
         foreach ($split as $subExpr){
-            Logger::log('Sub Expression = \''.$subExpr.'\'.', 'debug');
-            Logger::log('Getting excepression type...');
             $exprType = $this->_getSubExprType($subExpr);
-            Logger::log('Expression type = \''.$exprType.'\'.', 'debug');
             if($exprType == self::ANY_VAL){
-                Logger::log('The expression means that the job will be executed every month.');
-                $monthAttrs['every-month'] = TRUE;
+                $monthAttrs['every-month'] = true;
             }
             else if($exprType == self::INV_VAL){
-                Logger::log('Invalid value in expression.', 'warning');
-                $isValidExpr = FALSE;
+                $isValidExpr = false;
                 break;
             }
             else if($exprType == self::RANGE_VAL){
-                Logger::log('The expression means that the job will be executed between specific range of months.');
-                Logger::log('Checking range validity...');
                 $range = explode('-', $subExpr);
                 $start = in_array(strtoupper($range[0]), array_keys(self::MONTHS_NAMES)) ? self::MONTHS_NAMES[strtoupper($range[0])] : intval($range[0]);
                 $end = in_array(strtoupper($range[1]), array_keys(self::MONTHS_NAMES)) ? self::MONTHS_NAMES[strtoupper($range[1])] : intval($range[1]);
-                Logger::log('$start = \''.$start.'\'.', 'debug');
-                Logger::log('$end = \''.$end.'\'.', 'debug');
                 if($start < $end){
                     if($start >= 1 && $start < 13){
                         if($end >= 1 && $end < 13){
-                            Logger::log('Valid range. New month attribute added.');
                             $monthAttrs['at-range'][] = array($start,$end);
                         }
                         else{
-                            Logger::log('Invalid range.', 'warning');
-                            $isValidExpr = FALSE;
+                            $isValidExpr = false;
                             break;
                         }
                     }
                     else{
-                        Logger::log('Invalid range.', 'warning');
-                        $isValidExpr = FALSE;
+                        $isValidExpr = false;
                         break;
                     }
                 }
                 else{
-                    Logger::log('Invalid range.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
             else if($exprType == self::STEP_VAL){
-                Logger::log('Step values not allowed in month fileld.','warning');
-                $isValidExpr = FALSE;
+                $isValidExpr = false;
             }
             else if($exprType == self::SPECIFIC_VAL){
-                Logger::log('The expression means that the job will be executed at specific month.');
                 $subExpr = strtoupper($subExpr);
                 $value = in_array($subExpr, array_keys(self::MONTHS_NAMES)) ? self::MONTHS_NAMES[$subExpr] : intval($subExpr);
-                Logger::log('Checking month validity...');
-                Logger::log('$value = \''.$value.'\'.', 'debug');
                 if($value >= 1 && $value <= 12){
                     $monthAttrs['at-x-month'][] = $value;
-                    Logger::log('Valid value. New month attribute added.');
                 }
                 else{
-                    Logger::log('Invalid value.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
         }
-        if($isValidExpr !== TRUE){
-            Logger::log('Invalid month expression.', 'warning');
-            $monthAttrs = FALSE;
+        if($isValidExpr !== true){
+            $monthAttrs = false;
         }
-        Logger::logFuncReturn(__METHOD__);
         return $monthAttrs;
     }
     /**
      * Checks if current day of month in time is a day at which the job must be 
      * executed.
-     * @return boolean The method will return TRUE if the current day of month in 
+     * @return boolean The method will return true if the current day of month in 
      * time is a day at which the job must be executed.
      * @since 1.0
      */
     public function isDayOfMonth() {
-        Logger::logFuncCall(__METHOD__);
         $monthDaysArr = $this->jobDetails['days-of-month'];
-        Logger::log('Checking if the job will be executed every day of month...');
-        Logger::log('every-day = \''.$monthDaysArr['every-day'].'\'.', 'debug');
-        if($monthDaysArr['every-day'] === TRUE){
-            Logger::log('It will be executed every day of month.');
-            $retVal = TRUE;
+        if($monthDaysArr['every-day'] === true){
+            $retVal = true;
         }
         else{
-            Logger::log('Checking if the current day is in range of days...');
-            $retVal = FALSE;
+            $retVal = false;
             $current = Cron::dayOfMonth();
-            Logger::log('Current day of month = \''.$current.'\'.', 'debug');
             $ranges = $monthDaysArr['at-range'];
             foreach ($ranges as $range){
-                Logger::log('Min Range Value = \''.$range[0].'\', Max Range Value = \''.$range[1].'\'.', 'debug');
                 if($current >= $range[0] && $current <= $range[1]){
-                    Logger::log('It is in given range.');
-                    $retVal = TRUE;
+                    $retVal = true;
                     break;
                 }
             }
-            if($retVal === FALSE){
-                Logger::log('Checking if day is in a set of specific days...');
+            if($retVal === false){
                 $days = $monthDaysArr['at-every-x-day'];
                 $retVal = in_array($current, $days);
-                if($retVal === TRUE){
-                    Logger::log('It is a specific day.');
-                }
             }
         }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
      * Checks if current day of week in time is a day at which the job must be 
      * executed.
-     * @return boolean The method will return TRUE if the current day of week in 
+     * @return boolean The method will return true if the current day of week in 
      * time is a day at which the job must be executed.
      * @since 1.0
      */
     public function isDayOfWeek() {
-        Logger::logFuncCall(__METHOD__);
         $daysArr = $this->jobDetails['days-of-week'];
-        Logger::log('Checking if the job will be executed every day of week...');
-        Logger::log('every-day = \''.$daysArr['every-day'].'\'.', 'debug');
-        if($daysArr['every-day'] === TRUE){
-            Logger::log('It will be executed every day of week.');
-            $retVal = TRUE;
+        if($daysArr['every-day'] === true){
+            $retVal = true;
         }
         else{
-            $retVal = FALSE;
-            Logger::log('Checking if current week day is in range of days...');
+            $retVal = false;
             $current = Cron::dayOfWeek();
-            Logger::log('Current day of week = \''.$current.'\'.', 'debug');
             $ranges = $daysArr['at-range'];
             foreach ($ranges as $range){
-                Logger::log('Min Range Value = \''.$range[0].'\', Max Range Value = \''.$range[1].'\'.', 'debug');
                 if($current >= $range[0] && $current <= $range[1]){
-                    Logger::log('It is in given range.');
-                    $retVal = TRUE;
+                    $retVal = true;
                     break;
                 }
             }
-            if($retVal === FALSE){
-                Logger::log('Checking if current day is in the set of specific days...');
+            if($retVal === false){
                 $days = $daysArr['at-x-day'];
                 $retVal = in_array($current, $days);
-                if($retVal === TRUE){
-                    Logger::log('Current day is in the set of specific days.');
-                }
             }
         }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
      * Checks if current month in time is a month at which the job must be 
      * executed.
-     * @return boolean The method will return TRUE if the current month in 
+     * @return boolean The method will return true if the current month in 
      * time is a month at which the job must be executed.
      * @since 1.0
      */
     public function isMonth(){
-        Logger::logFuncCall(__METHOD__);
         $monthsArr = $this->jobDetails['months'];
-        Logger::log('Checking if the job will be executed every month...');
-        Logger::log('every-month = \''.$monthsArr['every-month'].'\'.', 'debug');
-        if($monthsArr['every-month'] === TRUE){
-            Logger::log('It will be executed every month.');
-            $retVal = TRUE;
+        if($monthsArr['every-month'] === true){
+            $retVal = true;
         }
         else{
-            $retVal = FALSE;
+            $retVal = false;
             $current = intval(date('m'));
-            Logger::log('Checking if current month is in range of months...');
-            Logger::log('Current month = \''.$current.'\'.', 'debug');
             $ranges = $monthsArr['at-range'];
             foreach ($ranges as $range){
-                Logger::log('Min Range Value = \''.$range[0].'\', Max Range Value = \''.$range[1].'\'.', 'debug');
                 if($current >= $range[0] && $current <= $range[1]){
-                    Logger::log('It is in given range.');
-                    $retVal = TRUE;
+                    $retVal = true;
                     break;
                 }
             }
-            if($retVal === FALSE){
+            if($retVal === false){
                 $months = $monthsArr['at-x-month'];
-                Logger::log('Checking if month is in specific months array.');
                 $retVal = in_array($current, $months);
-                if($retVal === TRUE){
-                    Logger::log('It is in specific months array.');
-                }
             }
         }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
      * Checks if current hour in time is an hour at which the job must be 
      * executed.
-     * @return boolean The method will return TRUE if the current hour in 
+     * @return boolean The method will return true if the current hour in 
      * time is an hour at which the job must be executed.
      * @since 1.0
      */
     public function isHour(){
-        Logger::logFuncCall(__METHOD__);
         $hoursArr = $this->jobDetails['hours'];
-        Logger::log('Checking if the job will be executed every hour...');
-        Logger::log('every-hour = \''.$hoursArr['every-hour'].'\'.', 'debug');
-        if($hoursArr['every-hour'] === TRUE){
-            Logger::log('It will be executed every hour.');
-            $retVal = TRUE;
+        if($hoursArr['every-hour'] === true){
+            $retVal = true;
         }
         else{
-            $retVal = FALSE;
+            $retVal = false;
             $current = Cron::hour();
-            Logger::log('Current hour = \''.$current.'\'.', 'debug');
             $ranges = $hoursArr['at-range'];
             foreach ($ranges as $range){
-                Logger::log('Min Range Value = \''.$range[0].'\', Max Range Value = \''.$range[1].'\'.', 'debug');
                 if($current >= $range[0] && $current <= $range[1]){
-                    Logger::log('It is in given range.');
-                    $retVal = TRUE;
+                    $retVal = true;
                     break;
                 }
             }
-            if($retVal === FALSE){
-                Logger::log('Checking if job will be executed at the specific hour...');
+            if($retVal === false){
                 $hours = $hoursArr['at-every-x-hour'];
                 $retVal = in_array($current, $hours);
-                if($retVal === FALSE){
+                if($retVal === false){
                     $hours = $hoursArr['every-x-hours'];
                     foreach ($hours as $hour){
                         if($current % $hour == 0){
-                            Logger::log('Job will be executed at the specific hour.');
-                            $retVal = TRUE;
+                            $retVal = true;
                             break;
                         }
                     }
                 }
-                else{
-                    Logger::log('Job will be executed at the specific hour.');
-                }
             }
         }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
      * Checks if current minute in time is a minute at which the job must be 
      * executed.
-     * @return boolean The method will return TRUE if the current minute in 
+     * @return boolean The method will return true if the current minute in 
      * time is a minute at which the job must be executed.
      * @since 1.0
      */
     public function isMinute(){
-        Logger::logFuncCall(__METHOD__);
         $minuteArr = $this->jobDetails['minutes'];
-        Logger::log('Checking if the job will be executed every minute...');
-        Logger::log('every-minute = \''.$minuteArr['every-minute'].'\'.', 'debug');
-        if($minuteArr['every-minute'] === TRUE){
-            Logger::log('It will be executed every minute.');
-            $retVal = TRUE;
+        if($minuteArr['every-minute'] === true){
+            $retVal = true;
         }
         else{
-            Logger::log('Checking if current minute is in ranges of minutes...');
-            $retVal = FALSE;
+            $retVal = false;
             $current = Cron::minute();
-            Logger::log('Current minute = \''.$current.'\'.', 'debug');
             $ranges = $minuteArr['at-range'];
             foreach ($ranges as $range){
-                Logger::log('Min Range Value = \''.$range[0].'\', Max Range Value = \''.$range[1].'\'.', 'debug');
                 if($current >= $range[0] && $current <= $range[1]){
-                    Logger::log('It is in given range.');
-                    $retVal = TRUE;
+                    $retVal = true;
                     break;
                 }
             }
-            if($retVal === FALSE){
-                Logger::log('Checking if job will be executed at the specific minute...');
+            if($retVal === false){
                 $minutes = $minuteArr['at-every-x-minute'];
                 $retVal = in_array($current, $minutes);
-                if($retVal === FALSE){
+                if($retVal === false){
                     $minutes = $minuteArr['every-x-minutes'];
                     foreach ($minutes as $min){
                         if($current % $min == 0){
-                            Logger::log('Job will be executed at specific minute.');
-                            $retVal = TRUE;
+                            $retVal = true;
                             break;
                         }
                     }
                 }
-                else{
-                    Logger::log('Job will be executed at specific minute.');
-                }
             }
         }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
     /**
@@ -1051,87 +829,64 @@ class CronJob {
      * @since 1.0
      */
     private function _checkDayOfWeek($dayOfWeekField){
-        Logger::logFuncCall(__METHOD__);
-        $isValidExpr = TRUE;
+        $isValidExpr = true;
         $split = explode(',', $dayOfWeekField);
         $dayAttrs = array(
-            'every-day'=>FALSE,
+            'every-day'=>false,
             'at-x-day'=>array(),
             'at-range'=>array()
         );
-        Logger::log('Validating sub expressions...');
         foreach ($split as $subExpr){
-            Logger::log('Sub Expression = \''.$subExpr.'\'.', 'debug');
-            Logger::log('Getting excepression type...');
             $exprType = $this->_getSubExprType($subExpr);
-            Logger::log('Expression type = \''.$exprType.'\'.', 'debug');
             if($exprType == self::ANY_VAL){
-                Logger::log('The expression means that the job will be executed every day.');
-                $dayAttrs['every-day'] = TRUE;
+                $dayAttrs['every-day'] = true;
             }
             else if($exprType == self::INV_VAL){
-                Logger::log('Invalid value in expression.', 'warning');
-                $isValidExpr = FALSE;
+                $isValidExpr = false;
                 break;
             }
             else if($exprType == self::RANGE_VAL){
-                Logger::log('The expression means that the job will be executed between specific range of days.');
-                Logger::log('Checking range validity...');
                 $range = explode('-', $subExpr);
                 $start = in_array(strtoupper($range[0]), array_keys(self::WEEK_DAYS)) ? self::WEEK_DAYS[strtoupper($range[0])] : intval($range[0]);
                 $end = in_array(strtoupper($range[1]), array_keys(self::WEEK_DAYS)) ? self::WEEK_DAYS[strtoupper($range[1])] : intval($range[1]);
-                Logger::log('$start = \''.$start.'\'.', 'debug');
-                Logger::log('$end = \''.$end.'\'.', 'debug');
                 if($start < $end){
                     if($start >= 0 && $start < 6){
                         if($end >= 0 && $end < 6){
-                            Logger::log('Valid range. New day attribute added.');
                             $dayAttrs['at-range'][] = array($start,$end);
                         }
                         else{
-                            Logger::log('Invalid range.', 'warning');
-                            $isValidExpr = FALSE;
+                            $isValidExpr = false;
                             break;
                         }
                     }
                     else{
-                        Logger::log('Invalid range.', 'warning');
-                        $isValidExpr = FALSE;
+                        $isValidExpr = false;
                         break;
                     }
                 }
                 else{
-                    Logger::log('Invalid range.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
             else if($exprType == self::STEP_VAL){
-                Logger::log('Step values not allowed in day fileld.','warning');
-                $isValidExpr = FALSE;
+                $isValidExpr = false;
             }
             else if($exprType == self::SPECIFIC_VAL){
-                Logger::log('The expression means that the job will be executed at specific day.');
                 $subExpr = strtoupper($subExpr);
                 $value = in_array($subExpr, array_keys(self::WEEK_DAYS)) ? self::WEEK_DAYS[$subExpr] : intval($subExpr);
-                Logger::log('Checking day validity...');
-                Logger::log('$value = \''.$value.'\'.', 'debug');
                 if($value >= 0 && $value <= 6){
                     $dayAttrs['at-x-day'][] = $value;
-                    Logger::log('Valid value. New day attribute added.');
                 }
                 else{
-                    Logger::log('Invalid value.', 'warning');
-                    $isValidExpr = FALSE;
+                    $isValidExpr = false;
                     break;
                 }
             }
         }
-        if($isValidExpr !== TRUE){
-            Logger::log('Invalid day expression.', 'warning');
-            $dayAttrs = FALSE;
+        if($isValidExpr !== true){
+            $dayAttrs = false;
         }
-        Logger::logFuncReturn(__METHOD__);
         return $dayAttrs;
     }
     /**
@@ -1164,18 +919,22 @@ class CronJob {
      * @since 1.0
      */
     public function setOnExecution($func,$funcParams=array()){
-        Logger::logFuncCall(__METHOD__);
-        Logger::log('Checking if first parameter is callable...');
         if(is_callable($func)){
-            Logger::log('It is callable. Setting the on execute event.');
             $this->events['on']['func'] = $func;
-            Logger::log('Checking if the second parameter is an array.');
             if(gettype($funcParams) == 'array'){
-                Logger::log('It is an array. Setting the array as callable parameters.');
                 $this->events['on']['params'] = $funcParams;
             }
         }
-        Logger::logFuncReturn(__METHOD__);
+    }
+    /**
+     * Returns a callable which represents the code that will be 
+     * executed when its time to run the job.
+     * @return Callable A callable which represents the code that will be 
+     * executed when its time to run the job.
+     * @since 1.0.3
+     */
+    public function getOnExecution() {
+        return $this->events['on']['func'];
     }
     /**
      * Execute the event which should run when it is time to execute the job. 
@@ -1184,26 +943,20 @@ class CronJob {
      * not. If it is the time, The event will be executed. If 
      * the job is forced to execute, the event that is associated with the 
      * job will be executed even if it is not the time to execute the job.
-     * @param boolean $force If set to TRUE, the job will be forced to execute 
-     * even if it is not job time. Default is FALSE.
+     * @param boolean $force If set to true, the job will be forced to execute 
+     * even if it is not job time. Default is false.
      * @return boolean If the event that is associated with the job is executed, 
-     * the method will return TRUE. If it is not executed, the method 
-     * will return FALSE.
+     * the method will return true. If it is not executed, the method 
+     * will return false.
      * @since 1.0
      */
     public function execute($force=false){
-        Logger::logFuncCall(__METHOD__);
-        $retVal = FALSE;
-        Logger::log('Checking if it is time to run cron job...');
-        if($force === TRUE || ($this->isMinute() && $this->isHour() && $this->isDayOfMonth() && 
+        $retVal = false;
+        if($force === true || ($this->isMinute() && $this->isHour() && $this->isDayOfMonth() && 
         $this->isMonth() && $this->isDayOfWeek())){
-            Logger::log('It is time.');
-            Logger::log('Executing the \'on\' event.');
             call_user_func($this->events['on']['func'], $this->events['on']['params']);
-            $retVal = TRUE;
+            $retVal = true;
         }
-        Logger::logReturnValue($retVal);
-        Logger::logFuncReturn(__METHOD__);
         return $retVal;
     }
 }

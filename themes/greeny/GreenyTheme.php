@@ -41,12 +41,7 @@ class GreenyTheme extends Theme{
             Page::document()->getChildByID('main-content-area')->addTextNode('Main Content Area.');
         });
         $this->setBeforeLoaded(function(){
-            WebsiteFunctions::get()->useSession(array(
-                'name'=>'lang-session',
-                'create-new'=>true,
-                'duration'=>60*24*7,
-                'refresh'=>TRUE
-            ));
+            
         });
     }
     public function getAsideNode() {
@@ -70,7 +65,7 @@ class GreenyTheme extends Theme{
         $div = new HTMLNode('div');
         $div->setAttribute('class', 'pa-ltr-col-twelve');
         $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
-                . 'target="_blank">WebFiori Framework</a> v'.Config::getVersion().' ('.Config::getVersionType().')');
+                . 'target="_blank">WebFiori Framework</a> v'.Config::getVersion().' ('.Config::getVersionType().')',FALSE);
         $fNode->addChild($div);
         return $node;
     }

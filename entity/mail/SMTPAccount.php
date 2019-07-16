@@ -24,21 +24,9 @@
  */
 namespace webfiori\entity\mail;
 if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 403 Forbidden");
-    die(''
-        . '<!DOCTYPE html>'
-        . '<html>'
-        . '<head>'
-        . '<title>Forbidden</title>'
-        . '</head>'
-        . '<body>'
-        . '<h1>403 - Forbidden</h1>'
-        . '<hr>'
-        . '<p>'
-        . 'Direct access not allowed.'
-        . '</p>'
-        . '</body>'
-        . '</html>');
+    header("HTTP/1.1 404 Not Found");
+    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
+    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 /**
  * A class that represents an email account which is used to send or receive messages.
@@ -101,6 +89,12 @@ class SMTPAccount {
     public function __construct() {
         //$this->isSSL(FALSE);
         //$this->isTLS(FALSE);
+        $this->setPort(465);
+        $this->setUsername('');
+        $this->setPassword('');
+        $this->setServerAddress('');
+        $this->setName('');
+        $this->setAddress('');
     }
     /**
      * Sets the address of the email server.
@@ -108,7 +102,7 @@ class SMTPAccount {
      * @since 1.0
      */
     public function setServerAddress($addr){
-        $this->emailServerAddress = $addr;
+        $this->emailServerAddress = trim($addr);
     }
     /**
      * Sets or gets the value of the property 'useTls'.
@@ -152,7 +146,7 @@ class SMTPAccount {
      * @since 1.0
      */
     public function setUsername($u){
-        $this->userName = $u;
+        $this->userName = trim($u);
     }
     /**
      * Sets the password of the user account that is used to access email server.
@@ -167,19 +161,23 @@ class SMTPAccount {
      * @param string $address An email address.
      */
     public function setAddress($address) {
-        $this->address = $address;
+        $this->address = trim($address);
     }
     /**
      * Sets the name of the email account.
-     * @param string $name The name of the account (such as 'Programming Team').
+     * @param string $name The name of the account (such as 'Programming Team'). 
+     * The name is used when sending an email message using the given SMTP account. 
+     * The name will be used in the header 
+     * 'FROM' when sending an email
      * @since 1.0
      */
     public function setName($name) {
-        $this->name = $name;
+        $this->name = trim($name);
     }
     /**
      * Returns the username that is used to access email server.
-     * @return string The username that is used to access email server.
+     * @return string The username that is used to access email server. Default 
+     * is empty string.
      * @since 1.0
      */
     public function getUsername(){
@@ -187,7 +185,8 @@ class SMTPAccount {
     }
     /**
      * Returns the password of the user account that is used to access email server.
-     * @return string The password of the user account that is used to access email server.
+     * @return string The password of the user account that is used to access email server. 
+     * default is empty string.
      * @since 1.0
      */
     public function getPassword() {
@@ -195,7 +194,8 @@ class SMTPAccount {
     }
     /**
      * Returns the email address.
-     * @return string The email address.
+     * @return string The email address which will be used in the header 
+     * 'FROM' when sending an email. Default is empty string.
      * @since 1.0
      */
     public function getAddress() {
@@ -203,7 +203,8 @@ class SMTPAccount {
     }
     /**
      * Returns the name of the email account.
-     * @return string The name of the email account.
+     * @return string The name of the email account. The name will be used in the header 
+     * 'FROM' when sending an email. Default is empty string.
      * @since 1.0
      */
     public function getName() {
@@ -211,7 +212,8 @@ class SMTPAccount {
     }
     /**
      * Returns The address of the email server.
-     * @return string The address of the email server (such as 'mail.example.com').
+     * @return string The address of the email server (such as 'mail.example.com'). 
+     * Default is empty string.
      * @since 1.0
      */
     public function getServerAddress() {
@@ -219,7 +221,7 @@ class SMTPAccount {
     }
     /**
      * Returns the port number of email server.
-     * @return int The port number of email server.
+     * @return int The port number of email server. Default is 465.
      * @since 1.0
      */
     public function getPort() {
@@ -227,10 +229,13 @@ class SMTPAccount {
     }
     /**
      * Sets the port number of email server.
-     * @param int $port The port number of email server such as 25.
+     * @param int $port The port number of email server such as 25. It will 
+     * be only set if the given value is an integer and it is greater than 0.
      * @since 1.0
      */
     public function setPort($port){
-        $this->port = $port;
+        if(gettype($port) == 'integer' && $port > 0){
+            $this->port = $port;
+        }
     }
 }
