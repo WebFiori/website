@@ -32,7 +32,6 @@ class WebFioriTheme extends Theme{
         ));
         $this->setBeforeLoaded(function(){
             $session = WebsiteFunctions::get()->getSession();
-            $lang = $session->getLang(TRUE);
             $lang = $session->getLang(true);
             Page::lang($lang);
             if($lang == 'AR'){
