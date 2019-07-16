@@ -56,19 +56,23 @@ class WebFioriTheme extends Theme{
             $mainMenu = &Page::document()->getChildByID('menu-items-container');
 
             $item1 = new ListItem();
-            $link1 = new LinkNode(SiteConfig::getBaseURL(), $translation->get('menus/main-menu/menu-item-1'));
+            $link1 = new LinkNode(SiteConfig::getBaseURL().'download', $translation->get('menus/main-menu/menu-item-1'));
             $item1->addChild($link1);
             $mainMenu->addChild($item1);
 
             $item2 = new ListItem();
-            $link2 = new LinkNode(SiteConfig::getBaseURL(), $translation->get('menus/main-menu/menu-item-2'));
+            $link2 = new LinkNode(SiteConfig::getBaseURL().'docs/webfiori', $translation->get('menus/main-menu/menu-item-2'));
             $item2->addChild($link2);
             $mainMenu->addChild($item2);
 
             $item3 = new ListItem();
-            $link3 = new LinkNode(SiteConfig::getBaseURL(), $translation->get('menus/main-menu/menu-item-3'));
+            $link3 = new LinkNode(SiteConfig::getBaseURL().'learn', $translation->get('menus/main-menu/menu-item-3'));
             $item3->addChild($link3);
             $mainMenu->addChild($item3);
+             $item4 = new ListItem();
+            $link4 = new LinkNode(SiteConfig::getBaseURL().'contribute', $translation->get('menus/main-menu/menu-item-4'));
+            $item4->addChild($link4);
+            $mainMenu->addChild($item4);
 
         });
 
@@ -333,3 +337,4 @@ class WebFioriTheme extends Theme{
         }
     }
 }
+return __NAMESPACE__;
