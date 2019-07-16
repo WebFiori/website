@@ -1,4 +1,5 @@
 <?php
+namespace webfiori\theme;
 use webfiori\entity\Theme;
 use webfiori\WebFiori;
 use webfiori\entity\Page;
@@ -7,6 +8,8 @@ use phpStructs\html\ListItem;
 use phpStructs\html\LinkNode;
 use phpStructs\html\HeadNode;
 use phpStructs\html\HTMLNode;
+use phpStructs\html\Input;
+use phpStructs\html\Label;
 use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use webfiori\conf\SiteConfig;
@@ -18,23 +21,19 @@ class WebFioriTheme extends Theme{
         $this->setAuthor('Ibrahim Ali');
         $this->setName('WebFiori Theme');
         $this->setVersion('1.0');
+        $this->setVersion('1.0.1');
         $this->setDescription('The main theme for WebFiori Framework.');
         $this->setDirectoryName('webfiori');
         $this->setImagesDirName('images');
         $this->setJsDirName('js');
         $this->setCssDirName('css');
         $this->addComponents(array(
-            'WebFioriGUI.php','LangExt.php'
+            'LangExt.php'
         ));
         $this->setBeforeLoaded(function(){
-            WebsiteFunctions::get()->useSession(array(
-                'name'=>'lang-session',
-                'create-new'=>true,
-                'duration'=>60*24*7,
-                'refresh'=>TRUE
-            ));
             $session = WebsiteFunctions::get()->getSession();
             $lang = $session->getLang(TRUE);
+            $lang = $session->getLang(true);
             Page::lang($lang);
             if($lang == 'AR'){
                 Page::dir('rtl');
@@ -45,18 +44,18 @@ class WebFioriTheme extends Theme{
         });
         $this->setAfterLoaded(function(){
             $session = WebsiteFunctions::get()->getSession();
-            Page::lang($session->getLang(TRUE));
-            Page::document()->getChildByID('main-content-area')->setClassName('pa-'.Page::dir().'-col-10');
-            Page::document()->getChildByID('side-content-area')->setClassName('pa-'.Page::dir().'-col-2-np');
-            Page::document()->getChildByID('page-body')->setClassName('pa-row');
-            Page::document()->getChildByID('page-header')->setClassName('pa-row-np');
-            Page::document()->getChildByID('page-footer')->setClassName('pa-row');
+            Page::lang($session->getLang(true));
+            Page::document()->getChildByID('main-content-area')->setClassName('wf-'.Page::dir().'-col-10');
+            Page::document()->getChildByID('side-content-area')->setClassName('wf-'.Page::dir().'-col-2');
+            Page::document()->getChildByID('page-body')->setClassName('wf-row');
+            Page::document()->getChildByID('page-header')->setClassName('wf-row-np');
+            Page::document()->getChildByID('page-footer')->setClassName('wf-row');
             //WebFioriGUI::createTitleNode();
 
             LangExt::extLang();
             $translation = &Page::translation();
             //adding menu items 
-            $mainMenu = &Page::document()->getChildByID('main-menu');
+            $mainMenu = &Page::document()->getChildByID('menu-items-container');
 
             $item1 = new ListItem();
             $link1 = new LinkNode(SiteConfig::getBaseURL().'download', $translation->get('menus/main-menu/menu-item-1'));
@@ -90,11 +89,11 @@ class WebFioriTheme extends Theme{
         $page = Page::get();
         $node = new HTMLNode('div');
         $socialMedia = new HTMLNode();
-        $socialMedia->setClassName('pa-row');
+        $socialMedia->setClassName('wf-row');
         $socialMedia->setID('social-media-container');
         $socialMedia->setWritingDir($page->getWritingDir());
 
-        $facebookIcon = new HTMLNode('img', FALSE);
+        $facebookIcon = new HTMLNode('img', false);
         $facebookIcon->setAttribute('src', $page->getThemeImagesDir().'/facebook.png');
         $facebookIcon->setClassName('social-media-icon');
         $facebookLink = new HTMLNode('a');
@@ -103,7 +102,7 @@ class WebFioriTheme extends Theme{
         $facebookLink->addChild($facebookIcon);
         $socialMedia->addChild($facebookLink);
 
-        $twtrIcon = new HTMLNode('img', FALSE);
+        $twtrIcon = new HTMLNode('img', false);
         $twtrIcon->setAttribute('src', $page->getThemeImagesDir().'/tweeter.png');
         $twtrIcon->setClassName('social-media-icon');
         $twtrLink = new HTMLNode('a');
@@ -112,7 +111,7 @@ class WebFioriTheme extends Theme{
         $twtrLink->addChild($twtrIcon);
         $socialMedia->addChild($twtrLink);
 
-        $linkedinIcon = new HTMLNode('img', FALSE);
+        $linkedinIcon = new HTMLNode('img', false);
         $linkedinIcon->setAttribute('src', $page->getThemeImagesDir().'/linkedin.png');
         $linkedinIcon->setClassName('social-media-icon');
         $linkedinLink = new HTMLNode('a');
@@ -132,7 +131,7 @@ class WebFioriTheme extends Theme{
         
         $node->addChild($socialMedia);
         $contactInfo = new HTMLNode();
-        $contactInfo->setClassName('pa-'.Page::dir().'-col-12');
+        $contactInfo->setClassName('wf-'.Page::dir().'-col-12');
         $p = new PNode();
         $p->setStyle(array(
             'font-size'=>'8pt'
@@ -143,9 +142,9 @@ class WebFioriTheme extends Theme{
         $node->addChild($contactInfo);
         $p->addText('WebFiori Framework, All Rights Reserved © '.date('Y'));
         $div = new HTMLNode('div');
-        $div->setAttribute('class', 'pa-ltr-col-twelve');
+        $div->setAttribute('class', 'wf-ltr-col-12');
         $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
-                . 'target="_blank">WebFiori Framework</a> v'.WebFiori::getConfig()->getVersion().' ('.WebFiori::getConfig()->getVersionType().')</b>',FALSE);
+                . 'target="_blank">WebFiori Framework</a> v'.Config::getVersion().' ('.Config::getVersionType().')</b>',false);
         $node->addChild($div);
         return $node;
     }
@@ -177,27 +176,27 @@ class WebFioriTheme extends Theme{
         $headerSec = new HTMLNode();
         $logoContainer = new HTMLNode();
         $logoContainer->setID('inner-header');
-        $logoContainer->setClassName('pa-'.Page::dir().'-col-11-nm-np');
-        $img = new HTMLNode('img', FALSE);
+        $logoContainer->setClassName('wf-'.Page::dir().'-col-11-nm-np');
+        $img = new HTMLNode('img', false);
         $img->setAttribute('src',Page::imagesDir().'/WebsiteIcon_1024x1024.png');
-        $img->setClassName('pa-'.Page::dir().'-col-1-np-nm');
+        $img->setClassName('wf-'.Page::dir().'-col-1-np-nm');
         $img->setID('logo');
         $img->setWritingDir(Page::dir());
         $link = new LinkNode(SiteConfig::getHomePage(), '');
         $link->addChild($img);
         $headerSec->addChild($link);
-        $langCode = WebsiteFunctions::get()->getSession()->getLang(TRUE);
+        $langCode = WebsiteFunctions::get()->getSession()->getLang(true);
         $p = new PNode();
         $siteNames = SiteConfig::getWebsiteNames();
         if(isset($siteNames[$langCode])){
-            $p->addText($siteNames[$langCode], array('bold'=>TRUE));
+            $p->addText($siteNames[$langCode], array('bold'=>true));
         }
         else{
             if(isset($_GET['language']) && isset($siteNames[$_GET['language']])){
-                $p->addText($siteNames[$_GET['language']], array('bold'=>TRUE));
+                $p->addText($siteNames[$_GET['language']], array('bold'=>true));
             }
             else{
-                $p->addText('<SITE NAME>', array('bold'=>TRUE));
+                $p->addText('<SITE NAME>', array('bold'=>true));
             }
         }
         $logoContainer->addChild($p);
@@ -205,17 +204,65 @@ class WebFioriTheme extends Theme{
         //end of logo UI
         //starting of main menu items
         $menu = new HTMLNode('nav');
-        $menu->setID('main-nav');
-        $menu->setClassName('pa-'.Page::dir().'-col-9');
+        $menu->setID('main-navigation-menu');
+        $menu->setClassName('wf-'.Page::dir().'-col-9-np');
         $ul = new UnorderedList();
-        $ul->setID('main-menu');
-        $ul->setClassName('pa-row');
+        $ul->setID('menu-items-container');
+        $ul->setClassName('wf-row-nm-np');
         $ul->setAttribute('dir', Page::dir());
         $menu->addChild($ul);
         $logoContainer->addChild($menu);
         return $headerSec;
     }
 
+    /**
+     * 
+     * @param array $options An associative array of options. Available 
+     * options are:
+     * <ul>
+     * <li>type: The type of the node that will be created. Supported 
+     * types are: 
+     * <ul>
+     * <li>"div" (default).</li>
+     * <li>"wf-row". This type has the following options: 
+     * <ul>
+     * <li>"with-padding", a boolean. If set to true, the row will have padding. Default is true.</li>
+     * <li>"with-margin", a boolean. If set to true, the row will have margins. Default is true.</li>
+     * </ul>
+     * </li>
+     * <li>"wf-col". This type has the following options: 
+     * <ul>
+     * <li>"size". Size of the column. A number from 1 up to 12. Default is 12.</li>
+     * <li>"with-padding", a boolean. If set to true, the column will have padding. Default is true.</li>
+     * <li>"with-margin", a boolean. If set to true, the column will have margins. Default is true.</li>
+     * </ul>
+     * </li>
+     * <li>"input-element". A row which represents input element alongside its components. 
+     * This type has the following options:
+     * <ul>
+     * <li>"input-type". The type of input element. Default is "text"</li>
+     * <li>"label". The label which will be used for the input element. 
+     * If not provided, the value 'Input_label' is used.</li>
+     * <li>"input-id". The ID of input element. If not provided, the 
+     * value 'input-el' is used.</li>
+     * <li>"placeholder" A text to show as a placeholder.</li>
+     * <li>"on-input". A String that represents JavaScript code which 
+     * will be executed when input element value changes.</li>
+     * <li>"select-data". An array of sub-associative arrays that has an options which are 
+     * used if input element type is "select". Each sub array can have the following indices:
+     * <ul>
+     * <li>"label". A label to show for the select option.</li>
+     * <li>"value". The value of the attribute "value" of the select.</li>
+     * <li>"selected". A boolean. If set to true, the attribute "selected" will be set for the option.</li>
+     * <li>"disabled". A boolean. If set to true, the attribute "disabled" will be set for the option.</li>
+     * </ul>
+     * </ul>
+     * </li>
+     * </ul>
+     * </li>
+     * </ul>
+     * @return HTMLNode
+     */
     public function createHTMLNode($options = array()) {
         if(isset($options['type'])){
             if($options['type'] == 'section'){
