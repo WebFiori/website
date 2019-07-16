@@ -44,7 +44,7 @@ class InitAutoLoad {
      */
     public static function init() {
         $AU = AutoLoader::get();
-        //$AU->newSearchFolder('my-system');
+        $AU->newSearchFolder('apiParser');
         //$AU->newSearchFolder('my-entities', FALSE);
     }
 }
