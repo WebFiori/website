@@ -264,33 +264,95 @@ class WebFioriTheme extends Theme{
      * @return HTMLNode
      */
     public function createHTMLNode($options = array()) {
-        if(isset($options['type'])){
-            if($options['type'] == 'section'){
-                $node = new HTMLNode('section');
-                if(isset($options['h-level']) && $options['h-level'] > 0 && $options['h-level'] < 7){
-                    $h = new HTMLNode('h'.$options['h-level']);
-                }
-                else{
-                    $h = new HTMLNode('h1');
-                }
-                $h->addTextNode($options['title']);
-                $node->addChild($h);
+        $nodeType = isset($options['type']) ? $options['type'] : 'div';
+        $withPadding = isset($options['with-padding']) ? $options['with-padding'] === true : true;
+        $withMargin = isset($options['with-margin']) ? $options['with-margin'] === true : true;
+        if($nodeType == 'div'){
+            $node = new HTMLNode();
+            return $node;
+        }
+        else if($nodeType == 'section'){
+            $node = new HTMLNode('section');
+            if(isset($options['h-level']) && $options['h-level'] > 0 && $options['h-level'] < 7){
+                $h = new HTMLNode('h'.$options['h-level']);
             }
-            else if($options['type'] == 'p'){
-                $node = new PNode();
-                if(isset($options['text'])){
-                    $node->addText($options['text']);
+            else{
+                $h = new HTMLNode('h1');
+            }
+            $h->addTextNode($options['title']);
+            $node->addChild($h);
+        }
+        else if($nodeType == 'wf-row'){
+            $wp = $withPadding === true ? '' : '-np';
+            $wm = $withMargin === true ? '' : '-nm';
+            $node = new HTMLNode();
+            $node->setClassName('wf-row'.$wm.$wp);
+            return $node;
+        }
+        else if($nodeType == 'wf-col'){
+            $colSize = isset($options['size']) ? $options['size'] : 12;
+            if($colSize > 12 || $colSize < 1){
+                $colSize = 12;
+            }
+            $wp = $withPadding === true ? '' : '-np';
+            $wm = $withMargin === true ? '' : '-nm';
+            $node = new HTMLNode();
+            $node->setClassName('wf-'.Page::get()->getWritingDir().'-col-'.$colSize.$wm.$wp);
+            return $node;
+        }
+        else if($nodeType == 'page-title'){
+            $titleRow = $this->createHTMLNode([
+                'type'=>'wf-row'
+            ]);
+            $titleRow->setID('page-title');
+            $title = isset($options['title']) ? $options['title'] : Page::title();
+            $h1 = new HTMLNode('h2');
+            $h1->addTextNode($title);
+            $h1->setClassName('wf-'.Page::dir().'-col-10-nm-np');
+            $titleRow->addChild($h1);
+            return $titleRow;
+        }
+        else if($nodeType == 'input-element'){
+            $row = $this->createHTMLNode(['type'=>'wf-row']);
+            $label = isset($options['label']) ? $options['label'] : 'Input_label';
+            $labelNode = new Label($label);
+            $inputId = isset($options['input-id']) ? $options['input-id'] : 'input-el';
+            $labelNode->setAttribute('for', $inputId);
+            $row->addChild($labelNode);
+            $inputType = isset($options['input-type']) ? $options['input-type'] : 'text';
+            if($inputType == 'select'){
+                $inputEl = new HTMLNode('select');
+                $inputEl->setID($inputId);
+                if(isset($options['select-data'])){
+                    foreach ($options['select-data'] as $data){
+                        $label = isset($data['label']) ? $data['label'] : 'Lbl';
+                        $val = isset($data['value']) ? $data['value']:null;
+                        $isDisabled = isset($data['disabled']) ? $data['disabled'] === true : false;
+                        if($val !== null){
+                            $o = new HTMLNode('option');
+                            $o->addTextNode($label);
+                            $o->setAttribute('value', $val);
+                            if(isset($data['selected']) && $data['selected'] === true){
+                                $o->setAttribute('selected', '');
+                            }
+                            if($isDisabled){
+                                $o->setAttribute('disabled', '');
+                            }
+                            $inputEl->addChild($o);
+                        }
+                    }
                 }
             }
             else{
-                $node = new HTMLNode();
+                $inputEl = new Input($inputType);
+                $inputEl->setID($inputId);
+                $placeholder = isset($options['placeholder']) ? $options['placeholder'] : '';
+                $inputEl->setAttribute('placeholder', $placeholder);
+                $onInput = isset($options['on-input']) ? $options['on-input'] : "console.log(this.id+' has changed value.');";
+                $inputEl->setAttribute('oninput', $onInput);
             }
+            $row->addChild($inputEl);
+            return $row;
         }
-        else{
-            $node = new HTMLNode();
-        }
-        return $node;
     }
-
 }
-
