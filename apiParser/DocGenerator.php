@@ -16,7 +16,7 @@ use phpStructs\html\ListItem;
 use Exception;
 use webfiori\entity\File;
 /**
- * Description of DocGenerator
+ * A PHPDoc parser class which is used to generate API docs for PHP classes.
  *
  * @author Ibrahim
  */
@@ -34,7 +34,7 @@ class DocGenerator {
      * @param type $options An array of options. The available options are:
      * <ul>
      * <li>path: The location at which the classes are exist.</li>
-     * <li>output-to: The location at which the generated HTML files will 
+     * <li>output-path: The location at which the generated HTML files will 
      * be stored to.</li>
      * <li>base-url: A URL that will be used for the tag 'base' in the generated 
      * HTML File.</li>
@@ -62,8 +62,8 @@ class DocGenerator {
                 $this->baseUrl = $this->baseUrl.'/';
             }
             if(Util::isDirectory($options['path'])){
-                if(Util::isDirectory($options['output-to'])){
-                    $this->isDynamic = isset($options['is-dynamic']) && $options['is-dynamic'] === TRUE ? TRUE : FALSE;
+                if(Util::isDirectory($options['output-path'])){
+                    $this->isDynamic = isset($options['is-dynamic']) && $options['is-dynamic'] === true ? true : false;
                     $this->routRootFolder = $options['route-root-folder'];
                     $classes = $this->_scanPathForFiles($options['path'],$options['exclude-path']);
                     $this->linksArr = array();
@@ -77,7 +77,7 @@ class DocGenerator {
                     $this->_buildLinks();
                     $siteName = isset($options['site-name']) && strlen($options['site-name']) > 0 ?
                             $options['site-name'] : 'Docs';
-                    $this->createRoutesFile($options['output-to']);
+                    $this->createRoutesFile($options['output-path']);
                     foreach ($this->apiReadersArr as $reader){
                         Page::lang('EN');
                         Page::dir('ltr');
@@ -114,7 +114,7 @@ class DocGenerator {
                             Page::description('All classes in the namespace '.$nsObj->getName().'.');
                             Page::title('Namespace '.$nsObj->getName());
                             $this->_createAsideNav();
-                            $this->createNSIndexFile($options['output-to'],$nsObj->getName(), $options);
+                            $this->createNSIndexFile($options['output-path'],$nsObj->getName(), $options);
                             Page::reset();
                         }
                     }
@@ -124,19 +124,19 @@ class DocGenerator {
                 }
             }
             else{
-                throw new Exception('Given classes path is invalid.');
+                throw new Exception('The value of the index \'path\' is not valid.');
             }
         }
         else{
-            throw new Exception('Classes path is not set.');
+            throw new Exception('The index \'path\' is missing.');
         }
     }
     private function createAPIPage($classAPI,$options){
         if($this->isDynamicPage()){
-            $this->createPHPFile($classAPI,$options['output-to'], $options);
+            $this->createPHPFile($classAPI,$options['output-path'], $options);
         }
         else{
-            $this->createHTMLFile($classAPI,$options['output-to']);
+            $this->createHTMLFile($classAPI,$options['output-path']);
         }
     }
     private function isDynamicPage() {
@@ -205,6 +205,14 @@ class DocGenerator {
     }
     public function getRouterLinks() {
         return $this->routerLinks;
+    }
+    public function logMessage($message,$type='i') {
+        if($type == 'e'){
+            fprintf(STDERR, $message."\n");
+        }
+        else{
+            fprintf(STDOUT, $message."\n");
+        }
     }
     private function _buildLinks() {
         $nsClasses = array();
