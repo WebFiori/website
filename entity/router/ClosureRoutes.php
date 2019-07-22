@@ -54,9 +54,10 @@ class ClosureRoutes {
         //    Util::print_r($r->getParsedInfo());
             Logger::enabled(FALSE);
             $reader = new DocGenerator(array(
-                'path'=>'C:\Server\apache2\htdocs\webfiori',
+                'path'=>'C:\Server\apache2\htdocs\webfiori\src',
                 'exclude-path'=>array(
-                    'C:\Server\apache2\htdocs\webfiori\themes'
+                    'C:\Server\apache2\htdocs\webfiori\src\themes\greeny',
+                    'C:\Server\apache2\htdocs\webfiori\src\themes\template'
                 ),
                 'base-url'=> 'https://programmingacademia.com/webfiori/docs',
                 'theme'=>'WebFiori API Theme',
@@ -92,6 +93,14 @@ class ClosureRoutes {
         });
         Router::get()->setOnNotFound(function(){
             new \webfiori\views\NotFound();
+        });
+        Router::closure('/apis/shields-get-dontate-badget', function(){
+            $j = new \jsonx\JsonX();
+            $j->add('label', 'donate');
+            $j->add('message', 'PayPal');
+            $j->add('color', 'blue');
+            $j->add('namedLogo', 'PayPal');
+            echo $j;
         });
     }
 }
