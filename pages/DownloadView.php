@@ -44,6 +44,7 @@ class DownloadView extends WebFioriPage{
                 . 'not good option for production and might have bugs.'));
         $ul = new UnorderedList();
         $ul->addListItems(array(
+            '<a href="downloads/webfiori-v1.0.2-beta-1">WebFiori v1.0.2 Beta 1</a>',
             '<a href="downloads/webfiori-v1.0.0-stable">WebFiori v1.0.0 Stable</a>',
             '<a href="downloads/webfiori-v1.0.0-beta-2">WebFiori v1.0.0 Beta 2</a>',
             '<a href="downloads/webfiori-v1.0.0-beta-1">WebFiori v1.0.0 Beta 1</a>'
