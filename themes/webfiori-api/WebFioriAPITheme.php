@@ -11,6 +11,7 @@ use phpStructs\html\UnorderedList;
 use webfiori\apiParser\APITheme;
 use webfiori\apiParser\NameSpaceAPI;
 use phpStructs\html\Label;
+use webfiori\theme\LangExt;
 
 class WebFioriAPITheme extends APITheme{
     public function __construct() {
