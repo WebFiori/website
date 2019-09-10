@@ -1,10 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 namespace webfiori\apiParser;
 use webfiori\entity\Util;
 use WebFioriGUI;
@@ -73,7 +67,28 @@ class ClassAPI {
     private $classType;
     /**
      * 
-     * @param APIReader $classAPIReader
+     * @param APIReader $classAPIReader An object of type 'APIReader' which has
+     * all parsed class info.
+     * @param array $linksArr An array that contains links to parsed classes and 
+     * primitive data types. This array is used to add links for 'param' attribute 
+     * of a doc-block or method return type.
+     * @param array $options An associative array that contains options to customize 
+     * the view that will be generated. Available options are:
+     * <ul>
+     * <li><b>inc-private-attrs</b>: A boolean. If set to true, the generated 
+     * view will have documentation of private class attributes. Default is 
+     * false.</li>
+     * <li><b>inc-protected-attrs</b>: A boolean. If set to true, the generated 
+     * view will have documentation of protected class attributes. Default is 
+     * true.</li>
+     * <li><b>inc-private-funcs</b>: A boolean. If set to true, the generated 
+     * view will have documentation of private class methods. Default is false.</li>
+     * <li><b>inc-protected-funcs</b>: A boolean. If set to true, the generated 
+     * view will have documentation of private class attributes. Default 
+     * is true.</li>
+     * <li><b>base-url</b>: The base URL which is the view will be using 
+     * for the node 'base' for the generated HTML.</li>
+     * </ul>
      */
     public function __construct($classAPIReader,$linksArr=array(),$options=array(
         'inc-private-attrs'=>false,
@@ -208,11 +223,22 @@ class ClassAPI {
         $this->ns = $classAPIReader->getNamespace();
         $this->setSummary($classAPIReader->getClassSummary());
     }
+    /**
+     * Sets the base URL.
+     * The base URL is a URL which the view will be using 
+     * for the node 'base' for the generated HTML. Usulally, used as a relative 
+     * link for fetching page resources such as CSS files or JavaScript files.
+     * @param string $url The base URL. Must be non-empty string.
+     */
     public function setBaseURL($url) {
         if(strlen($url) > 0){
             $this->baseUrl = $url;
         }
     }
+    /**
+     * Returns the URL that takes the user to the view in a web browser.
+     * @return string
+     */
     public function getLink() {
         $retVal = trim($this->baseUrl,'/').'/'.$this->cName;
         if(strlen($this->package) > 0){
@@ -229,7 +255,7 @@ class ClassAPI {
     }
      /**
      * Sets the type of the class.
-     * @param string $mod Class type (e.g. 'class', 'interface').
+     * @param string $mod Class type (e.g. 'class', 'interface', 'trait').
      */
     public function setClassType($mod) {
         $this->classType = $mod;
@@ -297,15 +323,6 @@ class ClassAPI {
             $attr->setOwnerClass($this);
             $this->classAttributes[] = $attr;
         }
-    }
-    private function createBox($boxTitle) {
-        $summaryNode = WebFioriGUI::createRowNode();
-        $summaryNode->setAttribute('style', 'border: 1px solid;');
-        $titleNode = new PNode();
-        $titleNode->setClassName('pa-ltr-col-4-nm-np summary-box-title');
-        $titleNode->addText($boxTitle);
-        $summaryNode->addChild($titleNode);
-        return $summaryNode;
     }
     public function getClassMethods() {
         return $this->classMethods;
