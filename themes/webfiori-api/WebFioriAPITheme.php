@@ -401,6 +401,22 @@ class WebFioriAPITheme extends APITheme{
             $node = WebFioriAPIGUI::createRowNode();
             $titleNode = WebFioriAPIGUI::createTitleNode('Namespace <span class="mono">'.$nsObj->getName().'</span>');
             Page::insert($titleNode);
+            $nsArr = $nsObj->getSubNamespaces();
+            if(count($nsArr)!=0){
+                $nsNode = WebFioriAPIGUI::createRowNode();
+                $nsNode->setClassName('classes-container '.$nsNode->getAttributeValue('class'));
+                $label = new Label('All Sub-namespaces:');
+                $label->setClassName('pa-ltr-col-10 box-title');
+                $nsNode->addChild($label);
+                foreach ($nsArr as $nsName){
+                    $cNode = WebFioriAPIGUI::createRowNode(FALSE, FALSE);
+                    $cNode->setClassName('class-row '.$cNode->getAttributeValue('class'));
+                    $link = new LinkNode($this->getBaseURL(). str_replace('\\', '/', $nsName), $nsName);
+                    $cNode->addChild($link);
+                    $nsNode->addChild($cNode);
+                }
+                $node->addChild($nsNode);
+            }
             $interfaces = $nsObj->getInterfaces();
             if(count($interfaces) != 0){
                 $interfacesNode = WebFioriAPIGUI::createRowNode();
