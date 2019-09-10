@@ -177,9 +177,9 @@ class WebFioriAPITheme extends APITheme{
         $headTag->addLink('icon', Page::imagesDir().'/favicon.png');
         $analId = 'UA-91825602-1';
         $headTag->addJs('https://www.googletagmanager.com/gtag/js?id='.$analId, [
-            'async'=>'true'
+            'async'=>'false'
         ], false);
-        $jsCode = new phpStructs\html\JsCode();
+        $jsCode = new JsCode();
         $jsCode->addCode(''
                 . 'window.dataLayer = window.dataLayer || [];'
                 . 'function gtag(){'
