@@ -185,3 +185,76 @@ ul#menu-items-container .sub-menu li{
     left: 0.5%;
     margin: 0;
 }
+.prev-button,
+.next-button{
+    width:100%;
+    margin: 5px;
+    border-style: double;
+    border-top-style: double;
+    border-right-style: double;
+    border-bottom-style: double;
+    border-top: none;
+    border-bottom: none;
+    border-right: none;
+    border-radius: 5px;
+    width: 48%;
+    float: left;
+}
+.aside-nav{
+    padding: 10px !important;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+}
+.aside-nav-item{
+    line-height: 25px;
+    padding-left: 5px;
+    border: 1px solid whitesmoke;
+    font-size: 7.5pt;
+}
+.aside-nav-item:hover{
+    background-color: burlywood;
+}
+.active-aside-item{
+    background-color: #71b280;
+}
+#next-prev-container{
+    padding: 1%;
+    border-top-style: none;
+    border-right-style: none;
+    border-bottom-style: none;
+    border-left-style: none;
+    border-style: inset;
+    float: left;
+    width: 100% !important;
+}
+.active-aside-item > a{
+    color: white;
+}
+li{
+    line-height: 35px;
+}
+p,li{
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 11pt;
+}
+ul#main-menu > li:hover{
+    background-color: #61e290;
+}
+#main-nav ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+#main-nav ul li{
+    margin-left: 25px;
+    margin-right: 25px;
+    float: left;
+}
+#main-nav ul[dir=rtl] li{
+    float: right;
+}
+.back-link{
+    padding-left:10px;
+    background-color:azure;
+}
