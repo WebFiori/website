@@ -32,10 +32,11 @@ use webfiori\conf\Config;
 use webfiori\entity\DBConnectionFactory;
 use webfiori\entity\DBConnectionInfo;
 use webfiori\WebFiori;
+use webfiori\entity\MessageBox;
 /**
  * Framework utility class.
  * @author Ibrahim
- * @version 1.3.8
+ * @version 1.3.9
  */
 class Util{
     /**
@@ -62,6 +63,80 @@ class Util{
      * @since 1.2
      */
     const DB_NEED_CONF = 'db_conf_err';
+    /**
+     * A constant array that contains all PHP error codes in 
+     * addition to a description for each error.
+     * It is possible to access error information by simply using error 
+     * number as an index. For example, to access E_ERROR info, do the following:<br/>
+     * <code>
+     * $errInf = ERR_TYPES[E_ERROR];<br/>
+     * echo $errInf['type'];<br/>
+     * echo $errInf['description'];<br/>
+     * </code>
+     * @since 1.3.9
+     */
+    const ERR_TYPES = [
+        E_ERROR=>[
+            'type'=>'E_ERROR',
+            'description'=>'Fatal run-time error.'
+        ],
+        E_WARNING=>[
+            'type'=>'E_WARNING',
+            'description'=>'Run-time warning.'
+        ],
+        E_PARSE=>[
+            'type'=>'E_PARSE',
+            'description'=>'Compile-time parse error.'
+        ],
+        E_NOTICE=>[
+            'type'=>'E_NOTICE',
+            'description'=>'Run-time notice.'
+        ],
+        E_CORE_ERROR=>[
+            'type'=>'E_CORE_ERROR',
+            'description'=>'Fatal error during initialization.'
+        ],
+        E_CORE_WARNING=>[
+            'type'=>'E_CORE_WARNING',
+            'description'=>'Warning during initialization.'
+        ],
+        E_COMPILE_ERROR=>[
+            'type'=>'E_COMPILE_ERROR',
+            'description'=>'Fatal compile-time error.'
+        ],
+        E_COMPILE_WARNING=>[
+            'type'=>'E_COMPILE_WARNING',
+            'description'=>'Compile-time warning.'
+        ],
+        E_USER_ERROR=>[
+            'type'=>'E_USER_ERROR',
+            'description'=>'User-generated error message.'
+        ],
+        E_USER_WARNING=>[
+            'type'=>'E_USER_WARNING',
+            'description'=>'User-generated warning message.'
+        ],
+        E_USER_NOTICE=>[
+            'type'=>'E_USER_NOTICE',
+            'description'=>'User-generated notice message.'
+        ],
+        E_STRICT=>[
+            'type'=>'E_STRICT',
+            'description'=>'PHP suggest a change.'
+        ],
+        E_RECOVERABLE_ERROR=>[
+            'type'=>'E_RECOVERABLE_ERROR',
+            'description'=>'Catchable fatal error.'
+        ],
+        E_DEPRECATED=>[
+            'type'=>'E_DEPRECATED',
+            'description'=>'Run-time notice.'
+        ],
+        E_USER_DEPRECATED=>[
+            'type'=>'E_USER_DEPRECATED',
+            'description'=>'User-generated warning message.'
+        ],
+    ];
     /**
      *
      * @var DatabaseLink 
@@ -203,23 +278,25 @@ class Util{
             }
         }
         else{
-            foreach ($_SERVER as $k => $v){
-                $split = explode('_', $k);
-                if($split[0] == 'HTTP'){
-                    $headerName = '';
-                    $count = count($split);
-                    for($x = 0 ; $x < $count ; $x++){
-                        if($x + 1 == $count && $split[$x] != 'HTTP'){
-                            $headerName = $headerName.$split[$x];
+            if(isset($_SERVER)){
+                foreach ($_SERVER as $k => $v){
+                    $split = explode('_', $k);
+                    if($split[0] == 'HTTP'){
+                        $headerName = '';
+                        $count = count($split);
+                        for($x = 0 ; $x < $count ; $x++){
+                            if($x + 1 == $count && $split[$x] != 'HTTP'){
+                                $headerName = $headerName.$split[$x];
+                            }
+                            else if($x == 1 && $split[$x] != 'HTTP'){
+                                $headerName = $split[$x].'-';
+                            }
+                            else if($split[$x] != 'HTTP'){
+                                $headerName = $headerName.$split[$x].'-';
+                            }
                         }
-                        else if($x == 1 && $split[$x] != 'HTTP'){
-                            $headerName = $split[$x].'-';
-                        }
-                        else if($split[$x] != 'HTTP'){
-                            $headerName = $headerName.$split[$x].'-';
-                        }
+                        $retVal[strtolower($headerName)] = $v;
                     }
-                    $retVal[strtolower($headerName)] = $v;
                 }
             }
         }
@@ -436,7 +513,8 @@ class Util{
         return $datesArr;
     }
     /**
-     * Call the method 'print_r' and insert 'pre' around it.
+     * Call the method 'print_r' and insert 'pre' around it and display 
+     * it inside a floating message box.
      * The method is used to make the output well formatted and user 
      * readable.
      * @param mixed $expr Any variable or value that can be passed to the 
@@ -444,9 +522,14 @@ class Util{
      * @since 1.0
      */
     public static function print_r($expr){
-        $expr1 = str_replace('<', '&lt;', $expr);
-        $expr2 = str_replace('>', '&gt;', $expr1);
-        ?><pre><?php print_r($expr2)?></pre><?php
+        if(gettype($expr) == 'string'){
+            $expr1 = str_replace('<', '&lt;', $expr);
+            $expr = str_replace('>', '&gt;', $expr1);
+        }
+        $val = '<pre>'. print_r($expr, true).'</pre>';
+        $messageBox = new MessageBox();
+        $messageBox->getBody()->addTextNode($val,false);
+        echo $messageBox;
     }
     /**
      * Returns unicode code of a character.

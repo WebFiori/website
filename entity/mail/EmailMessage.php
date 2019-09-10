@@ -38,7 +38,7 @@ use Exception;
  * A class that can be used to write HTML formatted Email messages.
  *
  * @author Ibrahim
- * @version 1.0.3
+ * @version 1.0.4
  */
 class EmailMessage {
     /**
@@ -73,6 +73,14 @@ class EmailMessage {
             self::$em = new EmailMessage($sendAccountName);
         }
         return self::$em;
+    }
+    /**
+     * Returns the SocketMailer instance which is associated with the message.
+     * @return SocketMailer An object of type SocketMailer.
+     * @since 1.0.4
+     */
+    public static function &getSocketMailer() {
+        return self::createInstance()->socketMailer;
     }
     /**
      * Creates new instance of the class.

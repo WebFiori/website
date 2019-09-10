@@ -3,7 +3,6 @@
  * The MIT License
  *
  * Copyright 2018 Ibrahim, WebFiori Framework.
- * Copyright 2018 Ibrahim.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +33,7 @@ if(!defined('ROOT_DIR')){
  * A class thar represents a cron job.
  *
  * @author Ibrahim
- * @version 1.0.3
+ * @version 1.0.4
  */
 class CronJob {
     /**
@@ -129,7 +128,7 @@ class CronJob {
         );
         if($when !== null){
             if($this->cron($when) === false){
-                throw new Exception('Invalid cron expression.');
+                throw new Exception('Invalid cron expression: \''.$when.'\'.');
             }
         }
         else{
@@ -145,8 +144,9 @@ class CronJob {
      * @since 1.0
      */
     public function setJobName($name){
-        if(strlen($name) > 0){
-            $this->jobName = $name;
+        $trimmed = trim($name);
+        if(strlen($trimmed) > 0){
+            $this->jobName = $trimmed;
         }
     }
     /**
@@ -194,6 +194,7 @@ class CronJob {
     }
     /**
      * Schedules a cron job to run every hour.
+     * The job will run at the start of the hour.
      * @since 1.0.2
      */
     public function everyHour(){
@@ -216,7 +217,7 @@ class CronJob {
             return $this->_weeklyOn(self::WEEK_DAYS[$uDayName], $time);
         }
         else{
-            if($dayNameOrNum >= 0 && $dayNameOrNum <= 6){
+            if(gettype($dayNameOrNum) == 'integer' && $dayNameOrNum >= 0 && $dayNameOrNum <= 6){
                 return $this->_weeklyOn($dayNameOrNum, $time);
             }
         }
@@ -236,7 +237,7 @@ class CronJob {
      * @since 1.0
      */
     public function onMonth($monthNameOrNum='jan',$dayNum=1,$time='00:00'){
-        if($dayNum >= 1 && $dayNum <= 31){
+        if(gettype($dayNum) == 'integer' && $dayNum >= 1 && $dayNum <= 31){
             $timeSplit = explode(':', $time);
             if(count($timeSplit) == 2){
                 $hour = intval($timeSplit[0]);
@@ -248,8 +249,8 @@ class CronJob {
                         return $this->cron($minute.' '.$hour.' '.$dayNum.' '.$monthNum.' *');
                     }
                     else{
-                        if($monthNameOrNum >= 1 && $monthNameOrNum <= 12){
-                            $this->cron($minute.' '.$hour.' '.$dayNum.' '.$monthNameOrNum.' *');
+                        if(gettype($monthNameOrNum) == 'integer' && $monthNameOrNum >= 1 && $monthNameOrNum <= 12){
+                            return $this->cron($minute.' '.$hour.' '.$dayNum.' '.$monthNameOrNum.' *');
                         }
                     }
                 }
@@ -295,7 +296,12 @@ class CronJob {
      * For more information on cron expressions, go to 
      * https://en.wikipedia.org/wiki/Cron#CRON_expression. Note that 
      * the method does not support year field. This means 
-     * the expression will have only 5 fields.
+     * the expression will have only 5 fields. Notes about the expression: 
+     * <ul>
+     * <li>Step values are not supported for months.</li>
+     * <li>Step values are not supported for day of week.</li>
+     * <li>Step values are not supported for day of month.</li>
+     * </ul>
      * @param string $when A cron expression (such as '8 15 * * 1'). Default 
      * is '* * * * *' which means run the job every minute.
      * @return boolean If the given cron expression is valid, the method will 
@@ -378,6 +384,24 @@ class CronJob {
         return $retVal;
     }
     /**
+     * Checks if a given string represents a number or not.
+     * @param string $str
+     * @return boolean
+     */
+    private function _isNumber($str){
+        $len = strlen($str);
+        if($len != 0){
+            for($x = 0 ; $x < $len ; $x++){
+                $ch = $str[$x];
+                if(!($ch >= '0' && $ch <= '9')){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * 
      * @param type $minutesField
      * @return boolean|array
@@ -436,7 +460,13 @@ class CronJob {
                 }
             }
             else if($exprType == self::SPECIFIC_VAL){
-                $value = intval($subExpr);
+                if($this->_isNumber($subExpr)){
+                    $value = intval($subExpr);
+                }
+                else{
+                    $isValidExpr = false;
+                    break;
+                }
                 if($value >= 0 && $value <= 59){
                     $minuteAttrs['at-every-x-minute'][] = $value;
                 }
@@ -510,7 +540,13 @@ class CronJob {
                 }
             }
             else if($exprType == self::SPECIFIC_VAL){
-                $value = intval($subExpr);
+                if($this->_isNumber($subExpr)){
+                    $value = intval($subExpr);
+                }
+                else{
+                    $isValidExpr = false;
+                    break;
+                }
                 if($value >= 0 && $value <= 23){
                     $hoursAttrs['at-every-x-hour'][] = $value;
                 }
@@ -851,7 +887,7 @@ class CronJob {
                 $end = in_array(strtoupper($range[1]), array_keys(self::WEEK_DAYS)) ? self::WEEK_DAYS[strtoupper($range[1])] : intval($range[1]);
                 if($start < $end){
                     if($start >= 0 && $start < 6){
-                        if($end >= 0 && $end < 6){
+                        if($end >= 0 && $end <= 6){
                             $dayAttrs['at-range'][] = array($start,$end);
                         }
                         else{
@@ -952,11 +988,19 @@ class CronJob {
      */
     public function execute($force=false){
         $retVal = false;
-        if($force === true || ($this->isMinute() && $this->isHour() && $this->isDayOfMonth() && 
-        $this->isMonth() && $this->isDayOfWeek())){
+        if($force === true || $this->isTime()){
             call_user_func($this->events['on']['func'], $this->events['on']['params']);
             $retVal = true;
         }
         return $retVal;
+    }
+    /**
+     * Checks if its time to execute the job or not.
+     * @return boolean If its time to execute the job, the method will return true. 
+     * If not, it will return false.
+     * @since 1.0.4
+     */
+    public function isTime() {
+        return $this->isMinute() && $this->isHour() && $this->isDayOfMonth() && $this->isMonth() && $this->isDayOfWeek();
     }
 }

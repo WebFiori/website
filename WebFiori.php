@@ -34,6 +34,7 @@ use webfiori\functions\WebsiteFunctions;
 use webfiori\functions\BasicMailFunctions;
 use webfiori\entity\AutoLoader;
 use webfiori\entity\Util;
+use webfiori\entity\ErrorBox;
 use webfiori\entity\router\APIRoutes;
 use webfiori\entity\router\ViewRoutes;
 use webfiori\entity\router\ClosureRoutes;
@@ -46,7 +47,7 @@ use Exception;
  * The instance of this class is used to control basic settings of 
  * the framework. Also, it is the entry point of any request.
  * @author Ibrahim
- * @version 1.3.3
+ * @version 1.3.4
  */
 class WebFiori{
     /**
@@ -93,6 +94,12 @@ class WebFiori{
      * @since 1.0 
      */
     private static $LC;
+    /**
+     * Used to format errors and warnings messages.
+     * @var int 
+     * @since 1.3.4
+     */
+    private static $NoticeAndWarningCount;
     /**
      * A mutex lock to disallow class access during initialization state.
      * @var int
@@ -208,6 +215,7 @@ class WebFiori{
         
         InitAutoLoad::init();
         CLI::init();
+        self::$NoticeAndWarningCount = 0;
         $this->_setHandlers();
         self::$SF = SystemFunctions::get();
         self::$WF = WebsiteFunctions::get();
@@ -261,6 +269,110 @@ class WebFiori{
      * Sets new error and exception handler.
      */
     private function _setHandlers(){
+        error_reporting(E_ALL & ~E_ERROR & ~E_COMPILE_ERROR & ~E_CORE_ERROR & ~E_RECOVERABLE_ERROR);
+        set_error_handler(function($errno, $errstr, $errfile, $errline){
+            if(php_sapi_name() == 'cli'){
+                fprintf(STDERR, "\n<%s>\n",Util::ERR_TYPES[$errno]['type']);
+                fprintf(STDERR, "Error Message    %5s %s\n",":",$errstr);
+                fprintf(STDERR, "Error Number     %5s %s\n",":",$errno);
+                fprintf(STDERR, "Error Description%5s %s\n",":",Util::ERR_TYPES[$errno]['description']);
+                fprintf(STDERR, "Error File       %5s %s\n",":",$errfile);
+                fprintf(STDERR, "Error Line:      %5s %s\n",":",$errline);
+            }
+            else{
+                if(defined('API_CALL')){
+                    header("HTTP/1.1 500 Server Error");
+                    $j = new JsonX();
+                    $j->add('message',$errstr);
+                    $j->add('type',Util::ERR_TYPES[$errno]['type']);
+                    $j->add('description', Util::ERR_TYPES[$errno]['description']);
+                    $j->add('error-number',$errno);
+                    $j->add('file',$errfile);
+                    $j->add('line',$errline);
+                    header('content-type: application/json');
+                    die($j);
+                }
+                else{
+                    $errBox = new ErrorBox();
+                    $errBox->setError($errno);
+                    $errBox->setDescription($errno);
+                    $errBox->setFile($errfile);
+                    $errBox->setMessage($errstr);
+                    $errBox->setLine($errline);
+                    echo $errBox;
+                }
+            }
+            WebFiori::$NoticeAndWarningCount++;
+            return true;
+        });
+        set_exception_handler(function($ex){
+            if(php_sapi_name() == 'cli'){
+                fprintf(STDERR, "\n<%s>\n","Uncaught Exception.");
+                fprintf(STDERR, "Exception Message %5s %s\n",":",$ex->getMessage());
+                fprintf(STDERR, "Exception Code    %5s %s\n",":",$ex->getMessage());
+                fprintf(STDERR, "File              %5s %s\n",":",$ex->getFile());
+                fprintf(STDERR, "Line              %5s %s\n",":",$ex->getLine());
+                fprintf(STDERR, "Stack Trace:\n%s",$ex->getTraceAsString());
+            }
+            else{
+                header("HTTP/1.1 500 Server Error");
+                $routeUri = Router::getUriObjByURL(Util::getRequestedURL());
+                if($routeUri !== null){
+                    $routeType = $routeUri->getType();
+                }
+                else{
+                    $routeType = Router::VIEW_ROUTE;
+                }
+                if($routeType == Router::API_ROUTE){
+                    $j = new JsonX();
+                    $j->add('message','500 - Server Error: Uncaught Exception.');
+                    $j->add('type','error');
+                    $j->add('exception-message',$ex->getMessage());
+                    $j->add('exception-code',$ex->getMessage());
+                    $j->add('file',$ex->getFile());
+                    $j->add('line',$ex->getLine());
+                    $stackTrace = new JsonX();
+                    $index = 0;
+                    $trace = $ex->getTrace();
+                    foreach ($trace as $arr){
+                        $stackTrace->add('#'.$index,$arr['file'].' (Line '.$arr['line'].')');
+                        $index++;
+                    }
+                    $j->add('stack-trace',$stackTrace);
+                    header('content-type: application/json');
+                    die($j);
+                }
+                else{
+                    die(''
+                    . '<!DOCTYPE html>'
+                    . '<html>'
+                    . '<head>'
+                    . '<style>'
+                    . '.nice-red{'
+                    . 'color:#ff6666;'
+                    . '}'
+                    . '.mono{'
+                    . 'font-family:monospace;'
+                    . '}'
+                    . '</style>'
+                    . '<title>Uncaught Exception</title>'
+                    . '</head>'
+                    . '<body style="color:white;background-color:#1a000d;">'
+                    . '<h1 style="color:#ff4d4d">500 - Server Error: Uncaught Exception.</h1>'
+                    . '<hr>'
+                    . '<p>'
+                    .'<b class="nice-red mono">Exception Message:</b> <span class="mono">'.$ex->getMessage()."</span><br/>"
+                    .'<b class="nice-red mono">Exception Code:</b> <span class="mono">'.$ex->getCode()."</span><br/>"
+                    .'<b class="nice-red mono">File:</b> <span class="mono">'.$ex->getFile()."</span><br/>"
+                    .'<b class="nice-red mono">Line:</b> <span class="mono">'.$ex->getLine()."</span><br>"
+                    .'<b class="nice-red mono">Stack Trace:</b> '."<br/>"
+                    . '</p>'
+                    . '<pre>'.$ex->getTraceAsString().'</pre>'
+                    . '</body>'
+                    . '</html>');
+                }
+            }
+        });
         register_shutdown_function(function(){
             $error = error_get_last();
             if($error !== null) {
@@ -300,83 +412,18 @@ class WebFiori{
                     . '<h1 style="color:#ff4d4d">500 - Server Error</h1>'
                     . '<hr>'
                     . '<p>'
-                    .'<b class="nice-red mono">Error Number:</b> <span class="mono">'.$error["type"]."</span><br/>"
-                    .'<b class="nice-red mono">File:</b> <span class="mono">'.$error["file"]."</span><br/>"
-                    .'<b class="nice-red mono">Line:</b> <span class="mono">'.$error["line"]."</span><br/>"
+                    .'<b class="nice-red mono">Type:</b> <span class="mono">'.Util::ERR_TYPES[$error["type"]]['type']."</span><br/>"
+                    .'<b class="nice-red mono">Description:</b> <span class="mono">'.Util::ERR_TYPES[$error["type"]]['description']."</span><br/>"
                     .'<b class="nice-red mono">Message:</b> <span class="mono">'.$error["message"]."</span><br>"
+                    .'<b class="nice-red mono">File:</b> <span class="mono">'.$error["file"]."</span><br/>"
+                    .'<b class="nice-red mono">Line:</b> <span class="mono">'.$error["line"]."</span><br/>" 
                     . '</p>'
                     . '</body>'
                     . '</html>');
                 }
             }
         });
-        set_error_handler(function($errno, $errstr, $errfile, $errline){
-            Util::displayErrors();
-            if(defined('API_CALL')){
-                header("HTTP/1.1 500 Server Error");
-                $j = new JsonX();
-                $j->add('message',$errstr);
-                $j->add('type','error');
-                $j->add('error-number',$errno);
-                $j->add('file',$errfile);
-                $j->add('line',$errline);
-                header('content-type: application/json');
-                die($j);
-            }
-            //let php handle the error since it is not API call.
-            return false;
-        });
-        set_exception_handler(function($ex){
-            header("HTTP/1.1 500 Server Error");
-            if(defined('API_CALL')){
-                $j = new JsonX();
-                $j->add('message','500 - Server Error: Uncaught Exception.');
-                $j->add('type','error');
-                $j->add('exception-message',$ex->getMessage());
-                $j->add('exception-code',$ex->getMessage());
-                $j->add('file',$ex->getFile());
-                $j->add('line',$ex->getLine());
-                $stackTrace = new JsonX();
-                $index = 0;
-                $trace = $ex->getTrace();
-                foreach ($trace as $arr){
-                    $stackTrace->add('#'.$index,$arr['file'].' (Line '.$arr['line'].')');
-                    $index++;
-                }
-                $j->add('stack-trace',$stackTrace);
-                header('content-type: application/json');
-                die($j);
-            }
-            else{
-                die(''
-                . '<!DOCTYPE html>'
-                . '<html>'
-                . '<head>'
-                . '<style>'
-                . '.nice-red{'
-                . 'color:#ff6666;'
-                . '}'
-                . '.mono{'
-                . 'font-family:monospace;'
-                . '}'
-                . '</style>'
-                . '<title>Uncaught Exception</title>'
-                . '</head>'
-                . '<body style="color:white;background-color:#1a000d;">'
-                . '<h1 style="color:#ff4d4d">500 - Server Error: Uncaught Exception.</h1>'
-                . '<hr>'
-                . '<p>'
-                .'<b class="nice-red mono">Exception Message:</b> <span class="mono">'.$ex->getMessage()."</span><br/>"
-                .'<b class="nice-red mono">Exception Code:</b> <span class="mono">'.$ex->getCode()."</span><br/>"
-                .'<b class="nice-red mono">File:</b> <span class="mono">'.$ex->getFile()."</span><br/>"
-                .'<b class="nice-red mono">Line:</b> <span class="mono">'.$ex->getLine()."</span><br>"
-                .'<b class="nice-red mono">Stack Trace:</b> '."<br/>"
-                . '</p>'
-                . '<pre>'.$ex->getTraceAsString().'</pre>'
-                . '</body>'
-                . '</html>');
-            }
-        });
+        
     }
 
     /**
@@ -512,7 +559,14 @@ class WebFiori{
      */
     private function _needConfigration(){
         header('HTTP/1.1 503 Service Unavailable');
-        if(defined('API_CALL')){
+        $routeUri = Router::getUriObjByURL(Util::getRequestedURL());
+        if($routeUri !== null){
+            $routeType = $routeUri->getType();
+        }
+        else{
+            $routeType = Router::VIEW_ROUTE;
+        }
+        if($routeType == Router::API_ROUTE){
             header('content-type:application/json');
             $j = new JsonX();
             $j->add('message', '503 - Service Unavailable');

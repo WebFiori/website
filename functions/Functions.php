@@ -29,6 +29,7 @@ if(!defined('ROOT_DIR')){
     . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
 use phMysql\MySQLLink;
+use phpStructs\Stack;
 use webfiori\entity\SessionManager;
 use webfiori\entity\DBConnectionFactory;
 use webfiori\entity\DBConnectionInfo;
@@ -41,9 +42,26 @@ use webfiori\conf\Config;
  * the system uses any. The developer can extend this class to add his own 
  * logic to the application that he is creating.
  * @author Ibrahim
- * @version 1.3.7
+ * @version 1.3.8
  */
 class Functions {
+    /**
+     * A stack that contains all executed and non-executed query objects.
+     * @var Stack 
+     * @since 1.3.8
+     */
+    private static $QueryStack;
+    /**
+     * A stack that contains multiple data sets which was fetched from executing 
+     * database queries.
+     * @var Stack 
+     */
+    private $dataStack;
+    /**
+     * An array that contains current active data set info.
+     * @var array 
+     */
+    private $currentDataset;
     /**
      *
      * @var MySQLLink
@@ -180,10 +198,29 @@ class Functions {
      */
     public function __construct() {
         if(self::$sessions === null){
-            self::$sessions = array();
+            self::$sessions = [];
+            self::$QueryStack = new Stack();
         }
+        $this->dataStack = new Stack();
+        $this->currentDataset = null;
         $this->_setDBErrDetails(0, 'NO_ERR');
         $this->useSession(self::DEFAULT_SESSTION_OPTIONS);
+    }
+    /**
+     * 
+     * @return Stack
+     * @since 1.3.8
+     */
+    private function getDataStack() {
+        return $this->dataStack;
+    }
+    /**
+     * 
+     * @return array
+     * @since 1.3.8
+     */
+    private function &getCurrentDataset() {
+        return $this->currentDataset;
     }
     /**
      * Initiate database connection.
@@ -356,12 +393,44 @@ class Functions {
      */
     private function _runQuery($query) {
         $link = $this->getDBLink();
+        self::$QueryStack->push($query);
         $result = $link->executeQuery($query);
         if($result !== true){
             $this->_setDBErrDetails($link->getErrorCode(),$link->getErrorMessage());
             $this->dbErrDetails['query'] = $query->getQuery();
         }
+        $qType = $query->getType();
+        if($result === true && ($qType == 'select' || $qType == 'show')){
+            $current = $this->getCurrentDataset();
+            if($current !== null){
+                $this->getDataStack()->push($current);
+            }
+            $this->currentDataset = [
+                'rows-count'=>$link->rows(),
+                'current-position'=>0,
+                'data'=>$link->getRows()
+            ];
+        }
         return $result;
+    }
+    /**
+     * Returns a stack that contains all executed queries for current request.
+     * @return Stack An object of type 'Stack' that contains an objects of 
+     * type 'MySQLQuery'.
+     * @since 1.3.8
+     */
+    public static function getQueriesStack() {
+        return self::$QueryStack;
+    }
+    /**
+     * Returns the last executed query object.
+     * @return MySQLQuery|null The method will return an object of type 
+     * 'MySQLQuery' that contains query info. If no query was executed, the 
+     * method will return null.
+     * @since 1.3.8
+     */
+    public function getLastQuery() {
+        return $this->getQueriesStack()->peek();
     }
     /**
      * Checks if the current session user has a privilege or not given privilege 
@@ -512,73 +581,99 @@ class Functions {
      * null.
      * @since 1.2
      */
-    public function &getDBLink() {
+    private function &getDBLink() {
         return $this->databaseLink;
     }
     /**
      * Returns the number of rows resulted from executing a query.
+     * The method will return the number of rows for current active dataset.
      * @return int Number of rows resulted from executing a query. The 
      * method will return <b>-1</b> in case no connection was established to 
-     * the database.
+     * the database or in case no dataset was fetched.
      * @since 1.0
      */
     public function rows(){
         $retVal = -1;
-        $dbLink = &$this->getDBLink();
-        if($dbLink !== null){
-            $retVal = $dbLink->rows();
+        $dataset = $this->getCurrentDataset();
+        if($dataset !== null){
+            $retVal = $dataset['rows-count'];
         }
         return $retVal;
     }
     /**
      * Returns an array which contains all fetched rows from executing a database 
      * query.
+     * Note that the method can be used only once to get a data set. The 
+     * method might return different data set on next call or it might return 
+     * an empty array.
      * @return array An array which contains all fetched rows from executing a 
      * database query.
      * @since 1.3.2
      */
     public function getRows(){
-        $retVal = array();
-        $dbLink = &$this->getDBLink();
-        if($dbLink !== null){
-            $retVal = $dbLink->getRows();
+        $retVal = [];
+        $dataset = $this->getCurrentDataset();
+        if($dataset !== null){
+            $this->currentDataset = $this->dataStack->pop();
+            $retVal = $dataset;
         }
         return $retVal;
     }
    /**
-     * Returns the first that is resulted from executing a query.
-     * @return array|null An array that contains row info. The 
-     * method will return null in case no connection was established to 
-     * the database.
-     * @since 1.0
-     */
+    * Returns the first row that is resulted from executing a query.
+    * Note that if the number of fetched rows is 1, the method can be only 
+    * used once to get that row. In addition, If there are other data sets which was resulted from 
+     * executing other select queries, The method will switch to the last 
+     * data set.
+    * @return array|null An associative array that contains row info. The 
+    * method will return null in case no connection was established to 
+    * the database or there is no active data set.
+    * @since 1.0
+    */
     public function getRow(){
         $retVal = null;
-        $dbLink = $this->getDBLink();
-        if($dbLink !== null){
-            $retVal = $dbLink->getRow();
+        $current = &$this->getCurrentDataset();
+        if($current !== null){
+            if($current['rows-count'] != 0){
+                if(isset($current['data'][$current['current-position']])){
+                    $retVal = $current['data'][$current['current-position']];
+                }
+            }
+            if($current['rows-count'] == 1){
+                $this->currentDataset = $this->dataStack->pop();
+            }
         }
         return $retVal;
     }
     /**
      * Returns the next row in the result set that was generated from executing 
      * a query.
+     * Note that if current active data set has been traversed, the method 
+     * will return null. In addition, If there are other data sets which was resulted from 
+     * executing other select queries, The method will switch to the last 
+     * data set.
      * @return array|null An associative array that represents the row. If 
      * there was no result set generated from executing the query or the 
-     * result has no rows, the method will return null.
+     * result has no rows or the current data set has been traversed, the method will return null.
      * @since 1.3.1
      */
     public function nextRow() {
         $retVal = null;
-        $dbLink = &$this->getDBLink();
-        if($dbLink !== null){
-            $retVal = $dbLink->nextRow();
+        $dataset = &$this->getCurrentDataset();
+        if($dataset !== null){
+            if(isset($dataset['data'][$dataset['current-position']])){
+                $retVal = $dataset['data'][$dataset['current-position']];
+                $dataset['current-position'] = $dataset['current-position'] + 1;
+            }
+            else{
+                $this->currentDataset = $this->dataStack->pop();
+            }
         }
         return $retVal;
     }
     /**
      * Returns the ID of the user from session manager.
-     * @return int The ID of the user taken from session manager. The 
+     * @return string|int The ID of the user taken from session manager. The 
      * method will return -1 in case no user is set in session manager or in 
      * case no session is active.
      * @since 1.0
@@ -589,7 +684,7 @@ class Functions {
         if($sesstion !== null){
             $user = &$this->getSession()->getUser();
             if($user !== null){
-                $retVal = intval($user->getID());
+                $retVal = $user->getID().'';
             }
         }
         return $retVal;

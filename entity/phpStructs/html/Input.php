@@ -55,12 +55,13 @@ class Input extends HTMLNode{
      * <li>search</li>
      * <li>select</li>
      * <li>textarea</li>
+     * <li>radio</li>
      * </ul>
      * @since 1.0
      */
     const INPUT_TYPES = array('text','date','password','submit','checkbox','email','url','tel',
         'color','file','range','month','number','date-local','hidden','time','week','search', 
-        'select','textarea');
+        'select','textarea','radio');
     /**
      * An array of supported input modes.
      * The array contains the following values:
@@ -137,16 +138,40 @@ class Input extends HTMLNode{
         return false;
     }
     /**
-     * Sets the value of the attribute 'placeholder'.
-     * @param string $text The value to set. The attribute can be 
+     * Sets a placeholder text for the input element if it supports it.
+     * A placeholder can be set for the following input types:
+     * <ul>
+     * <li>text</li>
+     * <li>textarea</li>
+     * <li>password</li>
+     * <li>number</li>
+     * <li>search</li>
+     * <li>email</li>
+     * <li>url</li>
+     * </ul>
+     * @param string|null $text The value to set. The attribute can be 
      * set only if the type of the input is text or password or number.
      * @return boolean If placeholder is set, the method will return true. If 
      * it is not set, the method will return false.
      */
     public function setPlaceholder($text) {
-        $iType = $this->getType();
-        if($iType == 'password' || $iType == 'text' || $iType == 'number' || $this->getNodeName() == 'textarea'){
-            return $this->setAttribute('placeholder', $text);
+        if($text !== null){
+            $iType = $this->getType();
+            if($iType == 'password' || 
+               $iType == 'text' || 
+               $iType == 'number' || 
+               $iType == 'search' || 
+               $iType == 'email' || 
+               $iType == 'url' || 
+               $this->getNodeName() == 'textarea'){
+                return $this->setAttribute('placeholder', $text);
+            }
+        }
+        else{
+            if($this->hasAttribute('placeholder')){
+                $this->removeAttribute('placeholder');
+                return true;
+            }
         }
         return false;
     }
