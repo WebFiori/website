@@ -52,6 +52,7 @@ class ViewRoutes {
         Router::view('/contribute', '/ContributeView.php');
         self::createHelpTopicsRoutes();
         \docGenerator\DocGeneratorRoutes::createRoutes();
+        Router::incSiteMapRoute();
     }
     public static function createHelpTopicsRoutes() {
         //intro topics
