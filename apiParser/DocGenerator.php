@@ -62,7 +62,8 @@ class DocGenerator {
                 $this->baseUrl = $this->baseUrl.'/';
             }
             if(Util::isDirectory($options['path'])){
-                if(Util::isDirectory($options['output-path'])){
+                $outputPath = isset($options['output-path']) ? $options['output-path'] : '';
+                if(Util::isDirectory($outputPath,true)){
                     $this->isDynamic = isset($options['is-dynamic']) && $options['is-dynamic'] === true ? true : false;
                     $this->routRootFolder = $options['route-root-folder'];
                     $classes = $this->_scanPathForFiles($options['path'],$options['exclude-path']);
@@ -77,7 +78,7 @@ class DocGenerator {
                     $this->_buildLinks();
                     $siteName = isset($options['site-name']) && strlen($options['site-name']) > 0 ?
                             $options['site-name'] : 'Docs';
-                    $this->createRoutesFile($options['output-path']);
+                    $this->createRoutesFile($outputPath);
                     foreach ($this->apiReadersArr as $reader){
                         Page::lang('EN');
                         Page::dir('ltr');
@@ -114,7 +115,7 @@ class DocGenerator {
                             Page::description('All classes in the namespace '.$nsObj->getName().'.');
                             Page::title('Namespace '.$nsObj->getName());
                             $this->_createAsideNav();
-                            $this->createNSIndexFile($options['output-path'],$nsObj->getName(), $options);
+                            $this->createNSIndexFile($outputPath,$nsObj->getName(), $options);
                             Page::reset();
                         }
                     }
@@ -214,6 +215,10 @@ class DocGenerator {
             fprintf(STDOUT, $message."\n");
         }
     }
+    /**
+     * Initialize the array which contains links to all 
+     * detected objects.
+     */
     private function _buildLinks() {
         $nsClasses = array();
         $this->linksArr['NULL'] = '<a class="mono" href="http://php.net/manual/en/language.types.null.php" target="_blank">NULL</a>';
@@ -299,7 +304,10 @@ class DocGenerator {
                 . 'class DocGeneratorRoutes{'."\r\n"
                     . '    public static function createRoutes(){'."\r\n";
             foreach ($this->routerLinks as $link => $routeTo){
-                $routesStr .= '        Router::view(\'docs'.$link.'\',\''.$routeTo.'View.'.$ext.'\');'."\r\n";
+                $routesStr .= '        Router::view(['
+                        . '                 \'path\'=>\'docs'.$link.'\','
+                        . '                \'=>route-to\'=>\''.$routeTo.'View.'.$ext.'\''
+                        . '            ]);'."\r\n";
             }
         $routesStr .= '    }'."\r\n}";
         $file->setRawData($routesStr);
