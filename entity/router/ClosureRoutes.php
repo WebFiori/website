@@ -62,8 +62,8 @@ class ClosureRoutes {
                 'base-url'=> 'https://programmingacademia.com/webfiori/docs',
                 'theme'=>'WebFiori API Theme',
                 'site-name'=>'WebFiori API Docs',
-                'output-to'=>'C:\\Server\\apache2\\htdocs\\webfiori-docs\\pages\\apis-1.0.1',
-                'route-root-folder'=>'apis-1.0.1',
+                'output-path'=>'C:\\Server\\apache2\\htdocs\\webfiori-docs\\pages\\apis-1.0.2',
+                'route-root-folder'=>'apis-1.0.2',
                 'is-dynamic'=>TRUE
             ));
         });
@@ -108,5 +108,6 @@ class ClosureRoutes {
             $j->add('namedLogo', 'PayPal');
             echo $j;
         });
+        
     }
 }
