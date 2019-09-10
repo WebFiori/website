@@ -5,3 +5,4 @@ test.*
 /pages/apis-1.0.0
 logs/api-extractor-log.txt
 /res/release/
+/pages/apis-1.0.2/
