@@ -43,7 +43,7 @@ nav ul{
 }
 .class-row {
     border: 1px solid;
-    margin-bottom: 2px !important;
+    padding: 10px !important;
 }
 .class-row p{
     margin: 0;
