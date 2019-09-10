@@ -55,8 +55,9 @@ class ClosureRoutes {
             $reader = new DocGenerator(array(
                 'path'=>'C:\Server\apache2\htdocs\webfiori\src',
                 'exclude-path'=>array(
-                    'C:\Server\apache2\htdocs\webfiori\src\themes\greeny',
-                    'C:\Server\apache2\htdocs\webfiori\src\themes\template'
+                    'C:\Server\apache2\htdocs\webfiori\src\pages',
+                    'C:\Server\apache2\htdocs\webfiori\src\apis',
+                    'C:\Server\apache2\htdocs\webfiori\src\themes'
                 ),
                 'base-url'=> 'https://programmingacademia.com/webfiori/docs',
                 'theme'=>'WebFiori API Theme',
@@ -67,6 +68,14 @@ class ClosureRoutes {
             ));
         }
         ]);
+        Router::closure([
+            'path'=>'/downloads/webfiori-v1.0.2-stable', 
+            'route-to'=>function(){
+                $f = new File();
+                $f->setName('webfiori-1.0.2-stable.zip');
+                $f->setPath(ROOT_DIR.'/res/release');
+                $f->view(TRUE);
+        }]);
         Router::closure([
             'path'=>'/downloads/webfiori-v1.0.0-beta-1', 
             'route-to'=>function(){
