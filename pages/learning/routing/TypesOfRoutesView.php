@@ -59,10 +59,22 @@ class TypesOfRoutesView extends RoutingLearnView{
         $code01->setTitle('PHP Code');
         $code01->setCode("class ViewRoutes {
     public static function create(){
-        Router::view('/', '/HomeView.html');
-        Router::view('/home', '/HomeView.html');
-        Router::view('/user-login', '/ThemeTestPage.php');
-        Router::view('/dashboard', '/system-views/DashboardView.php');
+        Router::view([
+            'path'=>'/', 
+            'route-to'=>'/HomeView.html'
+        ]);
+        Router::view([
+            'path'=>'/home', 
+            'route-to'=>'/HomeView.html'
+        });
+        Router::view([
+            'path'=>'/user-login', 
+            'route-to'=>'/ThemeTestPage.php'
+        ]);
+        Router::view([
+            'path'=>'/dashboard', 
+            'route-to'=>'/system-views/DashboardView.php'
+        ]);
     }
 }
     ");
@@ -123,9 +135,18 @@ class TypesOfRoutesView extends RoutingLearnView{
         $code02->setTitle('PHP Code');
         $code02->setCode("class APIRoutes {
     public static function create(){
-        Router::api('/web-apis/user/{action}', '/UserAPIs.php');
-        Router::api('/web-apis/article/{action}', '/writer/ArticleAPIs.php');
-        Router::api('/web-apis/article-content/{action}', '/writer/ContentAPIs.php');
+        Router::api([
+            'path'=>'/web-apis/user/{action}', 
+            'route-to'=>'/UserAPIs.php'
+        ]);
+        Router::api([
+            'path'=>'/web-apis/article/{action}', 
+            'route-to'=>'/writer/ArticleAPIs.php'
+        ]);
+        Router::api([
+            'path'=>'/web-apis/article-content/{action}', 
+            'route-to'=>'/writer/ContentAPIs.php'
+        ]);
     }
 }
     ");
@@ -149,10 +170,13 @@ class TypesOfRoutesView extends RoutingLearnView{
         $code03->setTitle('PHP Code');
         $code03->setCode("class ClosureRoutes {
     public static function create(){
-        Router::closure('/say-hello-to/{A_Name}', function(){
-            \$name = \$_GET['A_Name'];
-            echo 'Hello Mr.'.\$name;
-        });
+        Router::closure([
+            'path'=>'/say-hello-to/{A_Name}', 
+            'route-to'=>function(){
+                \$name = \$_GET['A_Name'];
+                echo 'Hello Mr.'.\$name;
+            }
+        ]);
     }
 }
     ");
