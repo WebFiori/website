@@ -420,8 +420,6 @@ class Router {
      * It will be the same as requesting the URL 'https://example.com/OnE/tWO'. Default 
      * is true.</li>
      * </ul>
-     * @param string $path 
-     * @param string $viewFile 
      * @return boolean The method will return true if the route was created. 
      * If a route for the given path was already created, the method will return 
      * false.
