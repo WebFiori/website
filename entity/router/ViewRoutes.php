@@ -41,63 +41,114 @@ class ViewRoutes {
      * @since 1.0
      */
     public static function create(){
-        Router::view('/', '/WebFioriHome.php');
-        Router::view('/404', '/NotFound.php');
-        Router::view('/test-theme', '/ThemeTestPage.php');
-        Router::view('/webfiori', '/WebFioriHome.php');
+        Router::view([
+            'path'=>'/', 
+            'route-to'=>'/WebFioriHome.php'
+        ]);
+        Router::view([
+            'path'=>'/404', 
+            'route-to'=>'/NotFound.php'
+        ]);
+        Router::view([
+            'path'=>'/webfiori', 
+            'route-to'=>'/WebFioriHome.php'
+        ]);
         //Router::view('/docs', '/apis-1.0.0/webfiori/NSIndexView.php');
-        Router::view('/learn', '/learning/Index.php');
-        Router::view('/download', '/DownloadView.php');
-        Router::view('/learn/topics/cron', '/learning/cron/Index.php');
-        Router::view('/contribute', '/ContributeView.php');
+        Router::view([
+            'path'=>'/learn', 
+            'route-to'=>'/learning/Index.php'
+        ]);
+        Router::view([
+            'path'=>'/download', 
+            'route-to'=>'/DownloadView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/cron', 
+            'route-to'=>'/learning/cron/Index.php'
+        ]);
+        Router::view([
+            'path'=>'/contribute', 
+            'route-to'=>'/ContributeView.php'
+        ]);
         self::createHelpTopicsRoutes();
         \docGenerator\DocGeneratorRoutes::createRoutes();
         Router::incSiteMapRoute();
     }
     public static function createHelpTopicsRoutes() {
         //intro topics
-        Router::view('/learn/topics/introduction', '/learning/intro/Index.php');
-        Router::view('/learn/topics/architecture', '/learning/intro/FrameworkStructureView.php');
-        Router::view('/learn/topics/basic-usage', '/learning/intro/BasicUsageView.php');
-        Router::view('/learn/topics/more-about-views', '/learning/intro/MoreAboutViewsView.php');
+        Router::view([
+            'path'=>'/learn/topics/introduction', 
+            'route-to'=>'/learning/intro/Index.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/architecture', 
+            'route-to'=>'/learning/intro/FrameworkStructureView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/basic-usage', 
+            'route-to'=>'/learning/intro/BasicUsageView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/more-about-views', 
+            'route-to'=>'/learning/intro/MoreAboutViewsView.php'
+        ]);
         //routing
-        Router::view('/learn/topics/routing', '/learning/routing/Index.php');
-        Router::view('/learn/topics/routing/how-it-works', '/learning/routing/HowItWorksView.php');
-        Router::view('/learn/topics/routing/class-Router', '/learning/routing/ClassRouterView.php');
-        Router::view('/learn/topics/routing/types-of-routes', '/learning/routing/TypesOfRoutesView.php');
-        Router::view('/learn/topics/routing/examples', '/learning/routing/RoutingExamplesView.php');
+        Router::view([
+            'path'=>'/learn/topics/routing', 
+            'route-to'=>'/learning/routing/Index.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/routing/how-it-works', 
+            'route-to'=>'/learning/routing/HowItWorksView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/routing/class-Router', 
+            'route-to'=>'/learning/routing/ClassRouterView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/routing/types-of-routes', 
+            'route-to'=>'/learning/routing/TypesOfRoutesView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/routing/examples', 
+            'route-to'=>'/learning/routing/RoutingExamplesView.php'
+        ]);
         //theme creation tutorials
-        Router::view('/learn/topics/themes', '/learning/themes/Index.php');
-        Router::view('/learn/topics/themes/class-Theme', '/learning/themes/ClassThemeView.php');
-        Router::view('/learn/topics/themes/class-HTMLDoc', '/learning/themes/ClassHTMLDocView.php');
-        Router::view('/learn/topics/themes/class-Page', '/learning/themes/ClassPageView.php');
-        Router::view('/learn/topics/themes/class-HTMLNode', '/learning/themes/ClassHTMLNodeView.php');
-        Router::view('/learn/topics/themes/class-HeadNode', '/learning/themes/ClassHeadNodeView.php');
-        Router::view('/learn/topics/themes/create-simple-theme', '/learning/themes/CreateSimpleThemeView.php');
-        Router::view('/learn/topics/themes/before-after-loaded', '/learning/themes/BeforeAfterEventsView.php');
-        Router::view('/learn/topics/themes/the-method-createHTMLNode', '/learning/themes/MethodCreateNodeView.php');
-    }
-    /**
-     * A test for creating a site map from views URIs
-     * @return string An XML string.
-     * @since 1.0
-     */
-    public static function createSiteMap() {
-        $urlSet = new HTMLNode('urlset');
-        $urlSet->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-        $urlSet->setAttribute('xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
-        $routes = Router::get()->getRoutes();
-        foreach ($routes as $route){
-            if($route->getType() == Router::VIEW_ROUTE){
-                $url = new HTMLNode('url');
-                $loc = new HTMLNode('loc');
-                $loc->addChild(HTMLNode::createTextNode($route->getUri()));
-                $url->addChild($loc);
-                $urlSet->addChild($url);
-            }
-        }
-        $retVal = '<?xml version="1.0" encoding="UTF-8"?>';
-        $retVal .= $urlSet->toHTML();
-        return $retVal;
+        Router::view([
+            'path'=>'/learn/topics/themes', 
+            'route-to'=>'/learning/themes/Index.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/themes/class-Theme', 
+            'route-to'=>'/learning/themes/ClassThemeView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/themes/class-HTMLDoc', 
+            'route-to'=>'/learning/themes/ClassHTMLDocView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/themes/class-Page', 
+            'route-to'=>'/learning/themes/ClassPageView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/themes/class-HTMLNode', 
+            'route-to'=>'/learning/themes/ClassHTMLNodeView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/themes/class-HeadNode', 
+            'route-to'=>'/learning/themes/ClassHeadNodeView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/themes/create-simple-theme', 
+            'route-to'=>'/learning/themes/CreateSimpleThemeView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/themes/before-after-loaded', 
+            'route-to'=>'/learning/themes/BeforeAfterEventsView.php'
+        ]);
+        Router::view([
+            'path'=>'/learn/topics/themes/the-method-createHTMLNode', 
+            'route-to'=>'/learning/themes/MethodCreateNodeView.php'
+        ]);
     }
 }
