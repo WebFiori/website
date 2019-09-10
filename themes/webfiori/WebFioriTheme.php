@@ -13,7 +13,7 @@ use phpStructs\html\Label;
 use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use webfiori\conf\SiteConfig;
-use webfiori\conf\Config;
+use phpStructs\html\JsCode;
 
 class WebFioriTheme extends Theme{
     public function __construct() {
@@ -152,9 +152,9 @@ class WebFioriTheme extends Theme{
         $headTag->addMeta('robots', 'index, follow');
         $analId = 'UA-91825602-1';
         $headTag->addJs('https://www.googletagmanager.com/gtag/js?id='.$analId, [
-            'async'=>'true'
+            'async'=>'false'
         ], false);
-        $jsCode = new phpStructs\html\JsCode();
+        $jsCode = new JsCode();
         $jsCode->addCode(''
                 . 'window.dataLayer = window.dataLayer || [];'
                 . 'function gtag(){'
