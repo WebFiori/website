@@ -29,6 +29,11 @@ class DocGenerator {
     private $routRootFolder;
     private $isDynamic;
     private $nsApiObjecsArr;
+    private $files;
+    private $themeName;
+    private $siteName;
+    private $outputPath;
+    private $options;
     /**
      * 
      * @param type $options An array of options. The available options are:
@@ -55,6 +60,7 @@ class DocGenerator {
      * @throws Exception
      */
     public function __construct($options=array()) {
+        $this->options = $options;
         if(isset($options['path'])){
             $options['path'] = str_replace('/', '\\', $options['path']);
             $this->baseUrl = isset($options['base-url']) ? $options['base-url']:'';
@@ -62,63 +68,30 @@ class DocGenerator {
                 $this->baseUrl = $this->baseUrl.'/';
             }
             if(Util::isDirectory($options['path'])){
-                $outputPath = isset($options['output-path']) ? $options['output-path'] : '';
-                if(Util::isDirectory($outputPath,true)){
+                $this->outputPath = isset($options['output-path']) ? $options['output-path'] : '';
+                if(Util::isDirectory($this->getOutputPath(),true)){
                     $this->isDynamic = isset($options['is-dynamic']) && $options['is-dynamic'] === true ? true : false;
                     $this->routRootFolder = $options['route-root-folder'];
-                    $classes = $this->_scanPathForFiles($options['path'],$options['exclude-path']);
-                    $this->linksArr = array();
-                    $this->classesLinksByNS = array();
-                    $this->apiReadersArr = array();
-                    $this->routerLinks = array();
-                    $this->nsApiObjecsArr = array();
-                    foreach ($classes as $classPath){
-                        $this->apiReadersArr[] = new APIReader($classPath);
-                    }
+                    $this->themeName = isset($options['theme']) ? $options['theme'] : '';
+                    $this->logMessage('Scanning path \''.$options['path'].'\' for php files...');
+                    $this->_scanPathForFiles($options['path'],$options['exclude-path']);
+                    $this->linksArr = [];
+                    $this->classesLinksByNS = [];
+                    $this->apiReadersArr = [];
+                    $this->routerLinks = [];
+                    $this->nsApiObjecsArr = [];
+                    $this->logMessage('Parsing API Docs from files...');
+                    $this->_readAndrocessFiles();
+                    $this->logMessage('Building links...');
                     $this->_buildLinks();
-                    $siteName = isset($options['site-name']) && strlen($options['site-name']) > 0 ?
+                    $this->siteName = isset($options['site-name']) && strlen($options['site-name']) > 0 ?
                             $options['site-name'] : 'Docs';
-                    $this->createRoutesFile($outputPath);
-                    foreach ($this->apiReadersArr as $reader){
-                        Page::lang('EN');
-                        Page::dir('ltr');
-                        $theme = Page::theme($options['theme']);
-                        if($theme instanceof APITheme){
-                            $theme->setBaseURL($this->getBaseURL());
-                            Page::siteName($siteName);
-                            $classAPI = new ClassAPI($reader,$this->linksArr,$options);
-                            $classAPI->setBaseURL($this->baseUrl);
-                            $theme->setClass($classAPI);
-                            Page::insert($theme->createBodyNode());
-                            //$page = new APIPage($classAPI);
-                            $canonical = $options['base-url']. str_replace('\\', '/', $classAPI->getNameSpace()).'/'.$classAPI->getName();
-                            Page::canonical($canonical);
-                            Page::description($classAPI->getSummary());
-                            $this->_createAsideNav();
-                            $this->createAPIPage($classAPI, $options);
-                            Page::reset();
-                        }
-                        else{
-                            throw new Exception('The selected theme is not a sub-class of \'APITheme\'.');
-                        }
-                        
-                    }
-                    foreach ($this->getNSAPIObjcts() as $nsObj){
-                        $theme = Page::theme($options['theme']);
-                        if($theme instanceof APITheme){
-                            $theme->setBaseURL($this->getBaseURL());
-                            Page::siteName($siteName);
-                            Page::insert($theme->createNamespaceContentBlock($nsObj));
-                            //$page = new APIPage($classAPI);
-                            $canonical = trim($options['base-url'],'/'). str_replace('\\', '/', $nsObj->getName());
-                            Page::canonical($canonical);
-                            Page::description('All classes in the namespace '.$nsObj->getName().'.');
-                            Page::title('Namespace '.$nsObj->getName());
-                            $this->_createAsideNav();
-                            $this->createNSIndexFile($outputPath,$nsObj->getName(), $options);
-                            Page::reset();
-                        }
-                    }
+                    $this->logMessage('Generating routes class...');
+                    $this->_createRoutesFile();
+                    $this->logMessage('Creating web pages...');
+                    $this->_generateClassesAPIPages();
+                    $this->_generateNamespacesPages();
+                    $this->logMessage('Process completed.');
                 }
                 else{
                     throw new Exception('Given output path is invalid.');
@@ -132,7 +105,112 @@ class DocGenerator {
             throw new Exception('The index \'path\' is missing.');
         }
     }
-    private function createAPIPage($classAPI,$options){
+    /**
+     * Returns the path to the folder which will be used to store all generated 
+     * pages
+     * @return string
+     */
+    public function getOutputPath() {
+        return $this->outputPath;
+    }
+    /**
+     * Returns the name of the theme that will be used in generated views.
+     * @return string The name of the theme that will be used in generated views.
+     */
+    public function getThemeName() {
+        return $this->themeName;
+    }
+    /**
+     * Returns the name of the website that well be set for every generated view.
+     * @return string The name of the website that well be set for every generated view.
+     * Default return value is 'Docs'.
+     */
+    public function getSiteName() {
+        return $this->siteName;
+    }
+    private function getOptions() {
+        return $this->options;
+    }
+    private function _generateNamespacesPages(){
+        $themeName = $this->getThemeName();
+        $siteName = $this->getSiteName();
+        $base = $this->getBaseURL();
+        $outputPath = $this->getOutputPath();
+        $options = $this->getOptions();
+        foreach ($this->getNSAPIObjcts() as $nsObj){
+            $theme = Page::theme($themeName);
+            if($theme instanceof APITheme){
+                $theme->setBaseURL($this->getBaseURL());
+                Page::siteName($siteName);
+                Page::insert($theme->createNamespaceContentBlock($nsObj));
+                //$page = new APIPage($classAPI);
+                $canonical = trim($base,'/'). str_replace('\\', '/', $nsObj->getName());
+                Page::canonical($canonical);
+                Page::description('All classes and sub-namespaces in the namespace '.$nsObj->getName().'.');
+                Page::title('Namespace '.$nsObj->getName());
+                $this->_createAsideNav();
+                $this->createNSIndexFile($outputPath,$nsObj->getName(), $options);
+                Page::reset();
+            }
+        }
+    }
+
+    /**
+     * Generate all views for parsed classes.
+     * @throws Exception
+     */
+    private function _generateClassesAPIPages() {
+        $themeName = $this->getThemeName();
+        $siteName = $this->getSiteName();
+        $base = $this->getBaseURL();
+        $options = $this->getOptions();
+        foreach ($this->apiReadersArr as $reader){
+            Page::lang('EN');
+            Page::dir('ltr');
+            $theme = Page::theme($themeName);
+            if($theme instanceof APITheme){
+                $theme->setBaseURL($this->getBaseURL());
+                Page::siteName($siteName);
+                $classAPI = new ClassAPI($reader,$this->getLinks(),$options);
+                $classAPI->setBaseURL($base);
+                $theme->setClass($classAPI);
+                Page::insert($theme->createBodyNode());
+                //$page = new APIPage($classAPI);
+                $canonical = $base. str_replace('\\', '/', $classAPI->getNameSpace()).'/'.$classAPI->getName();
+                Page::canonical($canonical);
+                Page::description($classAPI->getSummary());
+                $this->_createAsideNav();
+                $this->_createAPIPage($classAPI, $options);
+                Page::reset();
+            }
+            else{
+                throw new Exception('The selected theme is not a sub-class of \'APITheme\'.');
+            }
+
+        }
+    }
+    /**
+     * Go through all detected php files and parse classes.
+     */
+    private function _readAndrocessFiles() {
+        foreach ($this->getFiles() as $classPath){
+            $this->apiReadersArr[] = new APIReader($classPath);
+        }
+    }
+    /**
+     * Returns an array which contains paths to all detected files.
+     * The files are the ones that API docs will be generated for.
+     * @return array An array which contains paths to all detected files.
+     */
+    public function getFiles() {
+        return $this->files;
+    }
+    /**
+     * Creates a web page that represents specific API page.
+     * @param type $classAPI
+     * @param type $options
+     */
+    private function _createAPIPage($classAPI,$options){
         if($this->isDynamicPage()){
             $this->createPHPFile($classAPI,$options['output-path'], $options);
         }
@@ -201,6 +279,12 @@ class DocGenerator {
     public function getLinks() {
         return $this->linksArr;
     }
+    /**
+     * Returns an associative array of all classes inside namespaces.
+     * @return array An associative array. The indices are namespaces and 
+     * the values are sub-arrays which contains links to classes inside each 
+     * namespace.
+     */
     public function getLinksByNameSpace() {
         return $this->classesLinksByNS;
     }
@@ -208,16 +292,21 @@ class DocGenerator {
         return $this->routerLinks;
     }
     public function logMessage($message,$type='i') {
-        if($type == 'e'){
-            fprintf(STDERR, $message."\n");
+        if(php_sapi_name() == 'cli'){
+            if($type == 'e'){
+                fprintf(STDERR, date('Y-m-d H:i:s').': '. $message."\n");
+            }
+            else{
+                fprintf(STDOUT, date('Y-m-d H:i:s').': '.$message."\n");
+            }
         }
         else{
-            fprintf(STDOUT, $message."\n");
+            echo date('Y-m-d H:i:s').': '. $message."<br/>";
         }
     }
     /**
      * Initialize the array which contains links to all 
-     * detected objects.
+     * detected classes.
      */
     private function _buildLinks() {
         $nsClasses = array();
@@ -233,18 +322,19 @@ class DocGenerator {
         $this->linksArr['resource'] = '<a class="mono" href="http://php.net/manual/en/language.types.resource.php" target="_blank">resource</a>';
         $this->linksArr['iterable'] = '<a class="mono" href="http://php.net/manual/en/language.types.iterable.php" target="_blank">iterable</a>';
         $this->linksArr['object'] = '<a class="mono" href="http://php.net/manual/en/language.types.object.php" target="_blank">object</a>';
+        $base = $this->getBaseURL();
         foreach ($this->apiReadersArr as $apiReader){
             $namespaceLink = $apiReader->getNamespace();
             $packageLink2 = str_replace('.', '/', $namespaceLink);
             $cName = $apiReader->getClassName();
             $nsName = $apiReader->getNamespace();
             if($packageLink2 === ''){
-                $classLink = trim($this->baseUrl,'/').'/'.$cName;
+                $classLink = trim($base,'/').'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.'NSIndex';
             }
             else{
-                $classLink = trim($this->baseUrl,'/').$packageLink2.'/'.$cName;
+                $classLink = trim($base,'/').$packageLink2.'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/NSIndex';
             }
@@ -258,11 +348,19 @@ class DocGenerator {
                 $this->linksArr[$cName.'::'.$name.'()'] = '<a class="mono" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'()</a>';
             }
         }
+        $namespacesNames = array_keys($nsClasses);
         foreach ($nsClasses as $nsName => $classes){
             $ns = new NameSpaceAPI();
             $ns->setName($nsName);
             foreach ($classes as $class){
                 $ns->addClass($class);
+            }
+            $len = strlen($nsName);
+            foreach ($namespacesNames as $nsXName){
+                $subNs = substr($nsXName, 0, $len);
+                if($subNs == $nsName){
+                    $ns->addSubNamespace($nsXName);
+                }
             }
             $this->nsApiObjecsArr[] = $ns;
         }
@@ -279,9 +377,10 @@ class DocGenerator {
         $ul->setClassName('side-ul');
         $nav->addChild($ul);
         $aside->addChild($nav);
+        $base = trim($this->getBaseURL(),'/');
         foreach ($this->classesLinksByNS as $nsName => $nsClasses){
             $packageLi = new ListItem();
-            $packageLi->addTextNode('<a href="'.trim($this->getBaseURL(),'/').str_replace('\\','/',$nsName).'">'.$nsName.'</a>',FALSE);
+            $packageLi->addTextNode('<a href="'.$base.str_replace('\\','/',$nsName).'">'.$nsName.'</a>',FALSE);
             $packageUl = new UnorderedList();
             $packageLi->addChild($packageUl);
             foreach ($nsClasses as $classLink){
@@ -290,13 +389,21 @@ class DocGenerator {
             $ul->addChild($packageLi);
         }
     }
+    /**
+     * Returns a string which represents the base URL which used inside the 
+     * 'base' tag of the 'head' tag in a page.
+     * @return string
+     */
     public function getBaseURL(){
         return $this->baseUrl;
     }
-    private function createRoutesFile($path){
+    /**
+     * Generates the class which will contains all routes to generated views.
+     */
+    private function _createRoutesFile(){
         $ext = $this->isDynamicPage() ? 'php' : 'html';
         $file = new File();
-        $file->setPath($path);
+        $file->setPath($this->getOutputPath());
         $file->setName('DocGeneratorRoutes.php');
         $routesStr = '<?php'."\r\n"
                 .'namespace docGenerator;'."\r\n"
@@ -304,10 +411,10 @@ class DocGenerator {
                 . 'class DocGeneratorRoutes{'."\r\n"
                     . '    public static function createRoutes(){'."\r\n";
             foreach ($this->routerLinks as $link => $routeTo){
-                $routesStr .= '        Router::view(['
-                        . '                 \'path\'=>\'docs'.$link.'\','
-                        . '                \'=>route-to\'=>\''.$routeTo.'View.'.$ext.'\''
-                        . '            ]);'."\r\n";
+                $routesStr .= '        Router::view(['."\n"
+                        . '            \'path\'=>\'docs'.$link.'\','."\n"
+                        . '            \'route-to\'=>\''.$routeTo.'View.'.$ext.'\''."\n"
+                        . '        ]);'."\r\n";
             }
         $routesStr .= '    }'."\r\n}";
         $file->setRawData($routesStr);
@@ -358,6 +465,12 @@ class DocGenerator {
         }
         return FALSE;
     }
+    /**
+     * Scan a specific path for all .php files.
+     * @param string $root The folder that will be scanned.
+     * @param array $excPath An array that contains a set of paths which 
+     * will be execluded from the scan.
+     */
     private function _scanPathForFiles($root,$excPath=array()){
         $dirsStack = new Stack();
         $dirsStack->push($root);
@@ -380,6 +493,6 @@ class DocGenerator {
                 }
             }
         }
-        return $retVal;
+        $this->files = $retVal;
     }
 }
