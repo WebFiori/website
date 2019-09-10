@@ -16,9 +16,11 @@ use webfiori\apiParser\ClassAPI;
 class NameSpaceAPI {
     private $name;
     private $classes;
+    private $subNamespaces;
     public function __construct() {
         $this->name = '\\';
         $this->classes = array();
+        $this->subNamespaces = [];
     }
     private function _get($cType){
         $arr = array();
@@ -39,6 +41,23 @@ class NameSpaceAPI {
      */
     public function getInterfaces() {
         return $this->_get('interface');
+    }
+    /**
+     * Returns an array which contains all names of sub-namespaces.
+     * @return array An array which contains all names of sub-namespaces as strings.
+     */
+    public function getSubNamespaces() {
+        return $this->subNamespaces;
+    }
+    /**
+     * Adds a sub-namespace name to the set of sub-namespaces.
+     * @param string $name The namespace name. It must be non-empty string.
+     */
+    public function addSubNamespace($name) {
+        $trimmed = trim($name);
+        if(strlen($trimmed) > 0){
+            $this->subNamespaces[] = $trimmed;
+        }
     }
     /**
      * Returns an array that contains an objects of type ClassAPI.
