@@ -31,6 +31,7 @@ if(!defined('ROOT_DIR')){
 use webfiori\conf\SiteConfig;
 use webfiori\entity\Util;
 use jsonx\JsonX;
+use phpStructs\html\HTMLNode;
 /**
  * The basic class that is used to route user requests to the correct 
  * location.
@@ -305,7 +306,7 @@ class Router {
     private function _addRoute($options) {
         $caseSensitive = isset($options['case-sensitive']) ? $options['case-sensitive'] === true : true;
         $routeType = isset($options['type']) ? $options['type'] : Router::CUSTOMIZED;
-        $incInSiteMap = isset($options['in-sitemap']) ? $options['in-sitemap'] === true : false;
+        $incInSiteMap = isset($options['in-sitemap']) ? $options['in-sitemap'] === true : true;
         $asApi = isset($options['as-api']) ? $options['as-api'] === true : false;
         $closureParams = isset($options['closure-params']) && gettype($options['closure-params']) == 'array' ? 
                 $options['closure-params'] : [];
