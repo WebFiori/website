@@ -1,7 +1,7 @@
 <?php
 use webfiori\WebFiori;
 use webfiori\entity\Page;
-use webfiori\functions\WebsiteFunctions;
+use phpStructs\html\JsCode;
 use phpStructs\html\ListItem;
 use phpStructs\html\LinkNode;
 use phpStructs\html\HeadNode;
@@ -175,10 +175,10 @@ class WebFioriAPITheme extends APITheme{
         $headTag = new HeadNode();
         $headTag->setBase(WebFiori::getSiteConfig()->getBaseURL());
         $headTag->addLink('icon', Page::imagesDir().'/favicon.png');
-        $js = new HTMLNode('script');
-        $js->setAttribute('async', '');
-        $js->setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=UA-91825602-1');
-        $headTag->addChild($js);
+        $analId = 'UA-91825602-1';
+        $headTag->addJs('https://www.googletagmanager.com/gtag/js?id='.$analId, [
+            'async'=>'true'
+        ], false);
         $jsCode = new phpStructs\html\JsCode();
         $jsCode->addCode(''
                 . 'window.dataLayer = window.dataLayer || [];'
@@ -186,7 +186,7 @@ class WebFioriAPITheme extends APITheme{
                 . 'dataLayer.push(arguments);'
                 . '}'
                 . 'gtag(\'js\', new Date());'
-                . 'gtag(\'config\', \'UA-91825602-1\');');
+                . 'gtag(\'config\', \''.$analId.'\');');
         $headTag->addChild($jsCode);
         $headTag->addCSS(Page::cssDir().'/Grid.css');
         $headTag->addCSS(Page::cssDir().'/colors.css');
