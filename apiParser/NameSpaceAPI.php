@@ -51,11 +51,12 @@ class NameSpaceAPI {
     }
     /**
      * Adds a sub-namespace name to the set of sub-namespaces.
-     * @param string $name The namespace name. It must be non-empty string.
+     * @param string $name The namespace name. It must be non-empty string and 
+     * not the same as the namespace name of current instance.
      */
     public function addSubNamespace($name) {
         $trimmed = trim($name);
-        if(strlen($trimmed) > 0){
+        if(strlen($trimmed) > 0 && $trimmed != $this->getName()){
             $this->subNamespaces[] = $trimmed;
         }
     }
