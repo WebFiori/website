@@ -80,3 +80,6 @@ button:hover, input[type=submit]:hover{
     margin: 0;
     margin-bottom: 25px;
 }
+#next-prev-container{
+    border: 7px #ae2153;
+}
