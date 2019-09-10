@@ -358,8 +358,8 @@ class DocGenerator {
             $len = strlen($nsName);
             foreach ($namespacesNames as $nsXName){
                 $subNs = substr($nsXName, 0, $len);
-                if($subNs == $nsName){
-                    $ns->addSubNamespace(trim($nsXName,'\\'));
+                if($subNs == $nsName && $nsXName != $nsName){
+                    $ns->addSubNamespace(substr($nsXName, 1));
                 }
             }
             $this->nsApiObjecsArr[] = $ns;
