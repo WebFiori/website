@@ -46,10 +46,9 @@ class ClosureRoutes {
      * @since 1.0
      */
     public static function create() {
-        Router::closure('/test', function (){
-            echo Page::document()->asCode(array('use-pre'=>TRUE));
-        });
-        Router::closure('/testx', function(){
+        Router::closure([
+            'path'=>'/testx', 
+            'route-to'=>function(){
         //    $r = new APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
         //    Util::print_r($r->getParsedInfo());
             Logger::enabled(FALSE);
@@ -66,48 +65,61 @@ class ClosureRoutes {
                 'route-root-folder'=>'apis-1.0.2',
                 'is-dynamic'=>TRUE
             ));
-        });
-        Router::closure('/downloads/webfiori-v1.0.0-beta-1', function(){
-            $f = new File();
-            $f->setName('webfiori-1.0.0-beta-1.zip');
-            $f->setPath(ROOT_DIR.'/res/release');
-            $f->view(TRUE);
-        });
-        Router::closure('/downloads/webfiori-v1.0.0-beta-2', function(){
-            $f = new File();
-            $f->setName('webfiori-1.0.0-beta-2.zip');
-            $f->setPath(ROOT_DIR.'/res/release');
-            $f->view(TRUE);
-        });
-        Router::closure('/downloads/webfiori-v1.0.2-beta-1', function(){
-            $f = new File();
-            $f->setName('webfiori-v1.0.2-beta-1.zip');
-            $f->setPath(ROOT_DIR.'/res/release');
-            $f->view(true);
-        });
-        Router::closure('/downloads/webfiori-v1.0.0-stable', function (){
-            $f = new File();
-            $f->setName('webfiori-1.0.0-stable.zip');
-            $f->setPath(ROOT_DIR.'/res/release');
-            $f->view(TRUE);
-        });
-        Router::closure('/downloads/webfiori-v1.0.1-stable', function (){
-            $f = new File();
-            $f->setName('webfiori-1.0.1-stable.zip');
-            $f->setPath(ROOT_DIR.'/res/release');
-            $f->view(TRUE);
-        });
+        }
+        ]);
+        Router::closure([
+            'path'=>'/downloads/webfiori-v1.0.0-beta-1', 
+            'route-to'=>function(){
+                $f = new File();
+                $f->setName('webfiori-1.0.0-beta-1.zip');
+                $f->setPath(ROOT_DIR.'/res/release');
+                $f->view(TRUE);
+        }]);
+        Router::closure([
+            'path'=>'/downloads/webfiori-v1.0.0-beta-2', 
+            'route-to'=>function(){
+                $f = new File();
+                $f->setName('webfiori-1.0.0-beta-2.zip');
+                $f->setPath(ROOT_DIR.'/res/release');
+                $f->view(TRUE);
+        }]);
+        Router::closure([
+            'path'=>'/downloads/webfiori-v1.0.2-beta-1', 
+            'route-to'=>function(){
+                $f = new File();
+                $f->setName('webfiori-v1.0.2-beta-1.zip');
+                $f->setPath(ROOT_DIR.'/res/release');
+                $f->view(true);
+        }]);
+        Router::closure([
+            'path'=>'/downloads/webfiori-v1.0.0-stable', 
+            'route-to'=>function (){
+                $f = new File();
+                $f->setName('webfiori-1.0.0-stable.zip');
+                $f->setPath(ROOT_DIR.'/res/release');
+                $f->view(TRUE);
+        }]);
+        Router::closure([
+            'path'=>'/downloads/webfiori-v1.0.1-stable', 
+            'route-to'=>function (){
+                $f = new File();
+                $f->setName('webfiori-1.0.1-stable.zip');
+                $f->setPath(ROOT_DIR.'/res/release');
+                $f->view(TRUE);
+        }]);
         Router::get()->setOnNotFound(function(){
             new \webfiori\views\NotFound();
         });
-        Router::closure('/apis/shields-get-dontate-badget', function(){
-            $j = new \jsonx\JsonX();
-            $j->add('label', 'donate');
-            $j->add('message', 'PayPal');
-            $j->add('color', 'blue');
-            $j->add('namedLogo', 'PayPal');
-            echo $j;
-        });
+        Router::closure([
+            'path'=>'/apis/shields-get-dontate-badget', 
+            'route-to'=>function(){
+                $j = new \jsonx\JsonX();
+                $j->add('label', 'donate');
+                $j->add('message', 'PayPal');
+                $j->add('color', 'blue');
+                $j->add('namedLogo', 'PayPal');
+                echo $j;
+        }]);
         
     }
 }
