@@ -69,6 +69,14 @@ class ClosureRoutes {
         }
         ]);
         Router::closure([
+            'path'=>'/downloads/webfiori-v1.0.3-stable', 
+            'route-to'=>function(){
+                $f = new File();
+                $f->setName('webfiori-v1.0.3-stable.zip');
+                $f->setPath(ROOT_DIR.'/res/release');
+                $f->view(TRUE);
+        }]);
+        Router::closure([
             'path'=>'/downloads/webfiori-v1.0.2-stable', 
             'route-to'=>function(){
                 $f = new File();
