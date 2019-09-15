@@ -72,7 +72,7 @@ class ClosureRoutes {
             'path'=>'/downloads/webfiori-v1.0.3-stable', 
             'route-to'=>function(){
                 $f = new File();
-                $f->setName('webfiori-v1.0.3-stable.zip');
+                $f->setName('webfiori-1.0.3-stable.zip');
                 $f->setPath(ROOT_DIR.'/res/release');
                 $f->view(TRUE);
         }]);
@@ -104,7 +104,7 @@ class ClosureRoutes {
             'path'=>'/downloads/webfiori-v1.0.2-beta-1', 
             'route-to'=>function(){
                 $f = new File();
-                $f->setName('webfiori-v1.0.2-beta-1.zip');
+                $f->setName('webfiori-1.0.2-beta-1.zip');
                 $f->setPath(ROOT_DIR.'/res/release');
                 $f->view(true);
         }]);
