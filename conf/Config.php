@@ -72,9 +72,9 @@ class Config{
      * Initialize configuration.
      */
     private function __construct() {
-        $this->isConfigured = true;
-        $this->releaseDate = '2019-09-10';
-        $this->version = '1.0.2';
+        $this->isConfigured = false;
+        $this->releaseDate = '2019-09-15';
+        $this->version = '1.0.3';
         $this->versionType = 'Stable';
         $this->configVision = '1.3.4';
         $this->dbConnections = array(
