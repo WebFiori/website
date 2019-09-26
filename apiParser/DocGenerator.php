@@ -413,7 +413,8 @@ class DocGenerator {
             foreach ($this->routerLinks as $link => $routeTo){
                 $routesStr .= '        Router::view(['."\n"
                         . '            \'path\'=>\'docs'.$link.'\','."\n"
-                        . '            \'route-to\'=>\''.$routeTo.'View.'.$ext.'\''."\n"
+                        . '            \'route-to\'=>\''.$routeTo.'View.'.$ext.'\','."\n"
+                        . '            \'in-sitemap\'=>true'."\n"
                         . '        ]);'."\r\n";
             }
         $routesStr .= '    }'."\r\n}";
