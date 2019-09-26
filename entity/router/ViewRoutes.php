@@ -71,7 +71,9 @@ class ViewRoutes {
             'route-to'=>'/ContributeView.php'
         ]);
         self::createHelpTopicsRoutes();
-        \docGenerator\DocGeneratorRoutes::createRoutes();
+        if(class_exists('\docGenerator\DocGeneratorRoutes')){
+            \docGenerator\DocGeneratorRoutes::createRoutes();
+        }
         Router::incSiteMapRoute();
     }
     public static function createHelpTopicsRoutes() {
