@@ -33,7 +33,7 @@ if(!defined('ROOT_DIR')){
  * A class thar represents a cron job.
  *
  * @author Ibrahim
- * @version 1.0.4
+ * @version 1.0.5
  */
 class CronJob {
     /**
@@ -85,6 +85,13 @@ class CronJob {
      */
     private $jobDetails;
     /**
+     * An array that contains custom attributes which can be provided on 
+     * job execution.
+     * @var array 
+     * @since 1.0.5
+     */
+    private $customAttrs;
+    /**
      * An array which contains the events that will be executed if it is the time 
      * to execute the job.
      * @var array
@@ -104,6 +111,13 @@ class CronJob {
      */
     private $cronExpr;
     /**
+     * A boolean which is set to true if the job was 
+     * successfully executed.
+     * @var boolean 
+     * @since 1.0.5
+     */
+    private $isSuccess;
+    /**
      * Creates new instance of the class.
      * @param string $when A cron expression. An exception will be thrown if 
      * the given expression is invalid. Default is '* * * * *' which means run 
@@ -113,6 +127,8 @@ class CronJob {
      */
     public function __construct($when='* * * * *') {
         $this->jobName = 'CRON-JOB';
+        $this->customAttrs = [];
+        $this->isSuccess = false;
         $this->jobDetails = array(
             'minutes'=>array(),
             'hours'=>array(),
@@ -124,7 +140,11 @@ class CronJob {
             'on'=>array(
                 'func'=>function(){},
                 'params'=>array()
-            )
+            ),
+            'on-failure'=>[
+                'func'=>function(){},
+                'params'=>[]
+            ]
         );
         if($when !== null){
             if($this->cron($when) === false){
@@ -133,6 +153,57 @@ class CronJob {
         }
         else{
             $this->cron();
+        }
+    }
+    /**
+     * Adds new execution attribute.
+     * The attribute can be supplied to the job in case of forced execution. This 
+     * method is used to prevent any typo in case of entering attribute name 
+     * in force execution view.
+     * @param string $name The name of the attribute.
+     * @since 1.0.5
+     */
+    public function addExecutionAttribute($name) {
+        $trimmed = trim($name);
+        if(strlen($trimmed) > 0 && !in_array($trimmed, $this->customAttrs)){
+            $this->customAttrs[] = $trimmed;
+        }
+    }
+    /**
+     * Returns an array that contains the names of custom execution attributes.
+     * @return array An array that contains the names of custom execution attributes.
+     * @since 1.0.5
+     */
+    public function getExecutionAttributes() {
+        return $this->customAttrs;
+    }
+    /**
+     * Returns true if the job was executed successfully.
+     * The value returned by this method will depends on the return value 
+     * of job function which was set by the method CronJob::setOnExecution(). 
+     * If the function returned null or true, then it means the job 
+     * was successfully executed. If it returns false, this means the job did 
+     * not execute successfully.
+     * @return boolean True if the job was executed successfully. False 
+     * if not.
+     * @since 1.0.5
+     */
+    public function isSuccess() {
+        return $this->isSuccess;
+    }
+    /**
+     * Sets a function to call in case the job function has returned false.
+     * @param callable $func The function that will be executed.
+     * @param array $params An array of parameters that will be passed to the 
+     * function.
+     * @since 1.0.5
+     */
+    public function setOnFailure($func,$params=[]) {
+        if(is_callable($func)){
+            $this->events['on-failure']['func'] = $func;
+            if(gettype($params) == 'array'){
+                $this->events['on-failure']['params'] = $params;
+            }
         }
     }
     /**
@@ -314,7 +385,7 @@ class CronJob {
         $trimmed = trim($when);
         $split = explode(' ', $trimmed);
         $count = count($split);
-        if(count($split) == 5){
+        if($count == 5){
             $minutesValidity = $this->_checkMinutes($split[0]);
             $hoursValidity = $this->_checkHours($split[1]);
             $daysOfMonthValidity = $this->_dayOfMonth($split[2]);
@@ -949,7 +1020,9 @@ class CronJob {
     /**
      * Sets the event that will be fired in case it is time to execute the job.
      * @param callable $func The function that will be executed if it is the 
-     * time to execute the job.
+     * time to execute the job. This function can have a return value If the function 
+     * returned null or true, then it means the job was successfully executed. 
+     * If it returns false, this means the job did not execute successfully.
      * @param array $funcParams An array which can hold some parameters that 
      * can be passed to the function.
      * @since 1.0
@@ -982,14 +1055,18 @@ class CronJob {
      * @param boolean $force If set to true, the job will be forced to execute 
      * even if it is not job time. Default is false.
      * @return boolean If the event that is associated with the job is executed, 
-     * the method will return true. If it is not executed, the method 
-     * will return false.
+     * the method will return true (Even if the job did not finish successfully).
+     * If it is not executed, the method will return false. 
      * @since 1.0
      */
     public function execute($force=false){
         $retVal = false;
         if($force === true || $this->isTime()){
-            call_user_func($this->events['on']['func'], $this->events['on']['params']);
+            $isSuccess = call_user_func($this->events['on']['func'], $this->events['on']['params']);
+            $this->isSuccess = $isSuccess === true || $isSuccess === null;
+            if(!$this->isSuccess()){
+                call_user_func($this->events['on-failure']['func'], $this->events['on']['params']);
+            }
             $retVal = true;
         }
         return $retVal;

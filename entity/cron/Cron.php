@@ -40,7 +40,7 @@ if(!defined('ROOT_DIR')){
  * Where {BASE_URL} is the web site's base URL and {password} is the password 
  * that was set by the developer to protect the jobs from unauthorized access.
  * @author Ibrahim
- * @version 1.0.4
+ * @version 1.0.5
  */
 class Cron {
     /**
@@ -107,6 +107,31 @@ class Cron {
      */
     public static function &activeJob() {
         return self::_get()->activeJob;
+    }
+    /**
+     * Returns a job given its name.
+     * @param string $jobName The name of the job.
+     * @return CronJob|null If a job which has the given name was found, 
+     * the method will return an object of type 'CronJob' that represents 
+     * the job. Other than that, the method will return null.
+     * @since 1.0.5
+     */
+    public static function &getJob($jobName) {
+        $trimmed = trim($jobName);
+        $retVal = null;
+        if(strlen($trimmed) != 0){
+            $tempQ = new Queue();
+            while ($job = &self::jobsQueue()->dequeue()){
+                $tempQ->enqueue($job);
+                if($job->getJobName() == $trimmed){
+                    $retVal = $job;
+                }
+            }
+            while ($job = &$tempQ->dequeue()){
+                self::scheduleJob($job);
+            }
+        }
+        return $retVal;
     }
     /**
      * Returns the number of current month as integer.
@@ -514,6 +539,7 @@ class Cron {
                         die();
                     }
                     else{
+                        http_response_code(401);
                         die(''
                         . '<!DOCTYPE html>'
                         . '<html>'
@@ -531,6 +557,7 @@ class Cron {
                     }
                 }
                 else{
+                    http_response_code(401);
                     die(''
                     . '<!DOCTYPE html>'
                     . '<html>'
@@ -559,6 +586,63 @@ class Cron {
         Router::closure([
             'path'=>'/cron-jobs/list/{password}',
             'route-to'=>$viewJobsFunc
+        ]);
+        $viewJobFunc = function(){
+            if(Cron::password() != 'NO_PASSWORD'){
+                $password = isset($_GET['password']) ? filter_var($_GET['password']) : '';
+                if($password != ''){
+                    if($password == Cron::password()){
+                        new CronTaskView();
+                        die();
+                    }
+                    else{
+                        http_response_code(401);
+                        die(''
+                        . '<!DOCTYPE html>'
+                        . '<html>'
+                        . '<head>'
+                        . '<title>Not Authorized</title>'
+                        . '</head>'
+                        . '<body>'
+                        . '<h1>401 - Not Authorized</h1>'
+                        . '<hr>'
+                        . '<p>'
+                        . 'Invalid password.'
+                        . '</p>'
+                        . '</body>'
+                        . '</html>');
+                    }
+                }
+                else{
+                    http_response_code(401);
+                    die(''
+                    . '<!DOCTYPE html>'
+                    . '<html>'
+                    . '<head>'
+                    . '<title>Not Authorized</title>'
+                    . '</head>'
+                    . '<body>'
+                    . '<h1>401 - Not Authorized</h1>'
+                    . '<hr>'
+                    . '<p>'
+                    . 'Password is missing.'
+                    . '</p>'
+                    . '</body>'
+                    . '</html>');
+                }
+            }
+            else{
+                new CronTaskView();
+                die('');
+            }
+        };
+        Router::closure([
+            'path'=>'/cron-jobs/job-details/{job-name}/{password}',
+            'route-to'=>$viewJobFunc
+        ]);
+        Router::closure([
+            'path'=>'/cron-jobs/job-details/{job-name}',
+            'route-to'=>$viewJobFunc
         ]);
     }
     private function _setLogEnabled($bool){
@@ -781,16 +865,24 @@ class Cron {
     
     private function _logJobExecution($job,$forced=false){
         if($this->isLogEnabled){
-            $logFile = ROOT_DIR.'/logs/cron.txt';
-            $file = fopen($logFile, 'a+');
-            if(is_resource($file)){
-                if($forced){
-                    fwrite($file, 'Job \''.$job->getJobName().'\' was forced to executed at '.date(DATE_RFC1123).". Request source IP: ".Util::getClientIP()."\n");
+            $ds = DIRECTORY_SEPARATOR;
+            $logFile = ROOT_DIR.$ds.'logs'.$ds.'cron.txt';
+            if(Util::isDirectory(ROOT_DIR.$ds.'logs', true)){
+                if(!file_exists($logFile)){
+                    $file = fopen($logFile, 'w');
                 }
                 else{
-                    fwrite($file, 'Job \''.$job->getJobName().'\' automatically executed at '.date(DATE_RFC1123)."\n");
+                    $file = fopen($logFile, 'a+');
                 }
-                fclose($file);
+                if(is_resource($file)){
+                    if($forced){
+                        fwrite($file, 'Job \''.$job->getJobName().'\' was forced to executed at '.date(DATE_RFC1123).". Request source IP: ".Util::getClientIP()."\n");
+                    }
+                    else{
+                        fwrite($file, 'Job \''.$job->getJobName().'\' automatically executed at '.date(DATE_RFC1123)."\n");
+                    }
+                    fclose($file);
+                }
             }
         }
     }
