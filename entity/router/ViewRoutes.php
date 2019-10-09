@@ -42,6 +42,10 @@ class ViewRoutes {
      */
     public static function create(){
         Router::view([
+            'path'=>'/learning/video',
+            'route-to'=>'/video-tutorials/IndexView.php'
+        ]);
+        Router::view([
             'path'=>'/', 
             'route-to'=>'/WebFioriHome.php'
         ]);
