@@ -21,10 +21,13 @@ class ContributeView extends WebFioriPage{
                 . 'most of the things that you need to get started with '
                 . 'WebFiori Framework. The creator of the videos is the '
                 . 'author of the video.'));
-$this->_createVideoSection('Introduction', 'UiIHQsZ-b2A', null);
+        $this->_createVideoSection('Introduction','An introduction to WebFiori Framework.', 'UiIHQsZ-b2A', 'intro');
+        $this->_createVideoSection('Installing WAMP Stack','How to install WAMP Stack and setup local development environment.', 'FD_ZLMwnRD8', 'installing-wamp-stack');
+        $this->_createVideoSection('Creating PHP Project','How to create a WebFiori Framework based PHP project using Apache NetBeans IDE.', '8nCTqtUsRAg', 'creating-first-project');
         $this->displayView();
     }
-    private function _createVideoSection($title,$vidId,$vidPageLink){
+    private function _createVideoSection($title,$desc,$vidId,$vidPageLink){
+        $link = Page::canonical().'/'.$vidPageLink;
         $vidRow = Page::theme()->createHTMLNode(['type'=>'wf-row']);
         $vidRow->setStyle([
             'border'=>'1px solid'
@@ -36,10 +39,11 @@ $this->_createVideoSection('Introduction', 'UiIHQsZ-b2A', null);
             'width'=>'150px'
         ]);
         $vidImg->setClassName('wf-ltr-col-3');
-        $vidRow->addChild($vidImg);
+        $vidRow->addTextNode('<a href="'.$link.'">'.$vidImg.'</a>',false);
         $vidTitleContainer = new HTMLNode();
         $vidTitleContainer->setClassName('wf-ltr-col-7');
-        $vidTitleContainer->addTextNode($title);
+        $vidTitleContainer->addTextNode('<p><a href="'.$link.'"></p>'.$title.'</a>',false);
+        $vidTitleContainer->addTextNode('<p>'.$desc.'</p>',false);
         $vidRow->addChild($vidTitleContainer);
         Page::insert($vidRow);
     }
