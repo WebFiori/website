@@ -121,7 +121,7 @@ class SiteConfig{
         $this->baseUrl = Util::getBaseURL();
         $this->titleSep = ' | ';
         $this->primaryLang = 'EN';
-        $this->baseThemeName = 'Greeny By Ibrahim Ali';
+        $this->baseThemeName = 'WebFiori Theme';
         $this->adminThemeName = 'Greeny By Ibrahim Ali';
         $this->homePage = Util::getBaseURL();
         $this->descriptions = array('EN'=>'','AR'=>'',);
