@@ -28,6 +28,7 @@ if(!defined('ROOT_DIR')){
     die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
     . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
 }
+use webfiori\views\VideoTut;
 /**
  * A class that only has one method to initiate some of system routes.
  * The class is meant to only initiate the routes which uses the method 
@@ -42,7 +43,7 @@ class ViewRoutes {
      */
     public static function create(){
         Router::view([
-            'path'=>'/learning/video',
+            'path'=>'/learn/video',
             'route-to'=>'/video-tutorials/IndexView.php'
         ]);
         Router::view([
@@ -78,7 +79,43 @@ class ViewRoutes {
         if(class_exists('\docGenerator\DocGeneratorRoutes')){
             \docGenerator\DocGeneratorRoutes::createRoutes();
         }
+        ViewRoutes::createVideoTutLinks();
         Router::incSiteMapRoute();
+    }
+    private static function createVideoTutLinks() {
+        Router::closure([
+            'path'=>'/learn/video/intro',
+            'route-to'=> function (){
+                $view = new VideoTut('UiIHQsZ-b2A','WebFiori Framework - 1 Introduction',0);
+                $view->setDescription('First video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('First video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('In this tutorial, we introduce WebFiori Framework. In '
+                        . 'addition to that, we introduce you to the tools that you need '
+                        . 'in order to get started with developing websites using '
+                        . 'the framework.');
+                $view->displayView();
+            }
+        ]);
+        Router::closure([
+            'path'=>'/learn/video/installing-wamp-stack',
+            'route-to'=> function (){
+                $view = new VideoTut('FD_ZLMwnRD8','WebFiori Framework - 2 Installing WAMP Stack',1);
+                $view->setDescription('Second video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('Second video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('');
+                $view->displayView();
+            }
+        ]);
+        Router::closure([
+            'path'=>'/learn/video/creating-first-project',
+            'route-to'=> function (){
+                $view = new VideoTut('8nCTqtUsRAg','WebFiori Framework - 3 - Creating WebFiori Framwork Based PHP Project',2);
+                $view->setDescription('Third video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('Third video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('');
+                $view->displayView();
+            }
+        ]);
     }
     public static function createHelpTopicsRoutes() {
         //intro topics
