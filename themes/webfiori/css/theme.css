@@ -36,6 +36,9 @@ THE SOFTWARE.
         border-bottom-width: 0 !important;
         border-top-width: 0 !important;
     }
+    .video-container{
+        width: 100%
+    }
     #logo{
         width: 15% !important;
     }
