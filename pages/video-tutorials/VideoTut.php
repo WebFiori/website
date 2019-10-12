@@ -38,7 +38,9 @@ class VideoTut {
         $this->createAsidNav([
             'learn/video/intro'=>'Introduction',
             'learn/video/installing-wamp-stack'=>'Installing WAMP Stack',
-            'learn/video/creating-first-project'=>'Creating PHP Project'
+            'learn/video/creating-first-project'=>'Creating PHP Project',
+            'learn/video/routing-p1'=>'Routing - Part 1',
+            'learn/video/routing-p2'=>'Routing - Part 2'
         ], $asideActive);
     }
     public function addToDescription($text) {
