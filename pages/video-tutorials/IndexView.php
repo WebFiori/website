@@ -24,6 +24,8 @@ class ContributeView extends WebFioriPage{
         $this->_createVideoSection('Introduction','An introduction to WebFiori Framework.', 'UiIHQsZ-b2A', 'intro');
         $this->_createVideoSection('Installing WAMP Stack','How to install WAMP Stack and setup local development environment.', 'FD_ZLMwnRD8', 'installing-wamp-stack');
         $this->_createVideoSection('Creating PHP Project','How to create a WebFiori Framework based PHP project using Apache NetBeans IDE.', '8nCTqtUsRAg', 'creating-first-project');
+        $this->_createVideoSection('Routing - Part 1','Introduction to routing.', 'n7ZC-ti5XkM', 'routing-p1');
+        $this->_createVideoSection('Routing - Part 2','Different types of routes and how to create them.', 'UEQhVRVG7b4', 'routing-p2');
         $this->displayView();
     }
     private function _createVideoSection($title,$desc,$vidId,$vidPageLink){
@@ -36,7 +38,7 @@ class ContributeView extends WebFioriPage{
         $vidImg = new HTMLNode('img');
         $vidImg->setAttribute('src', $imgUrl);
         $vidImg->setStyle([
-            'width'=>'150px'
+            'width'=>'110px'
         ]);
         $vidImg->setClassName('wf-ltr-col-3');
         $vidRow->addTextNode('<a href="'.$link.'">'.$vidImg.'</a>',false);
