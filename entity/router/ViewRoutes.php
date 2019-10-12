@@ -116,6 +116,30 @@ class ViewRoutes {
                 $view->displayView();
             }
         ]);
+        Router::closure([
+            'path'=>'/learn/video/routing-p1',
+            'route-to'=>function(){
+                $view = new VideoTut('n7ZC-ti5XkM','WebFiori Framework - 4 - Routing Part 1',3);
+                $view->setDescription('Fourth video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('Fourth video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('In this tutorial, we explain the very basic feature '
+                        . 'which allows the framework to process requests. The feature '
+                        . 'is called <a href="learn/topics/routing">Routing</a>.');
+                $view->displayView();
+            }
+        ]);
+        Router::closure([
+            'path'=>'/learn/video/routing-p2',
+            'route-to'=>function(){
+                $view = new VideoTut('UEQhVRVG7b4','WebFiori Framework - 5 - Routing Part 2',4);
+                $view->setDescription('Fifth video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('Fifth video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('In this tutorial, we explain routing in more details. '
+                        . 'In addition, we explain the diffrent types of routes that can '
+                        . 'be created and how to create them.');
+                $view->displayView();
+            }
+        ]);
     }
     public static function createHelpTopicsRoutes() {
         //intro topics
