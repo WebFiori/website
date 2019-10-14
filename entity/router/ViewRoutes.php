@@ -140,6 +140,17 @@ class ViewRoutes {
                 $view->displayView();
             }
         ]);
+        Router::closure([
+            'path'=>'/learn/video/views-p1',
+            'route-to'=>function(){
+                $view = new VideoTut('u1qs1Mu-83c','WebFiori Framework - 6 - Views Part 1',5);
+                $view->setDescription('Sixth video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('Sixth video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('In this tutorial, we explain the very basic components of '
+                        . 'building views (HTML Pages) in WebFiori Framework.');
+                $view->displayView();
+            }
+        ]);
     }
     public static function createHelpTopicsRoutes() {
         //intro topics
