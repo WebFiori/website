@@ -25,6 +25,7 @@ class VideoTut {
             'title'=>$pageTitle
         ]));
         Page::title($pageTitle);
+        Page::siteName('WebFiori Framework');
         $this->iframe = new HTMLNode('iframe');
         $this->iframe->setClassName('video-container');
         $this->iframe->setAttribute('width', '560');
@@ -40,7 +41,8 @@ class VideoTut {
             'learn/video/installing-wamp-stack'=>'Installing WAMP Stack',
             'learn/video/creating-first-project'=>'Creating PHP Project',
             'learn/video/routing-p1'=>'Routing - Part 1',
-            'learn/video/routing-p2'=>'Routing - Part 2'
+            'learn/video/routing-p2'=>'Routing - Part 2',
+            'learn/video/views-p1'=>'Views - Part 1'
         ], $asideActive);
     }
     public function addToDescription($text) {
