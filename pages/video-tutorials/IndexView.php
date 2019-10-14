@@ -26,6 +26,7 @@ class ContributeView extends WebFioriPage{
         $this->_createVideoSection('Creating PHP Project','How to create a WebFiori Framework based PHP project using Apache NetBeans IDE.', '8nCTqtUsRAg', 'creating-first-project');
         $this->_createVideoSection('Routing - Part 1','Introduction to routing.', 'n7ZC-ti5XkM', 'routing-p1');
         $this->_createVideoSection('Routing - Part 2','Different types of routes and how to create them.', 'UEQhVRVG7b4', 'routing-p2');
+        $this->_createVideoSection('Views - Part 1','Learn about the basic components of building HTML pages.', 'u1qs1Mu-83c', 'views-p1');
         $this->displayView();
     }
     private function _createVideoSection($title,$desc,$vidId,$vidPageLink){
