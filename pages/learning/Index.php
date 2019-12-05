@@ -21,6 +21,8 @@ class Index extends WebFioriPage{
         ));
         WebFioriGUI::createTitleNode('Learning Center');
         $this->_welcome();
+        $link = new LinkNode('learn/video', 'Video Tutorials');
+        Page::insert($link);
         $this->_whatToLearn();
         Page::render();
     }
