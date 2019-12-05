@@ -46,8 +46,13 @@ class WebFioriTheme extends Theme{
             }
         });
         $this->setAfterLoaded(function(){
-            $session = WebsiteFunctions::get()->getSession();
-            Page::lang($session->getLang(true));
+            $session = WebsiteController::get()->getSession();
+            if($session !== null){
+                Page::lang($session->getLang(true));
+            }
+            else{
+                Page::lang('en');
+            }
             Page::document()->getChildByID('main-content-area')->setClassName('wf-'.Page::dir().'-col-10');
             Page::document()->getChildByID('side-content-area')->setClassName('wf-'.Page::dir().'-col-2');
             Page::document()->getChildByID('page-body')->setClassName('wf-row');
