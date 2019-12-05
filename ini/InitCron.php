@@ -23,13 +23,9 @@
  * THE SOFTWARE.
  */
 namespace webfiori\ini;
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
 use webfiori\entity\cron\Cron;
 use webfiori\entity\cron\CronJob;
+use Exception;
 
 /**
  * A class that has one method to initialize cron jobs.
@@ -46,14 +42,14 @@ class InitCron {
     public static function init() {
         //set an optional password to protect jobs from 
         //unauthorized execution access
-        Cron::password('123456');
-        
+        //default password: 123456
+        Cron::password('8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
         //enable job execution log
         Cron::execLog(true);
         
         //add jobs
-        //Cron::dailyJob("13:00", "Test Job", function (){
-        //
-        //});
+//        Cron::dailyJob("13:00", "Test Job", function (){
+//
+//        });
     }
 }
