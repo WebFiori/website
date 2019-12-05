@@ -188,7 +188,13 @@ class WebFioriTheme extends Theme{
         $link = new LinkNode(SiteConfig::getHomePage(), '');
         $link->addChild($img);
         $headerSec->addChild($link);
-        $langCode = WebsiteFunctions::get()->getSession()->getLang(true);
+        $session = WebsiteController::get()->getSession();
+        if($session !== null){
+            $langCode = WebsiteController::get()->getSession()->getLang(true);
+        }
+        else{
+            $langCode = 'EN';
+        }
         $p = new PNode();
         $siteNames = SiteConfig::getWebsiteNames();
         if(isset($siteNames[$langCode])){
@@ -239,6 +245,8 @@ class WebFioriTheme extends Theme{
      * <li>"with-margin", a boolean. If set to true, the column will have margins. Default is true.</li>
      * </ul>
      * </li>
+     * <li>"status-label". A row with a label inside it which has a paragraph 
+     * with ID = "status-label"</li>
      * <li>"input-element". A row which represents input element alongside its components. 
      * This type has the following options:
      * <ul>
@@ -250,6 +258,10 @@ class WebFioriTheme extends Theme{
      * <li>"placeholder" A text to show as a placeholder.</li>
      * <li>"on-input". A String that represents JavaScript code which 
      * will be executed when input element value changes.</li>
+     * <li>
+     * "name". A string that is used when input type is "radio". Its the value 
+     * of the attribute "name" of the radio button.
+     * </li>
      * <li>"select-data". An array of sub-associative arrays that has an options which are 
      * used if input element type is "select". Each sub array can have the following indices:
      * <ul>
@@ -314,15 +326,23 @@ class WebFioriTheme extends Theme{
             $titleRow->addChild($h1);
             return $titleRow;
         }
+        else if($nodeType == 'status-label'){
+            $statusContainer = $this->createHTMLNode(['type'=>'wf-row']);
+            $statusContainer->setClassName($statusContainer->getAttributeValue('class').' status-label-container');
+            $statusLabel = new PNode();
+            $statusLabel->setID('status-label');
+            $statusContainer->addChild($statusLabel);
+            return $statusContainer;
+        }
         else if($nodeType == 'input-element'){
             $row = $this->createHTMLNode(['type'=>'wf-row']);
             $label = isset($options['label']) ? $options['label'] : 'Input_label';
             $labelNode = new Label($label);
             $inputId = isset($options['input-id']) ? $options['input-id'] : 'input-el';
             $labelNode->setAttribute('for', $inputId);
-            $row->addChild($labelNode);
             $inputType = isset($options['input-type']) ? $options['input-type'] : 'text';
             if($inputType == 'select'){
+                $row->addChild($labelNode);
                 $inputEl = new HTMLNode('select');
                 $inputEl->setID($inputId);
                 if(isset($options['select-data'])){
@@ -344,14 +364,35 @@ class WebFioriTheme extends Theme{
                         }
                     }
                 }
+                $onInput = isset($options['on-input']) ? $options['on-input'] : "console.log(this.id+' has changed value.');";
+                $inputEl->setAttribute('onchange', $onInput);
             }
             else{
                 $inputEl = new Input($inputType);
                 $inputEl->setID($inputId);
-                $placeholder = isset($options['placeholder']) ? $options['placeholder'] : '';
-                $inputEl->setAttribute('placeholder', $placeholder);
                 $onInput = isset($options['on-input']) ? $options['on-input'] : "console.log(this.id+' has changed value.');";
-                $inputEl->setAttribute('oninput', $onInput);
+                if($inputType == 'submit'){
+                    $inputEl->setAttribute('onclick', $onInput);
+                    $inputEl->setAttribute('value', $label);
+                }
+                else if($inputType == 'checkbox' || $inputType == 'radio'){
+                    $labelNode->setStyle([
+                        'display'=>'inline-block'
+                    ]);
+                    $row->addChild($inputEl);
+                    $row->addChild($labelNode);
+                    if($inputType == 'radio'){
+                        $name = isset($options['name']) ? $options['name'] : 'radio-group';
+                        $inputEl->setName($name);
+                    }
+                    return $row;
+                }
+                else{
+                    $row->addChild($labelNode);
+                    $placeholder = isset($options['placeholder']) ? $options['placeholder'] : '';
+                    $inputEl->setAttribute('placeholder', $placeholder);
+                    $inputEl->setAttribute('oninput', $onInput);
+                }
             }
             $row->addChild($inputEl);
             return $row;
