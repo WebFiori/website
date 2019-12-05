@@ -24,11 +24,6 @@
  */
 namespace webfiori\entity\langs;
 use Exception;
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
 /**
  * A class that is can be used to make the application ready for 
  * Internationalization.
@@ -47,7 +42,7 @@ class Language {
      * 'Language'.
      * @since 1.1 
      */
-    private static $loadedLangs = array();
+    private static $loadedLangs = [];
     /**
      * An attribute that will be set to 'true' if the language 
      * is added to the set of loaded languages.
@@ -94,7 +89,7 @@ class Language {
      * the language was loaded.
      * @since 1.1
      */
-    public static function &loadTranslation($langCode){
+    public static function loadTranslation($langCode){
         $uLangCode = strtoupper(trim($langCode));
         if(isset(self::$loadedLangs[$uLangCode])){
             return self::$loadedLangs[$uLangCode];
@@ -109,7 +104,7 @@ class Language {
                     }
                     else{
                         throw new Exception('The translation file was found. But no object of type \'Language\' is stored. Make sure that the parameter '
-                                . '$addtoLoadedAfterCreate is set to true when creating the object.');
+                                . '$addtoLoadedAfterCreate is set to true when creating the language object.');
                     }
                 }
                 else{
@@ -222,7 +217,7 @@ class Language {
                     $this->_create($subSplit, $this->languageVars[$subSplit[0]],1);
                 }
                 else{
-                    $this->languageVars[$subSplit[0]] = array();
+                    $this->languageVars[$subSplit[0]] = [];
                     $this->_create($subSplit, $this->languageVars[$subSplit[0]],1);
                 }
             }
@@ -261,7 +256,7 @@ class Language {
      * name and the value of the key will act as the variable value.
      * @since 1.0
      */
-    public function setMultiple($dir,$arr=array()) {
+    public function setMultiple($dir,$arr=[]) {
         foreach ($arr as $k => $v){
             $this->set($dir, $k, $v);
         }
@@ -270,7 +265,9 @@ class Language {
      * Sets or updates a language variable.
      * @param string $dir A string that looks like a 
      * directory. 
-     * @param string $varName The name of the variable.
+     * @param string $varName The name of the variable. Note that if the name 
+     * of the variable is set and it was an array, it will become a string 
+     * which has the given name and value.
      * @param string $varValue The value of the variable.
      * @return boolean The function will return <b>true</b> if the variable is set. 
      * Other than that, the function will return <b>false</b>.

@@ -29,9 +29,9 @@ use webfiori\conf\MailConfig;
 use webfiori\ini\InitPrivileges;
 use webfiori\ini\InitAutoLoad;
 use webfiori\ini\InitCron;
-use webfiori\functions\SystemFunctions;
-use webfiori\functions\WebsiteFunctions;
-use webfiori\functions\BasicMailFunctions;
+use webfiori\logic\ConfigController;
+use webfiori\logic\WebsiteController;
+use webfiori\logic\EmailController;
 use webfiori\entity\AutoLoader;
 use webfiori\entity\Util;
 use webfiori\entity\ErrorBox;
@@ -72,19 +72,19 @@ class WebFiori{
     private static $AU;
     /**
      * An instance of system functions class.
-     * @var SystemFunctions 
+     * @var ConfigController 
      * @since 1.0
      */
     private static $SF;
     /**
      * An instance of web site functions class.
-     * @var WebsiteFunctions 
+     * @var WebsiteController 
      * @since 1.0
      */
     private static $WF;
     /**
      * An instance of basic mail functions class.
-     * @var BasicMailFunctions 
+     * @var EmailController 
      * @since 1.0
      */
     private static $BMF;
@@ -94,12 +94,6 @@ class WebFiori{
      * @since 1.0 
      */
     private static $LC;
-    /**
-     * Used to format errors and warnings messages.
-     * @var int 
-     * @since 1.3.4
-     */
-    private static $NoticeAndWarningCount;
     /**
      * A mutex lock to disallow class access during initialization state.
      * @var int
@@ -208,18 +202,15 @@ class WebFiori{
          * Initialize autoloader.
          */
         if(!class_exists('webfiori\entity\AutoLoader',false)){
-           require_once ROOT_DIR.'/entity/AutoLoader.php';
+           require_once ROOT_DIR.DIRECTORY_SEPARATOR.'entity'.DIRECTORY_SEPARATOR.'AutoLoader.php';
         }
         self::$AU = AutoLoader::get();
-        //display PHP warnings and errors
-        
         InitAutoLoad::init();
         CLI::init();
-        self::$NoticeAndWarningCount = 0;
         $this->_setHandlers();
-        self::$SF = SystemFunctions::get();
-        self::$WF = WebsiteFunctions::get();
-        self::$BMF = BasicMailFunctions::get();
+        self::$SF = ConfigController::get();
+        self::$WF = WebsiteController::get();
+        self::$BMF = EmailController::get();
         //initialize main session with name = 'wf-session'.
         $this->sysStatus = Util::checkSystemStatus(true);
         if($this->sysStatus == Util::MISSING_CONF_FILE || $this->sysStatus == Util::MISSING_SITE_CONF_FILE){
@@ -238,10 +229,11 @@ class WebFiori{
         ClosureRoutes::create();
         OtherRoutes::create();
         
-        //initialize some settings...
+        //initialize cron and privileges...
         InitCron::init();
         InitPrivileges::init();
         
+        //class is now initialized
         self::$classStatus = 'INITIALIZED';
         
         define('INITIAL_SYS_STATUS', $this->_getSystemStatus());
@@ -302,7 +294,6 @@ class WebFiori{
                     echo $errBox;
                 }
             }
-            WebFiori::$NoticeAndWarningCount++;
             return true;
         });
         set_exception_handler(function($ex){
@@ -435,7 +426,7 @@ class WebFiori{
      * will return null.
      * @since 1.3.3
      */
-    public static function &getConfig() {
+    public static function getConfig() {
         if(class_exists('webfiori\conf\Config')){
             return Config::get();
         }
@@ -450,7 +441,7 @@ class WebFiori{
      * will return null.
      * @since 1.3.3
      */
-    public static function &getSiteConfig() {
+    public static function getSiteConfig() {
         if(class_exists('webfiori\conf\SiteConfig')){
             return SiteConfig::get();
         }
@@ -465,7 +456,7 @@ class WebFiori{
      * will return null.
      * @since 1.3.3
      */
-    public static function &getMailConfig() {
+    public static function getMailConfig() {
         if(class_exists('webfiori\conf\MailConfig')){
             return MailConfig::get();
         }
@@ -490,31 +481,31 @@ class WebFiori{
      * @return AutoLoader A reference to an instance of 'AutoLoader'.
      * @since 1.2.1
      */
-    public static function &getAutoloader() {
+    public static function getAutoloader() {
         return self::$AU;
     }
     /**
-     * Returns a reference to an instance of 'BasicMailFunctions'.
-     * @return BasicMailFunctions A reference to an instance of 'BasicMailFunctions'.
+     * Returns a reference to an instance of 'EmailController'.
+     * @return EmailController A reference to an instance of 'EmailController'.
      * @since 1.2.1
      */
-    public static function &getBasicMailFunctions() {
+    public static function getEmailController() {
         return self::$BMF;
     }
     /**
-     * Returns a reference to an instance of 'SystemFunctions'.
-     * @return SystemFunctions A reference to an instance of 'SystemFunctions'.
+     * Returns a reference to an instance of 'ConfigController'.
+     * @return ConfigController A reference to an instance of 'ConfigController'.
      * @since 1.2.1
      */
-    public static function &getSysFunctions(){
+    public static function getSysController(){
         return self::$SF;
     }
     /**
-     * Returns a reference to an instance of 'WebsiteFunctions'.
-     * @return WebsiteFunctions A reference to an instance of 'WebsiteFunctions'.
+     * Returns a reference to an instance of 'WebsiteController'.
+     * @return WebsiteController A reference to an instance of 'WebsiteController'.
      * @since 1.2.1
      */
-    public static function &getWebsiteFunctions() {
+    public static function getWebsiteController() {
         return self::$WF;
     }
     /**
@@ -573,7 +564,7 @@ class WebFiori{
             $j->add('type', 'error');
             $j->add('description','This error means that the system is not configured yet. '
                     . 'Make sure to make the method Config::isConfig() return true. '
-                    . 'One way is to go to the file "conf/Config.php". Change attribute value at line 75 to true. '
+                    . 'One way is to go to the file "conf/Config.php". Change attribute "isConfigured" value to true. '
                     . 'Or Use the method SystemFunctions::configured(true). You must supply \'true\' as an attribute. '
                     . 'If you want to make the system do something else if the return value of the '
                     . 'given method is false, then open the file \'WebFiori.php\' and '
@@ -597,7 +588,7 @@ class WebFiori{
             . 'to change return value of this method:'
             . '</p>'
             . '<ul>'
-            . '<li>Go to the file "conf/Config.php". Change attribute value at line 75 to true.</li>'
+            . '<li>Go to the file "conf/Config.php". Change attribute "isConfigured" value to true.</li>'
             . '<li>Use the method SystemFunctions::configured(true). You must supply \'true\' as an attribute.</li>'
             . '<li>After that, reload the page and the system will work.</li>'
             . '</ul>'

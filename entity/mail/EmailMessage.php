@@ -23,14 +23,9 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity\mail;
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
 use webfiori\conf\MailConfig;
 use webfiori\entity\File;
-use webfiori\functions\BasicMailFunctions;
+use webfiori\logic\EmailController;
 use phpStructs\html\HTMLDoc;
 use phpStructs\html\HTMLNode;
 use Exception;
@@ -68,7 +63,7 @@ class EmailMessage {
      * @return EmailMessage
      * @since 1.0
      */
-    public static function &createInstance($sendAccountName=''){
+    public static function createInstance($sendAccountName=''){
         if(self::$em === null){
             self::$em = new EmailMessage($sendAccountName);
         }
@@ -85,11 +80,11 @@ class EmailMessage {
         if(class_exists('webfiori\conf\MailConfig')){
             $acc = MailConfig::getAccount($sendAccountName);
             if($acc instanceof SMTPAccount){
-                $this->socketMailer = BasicMailFunctions::get()->getSocketMailer($acc);
-                if($this->socketMailer == BasicMailFunctions::INV_CREDENTIALS){
+                $this->socketMailer = EmailController::get()->getSocketMailer($acc);
+                if($this->socketMailer == EmailController::INV_CREDENTIALS){
                     throw new Exception('The account "'.$sendAccountName.'" has inalid credintials.');
                 }
-                else if($this->socketMailer == BasicMailFunctions::INV_HOST_OR_PORT){
+                else if($this->socketMailer == EmailController::INV_HOST_OR_PORT){
                     throw new Exception('The account "'.$sendAccountName.'" has invalid host or port number. Port: '.$acc->getPort().', Host: '.$acc->getServerAddress().'.');
                 }
                 else{

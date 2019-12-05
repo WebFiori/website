@@ -23,18 +23,13 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity;
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
 use phMysql\MySQLLink;
 /**
  * A factory class that is used to create connections to different types of 
  * DBMSs connections.
  * Currently, the class only supports MySQL database. More will be added in the 
  * future.
- * @author Ibrahim <ibinshikh@hotmail.com>
+ * @author Ibrahim
  * @version 1.0
  */
 class DBConnectionFactory {
