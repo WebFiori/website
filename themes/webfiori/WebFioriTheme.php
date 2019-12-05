@@ -58,12 +58,11 @@ class WebFioriTheme extends Theme{
             Page::document()->getChildByID('page-body')->setClassName('wf-row');
             Page::document()->getChildByID('page-header')->setClassName('wf-row-np');
             Page::document()->getChildByID('page-footer')->setClassName('wf-row');
-            //WebFioriGUI::createTitleNode();
-
+            Page::siteName(WebFiori::getSiteConfig()->getWebsiteNames()[Page::lang()]);
             LangExt::extLang();
-            $translation = &Page::translation();
+            $translation = Page::translation();
             //adding menu items 
-            $mainMenu = &Page::document()->getChildByID('menu-items-container');
+            $mainMenu = Page::document()->getChildByID('menu-items-container');
 
             $item1 = new ListItem();
             $link1 = new LinkNode(SiteConfig::getBaseURL().'download', $translation->get('menus/main-menu/menu-item-1'));
