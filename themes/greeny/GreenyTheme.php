@@ -1,9 +1,10 @@
 <?php
+namespace webfiori\theme;
 use webfiori\entity\Theme;
 use webfiori\entity\Page;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\HeadNode;
-use webfiori\functions\WebsiteFunctions;
+use webfiori\logic\WebsiteController;
 use webfiori\conf\SiteConfig;
 use webfiori\conf\Config;
 class GreenyTheme extends Theme{
@@ -22,11 +23,8 @@ class GreenyTheme extends Theme{
         $this->setImagesDirName('images');
         $this->setJsDirName('js');
         $this->setCssDirName('css');
-        $this->addComponents(array(
-            'UIFunctions.php'
-        ));
         $this->setAfterLoaded(function(){
-            $session = WebsiteFunctions::get()->getSession();
+            $session = WebsiteController::get()->getSession();
             Page::lang($session->getLang(TRUE));
             Page::translation();
             Page::document()->getBody()->setClassName('pa-container');
@@ -72,7 +70,7 @@ class GreenyTheme extends Theme{
 
     public function getHeadNode() {
         $page = Page::get();
-        $lang = WebsiteFunctions::get()->getSession()->getLang(TRUE);
+        $lang = WebsiteController::get()->getSession()->getLang(TRUE);
         $page->setLang($lang);
         $headTag = new HeadNode();
         $headTag->setBase(SiteConfig::getBaseURL());
@@ -104,6 +102,6 @@ class GreenyTheme extends Theme{
         $node = new HTMLNode();
         return $node;
     }
-
 }
+return __NAMESPACE__;
 
