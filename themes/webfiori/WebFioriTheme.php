@@ -158,6 +158,7 @@ class WebFioriTheme extends Theme{
         $headTag->addCSS(Page::cssDir().'/Grid.css');
         $headTag->addCSS(Page::cssDir().'/colors.css');
         $headTag->addCSS(Page::cssDir().'/theme.css');
+        $headTag->addJs('sys-files/res/js/webfiori.js');
         $headTag->addMeta('robots', 'index, follow');
         $analId = 'UA-91825602-1';
         $headTag->addJs('https://www.googletagmanager.com/gtag/js?id='.$analId, [
