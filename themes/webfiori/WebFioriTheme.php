@@ -33,14 +33,16 @@ class WebFioriTheme extends Theme{
             'LangExt.php'
         ));
         $this->setBeforeLoaded(function(){
-            $session = WebsiteFunctions::get()->getSession();
-            $lang = $session->getLang(true);
-            Page::lang($lang);
-            if($lang == 'AR'){
-                Page::dir('rtl');
-            }
-            else{
-                Page::dir('ltr');
+            $session = WebsiteController::get()->getSession();
+            if($session !== null){
+                $lang = $session->getLang(true);
+                Page::lang($lang);
+                if($lang == 'AR'){
+                    Page::dir('rtl');
+                }
+                else{
+                    Page::dir('ltr');
+                }
             }
         });
         $this->setAfterLoaded(function(){
