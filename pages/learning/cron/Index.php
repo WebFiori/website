@@ -22,5 +22,10 @@ class Index extends LearnView{
         ));
         $this->display();
     }
+
+    public function createAsidNav() {
+        return new \phpStructs\html\HTMLNode();
+    }
+
 }
 new Index();
