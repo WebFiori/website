@@ -86,7 +86,7 @@ class ViewRoutes {
         Router::closure([
             'path'=>'/learn/video/intro',
             'route-to'=> function (){
-                $view = new VideoTut('UiIHQsZ-b2A','WebFiori Framework - 1 Introduction',0);
+                $view = new VideoTut('rxfy1f0PGHw','WebFiori Framework - 1 Introduction',0);
                 $view->setDescription('First video tutorial on how to use WebFiori Framework.');
                 $view->addToDescription('First video tutorial on how to use WebFiori Framework.');
                 $view->addToDescription('In this tutorial, we introduce WebFiori Framework. In '
@@ -99,7 +99,7 @@ class ViewRoutes {
         Router::closure([
             'path'=>'/learn/video/installing-wamp-stack',
             'route-to'=> function (){
-                $view = new VideoTut('FD_ZLMwnRD8','WebFiori Framework - 2 Installing WAMP Stack',1);
+                $view = new VideoTut('5JhFgz8Iycw','WebFiori Framework - 2 Installing WAMP Stack',1);
                 $view->setDescription('Second video tutorial on how to use WebFiori Framework.');
                 $view->addToDescription('Second video tutorial on how to use WebFiori Framework.');
                 $view->addToDescription('');
@@ -109,7 +109,7 @@ class ViewRoutes {
         Router::closure([
             'path'=>'/learn/video/creating-first-project',
             'route-to'=> function (){
-                $view = new VideoTut('8nCTqtUsRAg','WebFiori Framework - 3 - Creating WebFiori Framwork Based PHP Project',2);
+                $view = new VideoTut('h7tCZLfSvmE','WebFiori Framework - 3 - Creating WebFiori Framwork Based PHP Project',2);
                 $view->setDescription('Third video tutorial on how to use WebFiori Framework.');
                 $view->addToDescription('Third video tutorial on how to use WebFiori Framework.');
                 $view->addToDescription('');
@@ -143,11 +143,23 @@ class ViewRoutes {
         Router::closure([
             'path'=>'/learn/video/views-p1',
             'route-to'=>function(){
-                $view = new VideoTut('u1qs1Mu-83c','WebFiori Framework - 6 - Views Part 1',5);
+                $view = new VideoTut('ny1nz_zfUs4','WebFiori Framework - 6 - Views Part 1',5);
                 $view->setDescription('Sixth video tutorial on how to use WebFiori Framework.');
                 $view->addToDescription('Sixth video tutorial on how to use WebFiori Framework.');
                 $view->addToDescription('In this tutorial, we explain the very basic components of '
                         . 'building views (HTML Pages) in WebFiori Framework.');
+                $view->displayView();
+            }
+        ]);
+        //i5p3h6ZAZIs
+        Router::closure([
+            'path'=>'/learn/video/views-p2',
+            'route-to'=>function(){
+                $view = new VideoTut('sFdRiokvThg','WebFiori Framework - 7 - Views Part 2',6);
+                $view->setDescription('Seventh video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('Seventh video tutorial on how to use WebFiori Framework.');
+                $view->addToDescription('In this tutorial, We will be introducing the class "Page". '
+                        . 'This class is used to create web pages.');
                 $view->displayView();
             }
         ]);
