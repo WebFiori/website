@@ -42,7 +42,8 @@ class VideoTut {
             'learn/video/creating-first-project'=>'Creating PHP Project',
             'learn/video/routing-p1'=>'Routing - Part 1',
             'learn/video/routing-p2'=>'Routing - Part 2',
-            'learn/video/views-p1'=>'Views - Part 1'
+            'learn/video/views-p1'=>'Views - Part 1',
+            'learn/video/views-p2'=>'Views - Part 2'
         ], $asideActive);
     }
     public function addToDescription($text) {
