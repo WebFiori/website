@@ -23,11 +23,6 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity;
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
 use jsonx\JsonI;
 use jsonx\JsonX;
 /**
@@ -108,7 +103,8 @@ class User implements JsonI{
         $this->setUserName($username);
         $this->setResetCount(0);
         $this->setID(-1);
-        $this->userPrivileges = array();
+        $this->userPrivileges = [];
+        $this->setLastPasswordResetDate(null);
     }
     /**
      * Adds a user to a privileges group given group ID.
@@ -143,7 +139,7 @@ class User implements JsonI{
      * @since 1.7
      */
     public function addPrivilege($privilegeId){
-        $p = &Access::getPrivilege($privilegeId);
+        $p = Access::getPrivilege($privilegeId);
         if($p != null){
             foreach ($this->userPrivileges as $prev){
                 if($prev->getID() == $p->getID()){
@@ -163,7 +159,7 @@ class User implements JsonI{
      * @since 1.7.1
      */
     public function removePrivilege($privilegeId) {
-        $p = &Access::getPrivilege($privilegeId);
+        $p = Access::getPrivilege($privilegeId);
         if($p != null){
             $count = count($this->userPrivileges);
             for($x = 0 ; $x < $count ; $x++){
@@ -187,7 +183,7 @@ class User implements JsonI{
      * @since 1.7
      */
     public function removeAllPrivileges() {
-        $this->userPrivileges = array();
+        $this->userPrivileges = [];
     }
     /**
      * Checks if the user belongs to a privileges group given its ID.
@@ -202,7 +198,7 @@ class User implements JsonI{
      * @since 1.7
      */
     public function inGroup($groupId) {
-        $g = &Access::getGroup($groupId);
+        $g = Access::getGroup($groupId);
         if($g instanceof PrivilegesGroup){
             return $this->_inGroup($g);
         }

@@ -23,11 +23,6 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity;
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
 use webfiori\conf\Config;
 use webfiori\entity\DBConnectionFactory;
 use webfiori\entity\DBConnectionInfo;
@@ -515,27 +510,44 @@ class Util{
     /**
      * Call the method 'print_r' and insert 'pre' around it.
      * The method is used to make the output well formatted and user 
-     * readable.
+     * readable. Note that if the framework is running through command line 
+     * interface, the output will be sent to STDOUTE.
      * @param mixed $expr Any variable or value that can be passed to the 
      * function 'print_r'.
      * @param boolean $asMessageBox If this attribute is set to true, the output
      * will be shown in a floating message box which can be moved around inside 
-     * the web page. Default is true.
+     * the web page. Default is true. It has no effect in case the framework 
+     * is running through CLI.
      * @since 1.0
      */
     public static function print_r($expr,$asMessageBox=true){
-        if(gettype($expr) == 'string'){
-            $expr1 = str_replace('<', '&lt;', $expr);
-            $expr = str_replace('>', '&gt;', $expr1);
+        if($expr === null){
+            $expr = 'null';
         }
-        $val = '<pre>'. print_r($expr, true).'</pre>';
-        if($asMessageBox === true){
-            $messageBox = new MessageBox();
-            $messageBox->getBody()->addTextNode($val,false);
-            echo $messageBox;
+        else if($expr === true){
+            $expr = 'true';
+        }
+        else if($expr === false){
+            $expr = 'false';
+        }
+        if(CLI::isCLI()){
+            $val = print_r($expr, true);
+            fprintf(STDOUT, "%s\n",$val);
         }
         else{
-            echo $val;
+            if(gettype($expr) == 'string'){
+                $expr1 = str_replace('<', '&lt;', $expr);
+                $expr = str_replace('>', '&gt;', $expr1);
+            }
+            $val = '<pre>'. print_r($expr, true).'</pre>';
+            if($asMessageBox === true){
+                $messageBox = new MessageBox();
+                $messageBox->getBody()->addTextNode($val,false);
+                echo $messageBox;
+            }
+            else{
+                echo $val;
+            }
         }
     }
     /**
@@ -643,12 +655,16 @@ class Util{
             $secureHost = '';
         }
         $protocol = 'http://';
-        if(strlen($secureHost) != 0){
-            $protocol = 'https://';
+        $useHttp = defined('USE_HTTP') && USE_HTTP === true;
+        if((strlen($secureHost) != 0 && !$useHttp)){
+            $protocol = "https://";
         }
         $docRoot = filter_var($_SERVER['DOCUMENT_ROOT']);
         $len = strlen($docRoot);
         $toAppend = substr(ROOT_DIR, $len, strlen(ROOT_DIR) - $len);
+        if(isset($_SERVER['HTTP_WEBFIORI_REMOVE_PATH'])){
+            $toAppend = str_replace($_SERVER['HTTP_WEBFIORI_REMOVE_PATH'],'' ,$toAppend);
+        }
         return $protocol.$host. str_replace('\\', '/', $toAppend).'/';
     }
     /**
@@ -664,7 +680,8 @@ class Util{
             $secureHost = '';
         }
         $protocol = "http://";
-        if(strlen($secureHost) != 0){
+        $useHttp = defined('USE_HTTP') && USE_HTTP === true;
+        if(strlen($secureHost) != 0 && !$useHttp){
             $protocol = "https://";
         }
         $server = filter_var(getenv('HTTP_HOST'));
