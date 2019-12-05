@@ -23,25 +23,13 @@
  * THE SOFTWARE.
  */
 namespace webfiori\examples\views;
-/*
- * The next block of code can be added to every view or .php 
- * file to prevent direct access.
- */
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
 use webfiori\entity\Page;
 use phpStructs\html\PNode;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\UnorderedList;
 class ExamplePage{
     public function __construct() {
-        //load UI template components (JS, CSS and others)
-        //it is optional. to use a theme but recomended
-        Page::theme($themeName='WebFiori Theme');
-
+        
         //sets the title of the page
         $lang = Page::lang();
         if($lang == 'AR'){
@@ -58,6 +46,9 @@ class ExamplePage{
             $p->addText('Hello from "WebFiori Framework"!');
             Page::insert($p);
         }
+        //load UI template components (JS, CSS and others)
+        //it is optional. to use a theme but recomended
+        Page::theme($themeName='WebFiori Theme');
         $sec = new HTMLNode('section');
         Page::insert($sec);
         $secH = new HTMLNode('h1');
@@ -93,4 +84,4 @@ class ExamplePage{
         Page::render();
     }
 }
-new ExamplePage();
+return __NAMESPACE__;
