@@ -23,20 +23,16 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity;
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
 use webfiori\WebFiori;
 use webfiori\entity\router\Router;
 use webfiori\entity\Theme;
-use webfiori\entity\Access;
 use webfiori\entity\cron\Cron;
 /**
- * Description of CLIInterface
+ * A class which adds basic support for running the framework through 
+ * command line interface (CLI).
  *
  * @author Ibrahim
+ * @version 1.0
  */
 class CLI {
     /**
@@ -57,10 +53,11 @@ class CLI {
         self::printCommandInfo('--hello', "Show 'Hello world!' Message.");
         self::printCommandInfo('--route <url>', "Test the result of a route.");
         self::printCommandInfo('--view-conf', "Display system configuration settings.");
-        self::printCommandInfo('--view-cron-jobs <cron-pass>', "Display a list of cron jobs. If cron password is set, it must be provided.");
-        self::printCommandInfo('--view-privileges', "Display all created privileges groups and all privileges inside each group.");
-        self::printCommandInfo('--view-routes', "Display all available routes.");
-        self::printCommandInfo('--view-themes', "Display a list of available themes.");
+        self::printCommandInfo('--list-cron-jobs <cron-pass>', "Display a list of cron jobs. If cron password is set, it must be provided.");
+        self::printCommandInfo('--check-cron <cron-pass>', "Execute a command to check all jobs and execute them if its time to run the job.");
+        //self::printCommandInfo('--view-privileges', "Display all created privileges groups and all privileges inside each group.");
+        self::printCommandInfo('--list-routes', "Display all available routes.");
+        self::printCommandInfo('--list-themes', "Display a list of available themes.");
         exit(0);
     }
     /**
@@ -104,15 +101,42 @@ class CLI {
         fprintf(STDOUT, "    %s %".$dist."s %s\n", $command,":",$help);
     }
     /**
+     * Checks if the framework is running through command line interface (CLI) or 
+     * through a web server.
+     * @return boolean If the framework is running through a command line, 
+     * the method will return true. False if not.
+     */
+    public static function isCLI() {
+        //best way to check if app is runing through CLi
+        // or in a web server.
+        // Did a lot of reaseach on that.
+        $isCli = http_response_code() === false;
+        return $isCli;
+    }
+    /**
      * Initialize CLI.
      */
     public static function init() {
-        $sapi = php_sapi_name();
-        if($sapi == 'cli'){
-            $_SERVER['HTTP_HOST'] = '127.0.0.1';
-            $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        $isCli = self::isCLI();
+        if($isCli === true){
+            if(defined('CLI_HTTP_HOST')){
+                $host = CLI_HTTP_HOST;
+            }
+            else{
+                $host = '127.0.0.1';
+            }
+            $_SERVER['HTTP_HOST'] = $host;
+            $_SERVER['REMOTE_ADDR'] = $host;
             $_SERVER['DOCUMENT_ROOT'] = trim($_SERVER['argv'][0],'WebFiori.php');
-            putenv('HTTP_HOST=127.0.0.1');
+            $_SERVER['REQUEST_URI'] = '/';
+            putenv('HTTP_HOST='.$host);
+            putenv('REQUEST_URI=/');
+            if(defined('USE_HTTP') && USE_HTTP === true){
+                
+            }
+            else{
+                $_SERVER['HTTPS'] = 'yes';
+            }
         }
     }
     /**
@@ -175,23 +199,27 @@ class CLI {
             else if($commands[1] == "--h" || $commands[1] == "--help"){
                 self::showHelp();
             }
-            else if($commands[1] == '--show-routes'){
+            else if($commands[1] == '--list-routes'){
                 self::displayRoutes();
             }
-            else if($commands[1] == '--view-themes'){
+            else if($commands[1] == '--list-themes'){
                 self::viewThmes();
             }
             else if($commands[1] == '--view-conf'){
                 self::showConfig();
             }
-            else if($commands[1] == '--view-cron-jobs'){
+            else if($commands[1] == '--check-cron'){
+                $cPass = isset($commands[2]) ? $commands[2] : null;
+                self::checkCron($cPass);
+            }
+            else if($commands[1] == '--list-cron-jobs'){
                 $pass = Cron::password();
                 if($pass == 'NO_PASSWORD'){
                     self::listCron();
                 }
                 else{
                     $cPass = isset($commands[2]) ? $commands[2] : null;
-                    if($cPass == $pass){
+                    if(hash('sha256',$cPass) == $pass){
                         self::listCron();
                     }
                     else if($cPass === null){
@@ -203,9 +231,39 @@ class CLI {
                 }
             }
             else{
-                fprintf(STDERR,"Error: The command '".$commands[0]."' is not supported or not implemented.");
+                fprintf(STDERR,"Error: The command '".$commands[1]."' is not supported or not implemented.");
             }
             //exit(0);
+        }
+    }
+    private static function checkCron($pass=''){
+        $result = Cron::run($pass);
+        if($result == 'INV_PASS'){
+            fprintf(STDERR,"Error: Provided password is incorrect.");
+        }
+        else{
+            fprintf(STDOUT,"Total number of jobs: ".$result['total-jobs']."\n");
+            fprintf(STDOUT,"Executed Jobs: ".$result['executed-count']."\n");
+            fprintf(STDOUT,"Successfully finished jobs:\n");
+            $sJobs = $result['successfuly-completed'];
+            if(count($sJobs) == 0){
+                fprintf(STDOUT,"    <NONE>\n");
+            }
+            else{
+                foreach ($sJobs as $jobName){
+                    fprintf(STDOUT,"    ".$jobName."\n");
+                }
+            }
+            fprintf(STDOUT,"Failed jobs:\n");
+            $fJobs = $result['failed'];
+            if(count($fJobs) == 0){
+                fprintf(STDOUT,"    <NONE>\n");
+            }
+            else{
+                foreach ($fJobs as $jobName){
+                    fprintf(STDOUT,"    ".$jobName."\n");
+                }
+            }
         }
     }
     /**
@@ -227,7 +285,7 @@ class CLI {
             $i++;
         }
     }
-
+    
     /**
      * 
      */
