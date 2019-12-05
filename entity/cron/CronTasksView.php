@@ -23,11 +23,6 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity\cron;
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
 use webfiori\entity\Page;
 use phpStructs\html\JsCode;
 use phpStructs\html\TableRow;
@@ -64,73 +59,59 @@ use webfiori\WebFiori;
  */
 class CronTasksView {
     /**
-     * The URL of this view which is constructed when the method _getPageURL() is 
-     * called.
-     * @var string 
+     * A top container that contains all task related controls.
+     * @var HTMLNode 
      */
-    private $pageUrl;
+    private $controlsContainer;
     /**
      * Creates new instance of the view.
      */
     public function __construct() {
-        $useTheme = isset($_GET['use-theme']) && $_GET['use-theme'] == 'yes' ? true : false;
-        if($useTheme){
-            Page::theme(WebFiori::getSiteConfig()->getBaseThemeName());    
+        if(WebFiori::getWebsiteController()->getSessionVar('cron-login-status') !== true){
+            header('location: '.WebFiori::getSiteConfig()->getBaseURL().'cron/login');
         }
         Page::title('Scheduled CRON Tasks');
         Page::description('A list of available CRON jobs.');
+        $defaltSiteLang = WebFiori::getSiteConfig()->getPrimaryLanguage();
+        $siteNames = WebFiori::getSiteConfig()->getWebsiteNames();
+        $siteName = isset($siteNames[$defaltSiteLang]) ? $siteNames[$defaltSiteLang] : null;
+        if($siteName !== null){
+            Page::siteName($siteName);
+        }
+        $this->controlsContainer = new HTMLNode();
+        $this->controlsContainer->setWritingDir('ltr');
+        $this->controlsContainer->setStyle([
+            'direction'=>'ltr'
+        ]);
         $tasksCount = Cron::jobsQueue()->size();
         $h1 = new HTMLNode('h1');
         $h1->addTextNode('Scheduled CRON Tasks');
-        Page::insert($h1);
+        $this->controlsContainer->addChild($h1);
         $hr = new HTMLNode('hr',false);
-        Page::insert($hr);
+        $this->controlsContainer->addChild($hr);
+        if(Cron::password() != 'NO_PASSWORD'){
+            $this->controlsContainer->addTextNode('<button name="input-element" onclick="logout()"><b>Logout</b></button><br/>', false);
+        }
         $parag = new PNode();
         $parag->addText('<b>Total Scheduled Tasks:</b> '.$tasksCount.'.', array('esc-entities'=>false));
-        Page::insert($parag);
+        $this->controlsContainer->addChild($parag);
         $this->_createRefreshControls();
-        $this->_createThemeControls();
         $this->_createTasksTable();
         $this->_displayExecLog();
         $jsCode = new JsCode();
         $isRefresh = 'false';
-        
-        if(isset($_GET['use-theme']) && 
-          $_GET['use-theme'] == 'yes' && 
-            isset($_GET['refresh']) && 
-            $_GET['refresh'] == 'yes'){
-            $params = '?use-theme=yes&refresh=yes';
-            $isRefresh = 'true';
-        }
-        else if(isset($_GET['use-theme']) && 
-          $_GET['use-theme'] == 'yes'){
-            $params = '?use-theme=yes&refresh=yes';
-        }
-        else{
-            $params = '?refresh=yes';
-        }
         if(isset($_GET['refresh'])){
-            $refStr = 'window.location.reload(true);';
             $isRefresh = 'true';
-        }
-        else{
-            $refStr = 'window.location.href = \''.$this->_getPageURL().$params.'\'';
-        }
-        $password = Cron::password();
-        if($password != 'NO_PASSWORD'){
-            $forceUrl = WebFiori::getSiteConfig()->getBaseURL().'cron-jobs/execute/'.$password.'/force/';
-        }
-        else{
-            $forceUrl = WebFiori::getSiteConfig()->getBaseURL().'cron-jobs/execute/force/';
         }
         $jsCode->addCode(''
                 . 'window.onload = function(){'."\n"
                 . '     window.isRefresh = '.$isRefresh.';'."\n"
+                . "     "
                 . '     window.intervalId = window.setInterval(function(){'."\n"
                 . '         if(window.isRefresh){'."\n"
                 . '             disableOrEnableInputs();'."\n"
                 . '             document.getElementById(\'refresh-label\').innerHTML = \'<b>Refreshing...</b>\';'."\n"
-                . '             '.$refStr.';'."\n"
+                . '             window.location.href = \'cron/jobs?refresh=yes\';'."\n"
                 . '         }'."\n"
                 . '     },60000)'."\n"
                 . ' };'."\n"
@@ -153,10 +134,21 @@ class CronTasksView {
                 . '     disableOrEnableInputs();'
                 . '     source.innerHTML = \'Executing Job...\';'."\n"
                 . '     var xhr = new XMLHttpRequest();'."\n"
-                . '     xhr.open(\'get\',\''.$forceUrl.'\'+encodeURIComponent(jobName));'."\n"
+                . '     xhr.open(\'post\',\'cron/apis/force-execution\');'."\n"
                 . '     xhr.onreadystatechange = function(){'."\n"
                 . '         if(this.readyState === 4 && this.status === 200){'."\n"
-                . '             source.innerHTML = \'<b>Job Executed Successfully</b>\';'."\n"
+                . '             try{'."\n"
+                . '                 var asJson = JSON.parse(this.responseText);'."\n"
+                . '                 if(asJson[\'more-info\'][\'failed\'].length != 0){'."\n"
+                . '                     source.innerHTML = \'<b>The job was executed but did not finish successfully.</b>\';'."\n"
+                . '                 }'."\n"
+                . '                 else{'."\n"
+                . '                     source.innerHTML = \'<b>Job executed and finished successfully</b>\';'."\n"
+                . '                 }'."\n"
+                . '             }'."\n"
+                . '             catch(e){'."\n"
+                . '                 source.innerHTML = \'Something Went Wrong While Executing the Job. Try Again\';'."\n"
+                . '             }'."\n"
                 . '             disableOrEnableInputs(false);'."\n"
                 . '             window.isRefresh = refresh;'."\n"
                 . '         }'."\n"
@@ -171,10 +163,23 @@ class CronTasksView {
                 . '             window.isRefresh = refresh;'."\n"
                 . '         }'."\n"
                 . '     }'."\n"
-                . '     xhr.send();'."\n"
+                . "     xhr.setRequestHeader('content-type','application/x-www-form-urlencoded');"
+                . "     xhr.send('job-name='+encodeURIComponent(jobName));"."\n"
+                . '};'."\n"
+                . 'function logout(){'."\n"
+                . '     var xhr = new XMLHttpRequest();'."\n"
+                . '     xhr.open(\'post\',\'cron/apis/logout\');'."\n"
+                . '     xhr.onreadystatechange = function(){'."\n"
+                . '         if(this.readyState === 4){'."\n"
+                . '             window.location.href = \'cron\';'
+                . '         }'."\n"
+                . '     }'."\n"
+                . "     xhr.setRequestHeader('content-type','application/x-www-form-urlencoded');"
+                . "     xhr.send();"."\n"
                 . '};'."\n"
                 . '');
         Page::document()->getHeadNode()->addChild($jsCode);
+        Page::insert($this->controlsContainer);
         Page::render();
     }
     /**
@@ -189,7 +194,7 @@ class CronTasksView {
         $h->addTextNode('Jobs Execution Log:');
         $sec->addChild($h);
         $sec->addChild($pre);
-        Page::insert($sec);
+        $this->controlsContainer->addChild($sec);
         if(file_exists(ROOT_DIR.DIRECTORY_SEPARATOR.'logs'.DIRECTORY_SEPARATOR.'cron.txt')){
             $file = new File('cron.txt', ROOT_DIR.DIRECTORY_SEPARATOR.'logs');
             $file->read();
@@ -203,75 +208,6 @@ class CronTasksView {
         else{
             $pre->addTextNode('<b style="color:red">Log file not found.</b>',false);
         }
-    }
-    /**
-     * Constructs and returns the URL of the page.
-     * This method will include the password that is used to protect 
-     * Cron jobs if it was set.
-     * @return string
-     */
-    private function _getPageURL() {
-        if($this->pageUrl !== null){
-            return $this->pageUrl;
-        }
-        $url = WebFiori::getSiteConfig()->getBaseURL().'cron-jobs/list';
-        $pass = Cron::password();
-        if($pass != 'NO_PASSWORD'){
-            $url .= '/'.$pass.'';
-        }
-        $this->pageUrl = $url;
-        return $url;
-    }
-    /**
-     * Creates a form that contains the controls which is used to enable the 
-     * use of website theme while displaying the view.
-     */
-    private function _createThemeControls(){
-        $form = new HTMLNode('form');
-        $form->setID('theme-controls-form');
-        $themeCheckBox = new Input('checkbox');
-        $themeCheckBox->setName('input-element');
-        $themeCheckBox->setID('theme-checkbox');
-        if(isset($_GET['use-theme']) && $_GET['use-theme'] == 'yes'){
-            $themeCheckBox->setAttribute('checked');
-        }
-        $form->addChild($themeCheckBox);
-        $label = new Label('Use Website Theme to Display This Page.');
-        $label->setAttribute('for', 'theme-checkbox');
-        $label->setID('change-theme-label');
-        $form->addChild($label);
-        if(isset($_GET['refresh']) && $_GET['refresh'] == 'yes'){
-            $params = '?refresh=yes';
-        }
-        else{
-            $params = '';
-        }
-        $onclick = 'disableOrEnableInputs();'
-                . 'var isRef = window.isRefresh;'
-                . 'window.isRefresh = false;'
-                . 'document.getElementById(\'change-theme-label\').innerHTML = \'<b>Updating Page...</b>\';';
-        if(isset($_GET['use-theme']) && $_GET['use-theme'] = 'yes'){
-            $onclick .= 
-                'if(this.checked === false && isRef){'
-                . 'window.location.href = \''.$this->_getPageURL().$params.'\';'
-                . '}'
-                . 'else if(this.checked === false && !isRef){'
-                . 'window.location.href = \''.$this->_getPageURL().'\';'
-                . '}';
-            $themeCheckBox->setAttribute('onclick', $onclick);
-        }
-        else{
-            $onclick .= 
-                'if(this.checked && isRef){'
-                . 'window.location.href = \''.$this->_getPageURL().$params.'&use-theme=yes\';'
-                . '}'
-                . 'else{'
-                . 'window.location.href = \''.$this->_getPageURL().'?use-theme=yes\';'
-                . '}';
-            $themeCheckBox->setAttribute('onclick', $onclick);
-        }
-        
-        Page::insert($form);
     }
     /**
      * Creates a form which contains the controls that allow the user to 
@@ -288,11 +224,14 @@ class CronTasksView {
             $refreshCheckBox->setAttribute('checked');
         }
         $form->addChild($refreshCheckBox);
-        $label = new Label('Refresh The Page Every 1 Minute.');
+        $label = new Label('Refresh The Page Every <input style="width:50px" disabled value="60" id="refresh-time-input" min="5" type="number"> Second(s).');
+        $label->setStyle([
+            'display'=>'inline-block'
+        ]);
         $label->setAttribute('for', 'refresh-checkbox');
         $label->setID('refresh-label');
         $form->addChild($label);
-        Page::insert($form);
+        $this->controlsContainer->addChild($form);
     }
     /**
      * Creates the table that is used to display cron jobs information.
@@ -300,7 +239,7 @@ class CronTasksView {
     private function _createTasksTable() {
         $tasksTable = new HTMLNode('table');
         $tasksTable->setID('tasks-table');
-        Page::insert($tasksTable);
+        $this->controlsContainer->addChild($tasksTable);
         $tasksTable->setAttribute('border', 1);
         $tasksTable->setStyle(array(
             'border-collapse'=>'collapse',
@@ -335,18 +274,12 @@ class CronTasksView {
             $tasksTable->addChild($cell);
         }
         else{
-            $pass = Cron::password();
             while ($job = $jobsQueue->dequeue()){
                 $row = new TableRow();
                 $row->setClassName('tasks-table-row');
                 $jobNameCell = new TableCell();
                 $jobNameCell->setClassName('tasks-table-cell');
-                if($pass != 'NO_PASSWORD'){
-                    $jobNameCell->addTextNode('<a href="'.WebFiori::getSiteConfig()->getBaseURL().'cron-jobs/job-details/'.$job->getJobName().'/'.$pass.'">'.$job->getJobName().'</a>',false);
-                }
-                else{
-                    $jobNameCell->addTextNode('<a href="'.WebFiori::getSiteConfig()->getBaseURL().'cron-jobs/job-details/'.$job->getJobName().'">'.$job->getJobName().'</a>',false);
-                }
+                $jobNameCell->addTextNode('<a href="'.WebFiori::getSiteConfig()->getBaseURL().'cron/jobs/'.$job->getJobName().'">'.$job->getJobName().'</a>',false);
                 $row->addChild($jobNameCell);
                 $exprCell = new TableCell();
                 $jobNameCell->setClassName('tasks-table-cell');

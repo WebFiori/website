@@ -23,22 +23,14 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity\cron;
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
+use webfiori\WebFiori;
 use webfiori\entity\Page;
 use webfiori\entity\cron\CronJob;
 use phpStructs\html\JsCode;
 use phpStructs\html\TableRow;
 use phpStructs\html\TableCell;
-use phpStructs\html\Input;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
-use phpStructs\html\Label;
-use webfiori\entity\File;
-use webfiori\WebFiori;
 /**
  * A view to show details of a specific CRON task.
  *
@@ -53,69 +45,61 @@ class CronTaskView {
      */
     private $job;
     /**
-     * The URL of this view which is constructed when the method _getPageURL() is 
-     * called.
-     * @var string 
-     * @since 1.0
+     * A top container that contains all task related controls.
+     * @var HTMLNode 
      */
-    private $pageUrl;
+    private $controlsContainer;
     /**
      * @since 1.0
      */
     public function __construct() {
+        if(WebFiori::getWebsiteController()->getSessionVar('cron-login-status') !== true){
+            header('location: '.WebFiori::getSiteConfig()->getBaseURL().'cron/login');
+        }
         $jobName = $_GET['job-name'];
         $password = Cron::password();
         $job = Cron::getJob($jobName);
         if($job instanceof CronJob){
+            $this->controlsContainer = new HTMLNode();
+            $this->controlsContainer->setWritingDir('ltr');
+            $this->controlsContainer->setStyle([
+                'direction'=>'ltr'
+            ]);
             $this->job = $job;
-            $useTheme = isset($_GET['use-theme']) && $_GET['use-theme'] == 'yes' ? true : false;
-            if($useTheme){
-                Page::theme(WebFiori::getSiteConfig()->getBaseThemeName());    
-            }
+            
             Page::title('View Task');
             Page::description('Display task info.');
+            
+            $defaltSiteLang = WebFiori::getSiteConfig()->getPrimaryLanguage();
+            $siteNames = WebFiori::getSiteConfig()->getWebsiteNames();
+            $siteName = isset($siteNames[$defaltSiteLang]) ? $siteNames[$defaltSiteLang] : null;
+            if($siteName !== null){
+                Page::siteName($siteName);
+            }
+            
             $h1 = new HTMLNode('h1');
             $h1->addTextNode('View Task Details');
-            Page::insert($h1);
+            $h1->setStyle([
+                'direction'=>'ltr'
+            ]);
+            $this->controlsContainer->addChild($h1);
+            
             $hr = new HTMLNode('hr',false);
             
-            Page::insert($hr);
-            if($password != 'NO_PASSWORD'){
-                $forceUrl = WebFiori::getSiteConfig()->getBaseURL().'cron-jobs/execute/'.$password.'/force/';
+            $this->controlsContainer->addChild($hr);
+            if(Cron::password() != 'NO_PASSWORD'){
+                $this->controlsContainer->addTextNode('<button name="input-element" onclick="logout()"><b>Logout</b></button><br/>', false);
             }
-            else{
-                $forceUrl = WebFiori::getSiteConfig()->getBaseURL().'cron-jobs/execute/force/';
-            }
-            $isRefresh = 'false';
-
-            if(isset($_GET['use-theme']) && 
-              $_GET['use-theme'] == 'yes' && 
-                isset($_GET['refresh']) && 
-                $_GET['refresh'] == 'yes'){
-                $params = '?use-theme=yes&refresh=yes';
-                $isRefresh = 'true';
-            }
-            else if(isset($_GET['use-theme']) && 
-              $_GET['use-theme'] == 'yes'){
-                $params = '?use-theme=yes&refresh=yes';
-            }
-            else{
-                $params = '?refresh=yes';
-            }
-            if(isset($_GET['refresh'])){
-                $refStr = 'window.location.reload(true);';
-                $isRefresh = 'true';
-            }
-            else{
-                $refStr = 'window.location.href = \''.$this->_getPageURL().'\'+encodeURIComponent("'.$this->job->getJobName().'")+\''.$params.'\'';
-            }
-            
-            //$this->_createRefreshControls();
-            //$this->_createThemeControls();
+            $backButton = new HTMLNode('button');
+            $backButton->addTextNode('Back to Jobs List');
+            $backButton->setAttribute('onclick',"window.location.href = 'cron/jobs';");
+            $backButton->setStyle([
+                'float'=>'left'
+            ]);
+            $backButton->setName('input-element');
+            $this->controlsContainer->addChild($backButton);
+            $this->controlsContainer->addTextNode('<br/>', false);
             $this->_createInfoTable($job);
-            $forceNode = new HTMLNode();
-            $forceNode->addTextNode('<button name="input-element" onclick="execJob(this,\''.$job->getJobName().'\')" class="force-execution-button">Force Execution</button>', false);
-            Page::insert($forceNode);
             $this->_createCustomParamsContainer();
             $custAttrsNames = $job->getExecutionAttributes();
             $custAtrrsAsJsonArr = '[';
@@ -128,20 +112,25 @@ class CronTaskView {
                 }
             }
             $custAtrrsAsJsonArr .= ']';
+            $isRefresh = 'false';
+            if(isset($_GET['refresh'])){
+                $isRefresh = 'true';
+            }
             $jsCode = new JsCode();
             $jsCode->addCode(''
                     . 'window.onload = function(){'."\n"
-                    . '     window.customAttrs = [];'."\n"
-                    . '     window.custAttrsNames = '.$custAtrrsAsJsonArr.';'
-                    . '     for(var x = 0 ; x < window.custAttrsNames.length ; x++){'."\n"
-                    . '         addAttribute(window.custAttrsNames[x]);'."\n"
+                    . '     window.isRefresh = '.$isRefresh.';'
+                    . '     window.customAttrsArr = '.$custAtrrsAsJsonArr.';'
+                    . '     window.customAttrs = [];'
+                    . '     for(var x = 0 ; x < window.customAttrsArr.length ; x++){'
+                    . '         addAttribute(window.customAttrsArr[x]);'
                     . '     }'."\n"
-                    . '     window.isRefresh = '.$isRefresh.';'."\n"
+                    . "     "
                     . '     window.intervalId = window.setInterval(function(){'."\n"
                     . '         if(window.isRefresh){'."\n"
                     . '             disableOrEnableInputs();'."\n"
                     . '             document.getElementById(\'refresh-label\').innerHTML = \'<b>Refreshing...</b>\';'."\n"
-                    . '             '.$refStr.';'."\n"
+                    . '             window.location.href = \'cron/jobs?refresh=yes\';'."\n"
                     . '         }'."\n"
                     . '     },60000)'."\n"
                     . ' };'."\n"
@@ -166,9 +155,7 @@ class CronTaskView {
                     . '        }'."\n"
                     . '    }'."\n"
                     . '    var attrsTable = document.getElementById(\'custom-params-table\').children[0];'."\n"
-                    . '    console.log(attrsTable);'."\n"
                     . '    var addBtnRow = attrsTable.children[attrsTable.children.length - 1];'."\n"
-                    . '    console.log(addBtnRow);'."\n"
                     . '    attrsTable.removeChild(addBtnRow);'."\n"
                     . '    if(attrsCount === 0){'."\n"
                     . '        window.noAttrsNode = attrsTable.children[attrsTable.children.length - 1];'."\n"
@@ -176,20 +163,20 @@ class CronTaskView {
                     . '    }'."\n"
                     . '    var inputsIndex = window.customAttrs.length;'."\n"
                     . '    if(name !== undefined){'."\n"
-                    . '        var attrNameInput = "<input type=\'text\' value=\'"+name+"\' oninput=\'attributeNameChanged(this,"+inputsIndex+")\'>";'."\n"
+                    . '        var attrNameInput = "<input style=\'border:0px\' name=\'input-element\' type=\'text\' value=\'"+name+"\' oninput=\'attributeNameChanged(this,"+inputsIndex+")\'>";'."\n"
                     . '    }'
                     . '    else{'."\n"
-                    . '        var attrNameInput = "<input type=\'text\'  oninput=\'attributeNameChanged(this,"+inputsIndex+")\'>";'."\n"
+                    . '        var attrNameInput = "<input style=\'border:0px\' name=\'input-element\' type=\'text\'  oninput=\'attributeNameChanged(this,"+inputsIndex+")\'>";'."\n"
                     . '    }'."\n"
-                    . '    var attrValInput = "<input type=\'text\'  oninput=\'attributeValueChanged(this,"+inputsIndex+")\'>";'."\n"
+                    . '    var attrValInput = "<input style=\'border:0px\' type=\'text\' name=\'input-element\' oninput=\'attributeValueChanged(this,"+inputsIndex+")\'>";'."\n"
                     . '    var newRow = document.createElement("tr");'."\n"
                     . '    newRow.id = "attribute-"+window.customAttrs.length+"-row";'."\n"
                     . '    newRow.className = "attribute-row";'."\n"
-                    . '    newRow.innerHTML = "<td>"+attrNameInput+"</td><td>"+attrValInput+"</td><td>"'."\n"
-                    . '    +"<button class=\'remove-attribute-button\' onclick=\'removeAttr("+window.customAttrs.length+")\'>X</button></td>";'."\n"
+                    . '    newRow.innerHTML = "<td>"+attrNameInput+"</td><td>"+attrValInput+"</td><td style=\'padding:0px\'>"'."\n"
+                    . '    +"<button name=\'input-element\' class=\'remove-attribute-button cancel\' onclick=\'removeAttr("+window.customAttrs.length+")\'>X</button></td>";'."\n"
                     . '    attrsTable.appendChild(newRow);'."\n"
                     . '    attrsTable.appendChild(addBtnRow);'."\n"
-                    . '    window.customAttrs.push({name:"",value:"",use:true});'."\n"
+                    . '    window.customAttrs.push({name:name,value:"",use:true});'."\n"
                     . '    '."\n"
                     . '    '."\n"
                     . '}'."\n"
@@ -221,19 +208,21 @@ class CronTaskView {
                     . '    var retVal = "";'."\n"
                     . '    for(var x = 0 ; x < window.customAttrs.length ; x++){'."\n"
                     . '        var attr = window.customAttrs[x];'."\n"
-                    . '        if(attr.use === true){'."\n"
-                    . '            if(retVal.length === 0){'."\n"
-                    . '                retVal += attr.name+"="+encodeURIComponent(attr.value);'."\n"
-                    . '            }'."\n"
-                    . '            else{'."\n"
-                    . '                retVal += "&"+attr.name+"="+encodeURIComponent(attr.value);'."\n"
+                    . '        if(attr.value.length !== 0){'."\n"
+                    . '            if(attr.use === true){'."\n"
+                    . '                if(retVal.length === 0){'."\n"
+                    . '                    retVal += attr.name+"="+encodeURIComponent(attr.value);'."\n"
+                    . '                }'."\n"
+                    . '                else{'."\n"
+                    . '                    retVal += "&"+attr.name+"="+encodeURIComponent(attr.value);'."\n"
+                    . '                }'."\n"
                     . '            }'."\n"
                     . '        }'."\n"
                     . '    }'."\n"
                     . '    if(retVal.length === 0){'."\n"
                     . '        return "";'."\n"
                     . '    }'."\n"
-                    . '    return "?"+retVal;'."\n"
+                    . '    return "&"+retVal;'."\n"
                     . '};'."\n"
                     . 'function execJob(source,jobName){'."\n"
                     . '     var refresh = window.isRefresh;'."\n"
@@ -241,10 +230,21 @@ class CronTaskView {
                     . '     disableOrEnableInputs();'
                     . '     source.innerHTML = \'Executing Job...\';'."\n"
                     . '     var xhr = new XMLHttpRequest();'."\n"
-                    . '     xhr.open(\'get\',\''.$forceUrl.'\'+encodeURIComponent(jobName)+extractCustomParams());'."\n"
+                    . '     xhr.open(\'post\',\'cron/apis/force-execution\');'."\n"
                     . '     xhr.onreadystatechange = function(){'."\n"
                     . '         if(this.readyState === 4 && this.status === 200){'."\n"
-                    . '             source.innerHTML = \'<b>Job Executed Successfully</b>\';'."\n"
+                    . '             try{'."\n"
+                    . '                 var asJson = JSON.parse(this.responseText);'."\n"
+                    . '                 if(asJson[\'more-info\'][\'failed\'].length != 0){'."\n"
+                    . '                     source.innerHTML = \'<b>The job was executed but did not finish successfully.</b>\';'."\n"
+                    . '                 }'."\n"
+                    . '                 else{'."\n"
+                    . '                     source.innerHTML = \'<b>Job executed and finished successfully</b>\';'."\n"
+                    . '                 }'."\n"
+                    . '             }'."\n"
+                    . '             catch(e){'."\n"
+                    . '                 source.innerHTML = \'Something Went Wrong While Executing the Job. Try Again\';'."\n"
+                    . '             }'."\n"
                     . '             disableOrEnableInputs(false);'."\n"
                     . '             window.isRefresh = refresh;'."\n"
                     . '         }'."\n"
@@ -259,10 +259,58 @@ class CronTaskView {
                     . '             window.isRefresh = refresh;'."\n"
                     . '         }'."\n"
                     . '     }'."\n"
-                    . '     xhr.send();'."\n"
+                    . "     xhr.setRequestHeader('content-type','application/x-www-form-urlencoded');"
+                    . "     xhr.send('job-name='+encodeURIComponent(jobName)+extractCustomParams());"."\n"
+                    . '};'."\n"
+                    . 'function logout(){'."\n"
+                    . '     var xhr = new XMLHttpRequest();'."\n"
+                    . '     xhr.open(\'post\',\'cron/apis/logout\');'."\n"
+                    . '     xhr.onreadystatechange = function(){'."\n"
+                    . '         if(this.readyState === 4){'."\n"
+                    . '             window.location.href = \'cron\';'
+                    . '         }'."\n"
+                    . '     }'."\n"
+                    . "     xhr.setRequestHeader('content-type','application/x-www-form-urlencoded');"
+                    . "     xhr.send();"."\n"
                     . '};'."\n"
                     . '');
             Page::document()->getHeadNode()->addChild($jsCode);
+            $inlineStyle = new HTMLNode('style');
+            $inlineStyle->addTextNode(''
+                    . 'button{'
+                    . 'cursor: pointer'
+                    . '}'
+                    . 'button.ok{'
+                    . 'width: 100%;border: 0px;'
+                    . 'background-color: #229000;'
+                    . 'margin: 0;color: white;'
+                    . 'font-weight: bold;'
+                    . 'height: 25px;'
+                    . '}'
+                    . 'button.ok:hover{'
+                    . 'background-color: #22B000;'
+                    . '}'
+                    . 'button.cancel:hover{'
+                    . 'background-color: rgba(200,0,0,0.5);'
+                    . '}'
+                    . 'button[disabled]{'
+                    . 'cursor:not-allowed'
+                    . '}'
+                    . 'button.cancel{'
+                    . 'width: 100px;'
+                    . 'margin: 0;'
+                    . 'background-color: rgba(200,0,0,0.7);'
+                    . 'color: white;'
+                    . 'font-weight: bold;'
+                    . 'border: 0px;'
+                    . 'height:25px;'
+                    . '}'
+                    . '');
+            Page::document()->getHeadNode()->addChild($inlineStyle);
+            $forceNode = new HTMLNode();
+            $forceNode->addTextNode('<button style="margin-top:30px" name="input-element" onclick="execJob(this,\''.$job->getJobName().'\')" class="force-execution-button">Force Execution</button>', false);
+            $this->controlsContainer->addChild($forceNode);
+            Page::insert($this->controlsContainer);
             Page::render();
         }
         else{
@@ -274,86 +322,15 @@ class CronTaskView {
             }
         }
     }
-    /**
-     * Creates a form which contains the controls that allow the user to 
-     * enable refresh functionality.
-     */
-    private function _createRefreshControls(){
-        $form = new HTMLNode('form');
-        $form->setID('refresh-controls-form');
-        $refreshCheckBox = new Input('checkbox');
-        $refreshCheckBox->setName('input-element');
-        $refreshCheckBox->setID('refresh-checkbox');
-        $refreshCheckBox->setAttribute('onclick', 'window.isRefresh = this.checked;');
-        if(isset($_GET['refresh']) && $_GET['refresh'] == 'yes'){
-            $refreshCheckBox->setAttribute('checked');
-        }
-        $form->addChild($refreshCheckBox);
-        $label = new Label('Refresh The Page Every 1 Minute.');
-        $label->setAttribute('for', 'refresh-checkbox');
-        $label->setID('refresh-label');
-        $form->addChild($label);
-        Page::insert($form);
-    }
-    /**
-     * Creates a form that contains the controls which is used to enable the 
-     * use of website theme while displaying the view.
-     */
-    private function _createThemeControls(){
-        $form = new HTMLNode('form');
-        $form->setID('theme-controls-form');
-        $themeCheckBox = new Input('checkbox');
-        $themeCheckBox->setName('input-element');
-        $themeCheckBox->setID('theme-checkbox');
-        if(isset($_GET['use-theme']) && $_GET['use-theme'] == 'yes'){
-            $themeCheckBox->setAttribute('checked');
-        }
-        $form->addChild($themeCheckBox);
-        $label = new Label('Use Website Theme to Display This Page.');
-        $label->setAttribute('for', 'theme-checkbox');
-        $label->setID('change-theme-label');
-        $form->addChild($label);
-        if(isset($_GET['refresh']) && $_GET['refresh'] == 'yes'){
-            $params = '?refresh=yes';
-        }
-        else{
-            $params = '';
-        }
-        $onclick = 'disableOrEnableInputs();'
-                . 'var isRef = window.isRefresh;'
-                . 'window.isRefresh = false;'
-                . 'document.getElementById(\'change-theme-label\').innerHTML = \'<b>Updating Page...</b>\';';
-        if(isset($_GET['use-theme']) && $_GET['use-theme'] = 'yes'){
-            $onclick .= 
-                'if(this.checked === false && isRef){'
-                . 'window.location.href = \''.$this->_getPageURL().'+encodeURIComponent("'.$this->job->getJobName().'")+'.$params.'\';'
-                . '}'
-                . 'else if(this.checked === false && !isRef){'
-                . 'window.location.href = \''.$this->_getPageURL().'+encodeURIComponent("'.$this->job->getJobName().'")+'.'\';'
-                . '}';
-            $themeCheckBox->setAttribute('onclick', $onclick);
-        }
-        else{
-            $onclick .= 
-                'if(this.checked && isRef){'
-                . 'window.location.href = \''.$this->_getPageURL().'+encodeURIComponent("'.$this->job->getJobName().'")+'.$params.'&use-theme=yes\';'
-                . '}'
-                . 'else{'
-                . 'window.location.href = \''.$this->_getPageURL().'+encodeURIComponent("'.$this->job->getJobName().'")+'.'?use-theme=yes\';'
-                . '}';
-            $themeCheckBox->setAttribute('onclick', $onclick);
-        }
-        
-        Page::insert($form);
-    }
+    
     private function _createCustomParamsContainer(){
         $h2 = new HTMLNode('h2');
         $h2->addTextNode('Custom Execution Parameters');
-        Page::insert($h2);
+        $this->controlsContainer->addChild($h2);
         $p = new PNode();
         $p->addText('Here you can add extra parameters which will be sent with '
-                . 'th force execute command.');
-        Page::insert($p);
+                . 'force execute command.');
+        $this->controlsContainer->addChild($p);
         $table = new HTMLNode('table');
         $table->setID('custom-params-table');
         $table->setAttribute('border', 1);
@@ -410,10 +387,10 @@ class CronTaskView {
         $addButtonCell = new TableCell();
         $addButtonCell->setColSpan(3);
         $addButtonCell->setID('add-attr-button-cell');
-        $addButtonCell->addTextNode('<button style="width:100%" onclick="addAttribute()">Add Attribute</button>', false);
+        $addButtonCell->addTextNode('<button name="input-element" class="ok" style="width:100%" onclick="addAttribute()">Add Attribute</button>', false);
         $addRow->addChild($addButtonCell);
         $table->addChild($addRow);
-        Page::insert($table);
+        $this->controlsContainer->addChild($table);
     }
 
     /**
@@ -423,7 +400,7 @@ class CronTaskView {
     private function _createInfoTable($job){
         $taskTable = new HTMLNode('table');
         $taskTable->setID('tasks-table');
-        Page::insert($taskTable);
+        $this->controlsContainer->addChild($taskTable);
         $taskTable->setAttribute('border', 1);
         $taskTable->setStyle(array(
             'border-collapse'=>'collapse',
@@ -481,23 +458,5 @@ class CronTaskView {
             $cell->addTextNode('No');
         }
         return $cell;
-    }
-    /**
-     * Constructs and returns the URL of the page.
-     * This method will include the password that is used to protect 
-     * Cron jobs if it was set.
-     * @return string
-     */
-    private function _getPageURL() {
-        if($this->pageUrl !== null){
-            return $this->pageUrl;
-        }
-        $url = WebFiori::getSiteConfig()->getBaseURL().'cron-jobs/view-job/';
-        $pass = Cron::password();
-        if($pass != 'NO_PASSWORD'){
-            $url .= '/'.$pass.'';
-        }
-        $this->pageUrl = $url;
-        return $url;
     }
 }

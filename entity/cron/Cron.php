@@ -24,23 +24,21 @@
  */
 namespace webfiori\entity\cron;
 use phpStructs\Queue;
+use webfiori\WebFiori;
 use webfiori\entity\router\Router;
 use webfiori\entity\Util;
-if(!defined('ROOT_DIR')){
-    header("HTTP/1.1 404 Not Found");
-    die('<!DOCTYPE html><html><head><title>Not Found</title></head><body>'
-    . '<h1>404 - Not Found</h1><hr><p>The requested resource was not found on the server.</p></body></html>');
-}
 /**
  * A class that is used to manage cron jobs.
  * It is used to create jobs, schedule them and execute them. In order to run 
  * the jobs automatically, the developer must add an entry in the following 
  * formate in crontab:
- * <p>* * * * *  /usr/bin/curl {BASE_URL}/cron-jobs/execute/{password}</p>
- * Where {BASE_URL} is the web site's base URL and {password} is the password 
+ * <p>* * * * *  /usr/bin/php path/to/WebFiori.php --check-cron &lt;cron-pass&gt;</p>
+ * Where &lt;cron-pass&gt; is the password 
  * that was set by the developer to protect the jobs from unauthorized access.
+ * Note that the path to PHP executable might differ from "/usr/bin/php". 
+ * It depends on where the executable has been installed.
  * @author Ibrahim
- * @version 1.0.5
+ * @version 1.0.7
  */
 class Cron {
     /**
@@ -84,11 +82,42 @@ class Cron {
      * @return Cron
      * @since 1.0
      */
-    private static function &_get(){
+    private static function _get(){
         if(self::$executer === null){
             self::$executer = new Cron();
         }
         return self::$executer;
+    }
+    /**
+     * Returns the time at which jobs check was initialized.
+     * @return string The method will return a time string in the format 
+     * 'YY-DD HH:MM' where: 
+     * <ul>
+     * <li>'YY' is month number.</li>
+     * <li>'MM' is day number in the current month.</li>
+     * <li>'HH' is the hour.</li>
+     * <li>'MM' is the minute.</li>
+     * </ul> 
+     * @since 1.0.7
+     */
+    public static function timestamp() {
+        $month = self::month();
+        if($month < 10){
+            $month = '0'.$month;
+        }
+        $day = self::dayOfMonth();
+        if($day < 10){
+            $day = '0'.$day;
+        }
+        $hour = self::hour();
+        if($hour < 10){
+            $hour = '0'.$hour;
+        }
+        $minute = self::minute();
+        if($minute < 10){
+            $minute = '0'.$minute;
+        }
+        return $month.'-'.$day.' '.$hour.':'.$minute;
     }
     /**
      * 
@@ -206,443 +235,30 @@ class Cron {
         $this->isLogEnabled = false;
         $this->cronJobsQueue = new Queue();
         $this->_setPassword('');
-        $func = function(){
-            $clientIp = Util::getClientIP();
-            $serverIp = Util::getClientIP();
-            if($clientIp == $serverIp){
-                if(Cron::password() != 'NO_PASSWORD'){
-                    $password = isset($_GET['password']) ? filter_var($_GET['password']) : '';
-                    if($password != ''){
-                        if($password == Cron::password()){
-                            $totalJobs = Cron::jobsQueue()->size();
-                            $executedJobsCount = 0;
-                            while ($job = Cron::jobsQueue()->dequeue()){
-                                if($job->isTime()){
-                                    $this->_setActiveJob($job);
-                                }
-                                if($job->execute()){
-                                    $this->_logJobExecution($job);
-                                    $executedJobsCount++;
-                                }
-                                $this->_setActiveJob(null);
-                            }
-                            http_response_code(200);
-                            die(''
-                            . '<!DOCTYPE html>'
-                            . '<html>'
-                            . '<head>'
-                            . '<title>OK</title>'
-                            . '</head>'
-                            . '<body>'
-                            . '<h1>200 - OK</h1>'
-                            . '<hr>'
-                            . '<p>'
-                            . 'Total number of jobs: '.$totalJobs
-                            . '</p>'
-                            . '<p>'
-                            . 'Number of jobs executed: '.$executedJobsCount
-                            . '</p>'
-                            . '</body>'
-                            . '</html>');
-                        }
-                        else{
-                            die(''
-                            . '<!DOCTYPE html>'
-                            . '<html>'
-                            . '<head>'
-                            . '<title>Not Authorized</title>'
-                            . '</head>'
-                            . '<body>'
-                            . '<h1>401 - Not Authorized</h1>'
-                            . '<hr>'
-                            . '<p>'
-                            . 'Invalid password.'
-                            . '</p>'
-                            . '</body>'
-                            . '</html>');
-                        }
-                    }
-                    else{
-                        die(''
-                        . '<!DOCTYPE html>'
-                        . '<html>'
-                        . '<head>'
-                        . '<title>Not Authorized</title>'
-                        . '</head>'
-                        . '<body>'
-                        . '<h1>401 - Not Authorized</h1>'
-                        . '<hr>'
-                        . '<p>'
-                        . 'Password is missing.'
-                        . '</p>'
-                        . '</body>'
-                        . '</html>');
-                    }
-                }
-                else{
-                    $totalJobs = Cron::jobsQueue()->size();
-                    $executedJobsCount = 0;
-                    while ($job = Cron::jobsQueue()->dequeue()){
-                        if($job->isTime()){
-                            $this->_setActiveJob($job);
-                        }
-                        if($job->execute()){
-                            $this->_logJobExecution($job);
-                            $executedJobsCount++;
-                        }
-                        $this->_setActiveJob(null);
-                    }
-                    http_response_code(200);
-                    die(''
-                    . '<!DOCTYPE html>'
-                    . '<html>'
-                    . '<head>'
-                    . '<title>OK</title>'
-                    . '</head>'
-                    . '<body>'
-                    . '<h1>200 - OK</h1>'
-                    . '<hr>'
-                    . '<p>'
-                    . 'Total number of jobs: '.$totalJobs
-                    . '</p>'
-                    . '<p>'
-                    . 'Number of jobs executed: '.$executedJobsCount
-                    . '</p>'
-                    . '</body>'
-                    . '</html>');
-                }
-            }
-            else{
-                http_response_code(403);
-                die(''
-                . '<!DOCTYPE html>'
-                . '<html>'
-                . '<head>'
-                . '<title>Forbidden</title>'
-                . '</head>'
-                . '<body>'
-                . '<h1>403 - Forbidden</h1>'
-                . '<hr>'
-                . '<p>'
-                . 'Cron jobs can be executed only withen the server environment.'
-                . '</p>'
-                . '</body>'
-                . '</html>');
-            }
-        };
-        Router::closure([
-            'path'=>'/cron-jobs/execute/{password}',
-            'route-to'=>$func
+        Router::other([
+            'path'=>'/cron/login',
+            'route-to'=>'/entity/cron/CronLoginView.php'
+        ]);
+        Router::other([
+            'path'=>'/cron/apis/{action}',
+            'route-to'=>'/entity/cron/CronAPIs.php',
+            'as-api'=>true
+        ]);
+        Router::other([
+            'path'=>'/cron',
+            'route-to'=>'/entity/cron/CronLoginView.php'
         ]);
         Router::closure([
-            'path'=>'/cron-jobs/execute',
-            'route-to'=>$func
-        ]);
-        
-        $forceFunc = function(){
-            $clientIp = Util::getClientIP();
-            $serverIp = Util::getClientIP();
-            if($clientIp == $serverIp){
-                if(Cron::password() != 'NO_PASSWORD'){
-                    $password = isset($_GET['password']) ? filter_var($_GET['password']) : '';
-                    if($password != ''){
-                        if($password == Cron::password()){
-                            $jobName = isset($_GET['job-name']) ? filter_var($_GET['job-name']) : null;
-                            if($jobName != null){
-                                while ($job = Cron::jobsQueue()->dequeue()){
-                                    if($job->getJobName() == $jobName){
-                                        if($job->isTime()){
-                                            $this->_setActiveJob($job);
-                                        }
-                                        $job->execute(true);
-                                        $this->_logJobExecution($job,true);
-                                        http_response_code(200);
-                                        die(''
-                                        . '<!DOCTYPE html>'
-                                        . '<html>'
-                                        . '<head>'
-                                        . '<title>Job Executed</title>'
-                                        . '</head>'
-                                        . '<body>'
-                                        . '<h1>200 - Ok</h1>'
-                                        . '<hr>'
-                                        . '<p>'
-                                        . 'The given job was forced to execute.'
-                                        . '</p>'
-                                        . '</body>'
-                                        . '</html>');
-                                    }
-                                }
-                                http_response_code(404);
-                                die(''
-                                . '<!DOCTYPE html>'
-                                . '<html>'
-                                . '<head>'
-                                . '<title>Job Not Found</title>'
-                                . '</head>'
-                                . '<body>'
-                                . '<h1>404 - Not Found</h1>'
-                                . '<hr>'
-                                . '<p>'
-                                . 'No job was found which has the given name.'
-                                . '</p>'
-                                . '</body>'
-                                . '</html>');
-                            }
-                            else{
-                                http_response_code(404);
-                                die(''
-                                . '<!DOCTYPE html>'
-                                . '<html>'
-                                . '<head>'
-                                . '<title>Job Not Found</title>'
-                                . '</head>'
-                                . '<body>'
-                                . '<h1>404 - Not Found</h1>'
-                                . '<hr>'
-                                . '<p>'
-                                . 'No job was found which has the given name.'
-                                . '</p>'
-                                . '</body>'
-                                . '</html>');
-                            }
-                        }
-                        else{
-                            die(''
-                            . '<!DOCTYPE html>'
-                            . '<html>'
-                            . '<head>'
-                            . '<title>Not Authorized</title>'
-                            . '</head>'
-                            . '<body>'
-                            . '<h1>401 - Not Authorized</h1>'
-                            . '<hr>'
-                            . '<p>'
-                            . 'Invalid password.'
-                            . '</p>'
-                            . '</body>'
-                            . '</html>');
-                        }
-                    }
-                    else{
-                        die(''
-                        . '<!DOCTYPE html>'
-                        . '<html>'
-                        . '<head>'
-                        . '<title>Not Authorized</title>'
-                        . '</head>'
-                        . '<body>'
-                        . '<h1>401 - Not Authorized</h1>'
-                        . '<hr>'
-                        . '<p>'
-                        . 'Password is missing.'
-                        . '</p>'
-                        . '</body>'
-                        . '</html>');
-                    }
-                }
-                else{
-                    $jobName = isset($_GET['job-name']) ? filter_var($_GET['job-name']) : null;
-                    if($jobName != null){
-                        while ($job = Cron::jobsQueue()->dequeue()){
-                            if($job->getJobName() == $jobName){
-                                if($job->isTime()){
-                                    $this->_setActiveJob($job);
-                                }
-                                $job->execute(true);
-                                $this->_logJobExecution($job,true);
-                                http_response_code(200);
-                                die(''
-                                . '<!DOCTYPE html>'
-                                . '<html>'
-                                . '<head>'
-                                . '<title>Job Executed</title>'
-                                . '</head>'
-                                . '<body>'
-                                . '<h1>200 - Ok</h1>'
-                                . '<hr>'
-                                . '<p>'
-                                . 'The given job was forced to execute.'
-                                . '</p>'
-                                . '</body>'
-                                . '</html>');
-                            }
-                        }
-                        http_response_code(404);
-                        die(''
-                        . '<!DOCTYPE html>'
-                        . '<html>'
-                        . '<head>'
-                        . '<title>Job Not Found</title>'
-                        . '</head>'
-                        . '<body>'
-                        . '<h1>404 - Not Found</h1>'
-                        . '<hr>'
-                        . '<p>'
-                        . 'No job was found which has the given name.'
-                        . '</p>'
-                        . '</body>'
-                        . '</html>');
-                    }
-                    else{
-                        http_response_code(404);
-                        die(''
-                        . '<!DOCTYPE html>'
-                        . '<html>'
-                        . '<head>'
-                        . '<title>Job Not Found</title>'
-                        . '</head>'
-                        . '<body>'
-                        . '<h1>404 - Not Found</h1>'
-                        . '<hr>'
-                        . '<p>'
-                        . 'No job was found which has the given name.'
-                        . '</p>'
-                        . '</body>'
-                        . '</html>');
-                    }
-                }
-            }
-            else{
-                http_response_code(403);
-                die(''
-                . '<!DOCTYPE html>'
-                . '<html>'
-                . '<head>'
-                . '<title>Forbidden</title>'
-                . '</head>'
-                . '<body>'
-                . '<h1>403 - Forbidden</h1>'
-                . '<hr>'
-                . '<p>'
-                . 'Cron jobs can be executed only withen the server environment.'
-                . '</p>'
-                . '</body>'
-                . '</html>');
-            }
-        };
-        Router::closure([
-            'path'=>'/cron-jobs/execute/force/{job-name}',
-            'route-to'=>$forceFunc
-        ]);
-        Router::closure([
-            'path'=>'/cron-jobs/execute/{password}/force/{job-name}',
-            'route-to'=>$forceFunc
-        ]);
-        
-        $viewJobsFunc = function(){
-            if(Cron::password() != 'NO_PASSWORD'){
-                $password = isset($_GET['password']) ? filter_var($_GET['password']) : '';
-                if($password != ''){
-                    if($password == Cron::password()){
-                        new CronTasksView();
-                        die();
-                    }
-                    else{
-                        http_response_code(401);
-                        die(''
-                        . '<!DOCTYPE html>'
-                        . '<html>'
-                        . '<head>'
-                        . '<title>Not Authorized</title>'
-                        . '</head>'
-                        . '<body>'
-                        . '<h1>401 - Not Authorized</h1>'
-                        . '<hr>'
-                        . '<p>'
-                        . 'Invalid password.'
-                        . '</p>'
-                        . '</body>'
-                        . '</html>');
-                    }
-                }
-                else{
-                    http_response_code(401);
-                    die(''
-                    . '<!DOCTYPE html>'
-                    . '<html>'
-                    . '<head>'
-                    . '<title>Not Authorized</title>'
-                    . '</head>'
-                    . '<body>'
-                    . '<h1>401 - Not Authorized</h1>'
-                    . '<hr>'
-                    . '<p>'
-                    . 'Password is missing.'
-                    . '</p>'
-                    . '</body>'
-                    . '</html>');
-                }
-            }
-            else{
+            'path'=>'/cron/jobs',
+            'route-to'=>function(){
                 new CronTasksView();
-                die('');
             }
-        };
-        Router::closure([
-            'path'=>'/cron-jobs/list',
-            'route-to'=>$viewJobsFunc
         ]);
         Router::closure([
-            'path'=>'/cron-jobs/list/{password}',
-            'route-to'=>$viewJobsFunc
-        ]);
-        $viewJobFunc = function(){
-            if(Cron::password() != 'NO_PASSWORD'){
-                $password = isset($_GET['password']) ? filter_var($_GET['password']) : '';
-                if($password != ''){
-                    if($password == Cron::password()){
-                        new CronTaskView();
-                        die();
-                    }
-                    else{
-                        http_response_code(401);
-                        die(''
-                        . '<!DOCTYPE html>'
-                        . '<html>'
-                        . '<head>'
-                        . '<title>Not Authorized</title>'
-                        . '</head>'
-                        . '<body>'
-                        . '<h1>401 - Not Authorized</h1>'
-                        . '<hr>'
-                        . '<p>'
-                        . 'Invalid password.'
-                        . '</p>'
-                        . '</body>'
-                        . '</html>');
-                    }
-                }
-                else{
-                    http_response_code(401);
-                    die(''
-                    . '<!DOCTYPE html>'
-                    . '<html>'
-                    . '<head>'
-                    . '<title>Not Authorized</title>'
-                    . '</head>'
-                    . '<body>'
-                    . '<h1>401 - Not Authorized</h1>'
-                    . '<hr>'
-                    . '<p>'
-                    . 'Password is missing.'
-                    . '</p>'
-                    . '</body>'
-                    . '</html>');
-                }
-            }
-            else{
+            'path'=>'/cron/jobs/{job-name}',
+            'route-to'=>function(){
                 new CronTaskView();
-                die('');
             }
-        };
-        Router::closure([
-            'path'=>'/cron-jobs/job-details/{job-name}/{password}',
-            'route-to'=>$viewJobFunc
-        ]);
-        Router::closure([
-            'path'=>'/cron-jobs/job-details/{job-name}',
-            'route-to'=>$viewJobFunc
         ]);
     }
     private function _setLogEnabled($bool){
@@ -786,7 +402,9 @@ class Cron {
     }
     /**
      * Sets or gets the password that is used to protect the cron instance.
-     * The password is used to prevent unauthorized access to execute jobs.
+     * The password is used to prevent unauthorized access to execute jobs. 
+     * The provided password must be 'sha256' hashed string. It is recommended 
+     * to hash the password externally then use the hash inside your code.
      * @param string $pass If not null, the password will be updated to the 
      * given one.
      * @return string If the password is set, the method will return it. 
@@ -862,6 +480,87 @@ class Cron {
             $this->accessPass = $pass;
         }
     }
+    /**
+     * Check each scheduled job and run it if its time to run it.
+     * @param string $pass If cron password is set, this value must be 
+     * provided. The given value will be hashed inside the body of the 
+     * method and then compared with the password which was set. Default 
+     * is empty string
+     * @param string|null $jobName An optional job name. If specified, only 
+     * the given job will be checked. Default is null.
+     * @param boolean $force If this attribute is set to true and a job name 
+     * was provided, the job will be forced to execute. Default is false.
+     * @return string|array If cron password is set and the given one is 
+     * invalid, the method will return the string 'INV_PASS'. If 
+     * a job name is specified and no job was found which has the given 
+     * name, the method will return the string 'JOB_NOT_FOUND'. Other than that, 
+     * the method will return an associative array which has the 
+     * following indices:
+     * <ul>
+     * <li><b>total-jobs</b>: Total number of scheduled jobs.</li>
+     * <li><b>executed-count</b>: Number of executed jobs.</li>
+     * <li><b>successfuly-completed</b>: Number of successfully 
+     * completed jobs.</li>
+     * <li><b>failed</b>: Number of jobs which did not 
+     * finish successfully.</li>
+     * </ul>
+     * @since 1.0.6
+     */
+    public static function run($pass='',$jobName=null,$force=false) {
+        if(Cron::password() != 'NO_PASSWORD' && WebFiori::getWebsiteController()->getSessionVar('cron-login-status') !== true){
+            if(hash('sha256',$pass) != Cron::password()){
+                return 'INV_PASS';
+            }
+        }
+        $xForce = $force === true;
+        $retVal = [
+            'total-jobs'=>Cron::jobsQueue()->size(),
+            'executed-count'=>0,
+            'successfuly-completed'=>[],
+            'failed'=>[]
+        ];
+        if($jobName !== null){
+            $job = self::getJob(trim($jobName));
+            if($job instanceof CronJob){
+                if($job->isTime() || $xForce){
+                    self::_get()->_setActiveJob($job);
+                }
+                if($job->execute($xForce)){
+                    self::_get()->_logJobExecution($job,$xForce);
+                    $retVal['executed-count']++;
+                    if($job->isSuccess() === true){
+                        $retVal['successfuly-completed'][] = $job->getJobName();
+                    }
+                    else if($job->isSuccess() === false){
+                        $retVal['failed'][] = $job->getJobName();
+                    }
+                }
+                self::_get()->_setActiveJob(null);
+            }
+            else{
+                return 'JOB_NOT_FOUND';
+            }
+        }
+        else{
+            while ($job = Cron::jobsQueue()->dequeue()){
+                if($job->isTime()){
+                    self::_get()->_setActiveJob($job);
+                }
+                if($job->execute()){
+                    self::_get()->_logJobExecution($job,$xForce);
+                    $retVal['executed-count']++;
+                    if($job->isSuccess() === true){
+                        $retVal['successfuly-completed'][] = $job->getJobName();
+                    }
+                    else if($job->isSuccess() === false){
+                        $retVal['failed'][] = $job->getJobName();
+                    }
+                }
+                self::_get()->_setActiveJob(null);
+            }
+        }
+        return $retVal;
+    }
     
     private function _logJobExecution($job,$forced=false){
         if($this->isLogEnabled){
@@ -877,9 +576,21 @@ class Cron {
                 if(is_resource($file)){
                     if($forced){
                         fwrite($file, 'Job \''.$job->getJobName().'\' was forced to executed at '.date(DATE_RFC1123).". Request source IP: ".Util::getClientIP()."\n");
+                        if($job->isSuccess()){
+                            fwrite($file, 'Execution status: Successfully completed.'."\n");
+                        }
+                        else{
+                            fwrite($file, 'Execution status: Failed to completed.'."\n");
+                        }
                     }
                     else{
                         fwrite($file, 'Job \''.$job->getJobName().'\' automatically executed at '.date(DATE_RFC1123)."\n");
+                        if($job->isSuccess()){
+                            fwrite($file, 'Execution status: Successfully completed.'."\n");
+                        }
+                        else{
+                            fwrite($file, 'Execution status: Failed to completed.'."\n");
+                        }
                     }
                     fclose($file);
                 }
