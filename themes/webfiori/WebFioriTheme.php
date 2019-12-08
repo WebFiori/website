@@ -1,7 +1,7 @@
 <?php
 namespace webfiori\theme;
-use webfiori\entity\Theme;
 use webfiori\WebFiori;
+use webfiori\entity\Theme;
 use webfiori\entity\Page;
 use webfiori\logic\WebsiteController;
 use phpStructs\html\ListItem;
@@ -13,7 +13,7 @@ use phpStructs\html\Label;
 use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use webfiori\conf\SiteConfig;
-use phpStructs\html\JsCode;
+use webfiori\conf\Config;
 
 class WebFioriTheme extends Theme{
     public function __construct() {
@@ -65,23 +65,19 @@ class WebFioriTheme extends Theme{
             $mainMenu = Page::document()->getChildByID('menu-items-container');
 
             $item1 = new ListItem();
-            $link1 = new LinkNode(SiteConfig::getBaseURL().'download', $translation->get('menus/main-menu/menu-item-1'));
+            $link1 = new LinkNode(SiteConfig::getBaseURL(), $translation->get('menus/main-menu/menu-item-1'));
             $item1->addChild($link1);
             $mainMenu->addChild($item1);
 
             $item2 = new ListItem();
-            $link2 = new LinkNode(SiteConfig::getBaseURL().'docs/webfiori', $translation->get('menus/main-menu/menu-item-2'));
+            $link2 = new LinkNode(SiteConfig::getBaseURL(), $translation->get('menus/main-menu/menu-item-2'));
             $item2->addChild($link2);
             $mainMenu->addChild($item2);
 
             $item3 = new ListItem();
-            $link3 = new LinkNode(SiteConfig::getBaseURL().'learn', $translation->get('menus/main-menu/menu-item-3'));
+            $link3 = new LinkNode(SiteConfig::getBaseURL(), $translation->get('menus/main-menu/menu-item-3'));
             $item3->addChild($link3);
             $mainMenu->addChild($item3);
-             $item4 = new ListItem();
-            $link4 = new LinkNode(SiteConfig::getBaseURL().'contribute', $translation->get('menus/main-menu/menu-item-4'));
-            $item4->addChild($link4);
-            $mainMenu->addChild($item4);
 
         });
 
@@ -92,61 +88,62 @@ class WebFioriTheme extends Theme{
     }
 
     public function getFooterNode() {
-        $page = Page::get();
+        
         $node = new HTMLNode('div');
         $socialMedia = new HTMLNode();
-        $socialMedia->setClassName('pa-row');
+        $socialMedia->setClassName('wf-row');
         $socialMedia->setID('social-media-container');
-        $socialMedia->setWritingDir($page->getWritingDir());
+        $socialMedia->setWritingDir(Page::dir());
 
-        $facebookIcon = new HTMLNode('img', FALSE);
-        $facebookIcon->setAttribute('src', $page->getThemeImagesDir().'/facebook.png');
+        $facebookIcon = new HTMLNode('img', false);
+        $facebookIcon->setAttribute('src', Page::imagesDir().'/facebook.png');
         $facebookIcon->setClassName('social-media-icon');
         $facebookLink = new HTMLNode('a');
-        $facebookLink->setAttribute('href', 'https://www.facebook.com/webfiori');
+        $facebookLink->setAttribute('href', '');
         $facebookLink->setAttribute('target', '_blank');
         $facebookLink->addChild($facebookIcon);
         $socialMedia->addChild($facebookLink);
 
-        $twtrIcon = new HTMLNode('img', FALSE);
-        $twtrIcon->setAttribute('src', $page->getThemeImagesDir().'/tweeter.png');
+        $twtrIcon = new HTMLNode('img', false);
+        $twtrIcon->setAttribute('src', Page::imagesDir().'/tweeter.png');
         $twtrIcon->setClassName('social-media-icon');
         $twtrLink = new HTMLNode('a');
-        $twtrLink->setAttribute('href', 'https://twitter.com/webfiori_');
+        $twtrLink->setAttribute('href', '');
         $twtrLink->setAttribute('target', '_blank');
         $twtrLink->addChild($twtrIcon);
         $socialMedia->addChild($twtrLink);
 
-        $linkedinIcon = new HTMLNode('img', FALSE);
-        $linkedinIcon->setAttribute('src', $page->getThemeImagesDir().'/linkedin.png');
+        $linkedinIcon = new HTMLNode('img', false);
+        $linkedinIcon->setAttribute('src', Page::imagesDir().'/linkedin.png');
         $linkedinIcon->setClassName('social-media-icon');
         $linkedinLink = new HTMLNode('a');
-        $linkedinLink->setAttribute('href', 'https://www.linkedin.com/in/ibrahim-binalshikh/');
+        $linkedinLink->setAttribute('href', '');
         $linkedinLink->setAttribute('target', '_blank');
         $linkedinLink->addChild($linkedinIcon);
         $socialMedia->addChild($linkedinLink);
 
-        $bloggerIcon = new HTMLNode('img', FALSE);
-        $bloggerIcon->setAttribute('src', $page->getThemeImagesDir().'/iconfinder_blogger__social_media_icon_2986189.png');
-        $bloggerIcon->setClassName('social-media-icon');
-        $bloggerLink = new HTMLNode('a');
-        $bloggerLink->setAttribute('href', 'http://ibrahim-2017.blogspot.com');
-        $bloggerLink->setAttribute('target', '_blank');
-        $bloggerLink->addChild($bloggerIcon);
-        $socialMedia->addChild($bloggerLink);
-        
+        $snapIcon = new HTMLNode('img', false);
+        $snapIcon->setAttribute('src', Page::imagesDir().'/snapchat.png');
+        $snapIcon->setClassName('social-media-icon');
+        $snapLink = new HTMLNode('a');
+        $snapLink->setAttribute('href', '');
+        $snapLink->setAttribute('target', '_blank');
+        $snapLink->addChild($snapIcon);
+        $socialMedia->addChild($snapLink);
+
         $node->addChild($socialMedia);
         $contactInfo = new HTMLNode();
-        $contactInfo->setClassName('pa-'.Page::dir().'-col-12');
+        $contactInfo->setClassName('wf-'.Page::dir().'-col-12');
         $p = new PNode();
-        $p->addText('webfiori@programmingacademia.com',array('new-line'=>TRUE));
+        $p->addText('013 xxx xxxx', array('new-line'=>true));
+        $p->addText('youremail@example.com',array('new-line'=>true));
         $contactInfo->addChild($p);
         $node->addChild($contactInfo);
-        $p->addText('WebFiori Framework, All Rights Reserved © '.date('Y'));
+        $p->addText('Your Copyright Notice © '. date('Y'));
         $div = new HTMLNode('div');
-        $div->setAttribute('class', 'pa-ltr-col-twelve');
+        $div->setAttribute('class', 'wf-ltr-col-12');
         $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
-                . 'target="_blank">WebFiori Framework</a> v'.WebFiori::getConfig()->getVersion().' ('.WebFiori::getConfig()->getVersionType().')</b>',FALSE);
+                . 'target="_blank">WebFiori Framework</a> v'.Config::getVersion().' ('.Config::getVersionType().')</b>',false);
         $node->addChild($div);
         return $node;
     }
@@ -160,19 +157,6 @@ class WebFioriTheme extends Theme{
         $headTag->addCSS(Page::cssDir().'/theme.css');
         $headTag->addJs('sys-files/res/js/webfiori.js');
         $headTag->addMeta('robots', 'index, follow');
-        $analId = 'UA-91825602-1';
-        $headTag->addJs('https://www.googletagmanager.com/gtag/js?id='.$analId, [
-            'async'=>'false'
-        ], false);
-        $jsCode = new JsCode();
-        $jsCode->addCode(''
-                . 'window.dataLayer = window.dataLayer || [];'
-                . 'function gtag(){'
-                . 'dataLayer.push(arguments);'
-                . '}'
-                . 'gtag(\'js\', new Date());'
-                . 'gtag(\'config\', \''.$analId.'\');');
-        $headTag->addChild($jsCode);
         return $headTag;
     }
 
