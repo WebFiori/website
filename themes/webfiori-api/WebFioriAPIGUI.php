@@ -40,7 +40,7 @@ class WebFioriAPIGUI{
         $wp = $withPadding === TRUE ? '' : '-np';
         $wm = $withMargin === TRUE ? '' : '-nm';
         $node = new HTMLNode();
-        $node->setClassName('pa-'.Page::get()->getWritingDir().'-col-'.$colNum.$wm.$wp);
+        $node->setClassName('pa-'.Page::dir().'-col-'.$colNum.$wm.$wp);
         return $node;
     }
     /**
