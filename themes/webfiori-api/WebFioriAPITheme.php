@@ -28,7 +28,7 @@ class WebFioriAPITheme extends APITheme{
             'WebFioriAPIGUI.php'
         ));
         $this->setBeforeLoaded(function(){
-            $lang = WebFiori::getWebsiteFunctions()->getSessionLang(TRUE);
+            $lang = WebFiori::getWebsiteController()->getSessionLang(TRUE);
             Page::lang($lang);
             if($lang == 'AR'){
                 Page::dir('rtl');
@@ -47,9 +47,9 @@ class WebFioriAPITheme extends APITheme{
             //WebFioriGUI::createTitleNode();
 
             LangExt::extLang();
-            $translation = &Page::translation();
+            $translation = Page::translation();
             //adding menu items 
-            $mainMenu = &Page::document()->getChildByID('main-menu');
+            $mainMenu = Page::document()->getChildByID('main-menu');
 
             $item1 = new ListItem();
             $link1 = new LinkNode($this->getBaseURL().'download', $translation->get('menus/main-menu/menu-item-1'));
@@ -112,15 +112,14 @@ class WebFioriAPITheme extends APITheme{
         return $node;
     }
     public function getFooterNode() {
-        $page = Page::get();
         $node = new HTMLNode('div');
         $socialMedia = new HTMLNode();
         $socialMedia->setClassName('pa-row');
         $socialMedia->setID('social-media-container');
-        $socialMedia->setWritingDir($page->getWritingDir());
+        $socialMedia->setWritingDir(Page::dir());
 
         $facebookIcon = new HTMLNode('img', FALSE);
-        $facebookIcon->setAttribute('src', $page->getThemeImagesDir().'/facebook.png');
+        $facebookIcon->setAttribute('src', Page::imagesDir().'/facebook.png');
         $facebookIcon->setClassName('social-media-icon');
         $facebookLink = new HTMLNode('a');
         $facebookLink->setAttribute('href', 'https://www.facebook.com/webfiori');
@@ -129,7 +128,7 @@ class WebFioriAPITheme extends APITheme{
         $socialMedia->addChild($facebookLink);
 
         $twtrIcon = new HTMLNode('img', FALSE);
-        $twtrIcon->setAttribute('src', $page->getThemeImagesDir().'/tweeter.png');
+        $twtrIcon->setAttribute('src', Page::imagesDir().'/tweeter.png');
         $twtrIcon->setClassName('social-media-icon');
         $twtrLink = new HTMLNode('a');
         $twtrLink->setAttribute('href', 'https://twitter.com/webfiori_');
