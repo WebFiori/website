@@ -9,7 +9,7 @@ use webfiori\entity\langs\Language;
  */
 class LangExt {
     public static function extLang(){
-        $trans = &Page::translation();
+        $trans = Page::translation();
         $trans->createDirectory('menus/main-menu');
         $trans->setMultiple('menus/main-menu', array(
             'menu-item-1'=>'Download',
