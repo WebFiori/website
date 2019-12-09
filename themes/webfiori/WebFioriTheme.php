@@ -14,7 +14,7 @@ use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use webfiori\conf\SiteConfig;
 use webfiori\conf\Config;
-
+use phpStructs\html\JsCode;
 class WebFioriTheme extends Theme{
     public function __construct() {
         parent::__construct();
@@ -127,7 +127,7 @@ class WebFioriTheme extends Theme{
         $socialMedia->addChild($linkedinLink);
 
         $bloggerIcon = new HTMLNode('img', FALSE);
-        $bloggerIcon->setAttribute('src', $page->getThemeImagesDir().'/iconfinder_blogger__social_media_icon_2986189.png');
+        $bloggerIcon->setAttribute('src', Page::imagesDir().'/iconfinder_blogger__social_media_icon_2986189.png');
         $bloggerIcon->setClassName('social-media-icon');
         $bloggerLink = new HTMLNode('a');
         $bloggerLink->setAttribute('href', 'http://ibrahim-2017.blogspot.com');
@@ -137,17 +137,16 @@ class WebFioriTheme extends Theme{
 
         $node->addChild($socialMedia);
         $contactInfo = new HTMLNode();
-        $contactInfo->setClassName('wf-'.Page::dir().'-col-12');
+        $contactInfo->setClassName('pa-'.Page::dir().'-col-12');
         $p = new PNode();
-        $p->addText('013 xxx xxxx', array('new-line'=>true));
-        $p->addText('youremail@example.com',array('new-line'=>true));
+        $p->addText('webfiori@programmingacademia.com',array('new-line'=>TRUE));
         $contactInfo->addChild($p);
         $node->addChild($contactInfo);
         $p->addText('WebFiori Framework, All Rights Reserved © '.date('Y'));
         $div = new HTMLNode('div');
-        $div->setAttribute('class', 'wf-ltr-col-12');
+        $div->setAttribute('class', 'pa-ltr-col-twelve');
         $div->addTextNode('<b style="color:gray;font-size:8pt;">Powered By: <a href="https://github.com/usernane/webfiori" '
-                . 'target="_blank">WebFiori Framework</a> v'.Config::getVersion().' ('.Config::getVersionType().')</b>',false);
+                . 'target="_blank">WebFiori Framework</a> v'.WebFiori::getConfig()->getVersion().' ('.WebFiori::getConfig()->getVersionType().')</b>',FALSE);
         $node->addChild($div);
         return $node;
     }
