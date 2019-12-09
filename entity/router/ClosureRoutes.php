@@ -58,7 +58,7 @@ class ClosureRoutes {
                 'theme'=>'WebFiori API Theme',
                 'site-name'=>'WebFiori API Docs',
                 'output-path'=>'C:\\Server\\apache2\\htdocs\\webfiori-docs\\pages\\apis-1.0.7',
-                'route-root-folder'=>'apis-1.0.6',
+                'route-root-folder'=>'apis-1.0.7',
                 'is-dynamic'=>TRUE
             ));
         }
