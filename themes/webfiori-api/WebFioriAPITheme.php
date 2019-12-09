@@ -137,7 +137,7 @@ class WebFioriAPITheme extends APITheme{
         $socialMedia->addChild($twtrLink);
 
         $linkedinIcon = new HTMLNode('img', FALSE);
-        $linkedinIcon->setAttribute('src', $page->getThemeImagesDir().'/linkedin.png');
+        $linkedinIcon->setAttribute('src', Page::imagesDir().'/linkedin.png');
         $linkedinIcon->setClassName('social-media-icon');
         $linkedinLink = new HTMLNode('a');
         $linkedinLink->setAttribute('href', 'https://www.linkedin.com/in/ibrahim-binalshikh/');
@@ -146,7 +146,7 @@ class WebFioriAPITheme extends APITheme{
         $socialMedia->addChild($linkedinLink);
 
         $bloggerIcon = new HTMLNode('img', FALSE);
-        $bloggerIcon->setAttribute('src', $page->getThemeImagesDir().'/iconfinder_blogger__social_media_icon_2986189.png');
+        $bloggerIcon->setAttribute('src', Page::imagesDir().'/iconfinder_blogger__social_media_icon_2986189.png');
         $bloggerIcon->setClassName('social-media-icon');
         $bloggerLink = new HTMLNode('a');
         $bloggerLink->setAttribute('href', 'http://ibrahim-2017.blogspot.com');
