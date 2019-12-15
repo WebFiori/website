@@ -37,6 +37,10 @@ class ViewRoutes {
      */
     public static function create(){
         Router::view([
+            'path'=>'test',
+            'route-to'=>'TestView.php'
+        ]);
+        Router::view([
             'path'=>'/learn/video',
             'route-to'=>'/video-tutorials/IndexView.php'
         ]);
