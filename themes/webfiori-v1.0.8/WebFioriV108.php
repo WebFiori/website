@@ -21,6 +21,9 @@ class WebFioriV108 extends Theme{
         $this->setDirectoryName('webfiori-v1.0.8');
         $this->setAfterLoaded(function(){
             Page::document()->getChildByID('page-body')->setClassName('row');
+            Page::document()->getChildByID('page-body')->setStyle([
+                'margin-top'=>'100px'
+            ]);
             Page::document()->getChildByID('main-content-area')->setClassName('col-10');
         });
     }
@@ -37,8 +40,34 @@ class WebFioriV108 extends Theme{
     }
 
     public function getFooterNode(){
-        $footer = new HTMLNode();
-        $footer->setClassName('container-fluid');
+        $footer = new HTMLNode('footer');
+        $footer->setClassName('bd-footer text-muted');
+        $footer->setClassName('container-fluid p-md-4 mt-md-5');
+        $footerLinksUl = new UnorderedList();
+        $footerLinksUl->setClassName('nav justify-content-center');
+        $footerLinksUl->addListItems([
+            '<a href="https://github.com/usernane/webfiori">GitHub</a>',
+            '<a href="https://twitter.com/webfiori_" >Twitter</a>',
+            '<a href="https://t.me/webfiori" >Telegram</a>'
+        ], false);
+        $footerLinksUl->getChild(0)->setClassName('nav-item');
+        $footerLinksUl->getChild(1)->setClassName('nav-item ml-3');
+        $footerLinksUl->getChild(2)->setClassName('nav-item ml-3');
+        $footer->addChild($footerLinksUl);
+        $powerdByNode = new HTMLNode('p');
+        $powerdByNode->addTextNode('Powered by: <a href="https://programmingacademia.com/webfiori">WebFiori Framework</a> v'.WebFiori::getConfig()->getVersion().'. '
+                . 'Code licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.', false);
+        $footer->addChild($powerdByNode);
+        $img = new HTMLNode('img');
+        $img->setAttribute('src', Page::imagesDir().'/favicon.png');
+        $img->setAttribute('alt', 'logo');
+        $img->setStyle([
+            'height'=>'25px'
+        ]);
+        $footer->addChild($img);
+        $copywriteNotice = new HTMLNode('p');
+        $copywriteNotice->addTextNode('All Rights Reserved © '.date('Y'));
+        $footer->addChild($copywriteNotice);
         return $footer;
     }
     public function getHeadNode(){
@@ -64,17 +93,18 @@ class WebFioriV108 extends Theme{
     }
 
     public function getHeadrNode() {
-        $header = new HTMLNode();
+        $header = new HTMLNode('header');
         $header->setClassName('container-fluid');
         $mainNav = new HTMLNode('nav');
         $header->addChild($mainNav);
-        $mainNav->setClassName('navbar navbar-expand navbar-light bg-light');
+        $mainNav->setClassName('navbar navbar-expand navbar-light fixed-top');
         $mainNav->setStyle([
             'background-color'=>'#c1ec9b'
         ]);
         $logo = new HTMLNode('img');
         $logo->setID('main-logo');
         $logo->setAttribute('src', Page::imagesDir().'/favicon.png');
+        $logo->setAttribute('alt', 'logo');
         $logoLink = new LinkNode(WebFiori::getSiteConfig()->getHomePage(), $logo->toHTML());
         $logoLink->setClassName('navbar-brand');
         $mainNav->addChild($logoLink);
@@ -83,22 +113,24 @@ class WebFioriV108 extends Theme{
         $button->setClassName('navbar-toggler');
         $button->addTextNode('<span class="navbar-toggler-icon"></span>', false);
         $button->setAttribute('data-toggle', 'collapse');
-        $button->setAttribute('data-target', 'nav-items-container');
+        $button->setAttribute('data-target', '#navItemsContainer');
         $button->setAttribute('type', 'button');
+        $button->setAttribute('aria-controls', 'navItemsContainer');
+        $button->setAttribute('aria-expanded', 'false');
         $mainNav->addChild($button);
         
         $navItemsContainer = new HTMLNode();
-        $navItemsContainer->setID('nav-items-container');
+        $navItemsContainer->setID('navItemsContainer');
         $navItemsContainer->setClassName('collapse navbar-collapse');
         $mainNav->addChild($navItemsContainer);
         
         $mainLinksUl = new UnorderedList();
-        $mainLinksUl->setClassName('navbar-nav');
+        $mainLinksUl->setClassName('navbar-nav justify-content-center');
         $mainLinksUl->addListItems([
-            '<a href="" class="nav-link">Download</a>',
-            '<a href="" class="nav-link">API Docs</a>',
-            '<a href="" class="nav-link">Learn</a>',
-            '<a href="" class="nav-link">Contribute</a>'
+            '<a href="download" class="nav-link">Download</a>',
+            '<a href="docs" class="nav-link">API Docs</a>',
+            '<a href="learn" class="nav-link">Learn</a>',
+            '<a href="ontribute" class="nav-link">Contribute</a>'
         ], false);
         $mainLinksUl->getChild(0)->setClassName('nav-item');
         $mainLinksUl->getChild(1)->setClassName('nav-item');
