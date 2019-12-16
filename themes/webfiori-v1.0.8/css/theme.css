@@ -1,4 +1,10 @@
 #main-logo{
-    width:70px;
-    height: 70px;
+    height: 40px;
+}
+#page-footer{
+    background-color: #eef;
+    text-align: center;
+}
+#page-footer a{
+    font-weight: bold;
 }
