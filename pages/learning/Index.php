@@ -19,7 +19,8 @@ class Index extends WebFioriPage{
             'title'=>'Learning Center',
             'description'=>'Learn the basics of how to use WebFiori Framework.'
         ));
-        WebFioriGUI::createTitleNode('Learning Center');
+        $titleNode = Page::theme()->createHTMLNode(['type'=>'page-title']);
+        Page::insert($titleNode);
         $this->_welcome();
         $link = new LinkNode('learn/video', 'Video Tutorials');
         Page::insert($link);
@@ -27,7 +28,7 @@ class Index extends WebFioriPage{
         Page::render();
     }
     private function _welcome(){
-        $sec = $this->createSection('Welcome');
+        $sec = $this->createSection('Welcome',3);
         $sec->addChild($this->createParagraph('Welcome to WebFiori learning center. In here, you will '
                 . 'be able to learn how to use the framework in the most '
                 . 'effective way. You can find all the topics bellow.'));
@@ -35,7 +36,7 @@ class Index extends WebFioriPage{
     }
 
     private function _whatToLearn() {
-        $sec = $this->createSection('I want to learn about:');
+        $sec = $this->createSection('I want to learn about:',3);
         $ul = new UnorderedList();
         $sec->addChild($ul);
         $ul->addChild($this->createLinkListItem('learn/topics/introduction', 'Introduction.'));
