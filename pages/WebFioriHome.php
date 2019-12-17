@@ -40,14 +40,14 @@ class WebFioriHome extends WebFioriPage{
         Page::render();
     }
     public function createSec4() {
-        $sec = $this->createSection('Downloading The Framework');
+        $sec = $this->createSection('Downloading The Framework',3);
         $sec->addChild($this->createParagraph('Please go to <a href="'.WebFiori::getSiteConfig()->getBaseURL().'download">downloads page</a> to check the available '
                 . 'download options. After completing the download process, you can '
                 . 'go to <a href="learn" >learning center</a> in order to get started.'));
         Page::insert($sec);
     }
     public function createSec2(){
-        $sec = $this->createSection('Is it free to use?');
+        $sec = $this->createSection('Is it free to use?',3);
         $sec->addChild($this->createParagraph('Yes for sure. You can use it for free of charge. In '
                 . 'addition, it is open source. This means you can modify the '
                 . 'source code of the framework the way you like as long as you '
@@ -56,7 +56,7 @@ class WebFioriHome extends WebFioriPage{
     }
     public function createSec3(){
         $sec = $this->createSection('Why did you build such framework since there are many '
-                . 'good ones already out there?');
+                . 'good ones already out there?',3);
         $sec->addChild($this->createParagraph('One of the reasons is <b>simplicity</b>. '
                 . 'Some of the available frameworks makes it difficult for you '
                 . 'to develop your website or web application by overwhelming you '
@@ -82,7 +82,7 @@ class WebFioriHome extends WebFioriPage{
         Page::insert($sec);
     }
     private function createSec1(){
-        $sec = $this->createSection('What is WebFiori Framework?');
+        $sec = $this->createSection('What is WebFiori Framework?',3);
         $sec->addChild($this->createParagraph('WebFiori Framework is new web framework which is built using '
                 . 'PHP language. The framework is fully object oriented (OOP). '
                 . 'It allows the use of the famous model-view-controller (MVC) model '
