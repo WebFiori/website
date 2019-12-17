@@ -32,14 +32,14 @@ class DownloadView extends WebFioriPage{
         Page::render();
     }
     private function _stableDownloads() {
-        $sec = $this->createSection('Stable Releases');
+        $sec = $this->createSection('Stable Releases',3);
         $sec->addChild($this->createParagraph('The latest release of the framework is version '
                 . '1.0.7. You can click <a href="downloads/webfiori-v1.0.7-stable">here</a> in order to start the '
                 . 'download process.'));
         Page::insert($sec);
     }
     private function _betaDownloads(){
-        $sec = $this->createSection('Beta Releases and Old Releases');
+        $sec = $this->createSection('Beta Releases and Old Releases',3);
         $sec->addChild($this->createParagraph('Here you will find all beta and historical releases. The given ones are '
                 . 'not good option for production and might have bugs.'));
         $ul = new UnorderedList();
@@ -58,7 +58,7 @@ class DownloadView extends WebFioriPage{
         Page::insert($sec);
     }
     private function _nextSteps(){
-        $sec = $this->createSection('What is Next?');
+        $sec = $this->createSection('What is Next?',3);
         $sec->addChild($this->createParagraph('Once you finsh downloading the framework, you can visit '
                 . '<a href="learn" >Learning Center</a> in order to start your development process.'));
         Page::insert($sec);
