@@ -15,7 +15,7 @@ class IntroLearnView extends LearnView{
     }
     //put your code here
     public function createAsidNav() {
-        $aside = &Page::document()->getChildByID('side-content-area');
+        $aside = Page::document()->getChildByID('side-content-area');
         $backLink = new PNode();
         $backLink->addText('<a href="learning">Back to Learning Center Index</a>', array(
             'esc-entities'=>FALSE
