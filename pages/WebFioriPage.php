@@ -88,11 +88,20 @@ class WebFioriPage {
      * @return HTMLNode
      */
     public function createSection($title,$hLevel=1) {
-        $sec = new HTMLNode('section');
-        $hLevelX = $hLevel > 0 && $hLevel < 7 ? $hLevel : 1;
-        $h = new HTMLNode('h'.$hLevelX);
-        $h->addTextNode($title);
-        $sec->addChild($h);
+        $sec = Page::theme()->createHTMLNode([
+            'type'=>'section',
+            'title'=>$title,
+            'h-level'=>$hLevel
+        ]);
+        
+        if($sec == null){
+            $sec = new HTMLNode('section');
+            $hLevelX = $hLevel > 0 && $hLevel < 7 ? $hLevel : 1;
+            $h = new HTMLNode('h'.$hLevelX);
+            $h->addTextNode($title);
+            $sec->addChild($h);
+        
+        }
         return $sec;
     }
     /**
