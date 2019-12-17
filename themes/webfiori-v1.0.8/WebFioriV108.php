@@ -20,15 +20,30 @@ class WebFioriV108 extends Theme{
         $this->setName('WebFiori V108');
         $this->setDirectoryName('webfiori-v1.0.8');
         $this->setAfterLoaded(function(){
-            Page::document()->getChildByID('page-body')->setClassName('row');
+            Page::document()->getChildByID('page-body')->setClassName('row  ml-0 mr-0');
             Page::document()->getChildByID('page-body')->setStyle([
                 'margin-top'=>'100px'
+            ]);
+            Page::document()->getBody()->setStyle([
+                'max-height'=>'10px',
+                'height'=>'10px'
             ]);
             Page::document()->getChildByID('main-content-area')->setClassName('col-10');
         });
     }
     
     public function createHTMLNode($options = array()){
+        $nodeType = isset($options['type']) ? $options['type'] : '';
+        if($nodeType == 'section'){
+            $sec = new HTMLNode('section');
+            $hLvl = isset($options['h-level']) ? $options['h-level'] : 3;
+            $hLevelX = $hLvl > 0 && $hLvl < 7 ? $hLvl : 1;
+            $h = new HTMLNode('h'.$hLevelX);
+            $title = isset($options['title']) ? $options['title'] : 'Sec_Title';
+            $h->addTextNode($title);
+            $sec->addChild($h);
+            return $sec;
+        }
         $node = new HTMLNode();
         return $node;
     }
@@ -97,16 +112,17 @@ class WebFioriV108 extends Theme{
         $header->setClassName('container-fluid');
         $mainNav = new HTMLNode('nav');
         $header->addChild($mainNav);
-        $mainNav->setClassName('navbar navbar-expand navbar-light fixed-top');
+        $mainNav->setClassName('navbar navbar-expand-lg navbar-light fixed-top');
         $mainNav->setStyle([
-            'background-color'=>'#c1ec9b'
+            'background-color'=>'#c1ec9b',
+            'padding'=>'0'
         ]);
         $logo = new HTMLNode('img');
         $logo->setID('main-logo');
         $logo->setAttribute('src', Page::imagesDir().'/favicon.png');
         $logo->setAttribute('alt', 'logo');
         $logoLink = new LinkNode(WebFiori::getSiteConfig()->getHomePage(), $logo->toHTML());
-        $logoLink->setClassName('navbar-brand');
+        $logoLink->setClassName('navbar-brand ml-3');
         $mainNav->addChild($logoLink);
         
         $button = new HTMLNode('button');
