@@ -1,10 +1,17 @@
 #main-logo{
     height: 40px;
 }
+#page-header nav{
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12);
+}
+.page-title{
+    width: 90%;
+}
 #page-footer{
     background-color: #eef;
     text-align: center;
     font-size: 0.8rem;
+    height: 140px;
 }
 #page-footer a{
     font-weight: bold;
