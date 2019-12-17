@@ -2,6 +2,7 @@
 namespace webfiori\theme;
 use webfiori\WebFiori;
 use webfiori\entity\Theme;
+use webfiori\apiParser\APITheme;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\HeadNode;
 use phpStructs\html\LinkNode;
@@ -12,7 +13,7 @@ use webfiori\entity\Page;
  *
  * @author Ibrahim
  */
-class WebFioriV108 extends Theme{
+class WebFioriV108 extends APITheme{
     public function __construct() {
         parent::__construct();
         $this->setVersion('1.0');
@@ -155,6 +156,30 @@ class WebFioriV108 extends Theme{
         $navItemsContainer->addChild($mainLinksUl);
         
         return $header;
+    }
+
+    public function createAttributeDetailsBlock($attr) {
+        
+    }
+
+    public function createAttributeSummaryBlock($attr) {
+        
+    }
+
+    public function createClassDescriptionNode() {
+        
+    }
+
+    public function createMethodDetailsBlock($func) {
+        
+    }
+
+    public function createMethodSummaryBlock($func) {
+        
+    }
+
+    public function createNamespaceContentBlock($nsObj) {
+        
     }
 
 }
