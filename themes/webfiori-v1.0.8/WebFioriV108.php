@@ -45,6 +45,20 @@ class WebFioriV108 extends APITheme{
             $sec->addChild($h);
             return $sec;
         }
+        else if($nodeType == 'page-title'){
+            $titleRow = $this->createHTMLNode(['type'=>'row']);
+            $h1 = new HTMLNode('h2');
+            $title = isset($options['title']) ? $options['title'] : Page::title();
+            $h1->addTextNode(Page::title());
+            $h1->setClassName('page-title pb-2 mt-4 mb-2 border-bottom');
+            $titleRow->addChild($h1);
+            return $titleRow;
+        }
+        else if($nodeType == 'row'){
+            $node = new HTMLNode();
+            $node->setClassName('row');
+            return $node;
+        }
         $node = new HTMLNode();
         return $node;
     }
@@ -88,6 +102,7 @@ class WebFioriV108 extends APITheme{
     }
     public function getHeadNode(){
         $head = new HeadNode();
+        //$head->setBase(WebFiori::getSiteConfig()->getBaseURL());
         $head->addCSS(Page::cssDir().'/theme.css');
         $head->addCSS('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css', [
             'integrity'=>'sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh',
@@ -147,7 +162,7 @@ class WebFioriV108 extends APITheme{
             '<a href="download" class="nav-link">Download</a>',
             '<a href="docs" class="nav-link">API Docs</a>',
             '<a href="learn" class="nav-link">Learn</a>',
-            '<a href="ontribute" class="nav-link">Contribute</a>'
+            '<a href="contribute" class="nav-link">Contribute</a>'
         ], false);
         $mainLinksUl->getChild(0)->setClassName('nav-item');
         $mainLinksUl->getChild(1)->setClassName('nav-item');
