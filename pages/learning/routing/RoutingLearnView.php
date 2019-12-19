@@ -7,8 +7,6 @@ namespace webfiori\views\learn\routing;
  */
 use webfiori\views\learn\LearnView;
 use webfiori\entity\Page;
-use phpStructs\html\UnorderedList;
-use phpStructs\html\PNode;
 /**
  * Description of RoutingLearnView
  *
