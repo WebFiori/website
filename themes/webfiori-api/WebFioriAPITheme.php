@@ -461,5 +461,10 @@ class WebFioriAPITheme extends APITheme{
         $node = new HTMLNode();
         return $node;
     }
+
+    public function createNSAside($links) {
+        
+    }
+
 }
 
