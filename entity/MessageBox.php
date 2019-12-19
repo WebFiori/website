@@ -61,15 +61,15 @@ class MessageBox extends HTMLNode{
         $this->setStyle([
             'width'=>'75%',
             'border'=>'1px double white',
-            'height'=>'150px',
+            'height'=>'130px',
             'margin'=>'0px',
-            'z-index'=>'3000',
+            'z-index'=>'100',
             'position'=>'fixed',
             'background-color'=>'rgba(0,0,0,0.7)',
             'color'=>'white',
             'height'=>'auto',
-            'top'=> (self::getCount()*5).'px',
-            'left'=> (self::getCount()*5).'px'
+            'top'=> (self::getCount()*10).'px',
+            'left'=> (self::getCount()*10).'px'
         ]);
         $this->_createHeader();
         $this->_createBody();

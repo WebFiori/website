@@ -613,7 +613,7 @@ class Page{
      * @see Theme::usingTheme()
      */
     private function usingTheme($themeName=null) {
-        if($themeName === null){
+        if($themeName === null && $this->theme === null){
             $themeName = SiteConfig::getBaseThemeName();
         }
         else{
@@ -991,4 +991,3 @@ class Page{
         return $headNode;
     }
 }
-
