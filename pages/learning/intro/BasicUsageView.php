@@ -19,7 +19,7 @@ class BasicUsageView extends IntroLearnView{
         parent::__construct(array(
             'title'=>'Basic Usage',
             'description'=>'The simplest way to use the framework.',
-            'active-aside'=>2
+            'active-aside'=>3
         ));
         Page::document()->getHeadNode()->addCSS('themes/webfiori/css/code-theme.css');
         $sec = $this->createSection('A Route and a View');

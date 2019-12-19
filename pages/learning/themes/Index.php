@@ -23,7 +23,8 @@ class Index extends ThemesLearnView{
         parent::__construct(array(
             'title'=>'Themes',
             'description'=>'Learn about how to create themes using '
-            . 'WebFiori Framework.'
+            . 'WebFiori Framework.',
+            'active-aside'=>1
         ));
         $sec = $this->createSection('Introduction');
         Page::insert($sec);

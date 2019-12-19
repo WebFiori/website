@@ -16,3 +16,18 @@
 #page-footer a{
     font-weight: bold;
 }
+#side-content-area{
+    background-color: #c1ec9b;
+}
+li.active{
+    background-color: #eee;
+}
+@media screen and (max-width: 700px) {
+  #side-content-area {
+    width: 100%;
+    height: auto;
+    position: relative;
+    flex:0 0 100%;
+    max-width: 100%;
+  }
+}

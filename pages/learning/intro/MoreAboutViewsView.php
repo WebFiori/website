@@ -20,7 +20,7 @@ class MoreAboutViewsView extends IntroLearnView{
             'title'=>'More About Views',
             'description'=>'Learn more about views in WebFiori Framework and '
             . 'how to use the class \'Page\'.',
-            'active-aside'=>3
+            'active-aside'=>4
         ));
         Page::document()->getHeadNode()->addCSS('themes/webfiori/css/code-theme.css');
         Page::insert($this->createParagraph(''

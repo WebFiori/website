@@ -18,7 +18,7 @@ class GenericRoutesView extends RoutingLearnView{
         parent::__construct(array(
             'title'=>'Generic Routes',
             'description'=>'Learn about generic routes and how to create then in WebFiori Framework.',
-            'active-aside'=>3
+            'active-aside'=>4
         ));
         $sec1 = $this->createSection('The Basic Idea');
         $sec2 = $this->createSection('Using Generic Routes');

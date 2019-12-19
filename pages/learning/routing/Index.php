@@ -14,7 +14,7 @@ class Index extends RoutingLearnView{
             'title'=>'Introduction to Routing',
             'description'=>'Learn about the basics of routing in '
             . 'WebFiori Framework.',
-            'active-aside'=>0
+            'active-aside'=>1
         ));
         $sec = $this->createSection('Introduction');
         $sec->addChild($this->createParagraph(''

@@ -13,7 +13,7 @@ class TypesOfRoutesView extends RoutingLearnView{
         parent::__construct(array(
             'title'=>'Types of Routes',
             'description'=>'Learn about types of routes in WebFiori Framework.',
-            'active-aside'=>3
+            'active-aside'=>4
         ));
         Page::document()->getHeadNode()->addCSS('themes/webfiori/css/code-theme.css');
         Page::insert($this->createParagraph('As we have said in the last lesson, there '

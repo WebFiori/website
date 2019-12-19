@@ -15,7 +15,7 @@ use WebFioriGUI;
 class ClassThemeView extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
-            'active-aside'=>4,
+            'active-aside'=>5,
             'title'=>'The Class \'Theme\'',
             'description'=>'The core class for creating UI.'
         ));

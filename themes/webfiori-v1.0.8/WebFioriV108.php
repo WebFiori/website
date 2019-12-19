@@ -23,13 +23,13 @@ class WebFioriV108 extends APITheme{
         $this->setAfterLoaded(function(){
             Page::document()->getChildByID('page-body')->setClassName('row  ml-0 mr-0');
             Page::document()->getChildByID('page-body')->setStyle([
-                'margin-top'=>'100px'
+                'margin-top'=>'50px'
             ]);
             Page::document()->getBody()->setStyle([
                 'max-height'=>'10px',
                 'height'=>'10px'
             ]);
-            Page::document()->getChildByID('main-content-area')->setClassName('col-10');
+            Page::document()->getChildByID('main-content-area')->setClassName('col-10 p-5');
         });
     }
     
@@ -44,6 +44,50 @@ class WebFioriV108 extends APITheme{
             $h->addTextNode($title);
             $sec->addChild($h);
             return $sec;
+        }
+        else if($nodeType == 'vertical-nav-bar'){
+            $mainNav = new HTMLNode('nav');
+            $mainNav->setClassName('navbar navbar-expand-lg p-0');
+            $navbarId = isset($options['id']) ? $options['id'] : 'nav-'.substr(hash('sha256',date('Y-m-d H:i:s')), 0,10);
+            $button = new HTMLNode('button');
+            $button->setClassName('navbar-toggler');
+            $button->addTextNode('<span class="navbar-toggler-icon"></span>', false);
+            $button->setAttribute('data-toggle', 'collapse');
+            $button->setAttribute('data-target', '#'.$navbarId);
+            $button->setAttribute('type', 'button');
+            $button->setAttribute('aria-controls', ''.$navbarId);
+            $button->setAttribute('aria-expanded', 'false');
+            $mainNav->addChild($button);
+
+            $navItemsContainer = new HTMLNode();
+            $navItemsContainer->setID($navbarId);
+            $navItemsContainer->setClassName('collapse navbar-collapse');
+            $mainNav->addChild($navItemsContainer);
+
+            $mainLinksUl = new UnorderedList();
+            $mainLinksUl->setClassName('navbar-nav flex-column');
+            $listItems = isset($options['nav-links']) ? $options['nav-links'] : [];
+            $index = 0;
+            foreach ($listItems as $listItemArr){
+                $linkLabel = isset($listItemArr['label']) ? $listItemArr['label'] : 'Item_Lbl';
+                $itemLink = isset($listItemArr['link']) ? $listItemArr['link'] : '#';
+                $isActive = isset($listItemArr['is-active']) && $listItemArr['is-active'] === true ? true : false;
+                $mainLinksUl->addListItem('<a href="'.$itemLink.'" class="nav-link p-0">'.$linkLabel.'</a>', false);
+                if($isActive === true){
+                    $mainLinksUl->getChild($index)->setClassName('nav-item active');
+                }
+                else{
+                    $mainLinksUl->getChild($index)->setClassName('nav-item');
+                }
+                $index++;
+            }
+            $navItemsContainer->addChild($mainLinksUl);
+            return $mainNav;
+        }
+        else if($nodeType == 'container'){
+            $node = new HTMLNode();
+            $node->setClassName('container');
+            return $node;
         }
         else if($nodeType == 'page-title'){
             $titleRow = $this->createHTMLNode(['type'=>'row']);
@@ -72,7 +116,7 @@ class WebFioriV108 extends APITheme{
     public function getFooterNode(){
         $footer = new HTMLNode('footer');
         $footer->setClassName('bd-footer text-muted');
-        $footer->setClassName('container-fluid p-md-4 mt-md-5');
+        $footer->setClassName('container-fluid p-md-4');
         $footerLinksUl = new UnorderedList();
         $footerLinksUl->setClassName('nav justify-content-center');
         $footerLinksUl->addListItems([
@@ -102,24 +146,11 @@ class WebFioriV108 extends APITheme{
     }
     public function getHeadNode(){
         $head = new HeadNode();
-        //$head->setBase(WebFiori::getSiteConfig()->getBaseURL());
         $head->addCSS(Page::cssDir().'/theme.css');
-        $head->addCSS('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css', [
-            'integrity'=>'sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh',
-            'crossorigin'=>'anonymous'
-        ], false);
-        $head->addJs('https://code.jquery.com/jquery-3.4.1.slim.min.js', [
-            'integrity'=>'sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n',
-            'crossorigin'=>'anonymous'
-        ], false);
-        $head->addJs('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js', [
-            'integrity'=>'sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo',
-            'crossorigin'=>'anonymous'
-        ], false);
-        $head->addJs('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js', [
-            'integrity'=>'sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6',
-            'crossorigin'=>'anonymous'
-        ], false);
+        $head->addCSS('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css',false);
+        $head->addJs('https://code.jquery.com/jquery-3.4.1.slim.min.js',false);
+        $head->addJs('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js', false);
+        $head->addJs('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js',false);
         return $head;
     }
 

@@ -12,7 +12,7 @@ class ClassRouterView extends RoutingLearnView{
         parent::__construct(array(
             'title'=>'The Class \'Router\'',
             'description'=>'Learn about the class \'Router\' and how to use it.',
-            'active-aside'=>2
+            'active-aside'=>3
         ));
         $sec = $this->createSection('The Basics');
         Page::insert($sec);

@@ -36,13 +36,13 @@ abstract class LearnView extends WebFioriPage{
         $this->setAsideActiveLinkNum($active);
     }
     public function displayView() {
-        $div = new HTMLNode();
+        $div = Page::theme()->createHTMLNode(['type'=>'container']);
         $div->setID('next-prev-container');
-        if($this->prevTopicLink !== NULL){
+        if($this->prevTopicLink !== null){
             $this->prevTopicLink->setClassName('prev-button');
             $div->addChild($this->prevTopicLink);
         }
-        if($this->nextTopicLink !== NULL){
+        if($this->nextTopicLink !== null){
             $this->nextTopicLink->setClassName('next-button');
             $div->addChild($this->nextTopicLink);
         }
@@ -55,13 +55,13 @@ abstract class LearnView extends WebFioriPage{
     public function setNextTopicLink($link,$title) {
         $this->nextTopicLink = new HTMLNode();
         $linkNode = new LinkNode($link,$title);
-        $this->nextTopicLink->addTextNode('<b>Next:</b>',FALSE);
+        $this->nextTopicLink->addTextNode('<b>Next: </b>',false);
         $this->nextTopicLink->addChild($linkNode);
     }
     public function setPrevTopicLink($link,$title) {
         $this->prevTopicLink = new HTMLNode();
         $linkNode = new LinkNode($link,$title);
-        $this->prevTopicLink->addTextNode('<b>Previous:</b>',FALSE);
+        $this->prevTopicLink->addTextNode('<b>Previous: </b>',false);
         $this->prevTopicLink->addChild($linkNode);
     }
     public function getAsideActiveLinkNum() {

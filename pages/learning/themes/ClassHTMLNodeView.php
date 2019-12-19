@@ -18,7 +18,7 @@ class ClassThemeView extends ThemesLearnView{
         parent::__construct(array(
             'title'=>'The Class \'HTMLNode\'',
             'description'=>'The class HTMLNode is the core class for creating UI.',
-            'active-aside'=>0
+            'active-aside'=>1
         ));
         Page::insert($this->createParagraph('This class acts as an interface between the framework and HTML. It represents any '
                 . 'HTML element you can think of. The class <a href="'.WebFiori::getSiteConfig()->getBaseURL()

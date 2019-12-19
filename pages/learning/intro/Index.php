@@ -18,7 +18,7 @@ class Index extends IntroLearnView{
         parent::__construct(array(
             'title'=>'Introduction to WebFiori Framework',
             'description'=>'An introduction lesson to the framework.',
-            'active-aside'=>0
+            'active-aside'=>1
         ));
         $sec = $this->createSection('Introduction');
         Page::insert($sec);

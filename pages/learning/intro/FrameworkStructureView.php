@@ -19,7 +19,7 @@ class FrameworkStructureView extends IntroLearnView{
         parent::__construct(array(
             'title'=>'Framework Architecture',
             'description'=>'Learn about the Architecture of the framework.',
-            'active-aside'=>1
+            'active-aside'=>2
         ));
         $sec = $this->createSection('Separation of Concerns');
         Page::insert($sec);

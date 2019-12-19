@@ -20,7 +20,7 @@ use phpStructs\html\PNode;
  */
 class WebFioriPage {
     public function __construct($options=array()) {
-        Page::theme('WebFiori Theme');
+        Page::theme('WebFiori V108');
         if(isset($options['title'])){
             Page::title($options['title']);
         }
@@ -87,7 +87,7 @@ class WebFioriPage {
      * 1 up to 6 as value. If invalid value is provided, 1 is used as default.
      * @return HTMLNode
      */
-    public function createSection($title,$hLevel=1) {
+    public function createSection($title,$hLevel=3) {
         $sec = Page::theme()->createHTMLNode([
             'type'=>'section',
             'title'=>$title,
