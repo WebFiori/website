@@ -310,6 +310,9 @@ class DocGenerator {
      */
     private function _buildLinks() {
         $nsClasses = array();
+        $this->linksArr['null'] = '<a class="mono" href="http://php.net/manual/en/language.types.null.php" target="_blank">null</a>';
+        $this->linksArr['true'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">true</a>';
+        $this->linksArr['false'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">false</a>';
         $this->linksArr['NULL'] = '<a class="mono" href="http://php.net/manual/en/language.types.null.php" target="_blank">NULL</a>';
         $this->linksArr['TRUE'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">TRUE</a>';
         $this->linksArr['FALSE'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">FALSE</a>';
@@ -339,7 +342,10 @@ class DocGenerator {
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/NSIndex';
             }
             $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'">'.$cName.'</a>';
-            $this->classesLinksByNS[$nsName][] = '<a class="mono" href="'.$classLink.'">'.$cName.'</a>';
+            $this->classesLinksByNS[$nsName][] = [
+                'label'=>$cName,
+                'link'=>$classLink
+            ];
             $nsClasses[$nsName][] = new ClassAPI($apiReader);
             foreach ($apiReader->getConstantsNames() as $name){
                 $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'</a>';
@@ -370,24 +376,19 @@ class DocGenerator {
      * all system classes along packages.
      */
     private function _createAsideNav(){
-        $aside = &Page::document()->getChildByID('side-content-area');
-        $aside->addTextNode('<p class="all-classes-label">All Classes:</p>',FALSE);
-        $nav = new HTMLNode('nav');
-        $ul = new UnorderedList();
-        $ul->setClassName('side-ul');
-        $nav->addChild($ul);
-        $aside->addChild($nav);
+        $linksArr = [];
         $base = trim($this->getBaseURL(),'/');
         foreach ($this->classesLinksByNS as $nsName => $nsClasses){
-            $packageLi = new ListItem();
-            $packageLi->addTextNode('<a href="'.$base.str_replace('\\','/',$nsName).'">'.$nsName.'</a>',FALSE);
-            $packageUl = new UnorderedList();
-            $packageLi->addChild($packageUl);
-            foreach ($nsClasses as $classLink){
-                $packageUl->addListItem($classLink,FALSE);
-            }
-            $ul->addChild($packageLi);
+            $subList = [
+                'label'=>$nsName,
+                'link'=>$base.str_replace('\\','/',$nsName),
+                'list-items'=>$nsClasses
+            ];
+            $linksArr[] = $subList;
         }
+        $asideNav = Page::theme()->createNSAside($linksArr);
+        $aside = Page::document()->getChildByID('side-content-area');
+        $aside->addChild($asideNav);
     }
     /**
      * Returns a string which represents the base URL which used inside the 
@@ -459,7 +460,7 @@ class DocGenerator {
                     . '        P::render();'."\r\n"
                     . '    }'."\r\n"
                     . '}'."\r\n"
-                    . 'new NSIndexView();'
+                    . 'return __NAMESPACE__;'
             );
             $file->write();
             return TRUE;
