@@ -220,4 +220,5 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode which represents namespace index file content.
      */
     abstract public function createNamespaceContentBlock($nsObj);
+    abstract public function createNSAside($links);
 }
