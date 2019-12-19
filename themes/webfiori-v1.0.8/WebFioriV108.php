@@ -3,9 +3,14 @@ namespace webfiori\theme;
 use webfiori\WebFiori;
 use webfiori\entity\Theme;
 use webfiori\apiParser\APITheme;
+use webfiori\apiParser\AttributeDef;
+use webfiori\apiParser\NameSpaceAPI;
+use webfiori\apiParser\FunctionDef;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\HeadNode;
 use phpStructs\html\LinkNode;
+use phpStructs\html\ListItem;
+use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use webfiori\entity\Page;
 /**
@@ -47,8 +52,8 @@ class WebFioriV108 extends APITheme{
         }
         else if($nodeType == 'vertical-nav-bar'){
             $mainNav = new HTMLNode('nav');
-            $mainNav->setClassName('navbar navbar-expand-lg p-0');
-            $navbarId = isset($options['id']) ? $options['id'] : 'nav-'.substr(hash('sha256',date('Y-m-d H:i:s')), 0,10);
+            $mainNav->setClassName('navbar navbar-expand-lg navbar-light p-0');
+            $navbarId = isset($options['id']) ? $options['id'] : 'nav'.substr(hash('sha256',date('Y-m-d H:i:s')), 0,10);
             $button = new HTMLNode('button');
             $button->setClassName('navbar-toggler');
             $button->addTextNode('<span class="navbar-toggler-icon"></span>', false);
@@ -81,12 +86,77 @@ class WebFioriV108 extends APITheme{
                 }
                 $index++;
             }
+            $subLists = isset($options['sub-lists']) ? $options['sub-lists'] : [];
+            foreach ($subLists as $subList){
+                $listTxt = isset($subList['label']) ? $subList['label'] : 'Sub_list';
+                $link = isset($subList['link']) ? $subList['link'] : null;
+                $isActive = isset($subList['is-active']) && $subList['is-active'] === true ? true : false;
+                $subListItems = isset($subList['list-items']) ? $subList['list-items']:[];
+                $li = new ListItem();
+                $li->setClassName('nav-item');
+                $liDiv = new HTMLNode();
+                $li->addChild($liDiv);
+                $liDiv->setClassName('btn-group dropright');
+                $textButton = new HTMLNode('button');
+                $textButton->setClassName('btn btn-secondary p-0');
+                $textButton->setAttribute('type', 'button');
+                $textButton->setStyle([
+                    'background'=>'transparent',
+                    'border'=>'0px'
+                ]);
+                $liDiv->addChild($textButton);
+                if($link !== null){
+                    $textButton->addTextNode('<a href="'.$link.'">'.$listTxt.'</a>', false);
+                }
+                else{
+                    $textButton->addTextNode($listTxt);
+                }
+                $expandButton = new HTMLNode('button');
+                $expandButton->setClassName('btn btn-secondary dropdown-toggle dropdown-toggle-split');
+                $expandButton->setStyle([
+                    'background'=>'transparent',
+                    'border'=>'0px'
+                ]);
+                $expandButton->setAttributes([
+                    'type'=>'button',
+                    'data-toggle'=>"dropdown",
+                    'aria-haspopup'=>"true",
+                    'aria-expanded'=>"false"
+                ]);
+                $liDiv->addChild($expandButton);
+                $subItemsContainer = new HTMLNode();
+                $liDiv->addChild($subItemsContainer);
+                $subItemsContainer->setAttributes([
+                    'class'=>'dropdown-menu',
+                    'x-placement'=>'right-start',
+                    'style'=>'position: absolute; transform: translate3d(159px, 0px, 0px); top: 0px; left: 0px; will-change: transform;',
+                ]);
+                $index = 0; 
+                foreach ($subListItems as $listItem){
+                    $linkLabel = isset($listItem['label']) ? $listItem['label'] : 'Item_Lbl';
+                    $itemLink = isset($listItem['link']) ? $listItem['link'] : '#';
+                    $isActive = isset($listItem['is-active']) && $listItem['is-active'] === true ? true : false;
+                    $linkNode = new LinkNode($itemLink, $linkLabel);
+                    $linkNode->setClassName('dropdown-item');
+                    $subItemsContainer->addChild($linkNode);
+                    if($isActive === true){
+                        $subItemsContainer->getChild($index)->setClassName('active');
+                    }
+                    $index++;
+                }
+                $mainLinksUl->addChild($li);
+            }
             $navItemsContainer->addChild($mainLinksUl);
             return $mainNav;
         }
         else if($nodeType == 'container'){
             $node = new HTMLNode();
             $node->setClassName('container');
+            return $node;
+        }
+        else if($nodeType == 'row'){
+            $node = new HTMLNode();
+            $node->setClassName('row');
             return $node;
         }
         else if($nodeType == 'page-title'){
@@ -203,29 +273,77 @@ class WebFioriV108 extends APITheme{
         
         return $header;
     }
-
+    /**
+     * 
+     * @param AttributeDef $attr
+     * @return type
+     */
     public function createAttributeDetailsBlock($attr) {
-        
+        $node = $this->createHTMLNode(['type'=>'row']);
+        return $node;
     }
-
+    /**
+     * @param AttributeDef $attr An object of type AttributeDef.
+     * @return HTMLNode
+     */
     public function createAttributeSummaryBlock($attr) {
-        
+        $node = $this->createHTMLNode(['type'=>'row']);
+        return $node;
     }
 
     public function createClassDescriptionNode() {
-        
+        $class = $this->getClass();
+        $node = $this->createHTMLNode(['type'=>'container']);
+        $packageNode = new PNode();
+        $packageNode->addText('<b class="mono">namespace '.$class->getNameSpace().'</b>',array('esc-entities'=>false));
+        $node->addChild($packageNode);
+        $titleNode = $this->createHTMLNode([
+            'type'=>'page-title',
+            'title'=>$class->getClassType().' '.$class->getName()
+        ]);
+        $node->addChild($titleNode);
+        $descNode = new HTMLNode();
+        $descNode->setAttribute('class', 'description-box');
+        $descNode->addTextNode($class->getSummary().' '.$class->getDescription(),false);
+        $node->addChild($descNode);
+        $classV = $class->getVersion();
+        if($classV !== null){
+            $vNode = new PNode();
+            $vNode->addText('Version: '.$classV);
+            $node->addChild($vNode);
+        }
+        return $node;
     }
-
+    /**
+     * @param FunctionDef $func An object of type FunctionDef.
+     * @return HTMLNode 
+     */
     public function createMethodDetailsBlock($func) {
-        
+        $node = $this->createHTMLNode(['type'=>'row']);
+        return $node;
     }
-
+    /**
+     * @param FunctionDef $func An object of type FunctionDef.
+     * @return HTMLNode
+     */
     public function createMethodSummaryBlock($func) {
-        
+        $node = $this->createHTMLNode(['type'=>'row']);
+        return $node;
+    }
+    /**
+     * @param NameSpaceAPI $nsObj An object of type NameSpaceAPI.
+     * @return HTMLNode The function must be implemented in a way that it returns 
+     */
+    public function createNamespaceContentBlock($nsObj) {
+        $node = $this->createHTMLNode(['type'=>'row']);
+        return $node;
     }
 
-    public function createNamespaceContentBlock($nsObj) {
-        
+    public function createNSAside($links) {
+        return $this->createHTMLNode([
+            'type'=>'vertical-nav-bar',
+            'sub-lists'=>$links
+        ]);
     }
 
 }
