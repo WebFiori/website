@@ -55,11 +55,11 @@ class ClosureRoutes {
                     'C:\Server\apache2\htdocs\webfiori\src\themes'
                 ),
                 'base-url'=> 'https://programmingacademia.com/webfiori/docs',
-                'theme'=>'WebFiori API Theme',
+                'theme'=>'WebFiori V108',
                 'site-name'=>'WebFiori API Docs',
-                'output-path'=>'C:\\Server\\apache2\\htdocs\\webfiori-docs\\pages\\apis-1.0.7',
-                'route-root-folder'=>'apis-1.0.7',
-                'is-dynamic'=>TRUE
+                'output-path'=>'C:\\Server\\apache2\\htdocs\\webfiori-docs\\pages\\apis-1.0.8',
+                'route-root-folder'=>'apis-1.0.8',
+                'is-dynamic'=>true
             ));
         }
         ]);
