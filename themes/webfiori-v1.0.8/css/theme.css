@@ -19,11 +19,26 @@
 #side-content-area{
     background-color: #c1ec9b;
 }
+.method-signator-block,
+.attribute-name-block{
+    font-weight: bold;
+    background-color: #eee;
+}
+.summary-box-title,
+.details-box-title{
+    font-weight: bold;
+    margin: 10px;
+    border-bottom: 1px solid #eee;
+}
+.summary-box,
+.details-box{
+    
+}
 li.active{
     background-color: #eee;
 }
-@media screen and (max-width: 700px) {
-  #side-content-area {
+@media screen and (max-width: 992px) {
+  #side-content-area,#main-content-area {
     width: 100%;
     height: auto;
     position: relative;

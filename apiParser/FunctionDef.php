@@ -6,6 +6,9 @@
  * and open the template in the editor.
  */
 namespace webfiori\apiParser;
+use phpStructs\html\HTMLNode;
+use phpStructs\html\PNode;
+use phpStructs\html\UnorderedList;
 /**
  * A class that is used to build a GUI blocks for function definition. 
  *
@@ -33,6 +36,77 @@ class FunctionDef {
         );
         
         $this->accessMofifier = '';
+    }
+    public function getDetailsHTMLNode() {
+        $node = new HTMLNode();
+        $node->setClassName('method-details-block');
+        $methNameNode = $this->getMethodSignatorNode();
+        $methNameNode->setID('method-'.$this->getName().'-signator');
+        $node->addChild($methNameNode);
+        $descNode = new HTMLNode();
+        $descNode->addTextNode($this->getDescription(),false);
+        $descNode->setID('method-'.$this->getName().'-description');
+        $descNode->setClassName('method-description-block');
+        $node->addChild($descNode);
+        $params = $this->getParameters();
+        $count = count($params);
+        if($count != 0){
+            $paramsNode = new HTMLNode();
+            $paramsNode->setClassName('method-parameters-block');
+            $paramsNode->setID('method-'.$this->getName().'-parameters');
+            $textNode = new PNode();
+            $textNode->addText('Parameters:',['bold'=>true]);
+            $paramsNode->addChild($textNode);
+            $ul = new UnorderedList();
+            for($x = 0 ; $x < $count ; $x++){
+                $param = $params['param-'.$x];
+                $text = '<span style="font-family: monospace;">'.$param['var-type'].' '.$param['var-name'].'</span>';
+                if($param['is-optional'] === TRUE){
+                    $text .= ' [Optional]';
+                }
+                $text .= ' '.$param['var-desc'];
+                $ul->addListItem($text,false);
+            }
+            $paramsNode->addChild($ul);
+            $node->addChild($paramsNode);
+        }
+        $return = $this->getMethodReturnTypesStr();
+        if($return !== null){
+            $retNode = new HTMLNode();
+            $retNode->setClassName('method-return-block');
+            $retNode->setID('method-'.$this->getName().'-return');
+            $textNode = new PNode();
+            $textNode->addText('<b>Returns:</b> <span class="mono">'.$return.'</span>',array('esc-entities'=>false));
+            $retNode->addChild($textNode);
+            $descNode = new HTMLNode();
+            $descNode->addTextNode($this->getMethodReturnDescription(),false);
+            $descNode->setClassName('method-return-description-block');
+            $retNode->addChild($descNode);
+            $node->addChild($retNode);
+        }
+        return $node;
+    }
+    public function getMethodSignatorNode() {
+        $nodeText = $this->getAccessModofier().' <a href="'.
+                $this->getPageURL().'/'. 
+                str_replace('\\', '/', trim($this->getOwnerClass()->getNameSpace(), '\\')).
+                '/'.$this->getOwnerClass()->getName().'#'.str_replace('&', '', $this->getName()).
+                '">'. str_replace('&', '&amp;', $this->getName()).'</a>(';
+        $count = count($this->getParameters());
+        for($x = 0 ; $x < $count ; $x++){
+            $param = $this->getParameters()['param-'.$x];
+            if($x + 1 == $count){
+                $nodeText .= $param['var-type'].' '.$param['var-name'];
+            }
+            else{
+                $nodeText .= $param['var-type'].' '.$param['var-name'].', ';
+            }
+        }
+        $nodeText .= ')';
+        $retVal = new HTMLNode();
+        $retVal->setClassName('method-signator-block');
+        $retVal->addTextNode($nodeText,false);
+        return $retVal;
     }
     /**
      * Returns a string that contains the names of return types of the method.

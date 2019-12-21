@@ -50,6 +50,17 @@ class WebFioriV108 extends APITheme{
             $sec->addChild($h);
             return $sec;
         }
+        else if($nodeType == 'col'){
+            $node = new HTMLNode();
+            $colSize = isset($options['size']) ? $options['size'] : null;
+            if($colSize >= 1 && $colSize <= 12){
+                $node->setClassName('col-'.$colSize);
+            }
+            else{
+                $node->setClassName('col');
+            }
+            return $node;
+        }
         else if($nodeType == 'vertical-nav-bar'){
             $mainNav = new HTMLNode('nav');
             $mainNav->setClassName('navbar navbar-expand-lg navbar-light p-0');
@@ -279,7 +290,10 @@ class WebFioriV108 extends APITheme{
      * @return type
      */
     public function createAttributeDetailsBlock($attr) {
-        $node = $this->createHTMLNode(['type'=>'row']);
+        $node = $attr->getDetailsHTMLNode();
+        $node->setClassName('row ml-2 border-left border-top border-right border-bottom', false);
+        $node->getChildByID('attribute-'.$attr->getName().'-name')->setClassName('col-12', false);
+        $node->getChildByID('attribute-'.$attr->getName().'-details')->setClassName('col-12', false);
         return $node;
     }
     /**
@@ -288,6 +302,18 @@ class WebFioriV108 extends APITheme{
      */
     public function createAttributeSummaryBlock($attr) {
         $node = $this->createHTMLNode(['type'=>'row']);
+        $node->setClassName('ml-2 border-left border-top border-right border-bottom', false);
+        $attrSummaryLink = $attr->getSummaryLink();
+        $attrNameNode = $this->createHTMLNode(['type'=>'col','size'=>'12']);
+        $attrNameNode->setClassName('attribute-name-block', false);
+        $attrNameNode->addTextNode($attrSummaryLink, false);
+        $attrNameNode->setStyle([
+            'font-weight'=>'bold'
+        ]);
+        $node->addChild($attrNameNode);
+        $descNode = $this->createHTMLNode(['type'=>'col','size'=>12]);
+        $descNode->addTextNode($attr->getSummary());
+        $node->addChild($descNode);
         return $node;
     }
 
@@ -319,7 +345,18 @@ class WebFioriV108 extends APITheme{
      * @return HTMLNode 
      */
     public function createMethodDetailsBlock($func) {
-        $node = $this->createHTMLNode(['type'=>'row']);
+        $node = $func->getDetailsHTMLNode();
+        $node->setClassName('row ml-2 border-left border-top border-right border-bottom', false);
+        $node->getChildByID('method-'.$func->getName().'-signator')->setClassName('col-12', false);
+        $node->getChildByID('method-'.$func->getName().'-description')->setClassName('col-12', false);
+        $paramsNode = $node->getChildByID('method-'.$func->getName().'-parameters');
+        if($paramsNode !== null){
+            $paramsNode->setClassName('col-12', false);
+        }
+        $returnNode = $node->getChildByID('method-'.$func->getName().'-return');
+        if($returnNode !== null){
+            $returnNode->setClassName('col-12', false);
+        }
         return $node;
     }
     /**
@@ -328,6 +365,13 @@ class WebFioriV108 extends APITheme{
      */
     public function createMethodSummaryBlock($func) {
         $node = $this->createHTMLNode(['type'=>'row']);
+        $node->setClassName('ml-2 border-left border-top border-right border-bottom', false);
+        $sigNode = $func->getMethodSignatorNode();
+        $sigNode->setClassName('col-12', false);
+        $node->addChild($sigNode);
+        $descNode = $this->createHTMLNode(['type'=>'col','size'=>12]);
+        $descNode->addTextNode($func->getSummary());
+        $node->addChild($descNode);
         return $node;
     }
     /**

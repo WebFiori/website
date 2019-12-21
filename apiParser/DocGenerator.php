@@ -35,6 +35,11 @@ class DocGenerator {
     private $outputPath;
     private $options;
     /**
+     *
+     * @var HTMLNode 
+     */
+    private $asideNavNode;
+    /**
      * 
      * @param type $options An array of options. The available options are:
      * <ul>
@@ -146,7 +151,7 @@ class DocGenerator {
                 //$page = new APIPage($classAPI);
                 $canonical = trim($base,'/'). str_replace('\\', '/', $nsObj->getName());
                 Page::canonical($canonical);
-                Page::description('All classes and sub-namespaces in the namespace '.$nsObj->getName().'.');
+                Page::description('All classes and sub-namespaces in the namespace \''.$nsObj->getName().'\'.');
                 Page::title('Namespace '.$nsObj->getName());
                 $this->_createAsideNav();
                 $this->createNSIndexFile($outputPath,$nsObj->getName(), $options);
@@ -225,7 +230,7 @@ class DocGenerator {
         
     )) {
         $savePath = $path.$classAPI->getNameSpace();
-        if(Util::isDirectory($savePath, TRUE)){
+        if(Util::isDirectory($savePath, true)){
             $file = new File();
             $file->setName($classAPI->getName().'View.php');
             $file->setPath($savePath);
@@ -247,7 +252,7 @@ class DocGenerator {
                     . '        P::title(\''.Page::title().'\');'."\r\n"
                     . '        $pageBody = new HTMLNode();'."\r\n"
                     . '        $pageBody->addTextNode(\''."\r\n"
-                    . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(TRUE))).'\''."\r\n"
+                    . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
                     . '        ,false);'."\r\n"
                     . '        $body = P::document()->getChildByID(\'page-body\');'."\r\n"
                     . '        P::document()->getBody()->replaceChild($body, $pageBody);'."\r\n"
@@ -263,7 +268,7 @@ class DocGenerator {
     }
     public function createHTMLFile($class,$path) {
         $savePath = $path.$class->getNameSpace();
-        if(Util::isDirectory($savePath, TRUE)){
+        if(Util::isDirectory($savePath, true)){
             $file = new File();
             $file->setName($class->getName().'View.html');
             $file->setPath($savePath);
@@ -310,6 +315,7 @@ class DocGenerator {
      */
     private function _buildLinks() {
         $nsClasses = array();
+        $this->linksArr['boolean'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">boolean</a>';
         $this->linksArr['null'] = '<a class="mono" href="http://php.net/manual/en/language.types.null.php" target="_blank">null</a>';
         $this->linksArr['true'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">true</a>';
         $this->linksArr['false'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">false</a>';
@@ -376,19 +382,21 @@ class DocGenerator {
      * all system classes along packages.
      */
     private function _createAsideNav(){
-        $linksArr = [];
-        $base = trim($this->getBaseURL(),'/');
-        foreach ($this->classesLinksByNS as $nsName => $nsClasses){
-            $subList = [
-                'label'=>$nsName,
-                'link'=>$base.str_replace('\\','/',$nsName),
-                'list-items'=>$nsClasses
-            ];
-            $linksArr[] = $subList;
+        if($this->asideNavNode === null){
+            $linksArr = [];
+            $base = trim($this->getBaseURL(),'/');
+            foreach ($this->classesLinksByNS as $nsName => $nsClasses){
+                $subList = [
+                    'label'=>$nsName,
+                    'link'=>$base.str_replace('\\','/',$nsName),
+                    'list-items'=>$nsClasses
+                ];
+                $linksArr[] = $subList;
+            }
+            $this->asideNavNode = Page::theme()->createNSAside($linksArr);
         }
-        $asideNav = Page::theme()->createNSAside($linksArr);
         $aside = Page::document()->getChildByID('side-content-area');
-        $aside->addChild($asideNav);
+        $aside->addChild($this->asideNavNode);
     }
     /**
      * Returns a string which represents the base URL which used inside the 
@@ -453,7 +461,7 @@ class DocGenerator {
                     . '        P::title(\''.Page::title().'\');'."\r\n"
                     . '        $pageBody = new HTMLNode();'."\r\n"
                     . '        $pageBody->addTextNode(\''."\r\n"
-                    . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(TRUE))).'\''."\r\n"
+                    . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
                     . '        ,false);'."\r\n"
                     . '        $body = P::document()->getChildByID(\'page-body\');'."\r\n"
                     . '        P::document()->getBody()->replaceChild($body, $pageBody);'."\r\n"
@@ -463,9 +471,9 @@ class DocGenerator {
                     . 'return __NAMESPACE__;'
             );
             $file->write();
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
     /**
      * Scan a specific path for all .php files.

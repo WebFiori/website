@@ -6,6 +6,7 @@
  * and open the template in the editor.
  */
 namespace webfiori\apiParser;
+use phpStructs\html\HTMLNode;
 /**
  * Definition of class attribute
  *
@@ -32,6 +33,49 @@ class AttributeDef {
     }
     public function setNameSpace($ns){
         $this->ns = $ns;
+    }
+    /**
+     * Returns a string that represents a link which can be used in the class 
+     * attributes summary block.
+     * @return string The returned string will be formatted as follows: 
+     * 'ACCESS_MODIFIER &lt;a class="class-attribute" href="BASE_URL/NAMESPACE/CLASS_NAME#ATTR_NAME&gt;ATTR_NAME&lt;a&gt;'
+     */
+    public function getSummaryLink() {
+        return $this->getAccessModofier().
+                ' <a class="class-attribute" href="'.$this->getPageURL().
+                '/'. str_replace('\\', '/', trim($this->getOwnerClass()->getNameSpace(), '\\'))
+                .'/'.$this->getOwnerClass()->getName().'#'.$this->getName().'">'
+                .$this->getName().'</a>';
+    }
+    /**
+     * Returns an instance of the class 'HTMLNode' that represents class 
+     * attribute details block.
+     * @return HTMLNode The returned instance will have the following structure:
+     * <pre>
+&lt;div id="ATTR_NAME" class="attribute-block" &gt;
+    &lt;div id="attribute-ATTR_NAME-name" class="attribute-name-block" &gt;
+    &lt;/div&gt;
+    &lt;div id="attribute-ATTR_NAME-details" class="attribute-details-block" &gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+     </pre>
+     */
+    public function getDetailsHTMLNode() {
+        $node = new HTMLNode();
+        $node->setID($this->getName());
+        $node->setClassName('attribute-block');
+        $attrNameNode = new HTMLNode();
+        $attrNameNode->setClassName('attribute-name-block');
+        $attrNameNode->setID('attribute-'.$this->getName().'-name');
+        $nodeText = $this->getAccessModofier().' '.$this->getName();
+        $attrNameNode->addTextNode($nodeText);
+        $node->addChild($attrNameNode);
+        $descNode = new HTMLNode();
+        $descNode->setID('attribute-'.$this->getName().'-details');
+        $descNode->addTextNode($this->getDescription(),false);
+        $descNode->setClassName('attribute-details-block');
+        $node->addChild($descNode);
+        return $node;
     }
     /**
      * 
