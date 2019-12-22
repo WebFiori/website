@@ -52,7 +52,7 @@ class AttributeDef {
      * attribute details block.
      * @return HTMLNode The returned instance will have the following structure:
      * <pre>
-&lt;div id="ATTR_NAME" class="attribute-block" &gt;
+&lt;div id="ATTR_NAME" class="block attribute-block" &gt;
     &lt;div id="attribute-ATTR_NAME-name" class="attribute-name-block" &gt;
     &lt;/div&gt;
     &lt;div id="attribute-ATTR_NAME-details" class="attribute-details-block" &gt;
@@ -63,9 +63,9 @@ class AttributeDef {
     public function getDetailsHTMLNode() {
         $node = new HTMLNode();
         $node->setID($this->getName());
-        $node->setClassName('attribute-block');
+        $node->setClassName('block attribute-block');
         $attrNameNode = new HTMLNode();
-        $attrNameNode->setClassName('attribute-name-block');
+        $attrNameNode->setClassName('attribute-name');
         $attrNameNode->setID('attribute-'.$this->getName().'-name');
         $nodeText = $this->getAccessModofier().' '.$this->getName();
         $attrNameNode->addTextNode($nodeText);
@@ -73,7 +73,7 @@ class AttributeDef {
         $descNode = new HTMLNode();
         $descNode->setID('attribute-'.$this->getName().'-details');
         $descNode->addTextNode($this->getDescription(),false);
-        $descNode->setClassName('attribute-details-block');
+        $descNode->setClassName('attribute-details');
         $node->addChild($descNode);
         return $node;
     }
@@ -123,6 +123,24 @@ class AttributeDef {
      */
     public function setSummary($desc) {
         $this->shortDescription = $desc;
+    }
+    /**
+     * 
+     * @return HTMLNode
+     */
+    public function getSummaryNode() {
+        $node = new HTMLNode();
+        $node->setClassName('block attribute-summary-block');
+        $attrSummaryLink = $this->getSummaryLink();
+        $attrNameNode = new HTMLNode();
+        $attrNameNode->setClassName('attribute-name');
+        $attrNameNode->addTextNode($attrSummaryLink, false);
+        $node->addChild($attrNameNode);
+        $descNode = new HTMLNode();
+        $descNode->setClassName('description attribute-description');
+        $descNode->addTextNode($this->getSummary(),false);
+        $node->addChild($descNode);
+        return $node;
     }
     /**
      * Returns the summary of the attribute.
