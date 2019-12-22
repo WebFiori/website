@@ -19,8 +19,9 @@
 #side-content-area{
     background-color: #c1ec9b;
 }
-.method-signator-block,
-.attribute-name-block{
+.block:first-child,
+.method-signator,
+.attribute-name{
     font-weight: bold;
     background-color: #eee;
 }
