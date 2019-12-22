@@ -37,9 +37,9 @@ class FunctionDef {
         
         $this->accessMofifier = '';
     }
-    public function getDetailsHTMLNode() {
+    public function getDetailsNode() {
         $node = new HTMLNode();
-        $node->setClassName('method-details-block');
+        $node->setClassName('block method-details-block');
         $methNameNode = $this->getMethodSignatorNode();
         $methNameNode->setID('method-'.$this->getName().'-signator');
         $node->addChild($methNameNode);
@@ -86,6 +86,17 @@ class FunctionDef {
         }
         return $node;
     }
+    public function getSummaryNode() {
+        $node = new HTMLNode();
+        $node->setClassName('block method-summary-block');
+        $sigNode = $this->getMethodSignatorNode();
+        $node->addChild($sigNode);
+        $descNode = new HTMLNode();
+        $descNode->addTextNode($this->getSummary());
+        $descNode->setClassName('method-description');
+        $node->addChild($descNode);
+        return $node;
+    }
     public function getMethodSignatorNode() {
         $nodeText = $this->getAccessModofier().' <a href="'.
                 $this->getPageURL().'/'. 
@@ -104,7 +115,7 @@ class FunctionDef {
         }
         $nodeText .= ')';
         $retVal = new HTMLNode();
-        $retVal->setClassName('method-signator-block');
+        $retVal->setClassName('method-signator');
         $retVal->addTextNode($nodeText,false);
         return $retVal;
     }
