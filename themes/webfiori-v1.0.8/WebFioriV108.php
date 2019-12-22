@@ -301,25 +301,16 @@ class WebFioriV108 extends APITheme{
      * @return HTMLNode
      */
     public function createAttributeSummaryBlock($attr) {
-        $node = $this->createHTMLNode(['type'=>'row']);
-        $node->setClassName('ml-2 border-left border-top border-right border-bottom', false);
-        $attrSummaryLink = $attr->getSummaryLink();
-        $attrNameNode = $this->createHTMLNode(['type'=>'col','size'=>'12']);
-        $attrNameNode->setClassName('attribute-name-block', false);
-        $attrNameNode->addTextNode($attrSummaryLink, false);
-        $attrNameNode->setStyle([
-            'font-weight'=>'bold'
-        ]);
-        $node->addChild($attrNameNode);
-        $descNode = $this->createHTMLNode(['type'=>'col','size'=>12]);
-        $descNode->addTextNode($attr->getSummary());
-        $node->addChild($descNode);
+        $node = $attr->getSummaryNode();
+        $node->setClassName('row ml-2 border-left border-top border-right border-bottom', false);
+        $node->getChild(0)->setClassName('col-12', false);
+        $node->getChild(1)->setClassName('col-12', false);
         return $node;
     }
 
     public function createClassDescriptionNode() {
         $class = $this->getClass();
-        $node = $this->createHTMLNode(['type'=>'container']);
+        $node = $this->createHTMLNode(['type'=>'container-fluid']);
         $packageNode = new PNode();
         $packageNode->addText('<b class="mono">namespace '.$class->getNameSpace().'</b>',array('esc-entities'=>false));
         $node->addChild($packageNode);
@@ -345,7 +336,7 @@ class WebFioriV108 extends APITheme{
      * @return HTMLNode 
      */
     public function createMethodDetailsBlock($func) {
-        $node = $func->getDetailsHTMLNode();
+        $node = $func->getDetailsNode();
         $node->setClassName('row ml-2 border-left border-top border-right border-bottom', false);
         $node->getChildByID('method-'.$func->getName().'-signator')->setClassName('col-12', false);
         $node->getChildByID('method-'.$func->getName().'-description')->setClassName('col-12', false);
@@ -364,14 +355,10 @@ class WebFioriV108 extends APITheme{
      * @return HTMLNode
      */
     public function createMethodSummaryBlock($func) {
-        $node = $this->createHTMLNode(['type'=>'row']);
-        $node->setClassName('ml-2 border-left border-top border-right border-bottom', false);
-        $sigNode = $func->getMethodSignatorNode();
-        $sigNode->setClassName('col-12', false);
-        $node->addChild($sigNode);
-        $descNode = $this->createHTMLNode(['type'=>'col','size'=>12]);
-        $descNode->addTextNode($func->getSummary());
-        $node->addChild($descNode);
+        $node = $func->getSummaryNode();
+        $node->setClassName('row ml-2 border-left border-top border-right border-bottom', false);
+        $node->getChild(0)->setClassName('col-12', false);
+        $node->getChild(1)->setClassName('col-12', false);
         return $node;
     }
     /**
@@ -379,7 +366,68 @@ class WebFioriV108 extends APITheme{
      * @return HTMLNode The function must be implemented in a way that it returns 
      */
     public function createNamespaceContentBlock($nsObj) {
-        $node = $this->createHTMLNode(['type'=>'row']);
+        $pageTitle = $this->createHTMLNode(['type'=>'page-title','title'=>Page::title()]);
+        $node = new HTMLNode();
+        $node->setClassName('container-fluid');
+        $node->addChild($pageTitle);
+        $nsArr = $nsObj->getSubNamespaces();
+        if(count($nsArr) != 0){
+            $subNsNode = new HTMLNode();
+            $subNsNode->setClassName('sub-ns-container');
+            $label = new PNode();
+            $label->addText('Nested Namespaces:');
+            $label->setClassName('box-title');
+            $subNsNode->addChild($label);
+            foreach ($nsArr as $nsName){
+                $cNode = new HTMLNode();
+                $cNode->setClassName('block');
+                $link = new LinkNode(str_replace('\\', '/', $nsName), $nsName);
+                $cNode->addChild($link);
+                $subNsNode->addChild($cNode);
+            }
+            $node->addChild($subNsNode);
+        }
+        $interfaces = $nsObj->getInterfaces();
+        if(count($interfaces) != 0){
+            $interfacesNode = new HTMLNode();
+            $interfacesNode->setClassName('interfaces-container');
+            $label = new PNode();
+            $label->addText('All Interfaces:');
+            $label->setClassName('box-title');
+            $interfacesNode->addChild($label);
+            foreach ($interfaces as $interface){
+                $cNode = new HTMLNode();
+                $cNode->setClassName('block');
+                $link = new LinkNode(str_replace('\\', '/', trim($this->getName(),'\\')).'/'.$interface->getName(), $interface->getName());
+                $cNode->addChild($link);
+                $descNode = new PNode();
+                $descNode->addText($interface->getSummary(),['esc-entities'=>false]);
+                $cNode->addChild($descNode);
+                $interfacesNode->addChild($cNode);
+            }
+            $node->addChild($interfacesNode);
+        }
+        $classes = $nsObj->getClasses();
+        if(count($classes) != 0){
+            $classesNode = new HTMLNode();
+            $classesNode->setClassName('classes-container');
+            $label = new PNode();
+            $label->addText('All Classes:');
+            $label->setClassName('box-title');
+            $classesNode->addChild($label);
+            foreach ($classes as $class){
+                $cNode = new HTMLNode();
+                $cNode->setClassName('block');
+                $cNode->setClassName('row ml-2 border-left border-top border-right border-bottom');
+                $link = new LinkNode(str_replace('\\', '/', trim($this->getName(),'\\')).'/'.$class->getName(), $class->getName());
+                $cNode->addChild($link);
+                $descNode = new PNode();
+                $descNode->addText($class->getSummary(),['esc-entities'=>false]);
+                $cNode->addChild($descNode);
+                $classesNode->addChild($cNode);
+            }
+            $node->addChild($classesNode);
+        }
         return $node;
     }
 
