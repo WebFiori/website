@@ -8,12 +8,15 @@
 
 namespace webfiori\apiParser;
 use webfiori\apiParser\ClassAPI;
+use phpStructs\html\HTMLNode;
+use phpStructs\html\LinkNode;
+use phpStructs\html\PNode;
 /**
  * Description of NameSpace
  *
  * @author Ibrahim
  */
-class NameSpaceAPI {
+class NameSpaceAPI{
     private $name;
     private $classes;
     private $subNamespaces;
@@ -21,6 +24,15 @@ class NameSpaceAPI {
         $this->name = '\\';
         $this->classes = array();
         $this->subNamespaces = [];
+    }
+    public function getSubNamespacesNode() {
+        
+    }
+    public function getInterfacesNode() {
+        
+    }
+    public function getClassesNode() {
+        
     }
     private function _get($cType){
         $arr = array();
