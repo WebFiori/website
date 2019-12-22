@@ -6,7 +6,6 @@
  * and open the template in the editor.
  */
 namespace webfiori\apiParser;
-use webfiori\entity\Logger;
 /**
  * Description of APIReader
  *
@@ -150,13 +149,13 @@ class APIReader {
                             }
                             case 'class-dec':{
                                 $r = $this->_extractClassInfo($charIndex);
-                                if($this->lastParsedDocBlock !== NULL){
+                                if($this->lastParsedDocBlock !== null){
                                     foreach ($r as $k => $v){
                                         $this->lastParsedDocBlock[$k] = $v;
                                     }
                                     $this->lastParsedDocBlock['access-modifier'] = $str;
                                     $this->parsedClassInfo['class-def'] = $this->lastParsedDocBlock;
-                                    $this->lastParsedDocBlock = NULL;
+                                    $this->lastParsedDocBlock = null;
                                 }
                                 else{
                                     $r['access-modifier'] = $str;
@@ -184,7 +183,6 @@ class APIReader {
                                 break;
                             }
                             case 'class-attribute':{
-                                Logger::log('It is class attribute.');
                                 $name = $this->_extractAttrName($charIndex);
                                 if($this->lastParsedDocBlock != NULL){
                                     $this->lastParsedDocBlock['name'] = $name;
@@ -569,21 +567,33 @@ class APIReader {
     }
     /**
      * Extract class information.
-     * This function will extract 
-     * @param type $charIndex
-     * @return type
+     * This function will extract the name of the class, the class that this 
+     * class is extending (if any) and the interfaces which this class implements 
+     * (if any).
+     * @param int $charIndex The position of the character at which class name 
+     * starts
+     * @return array The method will return an associative array which has the 
+     * following indices:
+     * <ul>
+     * <li>class-name: The parsed name of the class.</li>
+     * <li>extends: An array that contains the names of 
+     * the classes at which this class is extending.</li>
+     * <li>implements: An array that contains the names of the interfaces 
+     * at which the class implements.</li>
+     * </ul>
      */
     private function _extractClassInfo(&$charIndex){
         $infoArr = array(
             'class-name'=>'',
-            'extends'=>array(),
-            'implements'=>array()
+            'extends'=>[],
+            'implements'=>[]
         );
         $char = $this->getFileText()[$charIndex];
         //class declaration. Extract class name.
         $classNm = '';
         $charIndex++;
         while ($charIndex < $this->getFileSize()){
+            //extract class name
             $char = $this->getFileText()[$charIndex];
             if($char == ' ' || $char == '{'){
                 break;
@@ -677,7 +687,6 @@ class APIReader {
         if($char == ' '){
             while ($charIndex < $this->getFileSize() && $this->getFileText()[$charIndex] == ' '){
                 $charIndex++;
-                Logger::log('Index = '.$charIndex, 'debug');
             }
             $charIndex--;
         }

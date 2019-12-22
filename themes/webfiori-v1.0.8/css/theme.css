@@ -7,6 +7,14 @@
 .page-title{
     width: 90%;
 }
+.block-title {
+    font-size: 14pt;
+    background-color: #eee;
+    margin-top: 25px;
+    margin-bottom: 5px;
+    font-weight: bold;
+
+}
 #page-footer{
     background-color: #eef;
     text-align: center;

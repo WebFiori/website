@@ -39,7 +39,7 @@ class NameSpaceAPI{
         $count = count($this->getAll());
         for($x = 0 ; $x < $count ; $x++){
             $classApi = $this->getAll()[$x];
-            if(trim($classApi->getClassType()) == $cType){
+            if(trim($classApi->getAccessModifier()) == $cType){
                 $arr[] = $classApi;
             }
         }

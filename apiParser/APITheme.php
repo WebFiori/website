@@ -34,7 +34,7 @@ abstract class APITheme extends Theme{
     public function setClass($class) {
         if($class instanceof ClassAPI){
             $this->class = $class;
-            Page::title($class->getName());
+            Page::title($class->getAccessModifier().' '.$class->getName());
         }
     }
     /**
@@ -76,15 +76,15 @@ abstract class APITheme extends Theme{
      */
     public function createMethodsSummaryBlock(){
         $class = $this->getClass();
-        if($class !== NULL){
+        if($class !== null){
             $funcs = $class->getClassMethods();
             if(count($funcs) > 0){
                 $summaryNode = new HTMLNode();
-                $summaryNode->setAttribute('class', 'summary-box');
-                $summaryNode->setID('functions-summary');
-                $titleNode = new PNode();
-                $titleNode->setClassName('summary-box-title');
-                $titleNode->addText('Class Functions Summary');
+                $summaryNode->setAttribute('class', 'summary-block');
+                $summaryNode->setID('methods-summary');
+                $titleNode = new HTMLNode('h3');
+                $titleNode->setClassName('block-title');
+                $titleNode->addTextNode('Class Methods Summary');
                 $summaryNode->addChild($titleNode);
                 foreach ($class->getClassMethods() as $method){
                     $summaryNode->addChild($this->createMethodSummaryBlock($method));
@@ -92,7 +92,7 @@ abstract class APITheme extends Theme{
                 return $summaryNode;
             }
         }
-        return NULL;
+        return null;
     }
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
@@ -107,11 +107,11 @@ abstract class APITheme extends Theme{
             $funcs = $class->getClassMethods();
             if(count($funcs) > 0){
                 $detailsNode = new HTMLNode();
-                $detailsNode->setAttribute('class', 'details-box');
-                $detailsNode->setID('functions-details');
-                $titleNode = new PNode();
-                $titleNode->setClassName('details-box-title');
-                $titleNode->addText('Class Functions Details');
+                $detailsNode->setAttribute('class', 'details-block');
+                $detailsNode->setID('methods-details');
+                $titleNode = new HTMLNode('h3');
+                $titleNode->setClassName('block-title');
+                $titleNode->addTextNode('Class Methods Details');
                 $detailsNode->addChild($titleNode);
                 foreach ($class->getClassMethods() as $method){
                     $detailsNode->addChild($this->createMethodDetailsBlock($method));
@@ -130,15 +130,15 @@ abstract class APITheme extends Theme{
      */
     public function createAttrsSummaryBlock(){
         $class = $this->getClass();
-        if($class !== NULL){
+        if($class !== null){
             $attrs = $class->getClassAttributes();
             if(count($attrs) > 0){
                 $summaryNode = new HTMLNode();
-                $summaryNode->setAttribute('class', 'summary-box');
+                $summaryNode->setAttribute('class', 'summary-block');
                 $summaryNode->setID('attrs-summary');
-                $titleNode = new PNode();
-                $titleNode->setClassName('summary-box-title');
-                $titleNode->addText('Class Attributes Summary');
+                $titleNode = new HTMLNode('h3');
+                $titleNode->setClassName('block-title');
+                $titleNode->addTextNode('Class Attributes Summary');
                 $summaryNode->addChild($titleNode);
                 foreach ($class->getClassAttributes() as $attr){
                         $summaryNode->addChild($this->createAttributeSummaryBlock($attr));
@@ -161,11 +161,11 @@ abstract class APITheme extends Theme{
         if($class !== NULL){
             if(count($attrs) > 0){
                 $detailsNode = new HTMLNode();
-                $detailsNode->setAttribute('class', 'details-box');
+                $detailsNode->setAttribute('class', 'details-block');
                 $detailsNode->setID('attrs-details');
-                $titleNode = new PNode();
-                $titleNode->setClassName('details-box-title');
-                $titleNode->addText('Class Attributes Details');
+                $titleNode = new HTMLNode('h3');
+                $titleNode->setClassName('block-title');
+                $titleNode->addTextNode('Class Attributes Details');
                 $detailsNode->addChild($titleNode);
                 foreach ($class->getClassAttributes() as $attr){
                      $detailsNode->addChild($this->createAttributeDetailsBlock($attr));

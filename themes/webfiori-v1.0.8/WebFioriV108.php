@@ -174,7 +174,7 @@ class WebFioriV108 extends APITheme{
             $titleRow = $this->createHTMLNode(['type'=>'row']);
             $h1 = new HTMLNode('h2');
             $title = isset($options['title']) ? $options['title'] : Page::title();
-            $h1->addTextNode(Page::title());
+            $h1->addTextNode($title,false);
             $h1->setClassName('page-title pb-2 mt-4 mb-2 border-bottom');
             $titleRow->addChild($h1);
             return $titleRow;
@@ -316,7 +316,7 @@ class WebFioriV108 extends APITheme{
         $node->addChild($packageNode);
         $titleNode = $this->createHTMLNode([
             'type'=>'page-title',
-            'title'=>$class->getClassType().' '.$class->getName()
+            'title'=>$class->getSignature()
         ]);
         $node->addChild($titleNode);
         $descNode = new HTMLNode();
@@ -366,7 +366,8 @@ class WebFioriV108 extends APITheme{
      * @return HTMLNode The function must be implemented in a way that it returns 
      */
     public function createNamespaceContentBlock($nsObj) {
-        $pageTitle = $this->createHTMLNode(['type'=>'page-title','title'=>Page::title()]);
+        $pageTitle = $this->createHTMLNode(['type'=>'page-title',
+            'title'=>$nsObj->getName()]);
         $node = new HTMLNode();
         $node->setClassName('container-fluid');
         $node->addChild($pageTitle);
@@ -376,12 +377,13 @@ class WebFioriV108 extends APITheme{
             $subNsNode->setClassName('sub-ns-container');
             $label = new PNode();
             $label->addText('Nested Namespaces:');
-            $label->setClassName('box-title');
+            $label->setClassName('block-title');
             $subNsNode->addChild($label);
             foreach ($nsArr as $nsName){
                 $cNode = new HTMLNode();
-                $cNode->setClassName('block');
+                $cNode->setClassName('row ml-2 border-left border-top border-right border-bottom');
                 $link = new LinkNode(str_replace('\\', '/', $nsName), $nsName);
+                $link->setClassName('attribute-name col-12');
                 $cNode->addChild($link);
                 $subNsNode->addChild($cNode);
             }
@@ -393,14 +395,16 @@ class WebFioriV108 extends APITheme{
             $interfacesNode->setClassName('interfaces-container');
             $label = new PNode();
             $label->addText('All Interfaces:');
-            $label->setClassName('box-title');
+            $label->setClassName('block-title');
             $interfacesNode->addChild($label);
             foreach ($interfaces as $interface){
                 $cNode = new HTMLNode();
-                $cNode->setClassName('block');
+                $cNode->setClassName('row ml-2 border-left border-top border-right border-bottom');
                 $link = new LinkNode(str_replace('\\', '/', trim($this->getName(),'\\')).'/'.$interface->getName(), $interface->getName());
+                $link->setClassName('description attribute-name col-12');
                 $cNode->addChild($link);
                 $descNode = new PNode();
+                $descNode->setClassName('description attribute-description col-12');
                 $descNode->addText($interface->getSummary(),['esc-entities'=>false]);
                 $cNode->addChild($descNode);
                 $interfacesNode->addChild($cNode);
@@ -413,15 +417,17 @@ class WebFioriV108 extends APITheme{
             $classesNode->setClassName('classes-container');
             $label = new PNode();
             $label->addText('All Classes:');
-            $label->setClassName('box-title');
+            $label->setClassName('block-title');
             $classesNode->addChild($label);
             foreach ($classes as $class){
                 $cNode = new HTMLNode();
                 $cNode->setClassName('block');
                 $cNode->setClassName('row ml-2 border-left border-top border-right border-bottom');
                 $link = new LinkNode(str_replace('\\', '/', trim($this->getName(),'\\')).'/'.$class->getName(), $class->getName());
+                $link->setClassName('description attribute-name col-12');
                 $cNode->addChild($link);
                 $descNode = new PNode();
+                $descNode->setClassName('description attribute-description col-12');
                 $descNode->addText($class->getSummary(),['esc-entities'=>false]);
                 $cNode->addChild($descNode);
                 $classesNode->addChild($cNode);

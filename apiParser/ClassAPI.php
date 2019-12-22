@@ -97,13 +97,30 @@ class ClassAPI {
         'inc-protected-funcs'=>true,
         'base-url'=>''
     )) {
-        $this->classMethods = array();
-        $this->implements = array();
+        $this->classMethods = [];
+        $this->implements = [];
         $this->cName = $classAPIReader->getClassName();
         $this->baseUrl = $options['base-url'];
         $this->setSummary($classAPIReader->getClassSummary());
         $this->setDescription($classAPIReader->getClassDescription());
-        $this->setClassType($classAPIReader->getParsedInfo()['class-def']['access-modifier']);
+        $this->setClassAccessModifier($classAPIReader->getParsedInfo()['class-def']['access-modifier']);
+        $extendsClasses = $classAPIReader->getParsedInfo()['class-def']['extends'];
+        if(count($extendsClasses) != 0){
+            if(isset($linksArr[$extendsClasses[0]])){
+                $this->extends = $linksArr[$extendsClasses[0]];
+            }
+            else{
+                $this->extends = $extendsClasses[0];
+            }
+        }
+        foreach ($classAPIReader->getParsedInfo()['class-def']['implements'] as $interfaceNm){
+            if(isset($linksArr[$interfaceNm])){
+                $this->implements[] = $linksArr[$interfaceNm];
+            }
+            else{
+                $this->implements[] = $interfaceNm;
+            }
+        }
         foreach ($classAPIReader->getConstantsNames() as $name){
             $docBlock = $classAPIReader->getConstDocBlock($name);
             $api = new AttributeDef();
@@ -257,7 +274,7 @@ class ClassAPI {
      * Sets the type of the class.
      * @param string $mod Class type (e.g. 'class', 'interface', 'trait').
      */
-    public function setClassType($mod) {
+    public function setClassAccessModifier($mod) {
         $this->classType = $mod;
     }
     public function getVersion() {
@@ -270,18 +287,12 @@ class ClassAPI {
      * Returns The type of the class.
      * @return string Class type (e.g. 'class', 'interface').
      */
-    public function getClassType() {
+    public function getAccessModifier() {
         return $this->classType;
     }
     
     public function getInterfaces() {
         return $this->implements;
-    }
-    public function implementsInterface($interfaceName) {
-        $this->implements[] = $interfaceName;
-    }
-    public function extendClass($className,$package='') {
-        $this->extends = '<a href="'.$package.'/'.$className.'">'.$className.'</a>';
     }
     public function setNameSpace($ns) {
         $this->ns = $ns;
@@ -335,8 +346,8 @@ class ClassAPI {
      * 'abstract class SessionManager implements JsonX').
      * @return string
      */
-    public function getLongName() {
-        $longNm = $this->getClassType().' '.$this->getName();
+    public function getSignature() {
+        $longNm = $this->getAccessModifier().' '.$this->getName();
         if(strlen($this->extends)){
             $longNm .= ' extends '.$this->extends;
         }

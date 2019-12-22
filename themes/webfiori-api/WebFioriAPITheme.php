@@ -10,6 +10,7 @@ use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use webfiori\apiParser\APITheme;
 use webfiori\apiParser\NameSpaceAPI;
+use webfiori\apiParser\FunctionDef;
 use phpStructs\html\Label;
 use webfiori\theme\LangExt;
 
@@ -283,7 +284,7 @@ class WebFioriAPITheme extends APITheme{
         $packageNode = new PNode();
         $packageNode->addText('<b class="mono">namespace '.$class->getNameSpace().'</b>',array('esc-entities'=>FALSE));
         $node->addChild($packageNode);
-        $titleNode = WebFioriAPIGUI::createTitleNode($class->getClassType().' '.$class->getName());
+        $titleNode = WebFioriAPIGUI::createTitleNode($class->getAccessModifier().' '.$class->getName());
         $node->addChild($titleNode);
         $descNode = new HTMLNode();
         $descNode->setAttribute('class', 'description-box');

@@ -46,7 +46,6 @@ class ClosureRoutes {
             'route-to'=>function(){
         //    $r = new APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
         //    Util::print_r($r->getParsedInfo());
-            Logger::enabled(FALSE);
             $reader = new DocGenerator(array(
                 'path'=>'C:\Server\apache2\htdocs\webfiori\src',
                 'exclude-path'=>array(
