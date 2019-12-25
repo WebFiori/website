@@ -315,22 +315,22 @@ class DocGenerator {
      */
     private function _buildLinks() {
         $nsClasses = array();
-        $this->linksArr['boolean'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">boolean</a>';
-        $this->linksArr['null'] = '<a class="mono" href="http://php.net/manual/en/language.types.null.php" target="_blank">null</a>';
-        $this->linksArr['true'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">true</a>';
-        $this->linksArr['false'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">false</a>';
-        $this->linksArr['NULL'] = '<a class="mono" href="http://php.net/manual/en/language.types.null.php" target="_blank">NULL</a>';
-        $this->linksArr['TRUE'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">TRUE</a>';
-        $this->linksArr['FALSE'] = '<a class="mono" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">FALSE</a>';
-        $this->linksArr['int'] = '<a class="mono" href="http://php.net/manual/en/language.types.integer.php" target="_blank">int</a>';
-        $this->linksArr['array'] = '<a class="mono" href="http://php.net/manual/en/language.types.array.php" target="_blank">array</a>';
-        $this->linksArr['string'] = '<a class="mono" href="http://php.net/manual/en/language.types.string.php" target="_blank">string</a>';
-        $this->linksArr['callable'] = '<aclass="mono" href="http://php.net/manual/en/language.types.callable.php" target="_blank">callable</a>';
-        $this->linksArr['float'] = '<a class="mono" href="http://php.net/manual/en/language.types.float.php" target="_blank">float</a>';
-        $this->linksArr['double'] = '<a class="mono" href="http://php.net/manual/en/language.types.float.php" target="_blank">double</a>';
-        $this->linksArr['resource'] = '<a class="mono" href="http://php.net/manual/en/language.types.resource.php" target="_blank">resource</a>';
-        $this->linksArr['iterable'] = '<a class="mono" href="http://php.net/manual/en/language.types.iterable.php" target="_blank">iterable</a>';
-        $this->linksArr['object'] = '<a class="mono" href="http://php.net/manual/en/language.types.object.php" target="_blank">object</a>';
+        $this->linksArr['boolean'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">boolean</a>';
+        $this->linksArr['null'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.null.php" target="_blank">null</a>';
+        $this->linksArr['true'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">true</a>';
+        $this->linksArr['false'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">false</a>';
+        $this->linksArr['NULL'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.null.php" target="_blank">NULL</a>';
+        $this->linksArr['TRUE'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">TRUE</a>';
+        $this->linksArr['FALSE'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">FALSE</a>';
+        $this->linksArr['int'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.integer.php" target="_blank">int</a>';
+        $this->linksArr['array'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.array.php" target="_blank">array</a>';
+        $this->linksArr['string'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.string.php" target="_blank">string</a>';
+        $this->linksArr['callable'] = '<aclass="datatype-name" href="http://php.net/manual/en/language.types.callable.php" target="_blank">callable</a>';
+        $this->linksArr['float'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.float.php" target="_blank">float</a>';
+        $this->linksArr['double'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.float.php" target="_blank">double</a>';
+        $this->linksArr['resource'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.resource.php" target="_blank">resource</a>';
+        $this->linksArr['iterable'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.iterable.php" target="_blank">iterable</a>';
+        $this->linksArr['object'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.object.php" target="_blank">object</a>';
         $base = $this->getBaseURL();
         foreach ($this->apiReadersArr as $apiReader){
             $namespaceLink = $apiReader->getNamespace();
@@ -347,17 +347,17 @@ class DocGenerator {
                 $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/NSIndex';
             }
-            $this->linksArr[$cName] = '<a class="mono" href="'.$classLink.'">'.$cName.'</a>';
+            $this->linksArr[$cName] = '<a class="datatype-name" href="'.$classLink.'">'.$cName.'</a>';
             $this->classesLinksByNS[$nsName][] = [
                 'label'=>$cName,
                 'link'=>$classLink
             ];
             $nsClasses[$nsName][] = new ClassAPI($apiReader);
             foreach ($apiReader->getConstantsNames() as $name){
-                $this->linksArr[$cName.'::'.$name] = '<a class="mono" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'</a>';
+                $this->linksArr[$cName.'::'.$name] = '<a class="datatype-name" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'</a>';
             }
             foreach ($apiReader->getMethodsNames() as $name){
-                $this->linksArr[$cName.'::'.$name.'()'] = '<a class="mono" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'()</a>';
+                $this->linksArr[$cName.'::'.$name.'()'] = '<a class="datatype-name" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'()</a>';
             }
         }
         $namespacesNames = array_keys($nsClasses);
