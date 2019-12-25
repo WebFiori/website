@@ -21,7 +21,7 @@ class TypesOfRoutesView extends RoutingLearnView{
                 . 'creating route for each type will be the same. '
                 . 'The only difference will be the location of the resource '
                 . 'that the route will point to.'));
-        $sec1 = $this->createSection('View Route');
+        $sec1 = $this->createSection('View Route',3,'viewRoute');
         $sec1->addChild($this->createParagraph(''
                 . 'This type of route is the most common type of routes. It is a '
                 . 'route that will point to a web page. The page can be '
@@ -37,15 +37,17 @@ class TypesOfRoutesView extends RoutingLearnView{
                 . 'the method <a href="docs/webfiori/entity/router/ViewRoutes#create" target="_blank">ViewRoutes::create()</a> '
                 . 'to add new routes.'
                 . ''));
-        $sec1->addChild($this->createParagraph(''
+        $sec1subSec1 = $this->createSection('A Use Case', 4);
+        $sec1->addChild($sec1subSec1);
+        $sec1subSec1->addChild($this->createParagraph(''
                 . 'Lets assume that we have 3 views inside the folder \'pages\' as follows:'
                 . ''));
         $ul1 = new UnorderedList();
         $ul1->addListItem('/pages/HomeView.html');
         $ul1->addListItem('/pages/LoginView.php');
         $ul1->addListItem('/pages/system-views/DashboardView.php');
-        $sec1->addChild($ul1);
-        $sec1->addChild($this->createParagraph('Also, Lets assume that the base URL of the website is '
+        $sec1subSec1->addChild($ul1);
+        $sec1subSec1->addChild($this->createParagraph('Also, Lets assume that the base URL of the website is '
                 . 'https://example.com/. We want the user to see the pages as follows:'));
         $ul2 = new UnorderedList();
         $ul2->addListItem('\'https://example.com/\' should point to the view \'HomeView.html\'');
@@ -53,7 +55,7 @@ class TypesOfRoutesView extends RoutingLearnView{
         $ul2->addListItem('\'https://example.com/user-login\' should point to the view \'LoginView.php\'');
         $ul2->addListItem('\'https://example.com/dashboard\' should point to the view \'DashboardView.html\'');
         $sec1->addChild($ul2);
-        $sec1->addChild($this->createParagraph('The following sample code shows how to create such a URL structre using '
+        $sec1subSec1->addChild($this->createParagraph('The following sample code shows how to create such a URL structre using '
                 . 'the class <a href="docs/webfiori/entity/router/ViewRoutes" target="_blank">ViewRoutes</a>.'));
         $code01 = new CodeSnippet();
         $code01->setTitle('PHP Code');
@@ -78,9 +80,9 @@ class TypesOfRoutesView extends RoutingLearnView{
     }
 }
     ");
-        $sec1->addChild($code01);
+        $sec1subSec1->addChild($code01);
         Page::insert($sec1);
-        $sec2 = $this->createSection('API Route');
+        $sec2 = $this->createSection('API Route',3,'apiRoute');
         Page::insert($sec2);
         $sec2->addChild($this->createParagraph(''
                 . 'An API route is a route that usually will point to a PHP class that '
@@ -151,7 +153,7 @@ class TypesOfRoutesView extends RoutingLearnView{
 }
     ");
         $sec2->addChild($code02);
-        $sec3 = $this->createSection('Closure Route');
+        $sec3 = $this->createSection('Closure Route',3,'closureRoute');
         Page::insert($sec3);
         $sec3->addChild($this->createParagraph(''
                 . 'A closure route is a route to a user defined code that will '
@@ -163,8 +165,10 @@ class TypesOfRoutesView extends RoutingLearnView{
                 . 'will have the form \'https://example.com/say-hello-to/{A_Name}\'. As you can see, we have '
                 . 'added the name as a generic path variable in the URL.'
                 . ''));
-        $sec3->addChild($this->createParagraph('Since the request method of the URL is GET, we can access the '
-                . 'name using the super global $_GET. The following code sample shows '
+        $sec3->addChild($this->createParagraph('The value of the variable can be accessed using the '
+                . 'method <a href="docs/webfiori/entity/router/Router#getVarValue" target="_blank">Router::getVarValue()</a>. '
+                . 'All what we have to do is to pass variable name and the method will return its value.'
+                . 'The following code sample shows '
                 . 'how its done.'));
         $code03 = new CodeSnippet();
         $code03->setTitle('PHP Code');
@@ -173,7 +177,7 @@ class TypesOfRoutesView extends RoutingLearnView{
         Router::closure([
             'path'=>'/say-hello-to/{A_Name}', 
             'route-to'=>function(){
-                \$name = \$_GET['A_Name'];
+                \$name = Router::getVarValue('A_Name');
                 echo 'Hello Mr.'.\$name;
             }
         ]);
@@ -181,10 +185,44 @@ class TypesOfRoutesView extends RoutingLearnView{
 }
     ");
         $sec3->addChild($code03);
-        $sec4 = $this->createSection('Custom Route');
+        $sec4 = $this->createSection('Custom Route',3,'customRoute');
         Page::insert($sec4);
+        $sec4->addChild($this->createParagraph(''
+                . 'A custom route is a route that points to a file which exist '
+                . 'in a folder that was created by the developer. The folder '
+                . 'must exist inside the framework scope in order to create a '
+                . 'route to it.'
+                . ''));
+        $sec4->addChild($this->createParagraph(''
+                . 'Let\'s assume that we have a folder which has the name \'sys-files\' and '
+                . 'inside this folder, we have two folders. One has the name \'views\' which '
+                . 'contains web pages and another one has the name \'apis\' which '
+                . 'contains system\'s web APIs. Assuming that the \'views\' folder has a view '
+                . 'which has the name \'HomeView.php\' and the folder \'apis\' has one file which has the '
+                . 'name \'AuthAPI.php\'. The following code shows how to create '
+                . 'a route to each file:'
+                . ''));
+        $code04 = new CodeSnippet();
+        $code04->setTitle('PHP Code');
+        $code04->setCode("class ClosureRoutes {
+    public static function create(){
+        Router::other([
+            'path'=>'/index.php', 
+            'route-to'=>'sys-files/views/HomeView.php'
+        ]);
+        Router::other([
+            'path'=>'/apis/auth/{action}', 
+            'route-to'=>'sys-files/apis/AuthAPI.php',
+            'as-api'=>true
+        ]);
+    }
+}
+    ");
+        $sec4->addChild($code04);
+        $sec4->addChild($this->createParagraph('Note that in case of custom API route, we '
+                . 'included an extra option which is "as-api".'));
         $this->setPrevTopicLink('learn/topics/routing/class-Router', 'The Class \'Router\'');
-        $this->setNextTopicLink('learn/topics/routing/generic-route', 'Generic Routes');
+        $this->setNextTopicLink('learn/topics/routing/variables', 'Variables in Routes');
         $this->displayView();
     }
 }
