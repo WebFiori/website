@@ -40,6 +40,7 @@ class WebFioriV108 extends APITheme{
     
     public function createHTMLNode($options = array()){
         $nodeType = isset($options['type']) ? $options['type'] : '';
+        $elementId = isset($options['element-id']) ? $options['element-id'] : null;
         if($nodeType == 'section'){
             $sec = new HTMLNode('section');
             $hLvl = isset($options['h-level']) ? $options['h-level'] : 3;
@@ -48,6 +49,9 @@ class WebFioriV108 extends APITheme{
             $title = isset($options['title']) ? $options['title'] : 'Sec_Title';
             $h->addTextNode($title);
             $sec->addChild($h);
+            if($elementId !== null){
+                $h->setID($elementId);
+            }
             return $sec;
         }
         else if($nodeType == 'col'){
@@ -290,7 +294,7 @@ class WebFioriV108 extends APITheme{
      * @return type
      */
     public function createAttributeDetailsBlock($attr) {
-        $node = $attr->getDetailsHTMLNode();
+        $node = $attr->getDetailsNode();
         $node->setClassName('row ml-2 border-left border-top border-right border-bottom', false);
         $node->getChildByID('attribute-'.$attr->getName().'-name')->setClassName('col-12', false);
         $node->getChildByID('attribute-'.$attr->getName().'-details')->setClassName('col-12', false);
