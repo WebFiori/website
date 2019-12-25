@@ -42,7 +42,7 @@ class AttributeDef {
      */
     public function getSummaryLink() {
         return $this->getAccessModofier().
-                ' <a class="class-attribute" href="'.$this->getPageURL().
+                ' <a class="class-attribute attribute-name" href="'.$this->getPageURL().
                 '/'. str_replace('\\', '/', trim($this->getOwnerClass()->getNameSpace(), '\\'))
                 .'/'.$this->getOwnerClass()->getName().'#'.$this->getName().'">'
                 .$this->getName().'</a>';
@@ -60,15 +60,15 @@ class AttributeDef {
 &lt;/div&gt;
      </pre>
      */
-    public function getDetailsHTMLNode() {
+    public function getDetailsNode() {
         $node = new HTMLNode();
         $node->setID($this->getName());
         $node->setClassName('block attribute-block');
         $attrNameNode = new HTMLNode();
         $attrNameNode->setClassName('attribute-name');
         $attrNameNode->setID('attribute-'.$this->getName().'-name');
-        $nodeText = $this->getAccessModofier().' '.$this->getName();
-        $attrNameNode->addTextNode($nodeText);
+        $nodeText = $this->getAccessModofier().' <span class="class-attribute attribute-name>">'.$this->getName().'</span>';
+        $attrNameNode->addTextNode($nodeText,false);
         $node->addChild($attrNameNode);
         $descNode = new HTMLNode();
         $descNode->setID('attribute-'.$this->getName().'-details');
