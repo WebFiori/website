@@ -40,6 +40,7 @@ class FunctionDef {
     public function getDetailsNode() {
         $node = new HTMLNode();
         $node->setClassName('block method-details-block');
+        $node->setID($this->getName());
         $methNameNode = $this->getMethodSignatorNode();
         $methNameNode->setID('method-'.$this->getName().'-signator');
         $node->addChild($methNameNode);
@@ -60,8 +61,8 @@ class FunctionDef {
             $ul = new UnorderedList();
             for($x = 0 ; $x < $count ; $x++){
                 $param = $params['param-'.$x];
-                $text = '<span style="font-family: monospace;">'.$param['var-type'].' '.$param['var-name'].'</span>';
-                if($param['is-optional'] === TRUE){
+                $text = '<span class="datatype-name">'.$param['var-type'].' '.$param['var-name'].'</span>';
+                if($param['is-optional'] === true){
                     $text .= ' [Optional]';
                 }
                 $text .= ' '.$param['var-desc'];
@@ -76,7 +77,7 @@ class FunctionDef {
             $retNode->setClassName('method-return-block');
             $retNode->setID('method-'.$this->getName().'-return');
             $textNode = new PNode();
-            $textNode->addText('<b>Returns:</b> <span class="mono">'.$return.'</span>',array('esc-entities'=>false));
+            $textNode->addText('<b>Returns:</b> <span class="datatype-name">'.$return.'</span>',array('esc-entities'=>false));
             $retNode->addChild($textNode);
             $descNode = new HTMLNode();
             $descNode->addTextNode($this->getMethodReturnDescription(),false);
@@ -107,10 +108,10 @@ class FunctionDef {
         for($x = 0 ; $x < $count ; $x++){
             $param = $this->getParameters()['param-'.$x];
             if($x + 1 == $count){
-                $nodeText .= $param['var-type'].' '.$param['var-name'];
+                $nodeText .= '<span class="datatype-name">'.$param['var-type'].'</span> <span class="attribute-name">'.$param['var-name'].'</span>';
             }
             else{
-                $nodeText .= $param['var-type'].' '.$param['var-name'].', ';
+                $nodeText .= '<span class="datatype-name">'.$param['var-type'].'</span> <span class="attribute-name">'.$param['var-name'].'</span>, ';
             }
         }
         $nodeText .= ')';
