@@ -29,6 +29,10 @@ class ThemesLearnView extends LearnView{
                 'link'=>'learn'
             ],
             [
+                'label'=>'Introduction',
+                'link'=>'learn/topics/themes'
+            ],
+            [
                 'label'=>'The class \'HTMLNode\'',
                 'link'=>'learn/topics/themes/class-HTMLNode'
             ],
