@@ -198,6 +198,10 @@ class ViewRoutes {
             'route-to'=>'/learning/routing/TypesOfRoutesView.php'
         ]);
         Router::view([
+            'path'=>'/learn/topics/routing/variables',
+            'route-to'=>'/learning/routing/VariablesInRoutes.php'
+        ]);
+        Router::view([
             'path'=>'/learn/topics/routing/examples', 
             'route-to'=>'/learning/routing/RoutingExamplesView.php'
         ]);
