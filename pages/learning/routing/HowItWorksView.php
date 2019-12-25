@@ -16,13 +16,16 @@ class HowItWorksView extends RoutingLearnView{
         Page::document()->getHeadNode()->addCSS('themes/webfiori/css/code-theme.css');
         $sec = $this->createSection('Life Cycle of Request');
         Page::insert($sec);
-        $sec->addChild($this->createParagraph('Every request is made to a website that '
-                . 'uses Apache Server must go through a .htaccess file. '
-                . 'it is simply the entry point of all incoming requests. ' ));
-        $sec->addChild($this->createParagraph('WebFiori Framework uses a custom .htaccess file that '
+        $sec->addChild($this->createParagraph('Every web server must have some kind of a '
+                . 'configuration file. In Apache server, the configuration files have '
+                . 'the name "<a href="https://httpd.apache.org/docs/current/howto/htaccess.html" target="_blank">.htaccess</a>" '
+                . 'and in IIS has the name "web.config". '
+                . 'Usually, the configuration files will get executed before the actual code.' ));
+        $sec->addChild($this->createParagraph('WebFiori Framework uses a custom .htaccess  file that '
                 . 'has a rule to re-write the requested URL and '
-                . 'redirect every request to the root framework class '
-                . 'which is <a href="docs/webfiori/WebFiori" target="_blank">WebFiori</a>. '
+                . 'redirect every request to the root framework class which is the class '
+                . '"<a href="docs/webfiori/WebFiori" target="_blank">'
+                . 'WebFiori</a>" which exist inside the file "WebFiori.php".'
                 . 'If the content of the root .htaccess file is viewed, '
                 . 'the re-write rule will look like the folowing:'));
         $code = new CodeSnippet();
@@ -31,6 +34,33 @@ class HowItWorksView extends RoutingLearnView{
                 . 'ReWriteRule ^(.*)$ WebFiori.php [L,QSA]'
                 . '');
         $sec->addChild($code);
+        $sec->addChild($this->createParagraph(''
+                . 'Also, the framework has its own custom web.config file that has a '
+                . 'rule which is used to send requests to the class "WebFiori". If the content of '
+                . 'the file web.config is viewed, it will look like the following:'
+                . ''));
+        $code2 = new CodeSnippet();
+        $code2->setTitle('XML Code');
+        $code2->setCode("<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<configuration>
+    <system.webServer>
+        <directoryBrowse enabled=\"true\" />
+        <rewrite>
+            <rules>
+                <rule name=\"Imported Rule 2\" stopProcessing=\"true\">
+                    <match url=\"^(.*)$\" ignoreCase=\"false\" />
+                    <conditions>
+                        <!--#send all trafic to the root framework file-->
+                        <add input=\"{REQUEST_FILENAME}\" matchType=\"IsFile\" ignoreCase=\"false\" negate=\"true\" />
+                    </conditions>
+                    <action type=\"Rewrite\" url=\"WebFiori.php\" appendQueryString=\"true\" />
+                </rule>
+            </rules>
+        </rewrite>
+    </system.webServer>
+</configuration>
+");
+        $sec->addChild($code2);
         $sec->addChild($this->createParagraph('Once the request reaches the class <a href="docs/webfiori/WebFiori" target="_blank">WebFiori</a>, '
                 . 'The initialization process of the framework will start. '
                 . 'After the initialization is completed without any errors, '
