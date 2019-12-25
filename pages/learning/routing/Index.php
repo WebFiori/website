@@ -32,10 +32,12 @@ class Index extends RoutingLearnView{
                 . ''));
         $sec->addChild($this->createParagraph('One of the essential parts of the framework is routing. '
                 . 'Routing in simple trems is sending user request to its correct '
-                . 'destination. The developer can use the class <a href="docs/webfiori/entity/router/Router" target="_blank">Router</a>.'));
+                . 'destination. The class <a href="docs/webfiori/entity/router/Router" target="_blank">Router</a> is one of the core classes '
+                . 'which are resposibile for performing this task. It can be used to create routes and '
+                . 'send requests to the correct route.'));
         $sec->addChild($this->createParagraph('After finishing the following set of topics, you will '
                 . 'be able to understand how routing sub-system works and create '
-                . 'your own custom URL structure.'));
+                . 'your own custom URIs structure.'));
         Page::insert($sec);
         $sec2 = $this->createSection('Topics Covered:');
         
