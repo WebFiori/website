@@ -11,7 +11,7 @@ use phpStructs\html\UnorderedList;
 class ClassThemeView extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
-            'active-aside'=>3,
+            'active-aside'=>4,
             'title'=>'The Class \'HeadNode\'',
             'description'=>'This class represents the &lt;head&gt; tag of HTML document.',
         ));

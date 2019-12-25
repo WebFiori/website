@@ -1,13 +1,9 @@
 <?php
 namespace webfiori\views\learn\themes;
-use webfiori\views\WebFioriPage;
 use webfiori\WebFiori;
 use webfiori\entity\Page;
-use phpStructs\html\PNode;
-use phpStructs\html\HTMLNode;
 Use phpStructs\html\UnorderedList;
 use phpStructs\html\ListItem;
-use WebFioriGUI;
 /**
  * Description of ClassThemeView
  *
@@ -18,7 +14,7 @@ class ClassThemeView extends ThemesLearnView{
         parent::__construct(array(
             'title'=>'The Class \'HTMLNode\'',
             'description'=>'The class HTMLNode is the core class for creating UI.',
-            'active-aside'=>1
+            'active-aside'=>2
         ));
         Page::insert($this->createParagraph('This class acts as an interface between the framework and HTML. It represents any '
                 . 'HTML element you can think of. The class <a href="'.WebFiori::getSiteConfig()->getBaseURL()

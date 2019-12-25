@@ -20,7 +20,7 @@ class MethodCreateNodeView extends ThemesLearnView{
             'title'=>'Using the Method Theme::createHTMLNode()',
             'description'=>'Learn the basics of how to use the method Using the Method Theme::createHTMLNode() '
             . 'in order to create custom UI components.',
-            'active-aside'=>7
+            'active-aside'=>8
         ));
         Page::document()->getHeadNode()->addCSS('themes/webfiori/css/code-theme.css');
         Page::insert($this->createParagraph(''

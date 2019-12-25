@@ -16,7 +16,7 @@ use phpStructs\html\HTMLNode;
 class ClassThemeView extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
-            'active-aside'=>6,
+            'active-aside'=>7,
             'title'=>'Creating a Simple Theme',
             'description'=>'Learn how to create a simple theme using WebFiori Framework>'
         ));

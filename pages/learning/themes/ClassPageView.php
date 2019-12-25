@@ -17,7 +17,7 @@ use WebFioriGUI;
 class ClassThemeView extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
-            'active-aside'=>4,
+            'active-aside'=>5,
             'title'=>'The Class \'Page\'',
             'description'=>'This class is used to modify web page attributes by '
             . 'loading themes.'

@@ -19,7 +19,7 @@ use phpStructs\html\CodeSnippet;
 class ClassHTMLDocView extends ThemesLearnView{
     public function __construct() {
         parent::__construct(array(
-            'active-aside'=>2,
+            'active-aside'=>3,
             'title'=>'The Class \'HTMLDoc\'',
             'description'=>'The class HTMLDoc represents HTML document. It can be used '
             . 'to change many attributes of page\'s DOM.'
