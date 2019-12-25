@@ -26,12 +26,12 @@ class ClassRouterView extends RoutingLearnView{
                 . 'that was generated dynamically by gathering data '
                 . 'and representing it in a good looking way.'));
         $sec->addChild($this->createParagraph('Most of the time, this class will '
-                . 'be used to create routes. In general, there are '
+                . 'be used to create routes but it can be used to perform other tasks as well. In general, there are '
                 . '4 types of routes that can be created using this '
                 . 'class:'));
         $sec->addChild($this->typesOfRoutes());
         $sec->addChild($this->createParagraph('For each type of route, there is a '
-                . 'specific static method in the class \'Router\' that can be used to '
+                . 'specific static method that can be used to '
                 . 'create it. The 4 methods that corresponds to each type are:'));
         $sec->addChild($this->typesOfRoutesMethods());
         $this->setPrevTopicLink('learn/topics/routing/how-it-works', 'How Routing System Works');
