@@ -38,6 +38,10 @@ class RoutingLearnView extends LearnView{
             [
                 'label'=>'Types of Routes',
                 'link'=>'learn/topics/routing/types-of-routes'
+            ],
+            [
+                'label'=>'URI Variables',
+                'link'=>'learn/topics/routing/variables'
             ]
         ];
         $linksArr[$this->getAsideActiveLinkNum()]['is-active'] = true;
