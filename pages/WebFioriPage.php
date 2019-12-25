@@ -85,12 +85,15 @@ class WebFioriPage {
      * @param string $title The title that will be in the heading node.
      * @param int $hLevel Heading level. The method will only accepts 
      * 1 up to 6 as value. If invalid value is provided, 1 is used as default.
+     * @param string $secId The value of the attribute 'id' for the 
+     * 'h' element. Default is null.
      * @return HTMLNode
      */
-    public function createSection($title,$hLevel=3) {
+    public function createSection($title,$hLevel=3,$secId=null) {
         $sec = Page::theme()->createHTMLNode([
             'type'=>'section',
             'title'=>$title,
+            'element-id'=>$secId,
             'h-level'=>$hLevel
         ]);
         
@@ -100,7 +103,9 @@ class WebFioriPage {
             $h = new HTMLNode('h'.$hLevelX);
             $h->addTextNode($title);
             $sec->addChild($h);
-        
+            if($secId !== null){
+                $h->setID($secId);
+            }
         }
         return $sec;
     }
