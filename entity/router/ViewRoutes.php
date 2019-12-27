@@ -242,5 +242,22 @@ class ViewRoutes {
             'path'=>'/learn/topics/themes/the-method-createHTMLNode', 
             'route-to'=>'/learning/themes/MethodCreateNodeView.php'
         ]);
+        //sending emails
+        Router::view([
+            'path'=>'learn/topics/mailing',
+            'route-to'=>'learning/send-email/Index.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/mailing/classes',
+            'route-to'=>'learning/send-email/MailingClassesView.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/mailing/send-email',
+            'route-to'=>'learning/send-email/SendEmailView.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/mailing/attachments',
+            'route-to'=>'learning/send-email/EmailAttachmentsView.php'
+        ]);
     }
 }
