@@ -42,6 +42,7 @@ class Index extends WebFioriPage{
         $ul->addChild($this->createLinkListItem('learn/topics/introduction', 'Introduction.'));
         $ul->addChild($this->createLinkListItem('learn/topics/routing', 'Routing.'));
         $ul->addChild($this->createLinkListItem('learn/topics/themes', 'Creating themes.'));
+        $ul->addChild($this->createLinkListItem('learn/topics/mailing', 'Sending Email Messages.'));
         Page::insert($sec);
     }
 }
