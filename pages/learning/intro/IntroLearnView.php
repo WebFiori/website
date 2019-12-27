@@ -2,8 +2,6 @@
 namespace webfiori\views\learn\intro;
 use webfiori\views\learn\LearnView;
 use webfiori\entity\Page;
-use phpStructs\html\UnorderedList;
-use phpStructs\html\PNode;
 /**
  * Description of ThemesLearnView
  *
@@ -43,5 +41,4 @@ class IntroLearnView extends LearnView{
             'nav-links'=>$linksArr
         ]));
     }
-
 }
