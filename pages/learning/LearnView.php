@@ -9,12 +9,8 @@
 namespace webfiori\views\learn;
 use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
-use webfiori\entity\Util;
 use phpStructs\html\HTMLNode;
-use phpStructs\html\PNode;
 use phpStructs\html\LinkNode;
-use webfiori\views\learn\LearningAsideMenu;
-use WebFioriGUI;
 /**
  * Description of LearnView
  *
