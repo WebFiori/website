@@ -32,9 +32,9 @@ class Index extends MailingLearnView{
         Page::insert($sec);
         $topicsUl = new UnorderedList();
         $topicsUl->addListItems([
-            '<a href="learn/mail/classes">Mailing Sub-system Classes</a>',
-            '<a href="learn/mail/send-email">How to Send an Email</a>',
-            '<a href="learn/mail/attachments">Adding Attachments to Your Email</a>'
+            '<a href="learn/mailing/classes">Mailing Sub-system Classes</a>',
+            '<a href="learn/mailing/send-email">How to Send an Email</a>',
+            '<a href="learn/mailing/attachments">Adding Attachments to Your Email</a>'
         ], false);
         $sec->addChild($topicsUl);
         $this->setNextTopicLink('learn/topics/mailing/classes', 'Mailing Sub-system Classes');
