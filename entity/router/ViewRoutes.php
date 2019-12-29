@@ -259,5 +259,18 @@ class ViewRoutes {
             'path'=>'learn/topics/mailing/attachments',
             'route-to'=>'learning/send-email/EmailAttachmentsView.php'
         ]);
+        //file upload
+        Router::view([
+            'path'=>'learn/topics/file-upload',
+            'route-to'=>'learning/file-upload/Index.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/file-upload/class-Uploader',
+            'route-to'=>'learning/file-upload/ClassUploaderView.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/file-upload/example',
+            'route-to'=>'learning/file-upload/UploadExampleView.php'
+        ]);
     }
 }
