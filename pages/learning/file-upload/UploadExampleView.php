@@ -11,7 +11,7 @@ use phpStructs\html\CodeSnippet;
 class UploadExampleView extends UploadLearnView{
     public function __construct() {
         parent::__construct([
-            'title'=>'Usage Examples',
+            'title'=>'Usage Example',
             'description'=>'The class \'Uploader\' is a utility class which is '
             . 'used to handle file uploads in PHP in a very simple way.',
             'active-aside'=>3,
@@ -70,13 +70,64 @@ class UploadExampleView extends UploadLearnView{
         $code00->addCodeLine('$uploader->upload(true);');
         $code00->addCodeLine('//shows a JSON string that shows upload status.');
         $code00->addCodeLine('echo $uploader;');
-        $sec00->addChild($this->createParagraph('Steps:'));
-        
+        $sec00->addChild($this->createParagraph(''
+                . 'Assuming that we have created a route to our upload API and '
+                . 'the route is "apis/upload-files", The frond end code would '
+                . 'be like the following:'
+                . ''));
+        $code01 = new CodeSnippet();
+        $code01->setTitle('PHP Code (Front End)');
+        $sec00->addChild($code01);
+        $code01->setCode(""
+                . "use webfiori\entity\Page;\n"
+                . "use use phpStructs\html\HTMLNode;\n"
+                . "use phpStructs\html\Input;\n"
+                . "\n"
+                . "class UploadView{\n"
+                . "    __construct(){\n"
+                . "        \$form = new HTMLNode();\n"
+                . "        Page::insert(\$form);\n"
+                . "        //assume that upload API exist in the URL apis\upload-files\n"
+                . "        \$form->setAttributes([\n"
+                . "            'method'=>'post'\n"
+                . "            'action'=>'apis/upload-files'\n"
+                . "            'enctype'=>'multipart/form-data'\n"
+                . "        ]);\n"
+                . "        "
+                . "        \$filesInput = new Input('file');\n"
+                . "        \$form->addChild(\$filesInput);\n"
+                . "        //The attribute name must be set to the value which\n"
+                . "        // is passed to the method Uploader::setAssociatedFileName()\n"
+                . "        \$file->setName('files-input')\n"
+                . "        \n"
+                . "        \$submit = new Input('submit');\n"
+                . "        \$form->addChild(\$submit);\n"
+                . "        \n"
+                . "        Page::render();\n"
+                . "    }\n"
+                . "}\n"
+                . "return __NAMESPACE__\n"
+                . "");
         Page::insert($sec00);
         $sec01 = $this->createSection('Uploading Multiple Files',4);
+        $sec01->addChild($this->createParagraph(''
+                . 'The code which is used to upload multiple files at one call '
+                . 'is the same as the one which is used to upload one file. The '
+                . 'diffrence is that we have to set the attribute \'multiple\' of '
+                . 'the file input element and set the name to a syntax which '
+                . 'looks like an array as following:'
+                . ''
+                . ''));
+        $code02 = new CodeSnippet();
+        $code02->setTitle('PHP Code');
+        $sec01->addChild($code02);
+        $code02->setCode(""
+                . "\$file->setAttribute('multiple')\n"
+                . "\$file->setName('files-input[]')\n"
+                . "");
         Page::insert($sec01);
-        $sec02 = $this->createSection('Get MIME Type of File Given its Extension',4);
-        Page::insert($sec02);
+        //$sec02 = $this->createSection('Get MIME Type of File Given its Extension',4);
+        //Page::insert($sec02);
         $this->displayView();
     }
 }
