@@ -35,7 +35,7 @@ class ClassUploaderView extends UploadLearnView{
         ]);
         Page::insert($ul00);
         $this->setPrevTopicLink('learn/topics/file-upload', 'Introduction');
-        $this->setNextTopicLink('learn/topics/file-upload/example', 'Usage Examples');
+        $this->setNextTopicLink('learn/topics/file-upload/example', 'Usage Example');
         $this->displayView();
     }
 }
