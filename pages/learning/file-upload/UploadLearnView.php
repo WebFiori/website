@@ -27,7 +27,7 @@ class UploadLearnView extends LearnView{
                 'link'=>'learn/topics/file-upload/class-Uploader'
             ],
             [
-                'label'=>'Usage Examples',
+                'label'=>'Usage Example',
                 'link'=>'learn/topics/file-upload/example'
             ]
         ];
