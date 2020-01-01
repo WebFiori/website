@@ -14,7 +14,7 @@ use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use webfiori\entity\Page;
 /**
- * Description of WebFioriV108
+ * WebFiori Theme Which is bundled with v1.0.8 of the framework.
  *
  * @author Ibrahim
  */
@@ -24,6 +24,8 @@ class WebFioriV108 extends APITheme{
         $this->setVersion('1.0');
         $this->setAuthor('Ibrahim');
         $this->setName('WebFiori V108');
+        $this->setLicenseName('MIT License');
+        $this->setLicenseUrl('https://opensource.org/licenses/MIT');
         $this->setDirectoryName('webfiori-v1.0.8');
         $this->setAfterLoaded(function(){
             Page::document()->getChildByID('page-body')->setClassName('row  ml-0 mr-0');
