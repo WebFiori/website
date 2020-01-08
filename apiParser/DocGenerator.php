@@ -329,8 +329,10 @@ class DocGenerator {
         $this->linksArr['float'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.float.php" target="_blank">float</a>';
         $this->linksArr['double'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.float.php" target="_blank">double</a>';
         $this->linksArr['resource'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.resource.php" target="_blank">resource</a>';
-        $this->linksArr['iterable'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.iterable.php" target="_blank">iterable</a>';
+        $this->linksArr['Iterable'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.iterable.php" target="_blank">iterable</a>';
         $this->linksArr['object'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.object.php" target="_blank">object</a>';
+        $this->linksArr['Iterator'] = '<a class="datatype-name" href="https://www.php.net/manual/en/class.iterator.php">Iterator</a>';
+        $this->linksArr['Countable'] = '<a class="datatype-name" href="https://www.php.net/manual/en/class.countable.php">Countable</a>';
         $base = $this->getBaseURL();
         foreach ($this->apiReadersArr as $apiReader){
             $namespaceLink = $apiReader->getNamespace();
