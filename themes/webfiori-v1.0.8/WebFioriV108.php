@@ -278,7 +278,7 @@ class WebFioriV108 extends APITheme{
         $mainLinksUl->setClassName('navbar-nav justify-content-center');
         $mainLinksUl->addListItems([
             '<a href="download" class="nav-link">Download</a>',
-            '<a href="docs" class="nav-link">API Docs</a>',
+            '<a href="docs/webfiori" class="nav-link">API Docs</a>',
             '<a href="learn" class="nav-link">Learn</a>',
             '<a href="contribute" class="nav-link">Contribute</a>'
         ], false);
@@ -388,7 +388,7 @@ class WebFioriV108 extends APITheme{
             foreach ($nsArr as $nsName){
                 $cNode = new HTMLNode();
                 $cNode->setClassName('row ml-2 border-left border-top border-right border-bottom');
-                $link = new LinkNode(str_replace('\\', '/', $nsName), $nsName);
+                $link = new LinkNode($this->getBaseURL().str_replace('\\', '/', $nsName), $nsName);
                 $link->setClassName('attribute-name col-12');
                 $cNode->addChild($link);
                 $subNsNode->addChild($cNode);
@@ -406,7 +406,7 @@ class WebFioriV108 extends APITheme{
             foreach ($interfaces as $interface){
                 $cNode = new HTMLNode();
                 $cNode->setClassName('row ml-2 border-left border-top border-right border-bottom');
-                $link = new LinkNode(str_replace('\\', '/', trim($this->getName(),'\\')).'/'.$interface->getName(), $interface->getName());
+                $link = new LinkNode($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interface->getName(), $interface->getName());
                 $link->setClassName('description attribute-name col-12');
                 $cNode->addChild($link);
                 $descNode = new PNode();
@@ -429,7 +429,7 @@ class WebFioriV108 extends APITheme{
                 $cNode = new HTMLNode();
                 $cNode->setClassName('block');
                 $cNode->setClassName('row ml-2 border-left border-top border-right border-bottom');
-                $link = new LinkNode(str_replace('\\', '/', trim($this->getName(),'\\')).'/'.$class->getName(), $class->getName());
+                $link = new LinkNode($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$class->getName(), $class->getName());
                 $link->setClassName('description attribute-name col-12');
                 $cNode->addChild($link);
                 $descNode = new PNode();
