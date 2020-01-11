@@ -156,7 +156,7 @@ class ClosureRoutes {
                 $f->setPath(ROOT_DIR.'/res/release');
                 $f->view(TRUE);
         }]);
-        Router::get()->setOnNotFound(function(){
+        Router::setOnNotFound(function(){
             new \webfiori\views\NotFound();
         });
         Router::closure([
