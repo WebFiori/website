@@ -63,6 +63,20 @@ class ClosureRoutes {
         }
         ]);
         Router::closure([
+            'path'=>'/docs',
+            'route-to'=>function(){
+                header('location: '.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori');
+            }
+        ]);
+        Router::closure([
+            'path'=>'/downloads/webfiori-v1.0.8-stable', 
+            'route-to'=>function(){
+                $f = new File();
+                $f->setName('webfiori-1.0.8-stable.zip');
+                $f->setPath(ROOT_DIR.'/res/release');
+                $f->view(TRUE);
+        }]);
+        Router::closure([
             'path'=>'/downloads/webfiori-v1.0.7-stable', 
             'route-to'=>function(){
                 $f = new File();
