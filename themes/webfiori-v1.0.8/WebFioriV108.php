@@ -13,6 +13,7 @@ use phpStructs\html\ListItem;
 use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use webfiori\entity\Page;
+use phpStructs\html\JsCode;
 /**
  * WebFiori Theme Which is bundled with v1.0.8 of the framework.
  *
@@ -238,6 +239,14 @@ class WebFioriV108 extends APITheme{
         $head->addJs('https://code.jquery.com/jquery-3.4.1.slim.min.js',false);
         $head->addJs('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js', false);
         $head->addJs('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js',false);
+        $head->addJs("https://www.googletagmanager.com/gtag/js?id=UA-91825602-1", ['async'=>'']);
+        $jsCode = new JsCode();
+        $jsCode->addCode("window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-91825602-1');");
+        $head->addChild($jsCode);
         return $head;
     }
 
