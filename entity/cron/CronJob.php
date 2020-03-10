@@ -28,9 +28,15 @@ use Exception;
  * A class thar represents a cron job.
  *
  * @author Ibrahim
- * @version 1.0.5
+ * @version 1.0.6
  */
 class CronJob {
+    /**
+     * A boolean which is set to true if the job is forced to execute.
+     * @var boolean 
+     * @since 1.0.6
+     */
+    private $isForced;
     /**
      * A constant that indicates a sub cron expression is of type 'range'.
      * @since 1.0
@@ -149,6 +155,25 @@ class CronJob {
         else{
             $this->cron();
         }
+        $this->setIsForced(false);
+    }
+    /**
+     * Sets the value of the property which is used to check if the job is 
+     * forced to execute or not.
+     * @param boolean $bool True or false.
+     * @since 1.0.6
+     */
+    public function setIsForced($bool) {
+        $this->isForced = $bool === true;
+    }
+    /**
+     * Checks if the job is forced to execute or not.
+     * @return boolean If the job was forced to execute, the method will return 
+     * true. Other than that, it will return false.
+     * @since 1.0.6
+     */
+    public function isForced() {
+        return $this->isForced;
     }
     /**
      * Adds new execution attribute.
@@ -307,7 +332,16 @@ class CronJob {
             return $this->_weeklyOn(self::WEEK_DAYS[$uDayName], $time);
         }
         else{
-            if(gettype($dayNameOrNum) == 'integer' && $dayNameOrNum >= 0 && $dayNameOrNum <= 6){
+            if(gettype($dayNameOrNum) == 'string'){
+                $trimmed = trim($dayNameOrNum);
+                if(in_array($trimmed, ['0','1','2','3','4','5','6'])){
+                    $dayNameOrNum = intval($trimmed);
+                }
+                else{
+                    return false;
+                }
+            }
+            if($dayNameOrNum >= 0 && $dayNameOrNum <= 6){
                 return $this->_weeklyOn($dayNameOrNum, $time);
             }
         }
@@ -327,7 +361,18 @@ class CronJob {
      * @since 1.0
      */
     public function onMonth($monthNameOrNum='jan',$dayNum=1,$time='00:00'){
-        if(gettype($dayNum) == 'integer' && $dayNum >= 1 && $dayNum <= 31){
+        if(gettype($dayNum) == 'string'){
+            $trimmed = trim($dayNum);
+            if(in_array($trimmed, ['0','1','2','3','4','5','6','7','8','9',
+                '10','11','12','13','14','15','16','17','18','19',
+                '20','21','22','23','24','25','26','27','28','29','30','31'])){
+                $dayNum = intval($trimmed);
+            }
+            else{
+                return false;
+            }
+        }
+        if($dayNum >= 1 && $dayNum <= 31){
             $timeSplit = explode(':', $time);
             if(count($timeSplit) == 2){
                 $hour = intval($timeSplit[0]);
@@ -339,7 +384,14 @@ class CronJob {
                         return $this->cron($minute.' '.$hour.' '.$dayNum.' '.$monthNum.' *');
                     }
                     else{
-                        if(gettype($monthNameOrNum) == 'integer' && $monthNameOrNum >= 1 && $monthNameOrNum <= 12){
+                        $trimmed = trim($monthNameOrNum);
+                        if(in_array($trimmed, ['12','1','2','3','4','5','6','7','8','9','10','11'])){
+                            $monthNameOrNum = intval($trimmed);
+                        }
+                        else{
+                            return false;
+                        }
+                        if($monthNameOrNum >= 1 && $monthNameOrNum <= 12){
                             return $this->cron($minute.' '.$hour.' '.$dayNum.' '.$monthNameOrNum.' *');
                         }
                     }
@@ -1086,14 +1138,23 @@ class CronJob {
                 $this->isSuccess = $isSuccess === true || $isSuccess === null;
             } 
             catch (Exception $ex) {
+                Cron::log('Job failed to complete due to an exception.');
+                Cron::log('Exception message: "'.$ex->getMessage().'"');
+                Cron::log('Thrown in file: "'.$ex->getFile().'"');
+                Cron::log('Line: "'.$ex->getLine().'"');
                 $this->isSuccess = false;
             }
             if(!$this->isSuccess()){
                 try{
+                    Cron::log('Execiting on fail callback...');
                     call_user_func($this->events['on-failure']['func'], $this->events['on']['params']);
+                    Cron::log('Finished.');
                 } 
                 catch (Exception $ex) {
-                    
+                    Cron::log('An exception is thrown by the on-fail callback.');
+                    Cron::log('Exception message: "'.$ex->getMessage().'"');
+                    Cron::log('Thrown in file: "'.$ex->getFile().'"');
+                    Cron::log('Line: "'.$ex->getLine().'"');
                 }
             }
             $retVal = true;
