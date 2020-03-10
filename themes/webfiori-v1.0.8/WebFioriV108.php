@@ -8,7 +8,7 @@ use webfiori\apiParser\NameSpaceAPI;
 use webfiori\apiParser\FunctionDef;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\HeadNode;
-use phpStructs\html\LinkNode;
+use phpStructs\html\Anchor;
 use phpStructs\html\ListItem;
 use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
@@ -154,7 +154,7 @@ class WebFioriV108 extends APITheme{
                     $linkLabel = isset($listItem['label']) ? $listItem['label'] : 'Item_Lbl';
                     $itemLink = isset($listItem['link']) ? $listItem['link'] : '#';
                     $isActive = isset($listItem['is-active']) && $listItem['is-active'] === true ? true : false;
-                    $linkNode = new LinkNode($itemLink, $linkLabel);
+                    $linkNode = new Anchor($itemLink, $linkLabel);
                     $linkNode->setClassName('dropdown-item');
                     $subItemsContainer->addChild($linkNode);
                     if($isActive === true){
@@ -264,7 +264,7 @@ class WebFioriV108 extends APITheme{
         $logo->setID('main-logo');
         $logo->setAttribute('src', Page::imagesDir().'/favicon.png');
         $logo->setAttribute('alt', 'logo');
-        $logoLink = new LinkNode(WebFiori::getSiteConfig()->getHomePage(), $logo->toHTML());
+        $logoLink = new Anchor(WebFiori::getSiteConfig()->getHomePage(), $logo->toHTML());
         $logoLink->setClassName('navbar-brand ml-3');
         $mainNav->addChild($logoLink);
         
@@ -397,7 +397,7 @@ class WebFioriV108 extends APITheme{
             foreach ($nsArr as $nsName){
                 $cNode = new HTMLNode();
                 $cNode->setClassName('row ml-2 border-left border-top border-right border-bottom');
-                $link = new LinkNode($this->getBaseURL().str_replace('\\', '/', $nsName), $nsName);
+                $link = new Anchor($this->getBaseURL().str_replace('\\', '/', $nsName), $nsName);
                 $link->setClassName('attribute-name col-12');
                 $cNode->addChild($link);
                 $subNsNode->addChild($cNode);
@@ -415,7 +415,7 @@ class WebFioriV108 extends APITheme{
             foreach ($interfaces as $interface){
                 $cNode = new HTMLNode();
                 $cNode->setClassName('row ml-2 border-left border-top border-right border-bottom');
-                $link = new LinkNode($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interface->getName(), $interface->getName());
+                $link = new Anchor($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interface->getName(), $interface->getName());
                 $link->setClassName('description attribute-name col-12');
                 $cNode->addChild($link);
                 $descNode = new PNode();
@@ -438,7 +438,7 @@ class WebFioriV108 extends APITheme{
                 $cNode = new HTMLNode();
                 $cNode->setClassName('block');
                 $cNode->setClassName('row ml-2 border-left border-top border-right border-bottom');
-                $link = new LinkNode($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$class->getName(), $class->getName());
+                $link = new Anchor($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$class->getName(), $class->getName());
                 $link->setClassName('description attribute-name col-12');
                 $cNode->addChild($link);
                 $descNode = new PNode();
