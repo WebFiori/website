@@ -34,7 +34,7 @@ class DownloadView extends WebFioriPage{
     private function _stableDownloads() {
         $sec = $this->createSection('Stable Releases',3);
         $sec->addChild($this->createParagraph('The latest release of the framework is version '
-                . '1.0.8. You can click <a href="downloads/webfiori-v1.0.8-stable">here</a> in order to start the '
+                . '1.0.9. You can click <a href="downloads/webfiori-v1.0.9-stable">here</a> in order to start the '
                 . 'download process.'));
         Page::insert($sec);
     }
@@ -44,6 +44,7 @@ class DownloadView extends WebFioriPage{
                 . 'not good option for production and might have bugs.'));
         $ul = new UnorderedList();
         $ul->addListItems(array(
+            '<a href="downloads/webfiori-v1.0.8-stable">WebFiori v1.0.8 Stable</a>',
             '<a href="downloads/webfiori-v1.0.7-stable">WebFiori v1.0.7 Stable</a>',
             '<a href="downloads/webfiori-v1.0.6-stable">WebFiori v1.0.6 Stable</a>',
             '<a href="downloads/webfiori-v1.0.5-stable">WebFiori v1.0.5 Stable</a>',
