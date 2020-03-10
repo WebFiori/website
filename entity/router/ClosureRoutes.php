@@ -56,8 +56,8 @@ class ClosureRoutes {
                 'base-url'=> 'https://programmingacademia.com/webfiori/docs',
                 'theme'=>'WebFiori V108',
                 'site-name'=>'WebFiori API Docs',
-                'output-path'=>'C:\\Server\\apache2\\htdocs\\webfiori-docs\\pages\\apis-1.0.8',
-                'route-root-folder'=>'apis-1.0.8',
+                'output-path'=>'C:\\Server\\apache2\\htdocs\\webfiori-docs\\pages\\apis-1.0.9',
+                'route-root-folder'=>'apis-1.0.9',
                 'is-dynamic'=>true
             ));
         }
@@ -68,6 +68,14 @@ class ClosureRoutes {
                 header('location: '.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori');
             }
         ]);
+        Router::closure([
+            'path'=>'/downloads/webfiori-v1.0.9-stable', 
+            'route-to'=>function(){
+                $f = new File();
+                $f->setName('webfiori-1.0.9-stable.zip');
+                $f->setPath(ROOT_DIR.'/res/release');
+                $f->view(TRUE);
+        }]);
         Router::closure([
             'path'=>'/downloads/webfiori-v1.0.8-stable', 
             'route-to'=>function(){
