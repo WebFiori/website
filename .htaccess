@@ -10,7 +10,7 @@ RewriteCond %{HTTP:Authorization} ^(.*)
 RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
 
 #disable opcache
-#php_flag opcache.enable Off
+php_flag opcache.enable Off
 
 #allow CORS. Be careful here.
 <IfModule mod_headers.c>

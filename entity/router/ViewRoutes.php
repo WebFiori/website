@@ -205,6 +205,11 @@ class ViewRoutes {
             'path'=>'/learn/topics/routing/examples', 
             'route-to'=>'/learning/routing/RoutingExamplesView.php'
         ]);
+        Router::view([
+            'path'=>'learn/topics/routing/questions-and-answers',
+            'route-to'=>'learning/routing/RoutingQA.php'
+        ]);
+        
         //theme creation tutorials
         Router::view([
             'path'=>'/learn/topics/themes', 
@@ -242,6 +247,7 @@ class ViewRoutes {
             'path'=>'/learn/topics/themes/the-method-createHTMLNode', 
             'route-to'=>'/learning/themes/MethodCreateNodeView.php'
         ]);
+        
         //sending emails
         Router::view([
             'path'=>'learn/topics/mailing',
@@ -271,6 +277,36 @@ class ViewRoutes {
         Router::view([
             'path'=>'learn/topics/file-upload/example',
             'route-to'=>'learning/file-upload/UploadExampleView.php'
+        ]);
+        
+        //cron and background jobs
+        Router::view([
+            'path'=>'learn/topics/jobs-scheduling',
+            'route-to'=>'learning/cron/Index.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/jobs-scheduling/main-classes',
+            'route-to'=>'learning/cron/CronClasses.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/jobs-scheduling/job-as-closure',
+            'route-to'=>'learning/cron/JobAsClosure.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/jobs-scheduling/job-implementation',
+            'route-to'=>'learning/cron/ImplementingJob.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/jobs-scheduling/executing-jobs',
+            'route-to'=>'learning/cron/ExecutingJobs.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/jobs-scheduling/args',
+            'route-to'=>'learning/cron/JobArgs.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/jobs-scheduling/questions-and-answers',
+            'route-to'=>'learning/cron/QuestionsAndAnswers.php'
         ]);
     }
 }

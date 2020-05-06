@@ -68,6 +68,7 @@ class VariablesInRoutes extends RoutingLearnView{
 }
     ");
         $sec3->addChild($code03);
+        $this->setNextTopicLink('learn/topics/routing/questions-and-answers', 'Q&A About Routing');
         $this->setPrevTopicLink('learn/topics/routing/types-of-routes', 'Types of Routes');
         $this->displayView();
     }

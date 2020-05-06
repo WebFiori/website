@@ -12,6 +12,22 @@ use phpStructs\html\PNode;
  * @author Ibrahim
  */
 class WebFioriPage {
+    /**
+     * Creates new instance of the class.
+     * @param array $options An associative array of options. 
+     * Available options are:
+     * <ul>
+     * <li><b>title</b>: The title of the page. If not provided, the value 
+     * 'WebFiori Page' is used.<li>
+     * <li><b>description</b>: The description of the page. If not provided, 
+     * the global description which is stored in the class 'SiteConfig' is 
+     * used.<li>
+     * <li><b>site-name</b>: The name of the website. If not provided, 
+     * the global website which is stored in the class 'SiteConfig' is 
+     * used.<li>
+     * <li><b>canonical</b>: The canonical link of the page.<li>
+     * </ul>
+     */
     public function __construct($options=array()) {
         Page::theme('WebFiori V108');
         if(isset($options['title'])){
@@ -101,6 +117,35 @@ class WebFioriPage {
             }
         }
         return $sec;
+    }
+    /**
+     * 
+     * @param string $title
+     * @param string $ans
+     * @return HTMLNode
+     */
+    public function createQuestionBox($title, $ans) {
+        $questionSec = $this->createSection($title, 4);
+        $questionSec->setClassName('question-box', false);
+        $questionSec->setAttributes([
+            'itemscope', 
+            'itemtype'=>"http://schema.org/Question"
+        ]);
+        $questionSec->getChild(0)->setAttribute('itemprop', 'name');
+        $answerBox = new HTMLNode();
+        $answerBox->setAttributes([
+            'itemprop'=>"suggestedAnswer acceptedAnswer",
+            'itemscope',
+            'itemtype'=>"http://schema.org/Answer"
+        ]);
+        $answerBox->setClassName('answer-box');
+        $answerTxt = new HTMLNode();
+        $answerTxt->setClassName('answer-text');
+        $answerTxt->setAttribute('itemprop',"text");
+        $answerBox->addChild($answerTxt);
+        $answerBox->addTextNode($ans, false);
+        $questionSec->addChild($answerBox);
+        return $questionSec;
     }
     /**
      * Creates a generic HTMLNode based on the loaded theme.
