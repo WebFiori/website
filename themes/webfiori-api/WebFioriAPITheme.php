@@ -3,7 +3,7 @@ use webfiori\WebFiori;
 use webfiori\entity\Page;
 use phpStructs\html\JsCode;
 use phpStructs\html\ListItem;
-use phpStructs\html\LinkNode;
+use phpStructs\html\Anchor;
 use phpStructs\html\HeadNode;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
@@ -53,22 +53,22 @@ class WebFioriAPITheme extends APITheme{
             $mainMenu = Page::document()->getChildByID('main-menu');
 
             $item1 = new ListItem();
-            $link1 = new LinkNode($this->getBaseURL().'download', $translation->get('menus/main-menu/menu-item-1'));
+            $link1 = new Anchor($this->getBaseURL().'download', $translation->get('menus/main-menu/menu-item-1'));
             $item1->addChild($link1);
             $mainMenu->addChild($item1);
 
             $item2 = new ListItem();
-            $link2 = new LinkNode($this->getBaseURL().'docs/webfiori', $translation->get('menus/main-menu/menu-item-2'));
+            $link2 = new Anchor($this->getBaseURL().'docs/webfiori', $translation->get('menus/main-menu/menu-item-2'));
             $item2->addChild($link2);
             $mainMenu->addChild($item2);
 
             $item3 = new ListItem();
-            $link3 = new LinkNode($this->getBaseURL().'learn', $translation->get('menus/main-menu/menu-item-3'));
+            $link3 = new Anchor($this->getBaseURL().'learn', $translation->get('menus/main-menu/menu-item-3'));
             $item3->addChild($link3);
             $mainMenu->addChild($item3);
             
             $item4 = new ListItem();
-            $link4 = new LinkNode($this->getBaseURL().'contribute', $translation->get('menus/main-menu/menu-item-4'));
+            $link4 = new Anchor($this->getBaseURL().'contribute', $translation->get('menus/main-menu/menu-item-4'));
             $item4->addChild($link4);
             $mainMenu->addChild($item4);
 
@@ -206,7 +206,7 @@ class WebFioriAPITheme extends APITheme{
         $img->setClassName('pa-'.Page::dir().'-col-1-np-nm');
         $img->setID('logo');
         $img->setWritingDir(Page::dir());
-        $link = new LinkNode(WebFiori::getSiteConfig()->getHomePage(), '');
+        $link = new Anchor(WebFiori::getSiteConfig()->getHomePage(), '');
         $link->addChild($img);
         $headerSec->addChild($link);
         $langCode = 'EN';
@@ -411,7 +411,7 @@ class WebFioriAPITheme extends APITheme{
                 foreach ($nsArr as $nsName){
                     $cNode = WebFioriAPIGUI::createRowNode(FALSE, FALSE);
                     $cNode->setClassName('class-row '.$cNode->getAttributeValue('class'));
-                    $link = new LinkNode($this->getBaseURL(). str_replace('\\', '/', $nsName), $nsName);
+                    $link = new Anchor($this->getBaseURL(). str_replace('\\', '/', $nsName), $nsName);
                     $cNode->addChild($link);
                     $nsNode->addChild($cNode);
                 }
@@ -427,7 +427,7 @@ class WebFioriAPITheme extends APITheme{
                 foreach ($interfaces as $interface){
                     $cNode = WebFioriAPIGUI::createRowNode(FALSE, FALSE);
                     $cNode->setClassName('class-row '.$cNode->getAttributeValue('class'));
-                    $link = new LinkNode($this->getBaseURL(). str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interface->getName(), $interface->getName());
+                    $link = new Anchor($this->getBaseURL(). str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interface->getName(), $interface->getName());
                     $cNode->addChild($link);
                     $descNode = new PNode();
                     $descNode->addText($interface->getSummary());
@@ -446,7 +446,7 @@ class WebFioriAPITheme extends APITheme{
                 foreach ($classes as $class){
                     $cNode = WebFioriAPIGUI::createRowNode(FALSE, FALSE);
                     $cNode->setClassName('class-row '.$cNode->getAttributeValue('class'));
-                    $link = new LinkNode($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$class->getName(), $class->getName());
+                    $link = new Anchor($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$class->getName(), $class->getName());
                     $cNode->addChild($link);
                     $descNode = new PNode();
                     $descNode->addText($class->getSummary(),FALSE);
