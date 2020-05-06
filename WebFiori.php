@@ -272,29 +272,28 @@ class WebFiori{
                 fprintf(STDERR, "Error File       %5s %s\n",":",$errfile);
                 fprintf(STDERR, "Error Line:      %5s %s\n",":",$errline);
             }
-            else{
-                if(defined('API_CALL')){
-                    header("HTTP/1.1 500 Server Error");
-                    $j = new JsonX();
-                    $j->add('message',$errstr);
-                    $j->add('type',Util::ERR_TYPES[$errno]['type']);
-                    $j->add('description', Util::ERR_TYPES[$errno]['description']);
-                    $j->add('error-number',$errno);
-                    $j->add('file',$errfile);
-                    $j->add('line',$errline);
-                    header('content-type: application/json');
-                    die($j);
-                }
-                else{
-                    $errBox = new ErrorBox();
-                    $errBox->setError($errno);
-                    $errBox->setDescription($errno);
-                    $errBox->setFile($errfile);
-                    $errBox->setMessage($errstr);
-                    $errBox->setLine($errline);
-                    echo $errBox;
-                }
+            else if(defined('API_CALL')){
+                header("HTTP/1.1 500 Server Error");
+                $j = new JsonX();
+                $j->add('message',$errstr);
+                $j->add('type',Util::ERR_TYPES[$errno]['type']);
+                $j->add('description', Util::ERR_TYPES[$errno]['description']);
+                $j->add('error-number',$errno);
+                $j->add('file',$errfile);
+                $j->add('line',$errline);
+                header('content-type: application/json');
+                die($j);
             }
+            else{
+                $errBox = new ErrorBox();
+                $errBox->setError($errno);
+                $errBox->setDescription($errno);
+                $errBox->setFile($errfile);
+                $errBox->setMessage($errstr);
+                $errBox->setLine($errline);
+                echo $errBox;
+            }
+            
             return true;
         });
         set_exception_handler(function($ex){
@@ -626,5 +625,14 @@ if(CLI::isCLI() === true){
 }
 else{
     //route user request.
+    $base = Router::getBase();
+    $requested = Util::getRequestedURL();
+    $pathPart = substr($requested, strlen($base), strlen($requested));
+    //Util::print_r($base);
+    if($base == 'https://programmingacademia.com/webfiori'){
+        http_response_code(301);
+        header('location: https://webfiori.com'.$pathPart);
+        die();
+    }
     Router::route(Util::getRequestedURL());
 }
