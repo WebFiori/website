@@ -1,16 +1,9 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace webfiori\views\learn;
 use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
 use phpStructs\html\HTMLNode;
-use phpStructs\html\LinkNode;
+use phpStructs\html\Anchor;
 /**
  * Description of LearnView
  *
@@ -50,13 +43,13 @@ abstract class LearnView extends WebFioriPage{
     }
     public function setNextTopicLink($link,$title) {
         $this->nextTopicLink = new HTMLNode();
-        $linkNode = new LinkNode($link,$title);
+        $linkNode = new Anchor($link,$title);
         $this->nextTopicLink->addTextNode('<b>Next: </b>',false);
         $this->nextTopicLink->addChild($linkNode);
     }
     public function setPrevTopicLink($link,$title) {
         $this->prevTopicLink = new HTMLNode();
-        $linkNode = new LinkNode($link,$title);
+        $linkNode = new Anchor($link,$title);
         $this->prevTopicLink->addTextNode('<b>Previous: </b>',false);
         $this->prevTopicLink->addChild($linkNode);
     }

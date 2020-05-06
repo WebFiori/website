@@ -2,7 +2,7 @@
 namespace webfiori\views;
 use webfiori\entity\Page;
 use phpStructs\html\UnorderedList;
-use phpStructs\html\LinkNode;
+use phpStructs\html\Anchor;
 use phpStructs\html\HTMLNode;
 /**
  * Description of ContributeView

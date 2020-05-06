@@ -1,10 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 namespace webfiori\views;
 use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
@@ -13,7 +7,6 @@ use phpStructs\html\PNode;
 use webfiori\WebFiori;
 use phpStructs\html\UnorderedList;
 use phpStructs\html\ListItem;
-use phpStructs\html\LinkNode;
 /**
  * Description of DownloadView
  *
@@ -21,7 +14,6 @@ use phpStructs\html\LinkNode;
  */
 class DownloadView extends WebFioriPage{
     public function __construct() {
-        parent::__construct();
         parent::__construct(array(
             'title'=>'Download',
             'description'=>'Download options of WebFiori Framework.'
@@ -34,7 +26,7 @@ class DownloadView extends WebFioriPage{
     private function _stableDownloads() {
         $sec = $this->createSection('Stable Releases',3);
         $sec->addChild($this->createParagraph('The latest release of the framework is version '
-                . '1.0.9. You can click <a href="downloads/webfiori-v1.0.9-stable">here</a> in order to start the '
+                . '1.1.0. You can click <a href="downloads/webfiori-v1.1.0-stable">here</a> in order to start the '
                 . 'download process.'));
         Page::insert($sec);
     }
@@ -44,6 +36,7 @@ class DownloadView extends WebFioriPage{
                 . 'not good option for production and might have bugs.'));
         $ul = new UnorderedList();
         $ul->addListItems(array(
+            '<a href="downloads/webfiori-v1.0.9-stable">WebFiori v1.0.9 Stable</a>',
             '<a href="downloads/webfiori-v1.0.8-stable">WebFiori v1.0.8 Stable</a>',
             '<a href="downloads/webfiori-v1.0.7-stable">WebFiori v1.0.7 Stable</a>',
             '<a href="downloads/webfiori-v1.0.6-stable">WebFiori v1.0.6 Stable</a>',
@@ -66,4 +59,4 @@ class DownloadView extends WebFioriPage{
         Page::insert($sec);
     }
 }
-new DownloadView();
+return __NAMESPACE__;

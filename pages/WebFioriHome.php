@@ -1,11 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace webfiori\views;
 use webfiori\entity\Page;
 use webfiori\views\WebFioriPage;
@@ -36,7 +29,7 @@ class WebFioriHome extends WebFioriPage{
         $this->createSec1();
         $this->createSec4();
         $this->createSec2();
-        $this->createSec3();
+        //$this->createSec3();
         Page::render();
     }
     public function createSec4() {
@@ -44,6 +37,10 @@ class WebFioriHome extends WebFioriPage{
         $sec->addChild($this->createParagraph('Please go to <a href="'.WebFiori::getSiteConfig()->getBaseURL().'download">downloads page</a> to check the available '
                 . 'download options. After completing the download process, you can '
                 . 'go to <a href="learn" >learning center</a> in order to get started.'));
+        $sec->addChild($this->createParagraph('In addition to the pre-made package, you can use '
+                . 'composer to download the framework and its dependencies. just issue the '
+                . 'following composer command to download the framework:'));
+        $sec->addChild($this->createParagraph('<code>composer require webfiori/framework</code>'));
         Page::insert($sec);
     }
     public function createSec2(){
@@ -90,27 +87,30 @@ class WebFioriHome extends WebFioriPage{
                 . 'force it. The framework comes with many features which can '
                 . 'help in making your website or web application up and running '
                 . 'in no time. Some of the key features are:'));
+        
         $ul = new UnorderedList();
-        $ul->addListItem('Theming and the ability to create multiple UIs for the same web page using any CSS or JavaScript framework.');
-        $ul->addListItem('Support for routing that makes the ability of creating search-'
-                . 'engine-friendly links an easy task.');
-        $ul->addListItem('Creation of web APIs that supports JSON, data filtering and '
-                . 'validation.');
-        $ul->addListItem('Basic support for MySQL schema and query building.');
-        $ul->addListItem('Lightweight. The total size of framework core files is '
-                . 'less than 3 megabytes.');
-        $ul->addListItem('Access management by assigning system user a set '
-                . 'of privileges.');
-        $ul->addListItem('The ability to create and manage multiple '
-                . 'sessions at once.');
-        $ul->addListItem('Support for creating and sending nice-looking emails in a simple way by using SMTP '
-                . 'protocol.');
-        $ul->addListItem('Autoloading of user defined classes.');
-        $ul->addListItem('The ability to create automatic tasks and let them '
-                . 'run in specific time using CRON.');
-        $ul->addListItem('Support for logging of system events.');
-        $ul->addListItem('Well-defined file upload and file handling sub-system.');
-        $ul->addListItem('Building and manipulating the DOM of a web page using PHP language.');
+        $ul->addListItems([
+            'Theming and the ability to create multiple UIs for the same web page using any CSS or JavaScript framework.',
+            'Support for routing that makes the ability of creating search-'
+                . 'engine-friendly links an easy task.',
+            'Creation of web APIs that supports JSON, data filtering and '
+                . 'validation.',
+            'Basic support for MySQL schema and query building.',
+            'Lightweight. The total size of framework core files is '
+                . 'less than 3 megabytes.',
+            'Access management by assigning system user a set '
+                . 'of privileges.',
+            'The ability to create and manage multiple '
+                . 'sessions at once.',
+            'Support for creating and sending nice-looking emails in a simple way by using SMTP '
+                . 'protocol.',
+            'Autoloading of user defined classes in addition to composer packages.',
+            'The ability to create background tasks and let them '
+                . 'run automatically.',
+            'Well-defined file upload and file handling sub-system.',
+            'Building and manipulating the DOM of a web page using PHP.',
+            'Ability to create custom command line interface (CLI) commands.'
+        ]);
         $sec->addChild($ul);
         Page::insert($sec);
     }

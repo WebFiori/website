@@ -35,16 +35,20 @@ class Index extends IntroLearnView{
         $ul = new UnorderedList();
         $sec2->addChild($ul);
         Page::insert($sec2);
-        $ul->addListItem('OOP: Built from scratch to be object-oriented.');
-        $ul->addListItem('Routing: Create friendly URLs.');
-        $ul->addListItem('Theming: Create nice-looking and custom UIs.');
-        $ul->addListItem('Mailing: Sending email messages using SMTP.');
-        $ul->addListItem('Web APIs: Create web APIs for your mobile or web application.');
-        $ul->addListItem('Database Access: Support for MySQL database.');
-        $ul->addListItem('Sessions Management: Manage multiple sessions at once.');
-        $ul->addListItem('Autolading: Ability to load user-defined classes.');
-        $ul->addListItem('User Access Management: A sub-system to manage user privileges.');
-        $ul->addListItem('Tasks Schedualing: Run PHP commands at specific time using CRON.');
+        $ul->addListItems([
+            '<b>OOP:</b> Built from scratch to be object-oriented.',
+            '<b>Routing:</b> Create friendly URLs.',
+            '<b>Theming:</b> Create nice-looking and custom UIs.',
+            '<b>Mailing:</b> Sending email messages using SMTP.',
+            '<b>Web APIs (Services):</b> Create web APIs for your mobile or web application.',
+            '<b>Database Access:</b> Support for MySQL database.',
+            '<b>Sessions Management:</b> Manage multiple sessions at once.',
+            '<b>Autolading:</b> Ability to load user-defined classes and composer packages.',
+            '<b>User Access Management:</b> A sub-system to manage user privileges.',
+            '<b>Background Job Processing:</b> Run PHP commands at specific time in the background.',
+            '<b>Create CLI Command:</b> Extend the functionality of your app by implementing command line '
+            . 'interface commands.'
+        ], false);
         $this->setNextTopicLink('learn/topics/architecture', 'Framework Architecture');
         $this->displayView();
     }

@@ -6,7 +6,7 @@ use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use phpStructs\html\ListItem;
-use phpStructs\html\LinkNode;
+use phpStructs\html\Anchor;
 use WebFioriGUI;
 /**
  * Description of Index
@@ -22,7 +22,7 @@ class Index extends WebFioriPage{
         $titleNode = Page::theme()->createHTMLNode(['type'=>'page-title']);
         Page::insert($titleNode);
         $this->_welcome();
-        $link = new LinkNode('learn/video', 'Video Tutorials');
+        $link = new Anchor('learn/video', 'Video Tutorials');
         Page::insert($link);
         $this->_whatToLearn();
         Page::render();
@@ -44,6 +44,8 @@ class Index extends WebFioriPage{
         $ul->addChild($this->createLinkListItem('learn/topics/themes', 'Creating themes.'));
         $ul->addChild($this->createLinkListItem('learn/topics/file-upload', 'Uploading Files.'));
         $ul->addChild($this->createLinkListItem('learn/topics/mailing', 'Sending Email Messages.'));
+        $ul->addChild($this->createLinkListItem('learn/topics/cli', 'Command Line Interface.'));
+        $ul->addChild($this->createLinkListItem('learn/topics/cron', 'Task Scheduler.'));
         Page::insert($sec);
     }
 }

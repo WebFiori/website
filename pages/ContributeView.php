@@ -2,7 +2,7 @@
 namespace webfiori\views;
 use webfiori\entity\Page;
 use phpStructs\html\UnorderedList;
-use phpStructs\html\LinkNode;
+use phpStructs\html\Anchor;
 /**
  * Description of ContributeView
  *
@@ -26,7 +26,8 @@ class ContributeView extends WebFioriPage{
                 . 'framework as your web development framework. Since the '
                 . 'framework is licensed under MIT license, it is '
                 . 'possible to use the framework even for building '
-                . 'commercial software.'));
+                . 'commercial software without having to worry about any legal things as '
+                . 'long as you follow the terms of the license.'));
         
         $sec2 = $this->createSection('Documentation');
         Page::insert($sec2);
@@ -55,7 +56,7 @@ class ContributeView extends WebFioriPage{
                 . 'using one of the following channels:'
                 . ''));
         $payPalImg = $this->createImag('https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png', 'PayPal Image.');
-        $link = new LinkNode('https://paypal.me/IbrahimBinAlshikh', '', '_blank');
+        $link = new Anchor('https://paypal.me/IbrahimBinAlshikh', '', '_blank');
         $link->addChild($payPalImg);
         $sec4->addChild($link);
         $sec5 = $this->createSection('Contributers and Sponsers');
@@ -72,16 +73,17 @@ class ContributeView extends WebFioriPage{
         $subSec1->addChild($ul1);
         $ul1->addListItems(array(
             '<a href="https://twitter.com/IbrahimBAli2017">Ibrahim BinAlashikh</a> - Founder and Core Developer',
+            '<a href="https://github.com/ibrahimBeladi">Ibrahim Beladi</a> - Contributor',
             '&lt;YOUR NAME HERE &gt;'
-        ),FALSE);
+        ),false);
         $subSec2 = $this->createSection('Sponsers:', 2);
         $sec5->addChild($subSec2);
         $ul2 = new UnorderedList();
         $subSec2->addChild($ul2);
         $ul2->addListItems(array(
             '&lt;YOUR NAME HERE &gt;'
-        ),FALSE);
+        ),false);
         $this->displayView();
     }
 }
-new ContributeView();
+return __NAMESPACE__;

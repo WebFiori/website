@@ -6,7 +6,7 @@ use webfiori\entity\Page;
 use phpStructs\html\PNode;
 use phpStructs\html\ListItem;
 use phpStructs\html\UnorderedList;
-use phpStructs\html\LinkNode;
+use phpStructs\html\Anchor;
 class VideoTut {
     /**
      *
@@ -72,7 +72,7 @@ class VideoTut {
         $activeIndex=0;
         foreach ($linksArr as $link=>$title){
             $li00 = new ListItem();
-            $link00 = new LinkNode($link, $title);
+            $link00 = new Anchor($link, $title);
             $li00->addChild($link00);
             if($activeIndex == $active){
                 $li00->setClassName('aside-nav-item active-aside-item');

@@ -1,16 +1,9 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace webfiori\views;
 use webfiori\entity\Page;
 use webfiori\WebFiori;
 use phpStructs\html\ListItem;
-use phpStructs\html\LinkNode;
+use phpStructs\html\Anchor;
 use phpStructs\html\HTMLNode;
 use phpStructs\html\PNode;
 /**
@@ -64,7 +57,7 @@ class WebFioriPage {
      */
     public function createLinkListItem($link,$label,$target='_self') {
         $li00 = new ListItem();
-        $link00 = new LinkNode($link, $label,$target);
+        $link00 = new Anchor($link, $label,$target);
         $li00->addChild($link00);
         return $li00;
     }

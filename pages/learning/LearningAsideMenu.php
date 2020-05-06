@@ -2,7 +2,7 @@
 namespace webfiori\views\learn;
 use phpStructs\html\UnorderedList;
 use phpStructs\html\ListItem;
-use phpStructs\html\LinkNode;
+use phpStructs\html\Anchor;
 use phpStructs\html\HTMLNode;
 class LearningAsideMenu {
     public static function createAsideNav() {
