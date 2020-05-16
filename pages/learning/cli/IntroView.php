@@ -33,9 +33,13 @@ class IntroView extends CLILearnView{
         $ul = new UnorderedList();
         $sec2->addChild($ul);
         $ul->addListItems([
-            '<a href="learn/topics/cli/setup" >Setup.</a>'
+            '<a href="learn/topics/cli/setup" >Setup</a>',
+            '<a href="learn/topics/cli/running-commands" >Running Commands</a>',
+            '<a href="learn/topics/cli/implementing-custom-commands" >Implementing Custom Commands</a>',
+            '<a href="learn/topics/cli/registered-command" >Commandes Reference</a>',
+            '<a href="learn/topics/cli/questions-and-answers" >Questions and Answers</a>'
             ],false);
-        $this->setNextTopicLink('learn/topics/cli/how-it-works', 'How Routing System Works');
+        $this->setNextTopicLink('learn/topics/cli/setup', 'Setup');
         Page::insert($sec2);
         $this->displayView();
     }
