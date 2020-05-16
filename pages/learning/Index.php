@@ -44,7 +44,7 @@ class Index extends WebFioriPage{
         $ul->addChild($this->createLinkListItem('learn/topics/themes', 'Creating themes.'));
         $ul->addChild($this->createLinkListItem('learn/topics/file-upload', 'Uploading Files.'));
         $ul->addChild($this->createLinkListItem('learn/topics/mailing', 'Sending Email Messages.'));
-        //$ul->addChild($this->createLinkListItem('learn/topics/cli', 'Command Line Interface.'));
+        $ul->addChild($this->createLinkListItem('learn/topics/cli', 'Command Line Interface.'));
         $ul->addChild($this->createLinkListItem('learn/topics/jobs-scheduling', 'Task Scheduler.'));
         Page::insert($sec);
     }
