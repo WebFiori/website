@@ -38,6 +38,10 @@ class CLILearnView extends LearnView{
             [
                 'label'=>'Introduction',
                 'link'=>'learn/topics/cli'
+            ],
+            [
+                'label'=>'Setup',
+                'link'=>'learn/topics/cli/setup'
             ]
         ];
         $linksArr[$this->getAsideActiveLinkNum()]['is-active'] = true;
