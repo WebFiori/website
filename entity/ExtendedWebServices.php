@@ -23,20 +23,26 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity;
-use webfiori\WebFiori;
-use restEasy\WebServices;
-use webfiori\entity\langs\Language;
+
 use jsonx\JsonI;
 use jsonx\JsonX;
+use restEasy\WebServices;
+use webfiori\entity\langs\Language;
+use webfiori\WebFiori;
 /**
  * An extension for the class 'Services' that adds support for multi-language 
  * response messages.
  * The language can be set by sending a GET or POST request that has the 
  * parameter 'lang'.
  * @author Ibrahim
- * @version 1.0.1
+ * @version 1.0.2
  */
-abstract class ExtendedWebServices extends WebServices{
+abstract class ExtendedWebServices extends WebServices {
+    /**
+     * A constant that represents error message type.
+     * @since 1.0.2
+     */
+    private static $E = 'error';
     private $translation;
     /**
      * Creates new instance of 'API'.
@@ -47,91 +53,90 @@ abstract class ExtendedWebServices extends WebServices{
         parent::__construct($version);
         $this->_setTranslation();
         $langCode = $this->getTranslation()->getCode();
-        $this->createLangDir('general');
-        if($langCode == 'AR'){
-            $this->setLangVars('general', array(
-                'action-not-supported'=>'العملية غير مدعومة.',
-                'content-not-supported'=>'نوع المحتوى غير مدعوم.',
-                'action-not-impl'=>'لم يتم تنفيذ العملية.',
-                'missing-params'=>'المعاملات التالية مفقودة من جسم الطلب: ',
-                'inv-params'=>'المُعاملات التالية لديها قيم غير صالحة: ',
-                'db-error'=>'خطأ في قاعدة البيانات.'
-            ));
-        }
-        else{
-            $this->setLangVars('general', array(
-                'action-not-supported'=>'Action is not supported by the API.',
-                'content-not-supported'=>'Content type not supported.',
-                'action-not-impl'=>'API action is not implemented yet.',
-                'missing-params'=>'The following required parameter(s) where missing from the request body: ',
-                'inv-params'=>'The following parameter(s) has invalid values: ',
-                'db-error'=>'Database Error.'
-            ));
+        $generalDir = 'general';
+        $this->createLangDir($generalDir);
+
+        if ($langCode == 'AR') {
+            $this->setLangVars($generalDir, [
+                'action-not-supported' => 'العملية غير مدعومة.',
+                'content-not-supported' => 'نوع المحتوى غير مدعوم.',
+                'action-not-impl' => 'لم يتم تنفيذ العملية.',
+                'missing-params' => 'المعاملات التالية مفقودة من جسم الطلب: ',
+                'inv-params' => 'المُعاملات التالية لديها قيم غير صالحة: ',
+                'db-error' => 'خطأ في قاعدة البيانات.'
+            ]);
+        } else {
+            $this->setLangVars($generalDir, [
+                'action-not-supported' => 'Action is not supported by the API.',
+                'content-not-supported' => 'Content type not supported.',
+                'action-not-impl' => 'API action is not implemented yet.',
+                'missing-params' => 'The following required parameter(s) where missing from the request body: ',
+                'inv-params' => 'The following parameter(s) has invalid values: ',
+                'db-error' => 'Database Error.'
+            ]);
         }
     }
     /**
-     * Set the language at which the API is going to use for the response.
-     */
-    private function _setTranslation() {
-        $reqMeth = $this->getRequestMethod();
-        if($reqMeth == 'GET' || $reqMeth == 'DELETE'){
-            $langCode = isset($_GET['lang']) ? filter_var($_GET['lang']) : WebFiori::getWebsiteController()->getSessionLang();
-        }
-        else if($reqMeth == 'POST' || $reqMeth == 'PUT'){
-            $langCode = isset($_POST['lang']) ? filter_var($_POST['lang']) : WebFiori::getWebsiteController()->getSessionLang();
-        }
-        else{
-            $langCode = WebFiori::getWebsiteController()->getSessionLang();
-        }
-        $this->translation = Language::loadTranslation($langCode);
-    }
-    /**
-     * Returns an associative array that contains HTTP authorization header 
-     * content.
-     * The generated associative array will have two indices: 
-     * <ul>
-     * <li><b>type</b>: Type of authorization (e.g. basic, bearer )</li>
-     * <li><b>credentials</b>: Depending on authorization type, 
-     * this field will have different values.</li>
-     * </ul>
-     * Note that if no authorization header is sent, The two indices will be empty.
-     * @return array An associative array.
-     * @since 1.0.1
-     */
-    public function getAuthorizationHeader(){
-        $retVal = array(
-            'type'=>'',
-            'credentials'=>''
-        );
-        $headers = Util::getRequestHeaders();
-        if(isset($headers['authorization'])){
-            $split = explode(' ', $headers['authorization']);
-            if(count($split) == 2){
-                $retVal['type'] = strtolower($split[0]);
-                $retVal['credentials'] = $split[1];
-            }
-        }
-        return $retVal;
-    }
-    /**
-     * Returns the language instance which is linked with the API instance.
-     * @return Language an instance of the class 'Language'.
+     * Sends a response message to indicate that an action is not implemented.
+     * This method will send back a JSON string in the following format:
+     * <p>
+     * {<br/>
+     * &nbsp;&nbsp;"message":"Action not implemented.",<br/>
+     * &nbsp;&nbsp;"type":"error",<br/>
+     * }
+     * </p>
+     * In addition to the message, The response will sent HTTP code 404 - Not Found. 
+     * Note that the content of the field "message" might differ. It depends on 
+     * the language. If no language is selected or language is not supported, 
+     * The language that will be used is the language that was set as default 
+     * language in the class 'SiteConfig'.
      * @since 1.0
      */
-    public function getTranslation() {
-        return $this->translation;
+    public function actionNotImpl() {
+        $message = $this->get('general/action-not-impl');
+        $this->sendResponse($message, self::$E, 404);
     }
     /**
-     * Returns the value of a language variable.
-     * @param string $dir A directory to the language variable (such as 'pages/login/login-label').
-     * @return string|array If the given directory represents a label, the 
-     * method will return its value. If it represents an array, the array will 
-     * be returned. If nothing was found, the returned value will be the passed 
-     * value to the method. 
+     * Sends a response message to indicate that an action is not supported by the API.
+     * This method will send back a JSON string in the following format:
+     * <p>
+     * {<br/>
+     * &nbsp;&nbsp;"message":"Action not supported",<br/>
+     * &nbsp;&nbsp;"type":"error"<br/>
+     * }
+     * </p>
+     * In addition to the message, The response will sent HTTP code 404 - Not Found. 
+     * Note that the content of the field "message" might differ. It depends on 
+     * the language. If no language is selected or language is not supported, 
+     * The language that will be used is the language that was set as default 
+     * language in the class 'SiteConfig'.
      * @since 1.0
      */
-    public function get($dir) {
-        return $this->getTranslation()->get($dir);
+    public function actionNotSupported() {
+        $message = $this->get('general/action-not-supported');
+        $this->sendResponse($message, self::$E, 404);
+    }
+    /**
+     * Sends a response message to indicate that request content type is 
+     * not supported by the API.
+     * This method will send back a JSON string in the following format:
+     * <p>
+     * {<br/>
+     * &nbsp;&nbsp;"message":"Content type not supported.",<br/>
+     * &nbsp;&nbsp;"type":"error",<br/>
+     * &nbsp;&nbsp;"request-content-type":"content_type"<br/>
+     * }
+     * </p>
+     * In addition to the message, The response will sent HTTP code 404 - Not Found. 
+     * Note that the content of the field "message" might differ. It depends on 
+     * the language. If no language is selected or language is not supported, 
+     * The language that will be used is the language that was set as default 
+     * language in the class 'SiteConfig'.
+     * @since 1.1
+     */
+    public function contentTypeNotSupported($cType = '') {
+        $message = $this->get('general/content-not-supported');
+        $this->sendResponse($message, self::$E, 404,'"request-content-type":"'.$cType.'"');
     }
     /**
      * Creates a sub array to define language variables.
@@ -145,17 +150,6 @@ abstract class ExtendedWebServices extends WebServices{
      */
     public function createLangDir($dir) {
         $this->getTranslation()->createDirectory($dir);
-    }
-    /**
-     * Sets multiple language variables.
-     * @param string $dir A string that looks like a 
-     * directory. 
-     * @param array $arr An associative array. The key will act as the variable 
-     * and the value of the key will act as the variable value. 
-     * @since 1.0
-     */
-    public function setLangVars($dir,$arr=array()) {
-        $this->getTranslation()->setMultiple($dir, $arr);
     }
     /**
      * Sends a response message to indicate that a database error has occur.
@@ -177,9 +171,132 @@ abstract class ExtendedWebServices extends WebServices{
      * language in the class 'SiteConfig'.
      * @since 1.0
      */
-    public function databaseErr($info=''){
+    public function databaseErr($info = '') {
         $message = $this->get('general/db-error');
-        $this->sendResponse($message, 'error', 404, $info);
+        $this->sendResponse($message, self::$E, 404, $info);
+    }
+    /**
+     * Returns the value of a language variable.
+     * @param string $dir A directory to the language variable (such as 'pages/login/login-label').
+     * @return string|array If the given directory represents a label, the 
+     * method will return its value. If it represents an array, the array will 
+     * be returned. If nothing was found, the returned value will be the passed 
+     * value to the method. 
+     * @since 1.0
+     */
+    public function get($dir) {
+        return $this->getTranslation()->get($dir);
+    }
+    /**
+     * Returns an associative array that contains HTTP authorization header 
+     * content.
+     * The generated associative array will have two indices: 
+     * <ul>
+     * <li><b>type</b>: Type of authorization (e.g. basic, bearer )</li>
+     * <li><b>credentials</b>: Depending on authorization type, 
+     * this field will have different values.</li>
+     * </ul>
+     * Note that if no authorization header is sent, The two indices will be empty.
+     * @return array An associative array.
+     * @since 1.0.1
+     */
+    public function getAuthorizationHeader() {
+        $retVal = [
+            'type' => '',
+            'credentials' => ''
+        ];
+        $headers = Util::getRequestHeaders();
+
+        if (isset($headers['authorization'])) {
+            $split = explode(' ', $headers['authorization']);
+
+            if (count($split) == 2) {
+                $retVal['type'] = strtolower($split[0]);
+                $retVal['credentials'] = $split[1];
+            }
+        }
+
+        return $retVal;
+    }
+    /**
+     * Returns the language instance which is linked with the API instance.
+     * @return Language an instance of the class 'Language'.
+     * @since 1.0
+     */
+    public function getTranslation() {
+        return $this->translation;
+    }
+    /**
+     * Sends a response message to indicate that a request parameter(s) have invalid values.
+     * This method will send back a JSON string in the following format:
+     * <p>
+     * {<br/>
+     * &nbsp;&nbsp;"message":"The following parameter(s) has invalid values: 'param_1', 'param_2', 'param_n'",<br/>
+     * &nbsp;&nbsp;"type":"error"<br/>
+     * }
+     * </p>
+     * In addition to the message, The response will sent HTTP code 404 - Not Found. 
+     * Note that the content of the field "message" might differ. It depends on 
+     * the language. If no language is selected or language is not supported, 
+     * The language that will be used is the language that was set as default 
+     * language in the class 'SiteConfig'.
+     * @since 1.3
+     */
+    public function invParams() {
+        $val = '';
+        $paramsNamesArr = $this->getInvalidParameters();
+
+        if (gettype($paramsNamesArr) == 'array') {
+            $i = 0;
+            $count = count($paramsNamesArr);
+
+            foreach ($paramsNamesArr as $paramName) {
+                if ($i + 1 == $count) {
+                    $val .= '\''.$paramName.'\'';
+                } else {
+                    $val .= '\''.$paramName.'\', ';
+                }
+                $i++;
+            }
+        }
+        $message = $this->get('general/inv-params');
+        $this->sendResponse($message.$val.'.', self::$E, 404);
+    }
+    /**
+     * Sends a response message to indicate that a request parameter or parameters are missing.
+     * This method will send back a JSON string in the following format:
+     * <p>
+     * {<br/>
+     * &nbsp;&nbsp;"message":"The following required parameter(s) where missing from the request body: 'param_1', 'param_2', 'param_n'",<br/>
+     * &nbsp;&nbsp;"type":"error",<br/>
+     * }
+     * </p>
+     * In addition to the message, The response will sent HTTP code 404 - Not Found. 
+     * Note that the content of the field "message" might differ. It depends on 
+     * the language. If no language is selected or language is not supported, 
+     * The language that will be used is the language that was set as default 
+     * language in the class 'SiteConfig'.
+     * @since 1.3
+     */
+    public function missingParams() {
+        $val = '';
+        $paramsNamesArr = $this->getMissingParameters();
+
+        if (gettype($paramsNamesArr) == 'array') {
+            $i = 0;
+            $count = count($paramsNamesArr);
+
+            foreach ($paramsNamesArr as $paramName) {
+                if ($i + 1 == $count) {
+                    $val .= '\''.$paramName.'\'';
+                } else {
+                    $val .= '\''.$paramName.'\', ';
+                }
+                $i++;
+            }
+        }
+        $message = $this->get('general/missing-params');
+        $this->sendResponse($message.$val.'.', self::$E, 404);
     }
     /**
      * Sends a response message to indicate that a user is not authorized to 
@@ -198,51 +315,9 @@ abstract class ExtendedWebServices extends WebServices{
      * language in the class 'SiteConfig'.
      * @since 1.0
      */
-    public function notAuth(){
+    public function notAuth() {
         $message = $this->get('general/http-codes/401/message');
-        $this->sendResponse($message, 'error', 401);
-    }
-    /**
-     * Sends a response message to indicate that an action is not supported by the API.
-     * This method will send back a JSON string in the following format:
-     * <p>
-     * {<br/>
-     * &nbsp;&nbsp;"message":"Action not supported",<br/>
-     * &nbsp;&nbsp;"type":"error"<br/>
-     * }
-     * </p>
-     * In addition to the message, The response will sent HTTP code 404 - Not Found. 
-     * Note that the content of the field "message" might differ. It depends on 
-     * the language. If no language is selected or language is not supported, 
-     * The language that will be used is the language that was set as default 
-     * language in the class 'SiteConfig'.
-     * @since 1.0
-     */
-    public function actionNotSupported(){
-        $message = $this->get('general/action-not-supported');
-        $this->sendResponse($message, 'error', 404);
-    }
-    /**
-     * Sends a response message to indicate that request content type is 
-     * not supported by the API.
-     * This method will send back a JSON string in the following format:
-     * <p>
-     * {<br/>
-     * &nbsp;&nbsp;"message":"Content type not supported.",<br/>
-     * &nbsp;&nbsp;"type":"error",<br/>
-     * &nbsp;&nbsp;"request-content-type":"content_type"<br/>
-     * }
-     * </p>
-     * In addition to the message, The response will sent HTTP code 404 - Not Found. 
-     * Note that the content of the field "message" might differ. It depends on 
-     * the language. If no language is selected or language is not supported, 
-     * The language that will be used is the language that was set as default 
-     * language in the class 'SiteConfig'.
-     * @since 1.1
-     */
-    public function contentTypeNotSupported($cType=''){
-        $message = $this->get('general/content-not-supported');
-        $this->sendResponse($message, 'error', 404,'"request-content-type":"'.$cType.'"');
+        $this->sendResponse($message, self::$E, 401);
     }
     /**
      * Sends a response message to indicate that request method is not supported.
@@ -260,98 +335,36 @@ abstract class ExtendedWebServices extends WebServices{
      * language in the class 'SiteConfig'.
      * @since 1.0
      */
-    public function requestMethodNotAllowed(){
+    public function requestMethodNotAllowed() {
         $message = $this->get('general/http-codes/405/message');
-        $this->sendResponse($message, 'error', 405);
+        $this->sendResponse($message, self::$E, 405);
     }
     /**
-     * Sends a response message to indicate that an action is not implemented.
-     * This method will send back a JSON string in the following format:
-     * <p>
-     * {<br/>
-     * &nbsp;&nbsp;"message":"Action not implemented.",<br/>
-     * &nbsp;&nbsp;"type":"error",<br/>
-     * }
-     * </p>
-     * In addition to the message, The response will sent HTTP code 404 - Not Found. 
-     * Note that the content of the field "message" might differ. It depends on 
-     * the language. If no language is selected or language is not supported, 
-     * The language that will be used is the language that was set as default 
-     * language in the class 'SiteConfig'.
+     * Sets multiple language variables.
+     * @param string $dir A string that looks like a 
+     * directory. 
+     * @param array $arr An associative array. The key will act as the variable 
+     * and the value of the key will act as the variable value. 
      * @since 1.0
      */
-    public function actionNotImpl(){
-        $message = $this->get('general/action-not-impl');
-        $this->sendResponse($message, 'error', 404);
+    public function setLangVars($dir,$arr = []) {
+        $this->getTranslation()->setMultiple($dir, $arr);
     }
     /**
-     * Sends a response message to indicate that a request parameter or parameters are missing.
-     * This method will send back a JSON string in the following format:
-     * <p>
-     * {<br/>
-     * &nbsp;&nbsp;"message":"The following required parameter(s) where missing from the request body: 'param_1', 'param_2', 'param_n'",<br/>
-     * &nbsp;&nbsp;"type":"error",<br/>
-     * }
-     * </p>
-     * In addition to the message, The response will sent HTTP code 404 - Not Found. 
-     * Note that the content of the field "message" might differ. It depends on 
-     * the language. If no language is selected or language is not supported, 
-     * The language that will be used is the language that was set as default 
-     * language in the class 'SiteConfig'.
-     * @since 1.3
+     * Set the language at which the API is going to use for the response.
      */
-    public function missingParams(){
-        $val = '';
-        $paramsNamesArr = $this->getMissingParameters();
-        if(gettype($paramsNamesArr) == 'array'){
-            $i = 0;
-            $count = count($paramsNamesArr);
-            foreach ($paramsNamesArr as $paramName){
-                if($i + 1 == $count){
-                    $val .= '\''.$paramName.'\'';
-                }
-                else{
-                    $val .= '\''.$paramName.'\', ';
-                }
-                $i++;
+    private function _setTranslation() {
+        $reqMeth = $this->getRequestMethod();
+
+        if ($reqMeth == 'GET' || $reqMeth == 'DELETE') {
+            $langCode = isset($_GET['lang']) ? filter_var($_GET['lang']) : WebFiori::getWebsiteController()->getSessionLang();
+        } else {
+            if ($reqMeth == 'POST' || $reqMeth == 'PUT') {
+                $langCode = isset($_POST['lang']) ? filter_var($_POST['lang']) : WebFiori::getWebsiteController()->getSessionLang();
+            } else {
+                $langCode = WebFiori::getWebsiteController()->getSessionLang();
             }
         }
-        $message = $this->get('general/missing-params');
-        $this->sendResponse($message.$val.'.', 'error', 404);
-    }
-    /**
-     * Sends a response message to indicate that a request parameter(s) have invalid values.
-     * This method will send back a JSON string in the following format:
-     * <p>
-     * {<br/>
-     * &nbsp;&nbsp;"message":"The following parameter(s) has invalid values: 'param_1', 'param_2', 'param_n'",<br/>
-     * &nbsp;&nbsp;"type":"error"<br/>
-     * }
-     * </p>
-     * In addition to the message, The response will sent HTTP code 404 - Not Found. 
-     * Note that the content of the field "message" might differ. It depends on 
-     * the language. If no language is selected or language is not supported, 
-     * The language that will be used is the language that was set as default 
-     * language in the class 'SiteConfig'.
-     * @since 1.3
-     */
-    public function invParams(){
-        $val = '';
-        $paramsNamesArr = $this->getInvalidParameters();
-        if(gettype($paramsNamesArr) == 'array'){
-            $i = 0;
-            $count = count($paramsNamesArr);
-            foreach ($paramsNamesArr as $paramName){
-                if($i + 1 == $count){
-                    $val .= '\''.$paramName.'\'';
-                }
-                else{
-                    $val .= '\''.$paramName.'\', ';
-                }
-                $i++;
-            }
-        }
-        $message = $this->get('general/inv-params');
-        $this->sendResponse($message.$val.'.', 'error', 404);
+        $this->translation = Language::loadTranslation($langCode);
     }
 }

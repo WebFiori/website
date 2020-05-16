@@ -23,36 +23,25 @@
  * THE SOFTWARE.
  */
 namespace webfiori\entity\mail;
+
 /**
  * A class that represents an email account which is used to send or receive messages.
  *
  * @author Ibrahim
- * @version 1.0.1
+ * @version 1.0.2
  */
 class SMTPAccount {
+    /**
+     * The name of SMTP account.
+     * @var string 
+     * @since 1.0.2
+     */
+    private $accName;
     /**
      * Email address.
      * @var string 
      */
     private $address;
-    /**
-     * The user name that is used to login.
-     * @var string
-     * @since 1.0 
-     */
-    private $userName;
-    /**
-     * The password of the user account.
-     * @var string
-     * @since 1.0 
-     */
-    private $password;
-    /**
-     * The name of the email account.
-     * @var string
-     * @since 1.0 
-     */
-    private $name;
     /**
      * Server address of the email account.
      * @var string
@@ -60,96 +49,142 @@ class SMTPAccount {
      */
     private $emailServerAddress;
     /**
+     * The name of the email account.
+     * @var string
+     * @since 1.0 
+     */
+    private $name;
+    /**
+     * The password of the user account.
+     * @var string
+     * @since 1.0 
+     */
+    private $password;
+    /**
      * The port number that is used to access the email server.
      * @var int
      * @since 1.0 
      */
     private $port;
     /**
-     * A boolean value that is set to TRUE if connection uses TLS.
-     * @var boolean
-     * @since 1.0.1 
+     * The user name that is used to login.
+     * @var string
+     * @since 1.0 
      */
-    private $useTls;
-    /**
-     * A boolean value that is set to TRUE if connection uses SSL.
-     * @var boolean
-     * @since 1.0.1 
-     */
-    private $useSsl;
+    private $userName;
     /**
      * Creates new instance of the class.
+     * @param array $options An optional array that contains connection info. The array 
+     * can have the following indices:
+     * <ul>
+     * <li><b>port</b>: SMTP server port address. usually 25 or 465.</li>
+     * <li><b>server-address</b>: SMTP server address.</li>
+     * <li><b>user</b>: The username at which it is used to login to SMTP server.</li>
+     * <li><b>pass</b>: The password of the user</li>
+     * <li><b>sender-name</b>: The name of the sender that will appear when the 
+     * message is sent.</li>
+     * <li><b>sender-address</b>: The address that will appear when the 
+     * message is sent. Usually, it is the same as the username.</li>
+     * <li><b>account-name</b>: A unique name for the account. Used when creating 
+     * new email message. If not provided, 'sender-name' is used.</li>
+     * </ul>
      * @since 1.0.1
      */
-    public function __construct() {
-        //$this->isSSL(FALSE);
-        //$this->isTLS(FALSE);
-        $this->setPort(465);
-        $this->setUsername('');
-        $this->setPassword('');
-        $this->setServerAddress('');
-        $this->setName('');
-        $this->setAddress('');
+    public function __construct($options = []) {
+        if (isset($options['port'])) {
+            $this->setPort($options['port']);
+        } else {
+            $this->setPort(465);
+        }
+
+        if (isset($options['user'])) {
+            $this->setUsername($options['user']);
+        } else {
+            $this->setUsername('');
+        }
+
+        if (isset($options['pass'])) {
+            $this->setPassword($options['pass']);
+        } else {
+            $this->setPassword('');
+        }
+
+        if (isset($options['server-address'])) {
+            $this->setServerAddress($options['server-address']);
+        } else {
+            $this->setServerAddress('');
+        }
+
+        if (isset($options['sender-name'])) {
+            $this->setSenderName($options['sender-name']);
+        } else {
+            $this->setSenderName('');
+        }
+
+        if (isset($options['sender-address'])) {
+            $this->setAddress($options['sender-address']);
+        } else {
+            $this->setAddress('');
+        }
+        
+        if (isset($options['account-name'])) {
+            $this->setAccountName($options['account-name']);
+        } else {
+            $this->setAccountName($this->getSenderName());
+        }
     }
     /**
-     * Sets the address of the email server.
-     * @param string $addr The address of the email server (such as 'mail.example.com').
+     * Returns the email address.
+     * @return string The email address which will be used in the header 
+     * 'FROM' when sending an email. Default is empty string.
      * @since 1.0
      */
-    public function setServerAddress($addr){
-        $this->emailServerAddress = trim($addr);
+    public function getAddress() {
+        return $this->address;
     }
     /**
-     * Sets or gets the value of the property 'useTls'.
-     * @param boolean|NULL $bool TRUE if the connection to the server will use TLS. 
-     * FALSE if not. If NULL is given, the property will not updated. Default 
-     * is NULL.
-     * @return boolean $bool TRUE if the connection to the server will use TLS. 
-     * FALSE if not. Default return value is FALSE
-     * @since 1.0.1
-     */
-//    public function isTLS($bool=null){
-//        if($bool !== NULL){
-//            $this->useTls = $bool === TRUE ? TRUE : FALSE;
-//            if($this->useTls){
-//                $this->useSsl = FALSE;
-//            }
-//        }
-//        return $this->useTls;
-//    }
-    /**
-     * Sets or gets the value of the property 'useSsl'.
-     * @param boolean|NULL $bool [Optional] TRUE if the connection to the server will use SSL. 
-     * FALSE if not. If NULL is given, the property will not updated. Default 
-     * is NULL.
-     * @return boolean $bool TRUE if the connection to the server will use SSL. 
-     * FALSE if not. Default return value is FALSE
-     * @since 1.0.1
-     */
-//    public function isSSL($bool=null){
-//        if($bool !== NULL){
-//            $this->useSsl = $bool === TRUE ? TRUE : FALSE;
-//            if($this->useSsl){
-//                $this->useTls = FALSE;
-//            }
-//        }
-//        return $this->useSsl;
-//    }
-    /**
-     * Sets the username that is used to access email server.
-     * @param string $u The username that is used to access email server.
+     * Returns the name of sender.
+     * @return string The name of the email sender. The name will be used in the header 
+     * 'FROM' when sending an email. Default is empty string.
      * @since 1.0
      */
-    public function setUsername($u){
-        $this->userName = trim($u);
+    public function getSenderName() {
+        return $this->name;
     }
     /**
-     * Sets the password of the user account that is used to access email server.
-     * @param string $pass The password of the user account that is used to access email server.
+     * Returns the password of the user account that is used to access email server.
+     * @return string The password of the user account that is used to access email server. 
+     * default is empty string.
      * @since 1.0
      */
-    public function setPassword($pass) {
-        $this->password = $pass;
+    public function getPassword() {
+        return $this->password;
+    }
+    /**
+     * Returns the port number of email server.
+     * @return int The port number of email server. Default is 465.
+     * @since 1.0
+     */
+    public function getPort() {
+        return $this->port;
+    }
+    /**
+     * Returns The address of the email server.
+     * @return string The address of the email server (such as 'mail.example.com'). 
+     * Default is empty string.
+     * @since 1.0
+     */
+    public function getServerAddress() {
+        return $this->emailServerAddress;
+    }
+    /**
+     * Returns the username that is used to access email server.
+     * @return string The username that is used to access email server. Default 
+     * is empty string.
+     * @since 1.0
+     */
+    public function getUsername() {
+        return $this->userName;
     }
     /**
      * Sets the email address.
@@ -166,61 +201,37 @@ class SMTPAccount {
      * 'FROM' when sending an email
      * @since 1.0
      */
-    public function setName($name) {
+    public function setSenderName($name) {
         $this->name = trim($name);
     }
     /**
-     * Returns the username that is used to access email server.
-     * @return string The username that is used to access email server. Default 
-     * is empty string.
-     * @since 1.0
+     * Sets the name of the account.
+     * The name of the account is used by the class 'EmailMessage' when creating 
+     * new instance of the class. Also, the name is used when storing the account 
+     * programatically.
+     * @param string $name The name of the account.
+     * @since 1.0.2
      */
-    public function getUsername(){
-        return $this->userName;
+    public function setAccountName($name) {
+        $this->accName = $name;
     }
     /**
-     * Returns the password of the user account that is used to access email server.
-     * @return string The password of the user account that is used to access email server. 
-     * default is empty string.
-     * @since 1.0
+     * Returns the name of the account.
+     * The name of the account is used by the class 'EmailMessage' when creating 
+     * new instance of the class. Also, the name is used when storing the account 
+     * programatically.
+     * @return string A string that represents the name of the account.
      */
-    public function getPassword() {
-        return $this->password;
+    public function getAccountName() {
+        return $this->accName;
     }
     /**
-     * Returns the email address.
-     * @return string The email address which will be used in the header 
-     * 'FROM' when sending an email. Default is empty string.
+     * Sets the password of the user account that is used to access email server.
+     * @param string $pass The password of the user account that is used to access email server.
      * @since 1.0
      */
-    public function getAddress() {
-        return $this->address;
-    }
-    /**
-     * Returns the name of the email account.
-     * @return string The name of the email account. The name will be used in the header 
-     * 'FROM' when sending an email. Default is empty string.
-     * @since 1.0
-     */
-    public function getName() {
-        return $this->name;
-    }
-    /**
-     * Returns The address of the email server.
-     * @return string The address of the email server (such as 'mail.example.com'). 
-     * Default is empty string.
-     * @since 1.0
-     */
-    public function getServerAddress() {
-        return $this->emailServerAddress;
-    }
-    /**
-     * Returns the port number of email server.
-     * @return int The port number of email server. Default is 465.
-     * @since 1.0
-     */
-    public function getPort() {
-        return $this->port;
+    public function setPassword($pass) {
+        $this->password = $pass;
     }
     /**
      * Sets the port number of email server.
@@ -228,9 +239,25 @@ class SMTPAccount {
      * be only set if the given value is an integer and it is greater than 0.
      * @since 1.0
      */
-    public function setPort($port){
-        if(gettype($port) == 'integer' && $port > 0){
+    public function setPort($port) {
+        if (gettype($port) == 'integer' && $port > 0) {
             $this->port = $port;
         }
+    }
+    /**
+     * Sets the address of the email server.
+     * @param string $addr The address of the email server (such as 'mail.example.com').
+     * @since 1.0
+     */
+    public function setServerAddress($addr) {
+        $this->emailServerAddress = trim($addr);
+    }
+    /**
+     * Sets the username that is used to access email server.
+     * @param string $u The username that is used to access email server.
+     * @since 1.0
+     */
+    public function setUsername($u) {
+        $this->userName = trim($u);
     }
 }
