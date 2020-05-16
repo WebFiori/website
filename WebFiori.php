@@ -66,7 +66,7 @@ define('LOAD_COMPOSER_PACKAGES', true);
  * false.
  * @since 1.1.0
  */
-define('VERBOSE', false);
+define('VERBOSE', true);
 /**
  * The instance of this class is used to control basic settings of 
  * the framework. Also, it is the entry point of any request.
