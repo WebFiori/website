@@ -280,6 +280,19 @@ class ViewRoutes {
             'route-to'=>'learning/file-upload/UploadExampleView.php'
         ]);
         
+        //CLI
+        Router::view([
+            'path'=>'learn/topics/cli',
+            'route-to'=>'learning/cli/IntroView.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/cli/setup',
+            'route-to'=>'learning/cli/CliSetup.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/cli/running-commands',
+            'route-to'=>'learning/cli/RunningCommands.php'
+        ]);
         //cron and background jobs
         Router::view([
             'path'=>'learn/topics/jobs-scheduling',
