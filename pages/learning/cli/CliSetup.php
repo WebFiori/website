@@ -21,13 +21,52 @@ class CliSetup extends CLILearnView{
         $code->setTitle('Terminal');
         $code->addCodeLine('PATH_TO_PHP webfiori');
         Page::insert($code);
-        Page::insert($this->createParagraph('We will look at how to run it on Windows OS and '
-                . 'Linux (Ubuntu).'));
-        $linSec = $this->createSection('Windows');
-        Page::insert($linSec);
-        $winSec = $this->createSection('Windows');
-        Page::insert($winSec);
-        $this->setPrevTopicLink('learn/cli', 'Introduction');
+        Page::insert($this->createParagraph('Let\'s assume that '
+                . 'PHP interpeter is installed on Linux. '
+                . 'If the framework is downloaded and all standard '
+                . 'libraries of the framework are also included, the following output would be '
+                . 'seen when running the command <code>php webfiori</code>:'));
+        $output = new CodeSnippet();
+        $output->setTitle('Terminal');
+        $output->setCode("$ php webfiori                                                                                                                       
+|\                /|                          
+| \      /\      / |              |  / \  |
+\  \    /  \    /  / __________   |\/   \/|
+ \  \  /    \  /  / /  /______ /  | \/ \/ |
+  \  \/  /\  \/  / /  /           |  \ /  |
+   \    /  \    / /  /______      |\  |  /|
+    \  /    \  / /  /______ /       \ | /  
+     \/  /\  \/ /  /                  |    
+      \ /  \ / /  /                   |    
+       ______ /__/                    |    
+WebFiori Framework (c) Version 1.1.0 CR-5
+
+Usage:
+    command [arg1 arg2=\"val\" arg3...]
+
+Available Commands:
+    --help
+        Display CLI Help. To display help for specific command, use the argument \"command-name\" with this command.
+    -v
+        Display framework version info.
+    --show-config
+        Display framework configuration.
+    --list-themes
+        List all registered themes.
+    --list-jobs
+        List all scheduled CRON jobs.
+    --list-routes
+        List all created routes and which resource they point to.
+    --cron
+               Run CRON Scheduler
+    --route
+        Test the result of routing to a URL");
+        Page::insert($output);
+        
+        Page::insert($this->createParagraph("Once this output appears, it means everything is "
+                . "ready to use the framework in CLI environment."));
+        $this->setPrevTopicLink('learn/topics/cli', 'Introduction');
+        $this->setNextTopicLink('learn/topics/cli/running-commands', 'Running Commands');
         $this->displayView();
     }
 }
