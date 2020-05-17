@@ -38,6 +38,7 @@ abstract class LearnView extends WebFioriPage{
                 . 'need to learn in order to use WebFiori Framework in the most '
                 . 'effective way.')) {
         parent::__construct($x);
+        Page::document()->getHeadNode()->addCSS('themes/webfiori/css/code-theme.css');
         $titleNode = Page::theme()->createHTMLNode(['type'=>'page-title','title'=>Page::title()]);
         Page::document()->getChildByID('main-content-area')->addChild($titleNode);
         $active = isset($x['active-aside']) ? $x['active-aside'] : -1;
