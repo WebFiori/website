@@ -46,6 +46,10 @@ class CLILearnView extends LearnView{
             [
                 'label'=>'Running Commands',
                 'link'=>'learn/topics/cli/running-commands'
+            ],
+            [
+                'label'=>'Implementing Custom Cummands',
+                'link'=>'learn/topics/cli/running-commands'
             ]
         ];
         $linksArr[$this->getAsideActiveLinkNum()]['is-active'] = true;
