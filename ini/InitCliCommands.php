@@ -25,6 +25,7 @@
 namespace webfiori\ini;
 
 use webfiori\entity\cli\CLI;
+use webfiori\entity\cli\GenerateDocsCommand;
 /**
  * A class that contains one method for registering custom CLI 
  * commands.
@@ -43,5 +44,6 @@ class InitCliCommands {
      * </code>
      */
     public static function init() {
+        CLI::register(new GenerateDocsCommand());
     }
 }
