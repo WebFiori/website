@@ -210,7 +210,7 @@ class DocGenerator {
             if (count($reader->getParsedInfo()['class-def'])) {
                 $this->apiReadersArr[] = $reader;
             } else {
-                Util::print_r($classPath);
+                self::logMessage('The file "'.$classPath.'" is not a PHP class.');
             }
         }
     }
