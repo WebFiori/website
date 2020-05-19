@@ -1,13 +1,10 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 namespace webfiori\apiParser;
 use webfiori\apiParser\ClassAPI;
 use webfiori\entity\Util;
+use webfiori\entity\Logger;
+use webfiori\entity\cli\CLI;
+use webfiori\entity\AutoLoader;
 use webfiori\entity\Page;
 use phpStructs\Stack;
 use phpStructs\html\HTMLNode;
@@ -68,15 +65,25 @@ class DocGenerator {
         $this->options = $options;
         if(isset($options['path'])){
             $options['path'] = str_replace('/', '\\', $options['path']);
+            
             $this->baseUrl = isset($options['base-url']) ? $options['base-url']:'';
             if($this->baseUrl[strlen($this->baseUrl) - 1] != '/'){
                 $this->baseUrl = $this->baseUrl.'/';
             }
+            
             if(Util::isDirectory($options['path'])){
                 $this->outputPath = isset($options['output-path']) ? $options['output-path'] : '';
                 if(Util::isDirectory($this->getOutputPath(),true)){
+                    self::logMessage('Classes Path: '.$options['path']);
+                    self::logMessage('Output Path: '.$options['output-path']);
                     $this->isDynamic = isset($options['is-dynamic']) && $options['is-dynamic'] === true ? true : false;
+                    if ($this->isDynamicPage()) {
+                        self::logMessage('Dynamic: true');
+                    } else {
+                        self::logMessage('Dynamic: false');
+                    }
                     $this->routRootFolder = $options['route-root-folder'];
+                    self::logMessage('Root Routing Folder: '.$options['route-root-folder']);
                     $this->themeName = isset($options['theme']) ? $options['theme'] : '';
                     $this->logMessage('Scanning path \''.$options['path'].'\' for php files...');
                     $this->_scanPathForFiles($options['path'],$options['exclude-path']);
@@ -199,7 +206,12 @@ class DocGenerator {
      */
     private function _readAndrocessFiles() {
         foreach ($this->getFiles() as $classPath){
-            $this->apiReadersArr[] = new APIReader($classPath);
+            $reader = new APIReader($classPath);
+            if (count($reader->getParsedInfo()['class-def'])) {
+                $this->apiReadersArr[] = $reader;
+            } else {
+                Util::print_r($classPath);
+            }
         }
     }
     /**
@@ -261,7 +273,7 @@ class DocGenerator {
                     . '}'."\r\n"
                     . 'new '.$classAPI->getName().'View();'
             );
-            $file->write();
+            $file->write(false, true);
             return TRUE;
         }
         return FALSE;
@@ -273,7 +285,7 @@ class DocGenerator {
             $file->setName($class->getName().'View.html');
             $file->setPath($savePath);
             $file->setRawData(Page::document()->toHTML());
-            $file->write();
+            $file->write(false, true);
             return TRUE;
         }
         return FALSE;
@@ -296,17 +308,15 @@ class DocGenerator {
     public function getRouterLinks() {
         return $this->routerLinks;
     }
-    public function logMessage($message,$type='i') {
-        if(php_sapi_name() == 'cli'){
+    public static function logMessage($message,$type='i') {
+        Logger::log($message);
+        if(CLI::isCLI()){
             if($type == 'e'){
-                fprintf(STDERR, date('Y-m-d H:i:s').': '. $message."\n");
+                //fprintf(STDERR, date('Y-m-d H:i:s').': '. $message."\n");
             }
             else{
-                fprintf(STDOUT, date('Y-m-d H:i:s').': '.$message."\n");
+                //fprintf(STDOUT, date('Y-m-d H:i:s').': '.$message."\n");
             }
-        }
-        else{
-            echo date('Y-m-d H:i:s').': '. $message."<br/>";
         }
     }
     /**
@@ -430,7 +440,7 @@ class DocGenerator {
             }
         $routesStr .= '    }'."\r\n}";
         $file->setRawData($routesStr);
-        $file->write();
+        $file->write(false, true);
     }
     /**
      * 
@@ -447,32 +457,37 @@ class DocGenerator {
         $savePath = $path.$ns;
         if(Util::isDirectory($savePath, TRUE)){
             $file = new File();
-            $file->setName('NSIndexView.php');
             $file->setPath($savePath);
-            $file->setRawData(
-                    '<?php'."\r\n"
-                    . 'namespace docGenerator'.$ns.";\r\n"
-                    . 'use webfiori\entity\Page as P;'."\r\n"
-                    . 'use phpStructs\html\HTMLNode;'."\r\n"
-                    . 'class NSIndexView{'."\r\n"
-                    . '    public function __construct(){'."\r\n"
-                    . '        P::theme(\''.$options['theme'].'\');'."\r\n"
-                    . '        P::document()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
-                    . '        P::description(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::description())).'\');'."\r\n"
-                    . '        P::siteName(\''.Page::siteName().'\');'."\r\n"
-                    . '        P::title(\''.Page::title().'\');'."\r\n"
-                    . '        $pageBody = new HTMLNode();'."\r\n"
-                    . '        $pageBody->addTextNode(\''."\r\n"
-                    . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
-                    . '        ,false);'."\r\n"
-                    . '        $body = P::document()->getChildByID(\'page-body\');'."\r\n"
-                    . '        P::document()->getBody()->replaceChild($body, $pageBody);'."\r\n"
-                    . '        P::render();'."\r\n"
-                    . '    }'."\r\n"
-                    . '}'."\r\n"
-                    . 'return __NAMESPACE__;'
-            );
-            $file->write();
+            if($this->isDynamicPage()){
+                $file->setName('NSIndexView.php');
+                $file->setRawData(
+                        '<?php'."\r\n"
+                        . 'namespace docGenerator'.$ns.";\r\n"
+                        . 'use webfiori\entity\Page as P;'."\r\n"
+                        . 'use phpStructs\html\HTMLNode;'."\r\n"
+                        . 'class NSIndexView{'."\r\n"
+                        . '    public function __construct(){'."\r\n"
+                        . '        P::theme(\''.$options['theme'].'\');'."\r\n"
+                        . '        P::document()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
+                        . '        P::description(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::description())).'\');'."\r\n"
+                        . '        P::siteName(\''.Page::siteName().'\');'."\r\n"
+                        . '        P::title(\''. str_replace('\\', '\\\\', Page::title()).'\');'."\r\n"
+                        . '        $pageBody = new HTMLNode();'."\r\n"
+                        . '        $pageBody->addTextNode(\''."\r\n"
+                        . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
+                        . '        ,false);'."\r\n"
+                        . '        $body = P::document()->getChildByID(\'page-body\');'."\r\n"
+                        . '        P::document()->getBody()->replaceChild($body, $pageBody);'."\r\n"
+                        . '        P::render();'."\r\n"
+                        . '    }'."\r\n"
+                        . '}'."\r\n"
+                        . 'return __NAMESPACE__;'
+                );
+            } else {
+                $file->setName('NSIndexView.html');
+                $file->setRawData(Page::document()->toHTML());
+            }
+            $file->write(false, true);
             return true;
         }
         return false;
@@ -484,27 +499,52 @@ class DocGenerator {
      * will be execluded from the scan.
      */
     private function _scanPathForFiles($root,$excPath=array()){
+        self::logMessage('Scanning Started.');
         $dirsStack = new Stack();
         $dirsStack->push($root);
         $retVal = array();
         while($root = $dirsStack->pop()){
+            self::logMessage('Scanning "'.$root."...");
             if(!in_array($root, $excPath)){
+                //AutoLoader::newSearchFolder($root, true);
                 $subDirs = scandir($root);
                 foreach ($subDirs as $subDir){
                     if($subDir != '.' && $subDir != '..'){
                         $xSubDir = $root.'\\'.$subDir;
                         if(Util::isDirectory($xSubDir)){
+                            self::logMessage('Sub-directory found. Push to stack.');
                             $dirsStack->push($xSubDir);
                         }
                         else{
                             if(strpos($subDir, '.php') !== FALSE){
+                                self::logMessage('PHP file found. File name: "'.$xSubDir.'".');
                                 $retVal[] = $xSubDir;
                             }
                         }
                     }
                 }
+            } else {
+                self::logMessage('Excelusing path from scan.');
             }
         }
+        self::logMessage('Scan finished.');
         $this->files = $retVal;
+    }
+    /**
+     * 
+     * @param type $path
+     * @return string
+     */
+    private function getClassName($path) {
+        self::logMessage('Extracting class name from the path "'.$path.'"...');
+        $trimmed = trim($path,'.php');
+        $split = explode(DIRECTORY_SEPARATOR, $trimmed);
+        if (count($split) != 0) {
+            $cName = $split[count($split) - 1];
+            self::logMessage("Extracted name: '$cName'.");
+            return $cName;
+        }
+        self::logMessage("No name was extracted.", 'warning');
+        return '';
     }
 }
