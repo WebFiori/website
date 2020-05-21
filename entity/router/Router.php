@@ -665,7 +665,7 @@ class Router {
         if (isset($options['in-sitemap'])) {
             $incInSiteMap = $options['in-sitemap'];
         } else {
-            $incInSiteMap = false;
+            $incInSiteMap = true;
         }
 
         if (isset($options['as-api'])) {
