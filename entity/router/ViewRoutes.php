@@ -297,6 +297,10 @@ class ViewRoutes {
             'path'=>'learn/topics/cli/implementing-custom-commands',
             'route-to'=>'learning/cli/CustomCommand.php'
         ]);
+        Router::view([
+            'path'=>'learn/topics/cli/using-args',
+            'route-to'=>'learning/cli/UsingArgs.php'
+        ]);
         //cron and background jobs
         Router::view([
             'path'=>'learn/topics/jobs-scheduling',
