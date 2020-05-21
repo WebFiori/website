@@ -99,6 +99,7 @@ class APIReader {
         return $ns;
     }
     public function __construct($pathToClassFile) {
+        DocGenerator::logMessage("Reading API Docs from the file '$pathToClassFile'...");
         $this->parsedClassInfo = array(
             'attributes'=>array(
                 'class-constants'=>array(),
