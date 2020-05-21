@@ -35,7 +35,9 @@ class IntroView extends CLILearnView{
         $ul->addListItems([
             '<a href="learn/topics/cli/setup" >Setup</a>',
             '<a href="learn/topics/cli/running-commands" >Running Commands</a>',
-            '<a href="learn/topics/cli/implementing-custom-commands" >Implementing Custom Commands</a>',
+            '<a href="learn/topics/cli/implementing-custom-commands" >Implementing Basic Command</a>',
+            '<a href="learn/topics/cli/using-args" >Using Arguments</a>',
+            '<a href="learn/topics/cli/formatting-output" >Formatting Output</a>',
             '<a href="learn/topics/cli/registered-command" >Commandes Reference</a>',
             '<a href="learn/topics/cli/questions-and-answers" >Questions and Answers</a>'
             ],false);
