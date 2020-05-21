@@ -100,8 +100,9 @@ class DocGenerator {
                             $options['site-name'] : 'Docs';
                     $this->logMessage('Generating routes class...');
                     $this->_createRoutesFile();
-                    $this->logMessage('Creating web pages...');
+                    $this->logMessage('Creating web pages for classes...');
                     $this->_generateClassesAPIPages();
+                    $this->logMessage('Creating web pages for namespaces...');
                     $this->_generateNamespacesPages();
                     $this->logMessage('Process completed.');
                 }
@@ -176,6 +177,7 @@ class DocGenerator {
         $siteName = $this->getSiteName();
         $base = $this->getBaseURL();
         $options = $this->getOptions();
+        $count = 1;
         foreach ($this->apiReadersArr as $reader){
             Page::lang('EN');
             Page::dir('ltr');
@@ -193,6 +195,8 @@ class DocGenerator {
                 Page::description($classAPI->getSummary());
                 $this->_createAsideNav();
                 $this->_createAPIPage($classAPI, $options);
+                self::logMessage($count.' Page Created.');
+                $count++;
                 Page::reset();
             }
             else{
@@ -312,10 +316,10 @@ class DocGenerator {
         Logger::log($message);
         if(CLI::isCLI()){
             if($type == 'e'){
-                //fprintf(STDERR, date('Y-m-d H:i:s').': '. $message."\n");
+                fprintf(STDERR, date('Y-m-d H:i:s').': '. $message."\n");
             }
             else{
-                //fprintf(STDOUT, date('Y-m-d H:i:s').': '.$message."\n");
+                fprintf(STDOUT, date('Y-m-d H:i:s').': '.$message."\n");
             }
         }
     }
@@ -343,6 +347,7 @@ class DocGenerator {
         $this->linksArr['object'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.object.php" target="_blank">object</a>';
         $this->linksArr['Iterator'] = '<a class="datatype-name" href="https://www.php.net/manual/en/class.iterator.php">Iterator</a>';
         $this->linksArr['Countable'] = '<a class="datatype-name" href="https://www.php.net/manual/en/class.countable.php">Countable</a>';
+        $this->linksArr['Exception'] = '<a class="datatype-name" href="https://www.php.net/manual/en/class.exception.php">Exception</a>';
         $base = $this->getBaseURL();
         foreach ($this->apiReadersArr as $apiReader){
             $namespaceLink = $apiReader->getNamespace();
