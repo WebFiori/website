@@ -99,6 +99,7 @@ class ClassAPI {
     )) {
         $this->classMethods = [];
         $this->implements = [];
+        $this->classAttributes = [];
         $this->cName = $classAPIReader->getClassName();
         $this->baseUrl = $options['base-url'];
         $this->setSummary($classAPIReader->getClassSummary());
