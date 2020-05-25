@@ -2,6 +2,7 @@
 
 namespace webfiori\views\learn\cli;
 
+use webfiori\entity\Page;
 use webfiori\views\learn\cli\CLILearnView;
 
 class UsingArgs extends CLILearnView {
@@ -12,6 +13,7 @@ class UsingArgs extends CLILearnView {
             . 'your command.',
             'active-aside' => 5
         ]);
+        Page::insert($this->createParagraph('Command line arguments '));
         $this->setPrevTopicLink('learn/topics/cli/implementing-custom-commands', 'Implementing Basic Command');
         $this->displayView();
     }
