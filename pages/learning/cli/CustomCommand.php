@@ -45,12 +45,12 @@ class CustomCommand extends CLILearnView{
         $sec1->addChild($this->createParagraph('The name of the command is a string which '
                 . 'will be used to execute it later. The arguments is an array that contains '
                 . 'sub associative arrays of arguments that the command needs. The description '
-                . 'of the command is a string that will be shown when the command <code>--help</code> '
+                . 'of the command is a string that will be shown when the command <code>help</code> '
                 . 'is executed.'));
         $sec1->addChild($this->createParagraph('Suppose that we would like to '
                 . 'implement a command that takes the name from the terminal as an '
                 . 'input and display the string "Hi <YOUR_NAME>". Let\'s assume that the '
-                . 'name of the command is <code>--say-hi</code>. The following '
+                . 'name of the command is <code>say-hi</code>. The following '
                 . 'code snippit shows how this command is created.'));
         $code1 = new CodeSnippet();
         $code1->setTitle('PHP Code');
@@ -63,14 +63,12 @@ use webfiori\entity\cli\CLICommand;
 class SayHiCommand extends CLICommand {
     
     public function __construct() {
-        parent::__construct('--say-hi', [], 'Takes a name as input and say \"Hi\".');
+        parent::__construct('say-hi', [], 'Takes a name as input and say \"Hi\".');
     }
     
     public function exec() {
-        fprintf(STDOUT, \"Give me your name:\\n\");
-        //We assume that max name length is 25 characters
-        \$name = fread(STDIN, 25);
-        fprintf(STDOUT, \"Hi \$name\");
+        \$name = \$this->input('Give me your name:');
+        \$this->println('Hi \$name');
         return 0;
     }
 
@@ -79,6 +77,11 @@ class SayHiCommand extends CLICommand {
         
         $sec2 = $this->createSection('Registering the command',4);
         Page::insert($sec2);
+        $sec2->addChild($this->createParagraph('Before we continue, let\'s explain what we did. '
+                . 'The method <a href="docs/webfiori/entity/cli/CLICommand#getInput" target="_blank">CLICommand::getInput()</a> '
+                . 'is used to read user input from <code>STDIN</code>. The method accepts 3 parameters but for now, we will '
+                . 'only use the first one. The first parameter of the method is simply a prompt text that will be shown to the '
+                . 'user. The text is used to specify what we would like to get from the user.'));
         $sec2->addChild($this->createParagraph('Now that we have our command is ready, all '
                 . 'what we have to to is to register it. In order to register any custom-created '
                 . 'command, the class <a target="_blank" href="docs/webfiori/ini/InitCliCommands">InitCliCommands</a>. '
