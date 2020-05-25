@@ -18,46 +18,46 @@ class RunningCommands extends CLILearnView{
                 . 'a command, we have to understand the structure of each command.'));
         Page::insert($this->createParagraph(''
                 . 'The overall format of any command in the framework is this: '
-                . '<code>--command-name [arg1 arg2="something" arg3...]</code>. '
+                . '<code>command-name [arg1 arg2="something" arg3...]</code>. '
                 . 'This format means that every command in the framework '
                 . 'consist of the following parts:'));
         $commandStructUl = new UnorderedList([
-            'Command name (the <code>--command-name</code>). ',
+            'Command name (the <code>command-name</code>). ',
             'Zero or more arguments (the <code>[arg1 arg2="something" arg3...]</code>).'
         ], false);
         Page::insert($commandStructUl);
         Page::insert($this->createParagraph(''
-                . 'The name of the command is usually something like <code>--help</code> or '
-                . '<code>-h</code>. The arguments usually come after the name of the '
+                . 'The name of the command is usually something like <code>help</code> or '
+                . '<code>h</code>. The arguments usually come after the name of the '
                 . 'command. Some commands does not have arguments and some do. '
                 . 'In addition, a command can have optional arguments and '
                 . 'mandatory ones.'));
         Page::insert($this->createParagraph(''
                 . 'One of the commands that the framework supports is the '
-                . 'command <code>--help</code>. When we run it without any '
+                . 'command <code>help</code>. When we run it without any '
                 . 'arguments, we would see the following output:'));
         $code1 = new CodeSnippet();
         $code1->setTitle('Terminal');
-        $code1->setCode("$ php webfiori --help                                                                                                           
+        $code1->setCode("$ php webfiori help                                                                                                           
 Usage:
     command [arg1 arg2=\"val\" arg3...]
 
 Available Commands:
-    --help
+    help
         Display CLI Help. To display help for specific command, use the argument \"command-name\" with this command.
-    -v
+    v
         Display framework version info.
-    --show-config
+    show-config
         Display framework configuration.
-    --list-themes
+    list-themes
         List all registered themes.
-    --list-jobs
+    list-jobs
         List all scheduled CRON jobs.
-    --list-routes
+    list-routes
         List all created routes and which resource they point to.
-    --cron
+    cron
                Run CRON Scheduler
-    --route
+    route
         Test the result of routing to a URL
 ");
         Page::insert($code1);
@@ -70,8 +70,8 @@ Available Commands:
                 . ''));
         $code2 = new CodeSnippet();
         $code2->setTitle('Terminal');
-        $code2->setCode("$ php webfiori --help command-name=--cron                
-    --cron
+        $code2->setCode("$ php webfiori help --command-name=cron                
+    cron
                Run CRON Scheduler
     Supported Arguments:
                             p:  CRON password.
