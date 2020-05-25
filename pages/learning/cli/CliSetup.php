@@ -45,21 +45,21 @@ Usage:
     command [arg1 arg2=\"val\" arg3...]
 
 Available Commands:
-    --help
+    help
         Display CLI Help. To display help for specific command, use the argument \"command-name\" with this command.
-    -v
+    v
         Display framework version info.
-    --show-config
+    show-config
         Display framework configuration.
-    --list-themes
+    list-themes
         List all registered themes.
-    --list-jobs
+    list-jobs
         List all scheduled CRON jobs.
-    --list-routes
+    list-routes
         List all created routes and which resource they point to.
-    --cron
+    cron
                Run CRON Scheduler
-    --route
+    route
         Test the result of routing to a URL");
         Page::insert($output);
         
