@@ -301,6 +301,11 @@ class ViewRoutes {
             'path'=>'learn/topics/cli/using-args',
             'route-to'=>'learning/cli/UsingArgs.php'
         ]);
+        Router::view([
+            'path'=>'learn/topics/cli/user-input',
+            'route-to'=>'learning/cli/ReadingInput.php'
+        ]);
+        
         //cron and background jobs
         Router::view([
             'path'=>'learn/topics/jobs-scheduling',
