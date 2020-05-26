@@ -44,7 +44,7 @@ Usage:
 
 Available Commands:
     help
-        Display CLI Help. To display help for specific command, use the argument \"command-name\" with this command.
+        Display CLI Help. To display help for specific command, use the argument \"--command-name\" with this command.
     v
         Display framework version info.
     show-config
@@ -62,11 +62,11 @@ Available Commands:
 ");
         Page::insert($code1);
         Page::insert($this->createParagraph(''
-                . 'From the help, we can notice that the <code>--help</code> supports '
+                . 'From the help, we can notice that the <code>help</code> supports '
                 . 'one argument and the name of the argument is <code>command-name</code>. '
                 . 'This argument is used to show help for a specific command. '
                 . 'For example, if we want to show the help for the command '
-                . '<code>--cron</code>, we can do it as follows:'
+                . '<code>cron</code>, we can do it as follows:'
                 . ''));
         $code2 = new CodeSnippet();
         $code2->setTitle('Terminal');
