@@ -49,32 +49,32 @@ class CronCommand extends CLICommand {
      * </ul>
      */
     public function __construct() {
-        parent::__construct('--cron', [
+        parent::__construct('cron', [
             'p' => [
                 'optional' => true,
                 'description' => 'CRON password. If it is set in CRON, then it must be '
                 .'provided here.'
             ],
-            'check' => [
+            '--check' => [
                 'optional' => true,
                 'description' => 'Run a check aginst all jobs to check if '
                 .'it is time to execute them or not.'
             ],
-            'force' => [
+            '--force' => [
                 'optional' => true,
                 'description' => 'Force a specific job to execute.'
             ],
-            'job-name' => [
+            '--job-name' => [
                 'optional' => true,
                 'description' => 'The name of the job that will be forced to '
                 .'execute.'
             ],
-            'show-job-args' => [
+            '--show-job-args' => [
                 'optional' => true,
                 'description' => 'If this one is provided with job name and a '
                 .'job has custom execution args, they will be shown.'
             ],
-            'show-log' => [
+            '--show-log' => [
                 'optional' => true,
                 'description' => 'If set, execution log will be shown after '
                 .'execution is completed.'
@@ -97,142 +97,112 @@ class CronCommand extends CLICommand {
     public function exec() {
         $retVal = -1;
 
-        if ($this->isArgProvided('check')) {
+        if ($this->isArgProvided('--check')) {
             $pass = $this->getArgValue('p');
 
             if ($pass !== null) {
                 $result = Cron::run($pass, null, false, $this);
 
                 if ($result == 'INV_PASS') {
-                    $this->error("Provided password is incorrect.\n");
+                    $this->error("Provided password is incorrect");
                 } else {
                     $this->_printExcResult($result);
                     $this->_showLog();
                     $retVal = 0;
                 }
             } else {
-                $this->error("The argument 'p' is missing. It must be provided if cron password is set.\n");
+                $this->error("The argument 'p' is missing. It must be provided if cron password is set.");
             }
-        } else if ($this->isArgProvided('force')) {
+        } else if ($this->isArgProvided('--force')) {
             $retVal = $this->_force();
-        } else if ($this->isArgProvided('show-job-args')) {
+        } else if ($this->isArgProvided('--show-job-args')) {
             $this->_showJobArgs();
         } else {
-            fprintf(STDOUT, self::formatOutput("Info:", [
-                'color' => 'blue'
-            ])." At least one of the options 'check', 'force' or 'show-job-args' must be provided.\n");
+            $this->info("At least one of the options '--check', '--force' or '--show-job-args' must be provided.");
         }
-
+            
         return $retVal;
     }
-    private function _checkPass() {
-        $cronPass = Cron::password();
-
-        if ($cronPass == 'NO_PASSWORD') {
-            return true;
-        }
-        $givenPass = $this->getArgValue('p');
-
-        if ($givenPass === null) {
-            $this->error("Password is missing. It must be provided as argument 'p=PASS'.\n");
-
-            return false;
-        }
-        $hash = hash('sha256', $givenPass);
-        $same = $hash == $cronPass;
-
-        if (!$same) {
-            $this->error("Provided password is incorrect.\n");
-        }
-
-        return $same;
-    }
     private function _force() {
-        $jobName = $this->getArgValue('job-name');
+        $jobName = $this->getArgValue('--job-name');
         $cPass = $this->getArgValue('p');
         $retVal = -1;
-
+        
         if ($jobName === null) {
-            $this->error("Job name is missing.\n");
-        } else if ($cPass === null && Cron::password() != 'NO_PASSWORD') {
-            $this->error("The argument 'p' is missing. It must be provided if cron password is set.\n");
-        } else {
-            $result = Cron::run($cPass,$jobName.'',true, $this);
+            $jobName = $this->select('Select one of the scheduled jobs to force:', Cron::getJobsNames());
+        } 
+        
+        $result = Cron::run($cPass,$jobName.'',true, $this);
 
-            if ($result == 'INV_PASS') {
-                $this->error(STDERR,"Provided password is incorrect.\n");
-            } else if ($result == 'JOB_NOT_FOUND') {
-                $this->error(STDERR,"No job was found which has the name '".$jobName."'\n");
+        if ($result == 'INV_PASS') {
+            $this->error("Provided password is incorrect.");
+        } else {
+            if ($result == 'JOB_NOT_FOUND') {
+                $this->error("No job was found which has the name '".$jobName."'");
             } else {
                 $this->_printExcResult($result);
                 $this->_showLog();
                 $retVal = 0;
             }
         }
+        
 
         return $retVal;
     }
     private function _printExcResult($result) {
-        fprintf(STDOUT,"Total number of jobs: ".$result['total-jobs']."\n");
-        fprintf(STDOUT,"Executed Jobs: ".$result['executed-count']."\n");
-        fprintf(STDOUT,"Successfully finished jobs:\n");
+        $this->println("Total number of jobs: ".$result['total-jobs']);
+        $this->println("Executed Jobs: ".$result['executed-count']);
+        $this->println("Successfully finished jobs:");
         $sJobs = $result['successfully-completed'];
 
         if (count($sJobs) == 0) {
-            fprintf(STDOUT,"    <NONE>\n");
+            $this->println("    <NONE>");
         } else {
             foreach ($sJobs as $jobName) {
-                fprintf(STDOUT,"    ".$jobName."\n");
+                $this->println("    ".$jobName);
             }
         }
-        fprintf(STDOUT,"Failed jobs:\n");
+        $this->println("Failed jobs:");
         $fJobs = $result['failed'];
 
         if (count($fJobs) == 0) {
-            fprintf(STDOUT,"    <NONE>\n");
+            $this->println("    <NONE>");
         } else {
             foreach ($fJobs as $jobName) {
-                fprintf(STDOUT,"    ".$jobName."\n");
+                $this->println("    ".$jobName);
             }
         }
     }
     private function _showJobArgs() {
-        $jobName = $this->getArgValue('job-name');
+        $jobName = $this->getArgValue('--job-name');
+        if ($jobName === null) {
+            $jobName = $this->select('Select one of the scheduled jobs to show supported args:', Cron::getJobsNames());
+        } 
+        $job = Cron::getJob($jobName);
 
-        if ($this->_checkPass()) {
-            if ($jobName !== null) {
-                $job = Cron::getJob($jobName);
+        $this->println("Job Args:");
+        $customArgs = $job->getExecArgsNames();
 
-                if ($job !== null) {
-                    fprintf(STDOUT,"Job Args:\n");
-                    $customArgs = $job->getExecArgsNames();
-
-                    if (count($customArgs) != 0) {
-                        foreach ($customArgs as $argName) {
-                            fprintf(STDOUT,"$argName\n");
-                        }
-                    } else {
-                        fprintf(STDOUT,"<NO ARGS>\n");
-                    }
-                } else {
-                    $this->error("No job which has the given name was found.\n");
-                }
-            } else {
-                $this->error("The argument 'job-name' is missing.\n");
+        if (count($customArgs) != 0) {
+            foreach ($customArgs as $argName) {
+                $this->println("$argName");
             }
+        } else {
+            $this->println("<NO ARGS>");
         }
     }
     private function _showLog() {
-        if ($this->isArgProvided('show-log')) {
-            fprintf(STDOUT, "\n------+-Execution Log-+------\n");
+        if ($this->isArgProvided('--show-log')) {
+            $this->println("\n------+-Execution Log-+------");
 
             foreach (Cron::getLogArray() as $message) {
-                fprintf(STDOUT, $message."\n");
+                $this->println($message);
             }
         } else {
-            fprintf(STDOUT, self::formatOutput("TIP:", [
+            $this->print("TIP: ", [
                 'color' => 'yellow'
-            ])." Supply the argument 'show-log' to show execution log.\n");
+            ]);
+            $this->println("Supply the argument '--show-log' to show execution log.");
         }
     }
 }

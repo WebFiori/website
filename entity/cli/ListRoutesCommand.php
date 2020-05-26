@@ -38,7 +38,7 @@ class ListRoutesCommand extends CLICommand {
      * point to.
      */
     public function __construct() {
-        parent::__construct('--list-routes', [], 'List all created routes and which resource they point to.');
+        parent::__construct('list-routes', [], 'List all created routes and which resource they point to.');
     }
     /**
      * Execute the command.
@@ -63,9 +63,9 @@ class ListRoutesCommand extends CLICommand {
             $location = $maxRouteLen - strlen($requestedUrl);
 
             if (gettype($routeTo) == 'object') {
-                fprintf(STDOUT, "$requestedUrl %".$location."s <object>\n", " => ");
+                $this->println("$requestedUrl %".$location."s <object>", " => ");
             } else {
-                fprintf(STDOUT, "$requestedUrl %".$location."s $routeTo\n"," => ");
+                $this->println("$requestedUrl %".$location."s $routeTo"," => ");
             }
         }
 

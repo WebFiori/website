@@ -38,17 +38,17 @@ use webfiori\ini\InitCliCommands;
  */
 class CLI {
     /**
-     *
-     * @var An associative array that contains supported commands. 
-     * @since 1.0.2
-     */
-    private $commands;
-    /**
      * The command that will be executed now.
      * @var CLICommand|null
      * @since 1.0.2 
      */
     private $activeCommand;
+    /**
+     *
+     * @var An associative array that contains supported commands. 
+     * @since 1.0.2
+     */
+    private $commands;
     /**
      *
      * @var CLI 
@@ -124,6 +124,13 @@ class CLI {
         fprintf(STDERR, $ex->getTraceAsString());
     }
     /**
+     * 
+     * @return CLICommand|null
+     */
+    public static function getActiveCommand() {
+        return self::get()->activeCommand;
+    }
+    /**
      * Returns an associative array of registered commands.
      * @return array The method will return an associative array. The keys of 
      * the array are the names of the commands and the value of the key is 
@@ -192,7 +199,7 @@ class CLI {
      */
     public static function runCLI() {
         if ($_SERVER['argc'] == 1) {
-            $command = self::get()->commands['--help'];
+            $command = self::get()->commands['help'];
             self::get()->activeCommand = $command;
             return $command->excCommand();
         } else if (defined('__PHPUNIT_PHAR__')) {
@@ -217,13 +224,6 @@ class CLI {
 
             return -1;
         }
-    }
-    /**
-     * 
-     * @return CLICommand|null
-     */
-    public static function getActiveCommand() {
-        return self::get()->activeCommand;
     }
     /**
      * 

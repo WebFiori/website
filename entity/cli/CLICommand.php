@@ -73,8 +73,9 @@ abstract class CLICommand {
      * @param string $commandName A string that represents the name of the 
      * command such as '-v' or '--help'. If not provided, the 
      * value '--new-command' is used.
-     * @param array $args An indexed array of sub-associative arrays of arguments which can 
-     * be supplied to the command when running it. Each 
+     * @param array $args An indexed array of sub-associative arrays of arguments (or options) which can 
+     * be supplied to the command when running it. The 
+     * key of each sub array is argument name. Each 
      * sub-array can have the following indices:
      * <ul>
      * <li><b>optional</b>: A boolean. if set to true, it means that the argument 
@@ -83,6 +84,11 @@ abstract class CLICommand {
      * to use if it is not provided and is optional.</li>
      * <li><b>description</b>: A description of the argument which 
      * will be shown if the command '--help' is executed.</li>
+     * <li><b>values</b>: A set of values that the argument can have. If provided, 
+     * only the values on the list will be allowed. Note that if null or empty string 
+     * is in the array, it will be ignored. Also, if boolean values are 
+     * provided, true will be converted to the string 'y' and false will 
+     * be converted to the string 'n'.</li>
      * </ul>
      * @param string $description A string that describes what does the job 
      * do. The description will appear when the command '--help' is executed.
@@ -103,7 +109,8 @@ abstract class CLICommand {
      * An argument is a string that comes after the name of the command. The value 
      * of an argument can be set using equal sign. For example, if command name 
      * is '--do-it' and one argument has the name 'what-to-do', then the full 
-     * CLI command would be "--do-it what-to-do=say-hi". 
+     * CLI command would be "--do-it what-to-do=say-hi". An argument can be 
+     * also treated as an option.
      * @param string $name The name of the argument. It must be non-empty string 
      * and does not contain spaces. Note that if the argument is already added and 
      * the developer is trying to add it again, the new options array will override 
@@ -116,6 +123,11 @@ abstract class CLICommand {
      * to use if it is not provided and is optional.</li>
      * <li><b>description</b>: A description of the argument which 
      * will be shown if the command '--help' is executed.</li>
+     * <li><b>values</b>: A set of values that the argument can have. If provided, 
+     * only the values on the list will be allowed. Note that if null or empty string 
+     * is in the array, it will be ignored. Also, if boolean values are 
+     * provided, true will be converted to the string 'y' and false will 
+     * be converted to the string 'n'.</li>
      * </ul>
      * @return boolean If the argument is added, the method will return true. 
      * Other than that, the method will return false.
@@ -130,7 +142,8 @@ abstract class CLICommand {
             } else {
                 $this->commandArgs[$trimmed] = [
                     'optional' => false,
-                    'description' => '<NO DESCRIPTION>'
+                    'description' => '<NO DESCRIPTION>',
+                    'values' => []
                 ];
             }
 
@@ -141,7 +154,8 @@ abstract class CLICommand {
     }
     /**
      * Adds multiple arguments to the command
-     * @param array $arr An indexed array of sub associative arrays. Each 
+     * @param array $arr An associative array of sub associative arrays. The 
+     * key of each sub array is argument name. Each 
      * sub-array can have the following indices:
      * <ul>
      * <li><b>optional</b>: A boolean. if set to true, it means that the argument 
@@ -150,6 +164,11 @@ abstract class CLICommand {
      * to use if it is not provided and is optional.</li>
      * <li><b>description</b>: A description of the argument which 
      * will be shown if the command '--help' is executed.</li>
+     * <li><b>values</b>: A set of values that the argument can have. If provided, 
+     * only the values on the list will be allowed. Note that if null or empty string 
+     * is in the array, it will be ignored. Also, if boolean values are 
+     * provided, true will be converted to the string 'y' and false will 
+     * be converted to the string 'n'.</li>
      * </ul>
      */
     public function addArgs($arr) {
@@ -162,16 +181,175 @@ abstract class CLICommand {
         }
     }
     /**
+     * Clears the output before or after cursor position.
+     * This method will replace the visible characters with spaces.
+     * Note that support for this operation depends on terminal support for 
+     * ANSI escape codes.
+     * @param int $numberOfCols Number of columns to clear. The columns that 
+     * will be cleared are before and after cursor position. They don't include 
+     * the character at which the cursor is currently pointing to.
+     * @param boolean $beforeCursor If set to true, the characters which 
+     * are before the cursor will be cleared. Default is true.
+     * @since 1.0
+     */
+    public function clear($numberOfCols = 1, $beforeCursor = true) {
+        $asInt = intval($numberOfCols);
+
+        if ($asInt >= 1) {
+            if ($beforeCursor) {
+                for ($x = 0 ; $x < $numberOfCols ; $x++) {
+                    $this->moveCursorLeft();
+                    $this->print(" ");
+                    $this->moveCursorLeft();
+                }
+                $this->moveCursorRight($asInt);
+            } else {
+                $this->moveCursorRight();
+
+                for ($x = 0 ; $x < $numberOfCols ; $x++) {
+                    $this->print(" ");
+                }
+                $this->moveCursorLeft($asInt + 1);
+            }
+        }
+    }
+    /**
+     * Clears the whole content of the console.
+     * Note that support for this operation depends on terminal support for 
+     * ANSI escape codes.
+     * @since 1.0
+     */
+    public function clearConsole() {
+        $this->print("\ec");
+    }
+    /**
+     * Clears the line at which the cursor is in and move it back to the start 
+     * of the line.
+     * Note that support for this operation depends on terminal support for 
+     * ANSI escape codes.
+     * @since 1.0
+     */
+    public function clearLine() {
+        $this->print(STDOUT, "\e[2K");
+        $this->print(STDOUT, "\r");
+    }
+    /**
+     * Asks the user to conform something.
+     * This method will display the question and wait for the user to confirm the 
+     * action by entering 'y' or 'n' in the terminal. If the user give something 
+     * other than 'Y' or 'n', it will shows an error and ask him to confirm 
+     * again.
+     * @param string $confirmTxt The text of the question which will be asked. 
+     * @return boolean If the user choose 'y', the method will return true. If 
+     * he choose 'n', the method will return false. 
+     * @param boolean|null $default Default answer to use if empty input is given. 
+     * It can be true for 'y' and false for 'n'. Default value is null which 
+     * means no default will be used.
+     * @since 1.0
+     * 
+     */
+    public function confirm($confirmTxt, $default = null) {
+        $answer = null;
+
+        do {
+            $this->print($confirmTxt, [
+                'color' => 'gray',
+                'bold' => true
+            ]);
+            $this->println('(y/n)', [
+                'color' => 'light-blue'
+            ]);
+
+            if ($default === true) {
+                $this->println('Enter = "y"', [
+                    'color' => 'light-blue'
+                ]);
+            } else {
+                if ($default === false) {
+                    $this->println('Enter = "n"', [
+                    'color' => 'light-blue'
+                ]);
+                }
+            }
+            $input = $this->read();
+
+            if ($input == 'n') {
+                $answer = false;
+            } else {
+                if ($input == 'y') {
+                    $answer = true;
+                } else {
+                    if (strlen($input) == 0 && $default !== null) {
+                        return $default === true;
+                    } else {
+                        $this->error('Invalid answer. Choose \'y\' or \'n\'.');
+                    }
+                }
+            }
+        } while ($answer === null);
+
+        return $answer;
+    }
+    /**
      * Display a message that represents an error.
      * The message will be prefixed with the string 'Error:' in 
-     * red. The output will be sent to STDERR.
+     * red. The output will be sent to STDOUT.
      * @param string $message The message that will be shown.
      * @since 1.0
      */
     public function error($message) {
-        fprintf(STDERR, self::formatOutput('Error:', [
-            'color' => 'light-red'
-        ]).' '.$message);
+        $this->print('Error: ', [
+            'color' => 'light-red',
+            'bold' => true
+        ]);
+        $this->println($message);
+    }
+    /**
+     * Take an input value from the user.
+     * This method will read the input from STDIN.
+     * @param string $prompt The string that will be shown to the user. The 
+     * string must be non-empty.
+     * @param string $default An optional default value to use in case the user 
+     * hit "Enter" without entering any value.
+     * @param callable $validator A callback that can be used to validate user 
+     * input. The callback accepts one parameter which is the value that 
+     * the user has given. If the value is valid, the callback must return true. 
+     * If the callback returns anything else, it means the value which is given 
+     * by the user is invalid and this method will ask the user to enter the 
+     * value again.
+     * @return string The method will return the value which was taken from the 
+     * user.
+     * @since 1.0
+     */
+    public function getInput($prompt, $default = null, $validator = null) {
+        $trimidPrompt = trim($prompt);
+        if (strlen($prompt) > 0) {
+            do {
+                $this->print($prompt, [
+                    'color' => 'gray',
+                    'bold' => true
+                ]);
+                if ($default !== null) {
+                    $this->print(' Enter = "'.$default.'"', [
+                        'color' => 'light-blue'
+                    ]);
+                }
+                $this->println();
+                $input = $this->read();
+                if (strlen($input) == 0 && $default !== null) {
+                    return $default;
+                } else if (is_callable($validator)) {
+                    $validateResult = call_user_func_array($validator, [$input]);
+                    if ($validateResult === true) {
+                        return $input;
+                    } else {
+                        $this->error('Invalid input is given. Try again.');
+                    }
+                } else {
+                    return $input;
+                }
+            } while (true);
+        }
     }
     /**
      * Execute the command.
@@ -184,7 +362,7 @@ abstract class CLICommand {
     public function excCommand() {
         $this->_parseArgs();
 
-        if ($this->_checkIsArgsSet()) {
+        if ($this->_checkIsArgsSet() && $this->_checkAllowedArgValues()) {
             $execResult = $this->exec();
 
             if ($execResult === null) {
@@ -212,7 +390,9 @@ abstract class CLICommand {
      * make it bold or underlined. The returned value of this 
      * method can be sent to STDOUT using the method 'fprintf()'. 
      * Note that the support for colors 
-     * and formatting will depend on the terminal configuration.
+     * and formatting will depend on the terminal configuration. In addition, 
+     * if the constant NO_COLOR is defined or is set in the environment, the 
+     * returned string will be returned as is.
      * @param string $string The string that will be formatted.
      * @param array $formatOptions An associative array of formatting 
      * options. Supported options are:
@@ -248,15 +428,6 @@ abstract class CLICommand {
      * @since 1.0
      */
     public static function formatOutput($string, $formatOptions) {
-        $os = php_uname('s');
-        $notSupported = [
-            'Windows NT'
-        ];
-        
-        if (in_array($os, $notSupported)) {
-            
-            return $string;
-        }
         $validatedOptions = self::_validateOutputOptions($formatOptions);
 
         return self::_getFormattedOutput($string, $validatedOptions);
@@ -362,6 +533,210 @@ abstract class CLICommand {
         return false;
     }
     /**
+     * Moves the cursor down by specific number of lines.
+     * Note that support for this operation depends on terminal support for 
+     * ANSI escape codes.
+     * @param int $lines The number of lines the cursor will be moved. Default 
+     * value is 1.
+     * @since 1.0
+     */
+    public function moveCursorDown($lines = 1) {
+        $asInt = intval($lines);
+
+        if ($asInt >= 1) {
+            $this->print("\e[".$asInt."B");
+        }
+    }
+    /**
+     * Moves the cursor to the left by specific number of columns.
+     * Note that support for this operation depends on terminal support for 
+     * ANSI escape codes.
+     * @param int $numberOfCols The number of columns the cursor will be moved. Default 
+     * value is 1.
+     * @since 1.0
+     */
+    public function moveCursorLeft($numberOfCols = 1) {
+        $asInt = intval($numberOfCols);
+
+        if ($asInt >= 1) {
+            $this->print("\e[".$asInt."D");
+        }
+    }
+    /**
+     * Moves the cursor to the right by specific number of columns.
+     * Note that support for this operation depends on terminal support for 
+     * ANSI escape codes.
+     * @param int $numberOfCols The number of columns the cursor will be moved. Default 
+     * value is 1.
+     * @since 1.0
+     */
+    public function moveCursorRight($numberOfCols = 1) {
+        $asInt = intval($numberOfCols);
+
+        if ($asInt >= 1) {
+            $this->print("\e[".$asInt."C");
+        }
+    }
+    /**
+     * Moves the cursor to specific position in the terminal.
+     * If no arguments are supplied to the method, it will move the cursor 
+     * to the upper-left corner of the screen (line 0, column 0).
+     * Note that support for this operation depends on terminal support for 
+     * ANSI escape codes.
+     * @param int $line The number of line at which the cursor will be moved 
+     * to. If not specified, 0 is used.
+     * @param int $col The number of column at which the cursor will be moved 
+     * to. If not specified, 0 is used.
+     * @since 1.0
+     */
+    public function moveCursorTo($line = 0, $col = 0) {
+        $lineAsInt = intval($line);
+        $colAsInt = intval($col);
+
+        if ($lineAsInt > -1 && $colAsInt > -1) {
+            $this->print("\e[".$lineAsInt.";".$colAsInt."H");
+        }
+    }
+    /**
+     * Moves the cursor up by specific number of lines.
+     * Note that support for this operation depends on terminal support for 
+     * ANSI escape codes.
+     * @param int $lines The number of lines the cursor will be moved. Default 
+     * value is 1.
+     * @since 1.0
+     */
+    public function moveCursorUp($lines = 1) {
+        $asInt = intval($lines);
+
+        if ($asInt >= 1) {
+            $this->print("\e[".$asInt."A");
+        }
+    }
+    /**
+     * Print out a string.
+     * This method works exactly like the function 'fprintf()'. The only 
+     * difference is that the method will print out the output to STDOUT and 
+     * the method accepts formatting options as last argument to format the output. 
+     * Note that support for output formatting depends on terminal support for 
+     * ANSI escape codes.
+     * @param string $str The string that will be printed to STDOUT.
+     * @param mixed $_ One or more extra arguments that can be supplied to the 
+     * method. The last argument can be an array that contains text formatting options. 
+     * for available options, check the method CLICommand::formatOutput().
+     * @since 1.0
+     */
+    public function print($str, ...$_) {
+        $argCount = count($_);
+        $formattingOptions = [];
+
+        if ($argCount != 0) {
+            if (gettype($_[$argCount - 1]) == 'array') {
+                $formattingOptions = $_[$argCount - 1];
+            }
+        }
+
+        $formattingOptions['force-styling'] = $this->isArgProvided('force-styling');
+        $formattingOptions['no-ansi'] = $this->isArgProvided('--no-ansi');
+        $arrayToPass = [
+            STDOUT,
+            $this->formatOutput($str, $formattingOptions)
+        ];
+
+        foreach ($_ as $val) {
+            $type = gettype($val);
+
+            if ($type != 'array') {
+                $arrayToPass[] = $val;
+            }
+        }
+        call_user_func_array('fprintf', $arrayToPass);
+    }
+    /**
+     * Print out a string and terminates the current line by writing the 
+     * line separator string.
+     * This method will work like the function fprintf(). The difference is that 
+     * it will print out directly to STDOUT and the text can have formatting 
+     * options. Note that support for output formatting depends on terminal support for 
+     * ANSI escape codes.
+     * @param string $str The string that will be printed to STDOUT.
+     * @param mixed $_ One or more extra arguments that can be supplied to the 
+     * method. The last argument can be an array that contains text formatting options. 
+     * for available options, check the method CLICommand::formatOutput().
+     * @since 1.0
+     */
+    public function println($str = '', ...$_) {
+        $toPass = [
+            $str."\n"
+        ];
+
+        foreach ($_ as $val) {
+            $toPass[] = $val;
+        }
+        call_user_func_array([$this, 'print'], $toPass);
+    }
+    /**
+     * Reads a string from STDIN stream.
+     * This method is limit to read 1024 bytes at once from STDIN.
+     * @return string The method will return the string which was given as input 
+     * in STDIN.
+     * @since 1.0
+     */
+    public function read() {
+        return trim(fread(STDIN, 1024));
+    }
+    /**
+     * Ask the user to select one of multiple answers.
+     * This method will display the prompt and wait for the user to select 
+     * the an answer. If the user give something other than the answers 
+     * specified, it will shows an error and ask him to select again again. The 
+     * user can select an answer by typing its text or its number which will appear 
+     * in the terminal.
+     * @param string $prompt The text that will be shown for the user.
+     * @param array $choices An indexed array of options to select from.
+     * @param int $defaultIndex The index of the default answer in case no answer 
+     * is selected and the user hit enter.
+     * @return string The method will return the answer which is selected by 
+     * the user.
+     * @since 1.0
+     */
+    public function select($prompt, $choices, $defaultIndex = null) {
+        if (gettype($choices) == 'array' && count($choices) != 0) {
+            do {
+                $this->print($prompt, [
+                    'color' => 'gray',
+                    'bold' => true
+                ]);
+                $default = null;
+
+                if ($defaultIndex !== null && gettype($defaultIndex) == 'integer') {
+                    $default = isset($choices[$defaultIndex]) ? $choices[$defaultIndex] : null;
+
+                    if ($default !== null) {
+                        $this->print('Enter = "'.$default.'"',[
+                            'color' => 'light-blue'
+                        ]);
+                    }
+                } 
+                $this->println();
+
+                foreach ($choices as $choiceIndex => $choiceTxt) {
+                    $this->println($choiceIndex.": ".$choiceTxt);
+                }
+                $input = trim($this->read());
+
+                if (in_array($input, $choices)) {
+                    return $input;
+                } else if (isset ($choices[$input])) {
+                    return $choices[$input];
+                } else if (strlen($input) == 0 && $default !== null) {
+                    return $default;
+                } else {
+                    $this->error('Invalid answer.');
+                }
+            } while (true);
+        }
+    }
+    /**
      * Sets the description of the command.
      * The description of the command is a string that describes what does the 
      * command do and it will appear in CLI if the command '--help' is executed.
@@ -402,6 +777,85 @@ abstract class CLICommand {
 
         return false;
     }
+    /**
+     * Display a message that represents a success status.
+     * @param string $message The message that will be displayed.
+     * @since 1.0
+     */
+    public function success($message) {
+        $this->println($message, [
+            'color' => 'light-green',
+            'bold' => true
+        ]);
+    }
+    /**
+     * Display a message that represents extra information.
+     * The message will be prefixed with the string 'Info:' in 
+     * blue. The output will be sent to STDOUT.
+     * @param string $message The message that will be shown.
+     * @since 1.0
+     */
+    public function info($message) {
+        $this->print('Info: ', [
+            'color' => 'blue',
+            'bold' => true
+        ]);
+        $this->println($message);
+    }
+    /**
+     * Display a message that represents a warning.
+     * The message will be prefixed with the string 'Warning:' in 
+     * red. The output will be sent to STDOUT.
+     * @param string $message The message that will be shown.
+     * @since 1.0
+     */
+    public function warning($message) {
+        $this->print('Warning: ', [
+            'color' => 'light-yellow',
+            'bold' => true
+        ]);
+        $this->println($message);
+    }
+    private function _checkAllowedArgValues() {
+        $invalidArgsVals = [];
+
+        foreach ($this->commandArgs as $argName => $argArray) {
+            if ($this->isArgProvided($argName) && count($argArray['values']) != 0) {
+                $argValue = $argArray['val'];
+
+                if (!in_array($argValue, $argArray['values'])) {
+                    $invalidArgsVals[] = $argName;
+                }
+            }
+        }
+
+        if (count($invalidArgsVals) != 0) {
+            $invalidStr = 'The following required argument(s) have invalid values: ';
+            $comma = '';
+
+            foreach ($invalidArgsVals as $argName) {
+                $invalidStr .= $comma.'"'.$argName.'"';
+                $comma = ', ';
+            }
+            $this->error($invalidStr);
+
+            foreach ($invalidArgsVals as $argName) {
+                $this->print('Info:', [
+                    'color' => 'light-yellow',
+                    'force-styling' => $this->isArgProvided('force-styling')
+                ]);
+                $this->println("Allowed values for the argument '$argName':");
+
+                foreach ($this->commandArgs[$argName]['values'] as $val) {
+                    $this->println($val);
+                }
+            }
+
+            return false;
+        }
+
+        return true;
+    }
     private function _checkArgOptions($options) {
         $optinsArr = [];
 
@@ -421,6 +875,29 @@ abstract class CLICommand {
             }
         } else {
             $optinsArr['description'] = '<NO DESCRIPTION>';
+        }
+
+        if (isset($options['values']) && gettype($options['values']) == 'array') {
+            $vals = [];
+
+            foreach ($options['values'] as $val) {
+                $type = gettype($val);
+
+                if ($type == 'boolean') {
+                    if ($val === true) {
+                        $vals[] = 'y';
+                    } else {
+                        $vals[] = 'n';
+                    }
+                } else {
+                    if ($type != 'object' && $val !== null && strlen($val) != 0) {
+                        $vals[] = $val.'';
+                    }
+                }
+            }
+            $optinsArr['values'] = $vals;
+        } else {
+            $optinsArr['values'] = [];
         }
 
         if (isset($options['default']) && gettype($options['default']) == 'string') {
@@ -450,7 +927,7 @@ abstract class CLICommand {
                 $missingStr .= $comma.'"'.$opt.'"';
                 $comma = ', ';
             }
-            $this->error($missingStr."\n");
+            $this->error($missingStr);
 
             return false;
         }
@@ -458,16 +935,23 @@ abstract class CLICommand {
         return true;
     }
     private static function _getFormattedOutput($outputString, $formatOptions) {
-        $outputString .= "\e";
         $outputManner = self::getCharsManner($formatOptions);
 
         if (strlen($outputManner) != 0) {
-            return "\e[".$outputManner."m$outputString \e[0m";
+            return "\e[".$outputManner."m$outputString\e[0m";
         }
 
         return $outputString;
     }
     private function _parseArgs() {
+        $this->addArg('--ansi', [
+            'optional' => true,
+            'description' => 'Force the use of ANSI output.'
+        ]);
+        $this->addArg('--no-ansi', [
+            'optional' => true,
+            'description' => 'Force the output to not use ANSI.'
+        ]);
         $options = array_keys($this->commandArgs);
 
         foreach ($options as $optName) {
@@ -522,10 +1006,29 @@ abstract class CLICommand {
     private static function getCharsManner($options) {
         $mannerStr = '';
 
+        if (isset($options['force-styling'])) {
+            $forceStyling = $options['force-styling'] === true;
+        } else {
+            $forceStyling = false;
+        }
+        if (isset($options['no-ansi']) && $options['no-ansi'] === true) {
+            return $mannerStr; 
+        }
+        if (!$forceStyling) {
+            $os = php_uname('s');
+            $notSupported = [
+                'Windows NT'
+            ];
+
+            if (in_array($os, $notSupported)) {
+                return $mannerStr;
+            }
+        }
+
         if ($options['bold']) {
             $mannerStr = self::addManner($mannerStr, 1);
         }
- 
+
         if ($options['underline']) {
             $mannerStr = self::addManner($mannerStr, 4);
         }
@@ -536,6 +1039,11 @@ abstract class CLICommand {
 
         if ($options['reverse']) {
             $mannerStr = self::addManner($mannerStr, 7);
+        }
+
+        if (defined('NO_COLOR') || isset($_SERVER['NO_COLOR']) || getenv('NO_COLOR') !== false) {
+            //See https://no-color.org/ for more info.
+            return $mannerStr;
         }
         $mannerStr2 = self::addManner($mannerStr, self::COLORS[$options['color']]);
 

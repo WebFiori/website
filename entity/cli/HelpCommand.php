@@ -24,8 +24,6 @@
  */
 namespace webfiori\entity\cli;
 
-use webfiori\entity\Util;
-use webfiori\WebFiori;
 /**
  * A class that represents help command of framework's CLI.
  *
@@ -41,14 +39,14 @@ class HelpCommand extends CLICommand {
      * provided, the shown help will be specific to the selected command.
      */
     public function __construct() {
-        parent::__construct('--help', [
-            'command-name' => [
+        parent::__construct('help', [
+            '--command-name' => [
                 'optional' => true,
                 'description' => 'An optional command name. If provided, help '
                 .'will be specific to the given command only.'
             ]
         ], 'Display CLI Help. To display help for specific command, use the argument '
-                .'"command-name" with this command.');
+                .'"--command-name" with this command.');
     }
     /**
      * Execute the command.
@@ -58,28 +56,28 @@ class HelpCommand extends CLICommand {
      */
     public function exec() {
         $regCommands = CLI::getRegisteredCommands();
-        $commandName = $this->getArgValue('command-name');
+        $commandName = $this->getArgValue('--command-name');
 
         if ($commandName !== null) {
             if (isset($regCommands[$commandName])) {
                 $this->printCommandInfo($regCommands[$commandName], true);
             } else {
-                $this->error("Command '$commandName' is not supported.\n");
+                $this->error("Command '$commandName' is not supported.");
             }
         } else {
-            if($_SERVER['argc'] == 1) {
+            if ($_SERVER['argc'] == 1) {
                 $vCommand = new VersionCommand();
                 $vCommand->exec();
             }
-            fprintf(STDOUT, self::formatOutput("Usage:\n",[
+            $this->println("Usage:",[
                 'bold' => true,
                 'color' => 'light-yellow'
-            ]));
-            fprintf(STDOUT, "    command [arg1 arg2=\"val\" arg3...]\n\n");
-            fprintf(STDOUT, self::formatOutput("Available Commands:\n", [
+            ]);
+            $this->println("    command [arg1 arg2=\"val\" arg3...]\n");
+            $this->println("Available Commands:", [
                 'bold' => true,
                 'color' => 'light-yellow'
-            ]));
+            ]);
 
             foreach ($regCommands as $commandObj) {
                 $this->printCommandInfo($commandObj);
@@ -94,36 +92,36 @@ class HelpCommand extends CLICommand {
      * @param CLICommand $cliCommand
      */
     private function printCommandInfo($cliCommand, $withArgs = false) {
-        fprintf(STDOUT, "    %s\n", self::formatOutput($cliCommand->getName(), [
+        $this->println("    %s", $cliCommand->getName(), [
             'color' => 'yellow',
             'bold' => true
-        ]));
-        fprintf(STDOUT, "        %25s\n", $cliCommand->getDescription());
+        ]);
+        $this->println("        %25s\n", $cliCommand->getDescription());
 
         if ($withArgs) {
             $args = $cliCommand->getArgs();
 
             if (count($args) != 0) {
-                fprintf(STDOUT, self::formatOutput("    Supported Arguments:\n", [
+                $this->println("    Supported Arguments:", [
                     'bold' => true,
                     'color' => 'light-blue'
-                ]));
+                ]);
 
                 foreach ($args as $argName => $options) {
-                    fprintf(STDOUT, "    %25s: ", self::formatOutput($argName, [
+                    $this->print("    %25s: ", $argName, [
                         'bold' => true,
                         'color' => 'yellow'
-                    ]));
+                    ]);
 
                     if ($options['optional']) {
-                        fprintf(STDOUT, "[Optional]");
+                        $this->print("[Optional]");
                     }
 
                     if (isset($options['default'])) {
                         $default = $options['default'];
-                        fprintf(STDOUT, "[Default = '$default']");
+                        $this->print("[Default = '$default']");
                     }
-                    fprintf(STDOUT, " %s\n", $options['description']);
+                    $this->println(" %s", $options['description']);
                 }
             }
         }

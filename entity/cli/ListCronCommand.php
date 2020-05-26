@@ -37,7 +37,7 @@ class ListCronCommand extends CLICommand {
      * all registered background jobs.
      */
     public function __construct() {
-        parent::__construct('--list-jobs', [], 'List all scheduled CRON jobs.');
+        parent::__construct('list-jobs', [], 'List all scheduled CRON jobs.');
     }
     /**
      * Execute the command.
@@ -48,22 +48,22 @@ class ListCronCommand extends CLICommand {
     public function exec() {
         $jobs = Cron::jobsQueue();
         $i = 1;
-        fprintf(STDOUT, "Number Of Jobs: ".$jobs->size()."\n");
+        $this->println("Number Of Jobs: ".$jobs->size());
 
         while ($job = $jobs->dequeue()) {
             if ($i < 10) {
-                fprintf(STDOUT, self::formatOutput("--------- Job #0$i ---------\n", [
+                $this->println("--------- Job #0$i ---------", [
                     'color' => 'light-blue',
                     'bold' => true
-                ]));
+                ]);
             } else {
-                fprintf(STDOUT, self::formatOutput("--------- Job #$i ---------\n", [
+                $this->println("--------- Job #$i ---------", [
                     'color' => 'light-blue',
                     'bold' => true
-                ]));
+                ]);
             }
-            fprintf(STDOUT, "Job Name %".(18 - strlen('Job Name'))."s %s\n",":",$job->getJobName());
-            fprintf(STDOUT, "Cron Expression %".(18 - strlen('Cron Expression'))."s %s\n",":",$job->getExpression());
+            $this->println("Job Name %".(18 - strlen('Job Name'))."s %s",[], ":",$job->getJobName());
+            $this->println("Cron Expression %".(18 - strlen('Cron Expression'))."s %s",[],":",$job->getExpression());
             $i++;
         }
 
