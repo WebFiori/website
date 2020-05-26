@@ -46,7 +46,7 @@ Usage:
 
 Available Commands:
     help
-        Display CLI Help. To display help for specific command, use the argument \"command-name\" with this command.
+        Display CLI Help. To display help for specific command, use the argument \"--command-name\" with this command.
     v
         Display framework version info.
     show-config
