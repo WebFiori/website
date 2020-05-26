@@ -67,21 +67,25 @@ class SayHiCommand extends CLICommand {
     }
     
     public function exec() {
-        \$name = \$this->input('Give me your name:');
-        \$this->println('Hi \$name');
+        \$name = \$this->getInput('Give me your name:');
+        \$this->println(\"Hi \$name\");
         return 0;
     }
 
 }");
         $sec1->addChild($code1);
-        
-        $sec2 = $this->createSection('Registering the command',4);
-        Page::insert($sec2);
-        $sec2->addChild($this->createParagraph('Before we continue, let\'s explain what we did. '
+        $sec1->addChild($this->createParagraph('Before we continue, let\'s explain what we did. '
                 . 'The method <a href="docs/webfiori/entity/cli/CLICommand#getInput" target="_blank">CLICommand::getInput()</a> '
                 . 'is used to read user input from <code>STDIN</code>. The method accepts 3 parameters but for now, we will '
                 . 'only use the first one. The first parameter of the method is simply a prompt text that will be shown to the '
                 . 'user. The text is used to specify what we would like to get from the user.'));
+        $sec1->addChild($this->createParagraph('The method '
+                . '<a href="docs/webfiori/entity/cli/CLICommand#getInput" target="_blank">CLICommand::println()</a> '
+                . 'is used to show output. It will send it directly to <code>STDIN</code>.'));
+        
+        $sec2 = $this->createSection('Registering the command',4);
+        Page::insert($sec2);
+        
         $sec2->addChild($this->createParagraph('Now that we have our command is ready, all '
                 . 'what we have to to is to register it. In order to register any custom-created '
                 . 'command, the class <a target="_blank" href="docs/webfiori/ini/InitCliCommands">InitCliCommands</a>. '
@@ -106,19 +110,19 @@ class InitCliCommands {
         
         $sec3 = $this->createSection('Running The Command',4);
         Page::insert($sec3);
-        $sec3->addChild($this->createParagraph('When the command <code>--help</code>, the newly created '
+        $sec3->addChild($this->createParagraph('When the command <code>help</code>, the newly created '
                 . 'command will appear at the end of supported commands as follows:'));
         $code3 = new CodeSnippet();
         $sec3->addChild($code3);
         $code3->setTitle('Terminal');
-        $code3->setCode("    --say-hi
+        $code3->setCode("    say-hi
         Takes a name as input and say \"Hi\".");
         $sec3->addChild($this->createParagraph('When the command is executed, the output in '
                 . 'the terminal will be similar to the one shown in next snippit.'));
         $code4 = new CodeSnippet();
         $sec3->addChild($code4);
         $code4->setTitle('Terminal');
-        $code4->setCode("$ php webfiori --say-hi
+        $code4->setCode("$ php webfiori say-hi
 Give me your name:
 Ibrahim BinAlshikh
 Hi Ibrahim BinAlshikh
