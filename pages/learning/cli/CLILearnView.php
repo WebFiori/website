@@ -54,6 +54,10 @@ class CLILearnView extends LearnView{
             [
                 'label'=>'Using Arguments',
                 'link'=>'learn/topics/cli/using-args'
+            ],
+            [
+                'label'=>'Reading Input',
+                'link'=>'learn/topics/cli/user-input'
             ]
         ];
         $linksArr[$this->getAsideActiveLinkNum()]['is-active'] = true;
