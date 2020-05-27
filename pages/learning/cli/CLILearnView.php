@@ -58,6 +58,18 @@ class CLILearnView extends LearnView{
             [
                 'label'=>'Reading Input',
                 'link'=>'learn/topics/cli/user-input'
+            ],
+            [
+                'label'=>'Formatting Output',
+                'link'=>'learn/topics/cli/formatting-output'
+            ],
+            [
+                'label' => 'Commands Reference',
+                'link' => 'learn/topics/cli/commands-reference'
+            ],
+            [
+                'label' => 'Questions and Answers',
+                'link' => 'learn/topics/cli/questions-and-answers'
             ]
         ];
         $linksArr[$this->getAsideActiveLinkNum()]['is-active'] = true;
