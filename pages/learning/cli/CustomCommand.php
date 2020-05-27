@@ -81,14 +81,15 @@ class SayHiCommand extends CLICommand {
                 . 'user. The text is used to specify what we would like to get from the user.'));
         $sec1->addChild($this->createParagraph('The method '
                 . '<a href="docs/webfiori/entity/cli/CLICommand#getInput" target="_blank">CLICommand::println()</a> '
-                . 'is used to show output. It will send it directly to <code>STDIN</code>.'));
+                . 'is used to show output. It will send it directly to <code>STDOUT</code>.'));
         
         $sec2 = $this->createSection('Registering the command',4);
         Page::insert($sec2);
         
         $sec2->addChild($this->createParagraph('Now that we have our command is ready, all '
                 . 'what we have to to is to register it. In order to register any custom-created '
-                . 'command, the class <a target="_blank" href="docs/webfiori/ini/InitCliCommands">InitCliCommands</a>. '
+                . 'command, the class <a target="_blank" href="docs/webfiori/ini/InitCliCommands">InitCliCommands</a> can be used '
+                . 'to complete the task. '
                 . 'The following code shows how to register new command'));
         $code2 = new CodeSnippet();
         $code2->setTitle('PHP Code');
@@ -97,7 +98,7 @@ class SayHiCommand extends CLICommand {
 use webfiori\entity\cli\CLI;
 
 //first, import the command.
-use webfiori\entity\cli\SayHiCommand;
+use webfiori\\entity\\cli\\SayHiCommand;
 
 class InitCliCommands {
 
@@ -110,8 +111,8 @@ class InitCliCommands {
         
         $sec3 = $this->createSection('Running The Command',4);
         Page::insert($sec3);
-        $sec3->addChild($this->createParagraph('When the command <code>help</code>, the newly created '
-                . 'command will appear at the end of supported commands as follows:'));
+        $sec3->addChild($this->createParagraph('When the command <code>help</code> is executed, the newly created '
+                . 'command will appear at the end of supported commands list as follows:'));
         $code3 = new CodeSnippet();
         $sec3->addChild($code3);
         $code3->setTitle('Terminal');
@@ -128,7 +129,7 @@ Ibrahim BinAlshikh
 Hi Ibrahim BinAlshikh
 ");
         $this->setPrevTopicLink('learn/topics/cli/running-commands', 'Running Commands');
-        $this->setPrevTopicLink('learn/topics/cli/using-args', 'Using Arguments');
+        $this->setNextTopicLink('learn/topics/cli/using-args', 'Using Arguments');
         $this->displayView();
     }
 }
