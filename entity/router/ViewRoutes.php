@@ -305,7 +305,18 @@ class ViewRoutes {
             'path'=>'learn/topics/cli/user-input',
             'route-to'=>'learning/cli/ReadingInput.php'
         ]);
-        
+        Router::view([
+            'path'=>'learn/topics/cli/formatting-output',
+            'route-to'=>'learning/cli/FormattingOutput.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/cli/commands-reference',
+            'route-to'=>'learning/cli/CommandsReference.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/cli/questions-and-answers',
+            'route-to'=>'learning/cli/QuestionsAndAnswers.php'
+        ]);
         //cron and background jobs
         Router::view([
             'path'=>'learn/topics/jobs-scheduling',
