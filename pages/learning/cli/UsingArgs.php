@@ -106,6 +106,7 @@ Warning: Email is not provided.
 ");
         Page::insert($code4);
         $this->setPrevTopicLink('learn/topics/cli/implementing-custom-commands', 'Implementing Basic Command');
+        $this->setNextTopicLink('learn/topics/cli/user-input', 'Reading Input');
         $this->displayView();
     }
 }
