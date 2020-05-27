@@ -39,7 +39,7 @@ class IntroView extends CLILearnView{
             '<a href="learn/topics/cli/using-args" >Using Arguments</a>',
             '<a href="learn/topics/cli/user-input" >Reading Input</a>',
             '<a href="learn/topics/cli/formatting-output" >Formatting Output</a>',
-            '<a href="learn/topics/cli/registered-command" >Commandes Reference</a>',
+            '<a href="learn/topics/cli/commands-reference" >Commandes Reference</a>',
             '<a href="learn/topics/cli/questions-and-answers" >Questions and Answers</a>'
             ],false);
         $this->setNextTopicLink('learn/topics/cli/setup', 'Setup');
