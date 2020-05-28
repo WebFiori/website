@@ -42,27 +42,6 @@ class ClosureRoutes {
      */
     public static function create() {
         Router::closure([
-            'path'=>'/testx', 
-            'route-to'=>function(){
-        //    $r = new APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
-        //    Util::print_r($r->getParsedInfo());
-            $reader = new DocGenerator(array(
-                'path'=>'C:\Server\apache2\htdocs\webfiori\src',
-                'exclude-path'=>array(
-                    'C:\Server\apache2\htdocs\webfiori\src\pages',
-                    'C:\Server\apache2\htdocs\webfiori\src\apis',
-                    'C:\Server\apache2\htdocs\webfiori\src\themes'
-                ),
-                'base-url'=> 'https://programmingacademia.com/webfiori/docs',
-                'theme'=>'WebFiori V108',
-                'site-name'=>'WebFiori API Docs',
-                'output-path'=>'C:\\Server\\apache2\\htdocs\\webfiori-docs\\pages\\apis-1.0.9',
-                'route-root-folder'=>'apis-1.0.9',
-                'is-dynamic'=>true
-            ));
-        }
-        ]);
-        Router::closure([
             'path'=>'/docs',
             'route-to'=>function(){
                 header('location: '.WebFiori::getSiteConfig()->getBaseURL().'docs/webfiori');
@@ -168,7 +147,7 @@ class ClosureRoutes {
             new \webfiori\views\NotFound();
         });
         Router::closure([
-            'path'=>'/apis/shields-get-dontate-badget', 
+            'path'=>'x/apis/shields-get-dontate-badget', 
             'route-to'=>function(){
                 $j = new \jsonx\JsonX();
                 $j->add('label', 'donate');
