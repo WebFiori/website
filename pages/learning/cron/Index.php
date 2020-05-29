@@ -1,6 +1,7 @@
 <?php
 namespace webfiori\views\learn\cron;
-use webfiori\views\learn\LearnView;
+use phpStructs\html\UnorderedList;
+use webfiori\entity\Page;
 
 class Index extends CronLearnView{
     public function __construct() {
@@ -10,6 +11,22 @@ class Index extends CronLearnView{
             . 'framework.', 
             'active-aside' => 1
         ]);
+        Page::insert($this->createParagraph('One of the features of the framework is the ability to '
+                . 'schedule PHP code to run at specific time in the background. '
+                . 'For example, it is possible to make your web application send reports at '
+                . 'specific time using email or any comunication way. The framework give the developers all '
+                . 'needed tools to schedule background tasks in a very simple way.'));
+        Page::insert($this->createParagraph('After completing the next set of '
+                . 'lessons, you will understand how task scheduling works and you will be '
+                . 'able to schedule your own background tasks.'));
+        $sec2 = $this->createSection('Topics Covered:');
+        Page::insert($sec2);
+        $ul = new UnorderedList();
+        $sec2->addChild($ul);
+        $ul->addListItems([
+            '<a href="learn/topics/jobs-scheduling/main-classes" >Main Classes</a>',
+            ],false);
+        $this->setNextTopicLink('learn/topics/cli/setup', 'Setup');
         $this->displayView();
     }
 
