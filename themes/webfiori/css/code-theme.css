@@ -27,3 +27,7 @@
 .code-snippt{
     background-color: rgb(21, 18, 33);
 }
+/*Disable prism background color*/
+:not(pre) > code[class*="language-"], pre[class*="language-"] {
+    background-color: rgb(21, 18, 33) !important;
+}
