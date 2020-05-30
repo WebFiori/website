@@ -25,8 +25,13 @@ class Index extends CronLearnView{
         $sec2->addChild($ul);
         $ul->addListItems([
             '<a href="learn/topics/jobs-scheduling/main-classes" >Main Classes</a>',
+            '<a href="learn/topics/jobs-scheduling/job-as-closure" >Scheduling Jobs as Closure</a>',
+            '<a href="learn/topics/jobs-scheduling/job-implementation" >Using The Class "AbstractJob"</a>',
+            '<a href="learn/topics/jobs-scheduling/executing-jobs" >Executing Jobs</a>',
+            '<a href="learn/topics/jobs-scheduling/args" >Using Arguments With Jobs</a>',
+            '<a href="learn/topics/jobs-scheduling/questions-and-answers" >Questions and Answers</a>'
             ],false);
-        $this->setNextTopicLink('learn/topics/cli/setup', 'Setup');
+        $this->setNextTopicLink('learn/topics/cron/main-classes', 'Main Classes');
         $this->displayView();
     }
 
