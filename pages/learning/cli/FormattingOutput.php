@@ -47,9 +47,9 @@ class FormattingOutput extends CLILearnView{
                 . 'text formatting options added as booleans:'));
         $ul = new UnorderedList([
             '<code>bold</code>: Make output bold.',
-            '<code>underline</code>: Make output bold.',
-            '<code>blink</code>: Make output bold.',
-            '<code>reverse</code>: Make output bold.',
+            '<code>underline</code>: Make output underlined.',
+            '<code>blink</code>: Make the output blink.',
+            '<code>reverse</code>: Reverse output colors (make background color become the text color and vice versa).',
         ], false);
         $sec1->addChild($ul);
         $sec1->addChild($this->createParagraph('The following code snippits uses the method <code>CLICommand::println()</code> to show the output. '
