@@ -65,6 +65,7 @@ class SendEmailView extends MailingLearnView{
         $code00 = new CodeSnippet();
         $sec00->addChild($code00);
         $code00->setTitle('PHP Code');
+        $code00->getCodeElement()->setClassName('language-php');
         $code00->setCode(""
                 . "//Inside the class MailConfig's constructor...\n"
                 . "\$account00 = new SMTPAccount();\n"
@@ -116,6 +117,7 @@ class SendEmailView extends MailingLearnView{
                 . 'and send a basic email message.'
                 . ''));
         $code01 = new CodeSnippet();
+        $code01->getCodeElement()->setClassName('language-php');
         $code01->setTitle('PHP Code');
         $sec01->addChild($code01);
         $code01->setCode(""

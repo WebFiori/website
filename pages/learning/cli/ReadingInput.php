@@ -29,6 +29,7 @@ class ReadingInput extends CLILearnView{
         $sec1->addChild($this->createParagraph('The following code snippit shows how to get user input using the method '
                 . '<code>CLICommand::getInput()</code>.'));
         $code1 = new CodeSnippet();
+        $code1->getCodeElement()->setClassName('language-php');
         $code1->setTitle('PHP');
         $code1->setCode("\$userInput = \$this->getInput('Give me your name:');\n"
                 . "\$this->println(\"Your name is: \$userInput\");");
@@ -36,6 +37,7 @@ class ReadingInput extends CLILearnView{
         $sec1->addChild($this->createParagraph('The following code snippit shows how to use default values with prompt. In this case, '
                 . 'the default value will be "Orange".'));
         $code2 = new CodeSnippet();
+        $code2->getCodeElement()->setClassName('language-php');
         $code2->setTitle('PHP');
         $code2->setCode("\$userInput = \$this->getInput('Enter a fruit name:', 'Orange');\n"
                 . "\$this->println(\"Fruit name: \$userInput\");");
@@ -55,6 +57,7 @@ class ReadingInput extends CLILearnView{
                 . 'method will keep asking till he submit one of the two answers.'));
         $sec2->addChild($this->createParagraph('The following code sample shows how to use the method <code>CLICommand::confirm()</code>.'));
         $code3 = new CodeSnippet();
+        $code3->getCodeElement()->setClassName('language-php');
         $code3->setTitle('PHP');
         $code3->setCode("if (\$this->confirm('Are you sure that you would like to continue?')) {\n"
                 . "    \$this->success('Will continue.');\n"
@@ -77,6 +80,7 @@ class ReadingInput extends CLILearnView{
                 . 'an input or the full text of the choice.'));
         $sec3->addChild($this->createParagraph('The following code sample shows how to use the method <code>CLICommand::select()</code>.'));
         $code4 = new CodeSnippet();
+        $code4->getCodeElement()->setClassName('language-php');
         $code4->setTitle('PHP');
         $code4->setCode(""
                 . "\$choices = [\n"

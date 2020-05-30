@@ -53,6 +53,7 @@ class CustomCommand extends CLILearnView{
                 . 'name of the command is <code>say-hi</code>. The following '
                 . 'code snippit shows how this command is created.'));
         $code1 = new CodeSnippet();
+        $code1->getCodeElement()->setClassName('language-php');
         $code1->setTitle('PHP Code');
         $code1->setCode("<?php
 
@@ -92,6 +93,7 @@ class SayHiCommand extends CLICommand {
                 . 'to complete the task. '
                 . 'The following code shows how to register new command'));
         $code2 = new CodeSnippet();
+        $code2->getCodeElement()->setClassName('language-php');
         $code2->setTitle('PHP Code');
         $code2->setCode("namespace webfiori\ini;
 
@@ -114,6 +116,7 @@ class InitCliCommands {
         $sec3->addChild($this->createParagraph('When the command <code>help</code> is executed, the newly created '
                 . 'command will appear at the end of supported commands list as follows:'));
         $code3 = new CodeSnippet();
+        $code3->getCodeElement()->setClassName('language-shell');
         $sec3->addChild($code3);
         $code3->setTitle('Terminal');
         $code3->setCode("    say-hi
@@ -121,6 +124,7 @@ class InitCliCommands {
         $sec3->addChild($this->createParagraph('When the command is executed, the output in '
                 . 'the terminal will be similar to the one shown in next snippit.'));
         $code4 = new CodeSnippet();
+        $code4->getCodeElement()->setClassName('language-shell');
         $sec3->addChild($code4);
         $code4->setTitle('Terminal');
         $code4->setCode("$ php webfiori say-hi

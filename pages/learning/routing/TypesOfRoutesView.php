@@ -59,6 +59,7 @@ class TypesOfRoutesView extends RoutingLearnView{
                 . 'the class <a href="docs/webfiori/entity/router/ViewRoutes" target="_blank">ViewRoutes</a>.'));
         $code01 = new CodeSnippet();
         $code01->setTitle('PHP Code');
+        $code01->getCodeElement()->setClassName('language-php');
         $code01->setCode("class ViewRoutes {
     public static function create(){
         Router::view([
@@ -134,6 +135,7 @@ class TypesOfRoutesView extends RoutingLearnView{
                 . 'see how API action is passed. Note that the value of the generic must be \'action\' or the API call '
                 . 'will fail.'));
         $code02 = new CodeSnippet();
+        $code02->getCodeElement()->setClassName('language-php');
         $code02->setTitle('PHP Code');
         $code02->setCode("class APIRoutes {
     public static function create(){
@@ -171,6 +173,7 @@ class TypesOfRoutesView extends RoutingLearnView{
                 . 'The following code sample shows '
                 . 'how its done.'));
         $code03 = new CodeSnippet();
+        $code03->getCodeElement()->setClassName('language-php');
         $code03->setTitle('PHP Code');
         $code03->setCode("class ClosureRoutes {
     public static function create(){
@@ -203,6 +206,7 @@ class TypesOfRoutesView extends RoutingLearnView{
                 . 'a route to each file:'
                 . ''));
         $code04 = new CodeSnippet();
+        $code04->getCodeElement()->setClassName('language-php');
         $code04->setTitle('PHP Code');
         $code04->setCode("class ClosureRoutes {
     public static function create(){

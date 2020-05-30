@@ -48,6 +48,7 @@ class MethodCreateNodeView extends ThemesLearnView{
                 . ''));
         $code1 = new CodeSnippet();
         $code1->setTitle('PHP Code');
+        $code1->getCodeElement()->setClassName('language-php');
         $code1->setCode('
 <?php
 use webfiori\entity\Theme;
@@ -113,6 +114,7 @@ class CustomTheme extends Theme{
                 . ''));
         $code2 = new CodeSnippet();
         $code2->setTitle('PHP Code');
+        $code2->getCodeElement()->setClassName('language-php');
         $code2->setCode('    public function createHTMLNode($options = array()) {
         if(isset($options[\'type\'])){
             $type = $options[\'type\'];
@@ -142,6 +144,7 @@ class CustomTheme extends Theme{
                 . ''));
         $code3 = new CodeSnippet();
         $code3->setTitle('PHP Code');
+        $code3->getCodeElement()->setClassName('language-php');
         $code3->setCode('    public function createHTMLNode($options = array()) {
         if(isset($options[\'type\'])){
             $type = $options[\'type\'];
@@ -182,6 +185,7 @@ class CustomTheme extends Theme{
                 . ''));
         $code4 = new CodeSnippet();
         $code4->setTitle('PHP Code');
+        $code4->getCodeElement()->setClassName('language-php');
         $code4->setCode('<?php
 use webfiori\entity\Theme;
 use phpStructs\html\HTMLNode;
@@ -272,6 +276,7 @@ class CustomTheme extends Theme{
                 . ''));
         $code5 = new CodeSnippet();
         $code5->setTitle('PHP Code');
+        $code5->getCodeElement()->setClassName('language-php');
         $code5->setCode('<?php
 namespace examples\views;
 use webfiori\entity\Page;

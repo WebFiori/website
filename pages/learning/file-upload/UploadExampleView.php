@@ -56,6 +56,7 @@ class UploadExampleView extends UploadLearnView{
                 . 'Partial Backend Code (Shows Uploader initialization only):'
                 . ''));
         $code00 = new CodeSnippet();
+        $code00->getCodeElement()->setClassName('language-php');
         $code00->setTitle('PHP Code (Back end)');
         $sec00->addChild($code00);
         $code00->addCodeLine('//...');
@@ -76,6 +77,7 @@ class UploadExampleView extends UploadLearnView{
                 . 'be like the following:'
                 . ''));
         $code01 = new CodeSnippet();
+        $code01->getCodeElement()->setClassName('language-php');
         $code01->setTitle('PHP Code (Front End)');
         $sec00->addChild($code01);
         $code01->setCode(""
@@ -120,6 +122,7 @@ class UploadExampleView extends UploadLearnView{
                 . ''));
         $code02 = new CodeSnippet();
         $code02->setTitle('PHP Code');
+        $code02->getCodeElement()->setClassName('language-php');
         $sec01->addChild($code02);
         $code02->setCode(""
                 . "\$file->setAttribute('multiple')\n"

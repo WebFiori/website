@@ -76,6 +76,7 @@ class ClassThemeView extends ThemesLearnView{
             . 'something like the following:'));
         $code = new CodeSnippet();
         $code->setTitle('CSS Code');
+        $code->getCodeElement()->setClassName('language-css');
         $code->setCode('
 #page-body{
     color: white;
@@ -117,6 +118,7 @@ class ClassThemeView extends ThemesLearnView{
             . 'inside the file \'CustomTheme.php\' should be look like the following:'));
         $code = new CodeSnippet();
         $code->setTitle('PHP Code');
+        $code->getCodeElement()->setClassName('language-php');
         $code->setCode('
 <?php
 use webfiori\entity\Theme;
@@ -151,6 +153,7 @@ class CustomTheme extends Theme{
             . '<a href="docs/webfiori/entity/Theme#setImagesDirName" target="_blank">Theme::setImagesDirName()</a>.'));
         $code = new CodeSnippet();
         $code->setTitle('PHP Code');
+        $code->getCodeElement()->setClassName('language-php');
         $code->setCode('
 <?php
 use webfiori\entity\Theme;
@@ -196,6 +199,7 @@ class CustomTheme extends Theme{
             . 'the class \'HeadNode\' since we are going to use them.'));
         $code2 = new CodeSnippet();
         $code2->setTitle('PHP Code');
+        $code2->getCodeElement()->setClassName('language-php');
         $code2->setCode('
 <?php
 use webfiori\entity\Theme;
@@ -251,6 +255,7 @@ class CustomTheme extends Theme{
             . 'this step, the theme will be ready for testing.'));
         $code3 = new CodeSnippet();
         $code3->setTitle('PHP Code');
+        $code3->getCodeElement()->setClassName('language-php');
         $code3->setCode('
 <?php
 use webfiori\entity\Theme;
@@ -317,6 +322,7 @@ class CustomTheme extends Theme{
             . 'text and make it clear.'));
         $code = new CodeSnippet();
         $code->setTitle('PHP Code');
+        $code->getCodeElement()->setClassName('language-php');
         $code->setCode('<?php
 namespace examples\views;
 use webfiori\entity\Page;

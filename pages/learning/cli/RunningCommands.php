@@ -38,6 +38,7 @@ class RunningCommands extends CLILearnView{
                 . 'arguments, we would see the following output:'));
         $code1 = new CodeSnippet();
         $code1->setTitle('Terminal');
+        $code1->getCodeElement()->setClassName('language-shell');
         $code1->setCode("$ php webfiori help                                                                                                           
 Usage:
     command [arg1 arg2=\"val\" arg3...]
@@ -70,6 +71,7 @@ Available Commands:
                 . ''));
         $code2 = new CodeSnippet();
         $code2->setTitle('Terminal');
+        $code2->getCodeElement()->setClassName('language-shell');
         $code2->setCode("$ php webfiori help --command-name=cron                
     cron
                Run CRON Scheduler

@@ -30,6 +30,7 @@ class ClassHTMLDocView extends ThemesLearnView{
                 . 'by the class will look like the following.'));
         $code = new CodeSnippet();
         $code->setTitle('HTML Code');
+        $code->getCodeElement()->setClassName('language-html');
         $doc = new HTMLDoc();
         $code->setCode($doc->toHTML());
         Page::insert($code);

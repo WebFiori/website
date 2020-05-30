@@ -28,6 +28,7 @@ class CliSetup extends CLILearnView{
                 . 'seen when running the command <code>php webfiori</code>:'));
         $output = new CodeSnippet();
         $output->setTitle('Terminal');
+        $output->getCodeElement()->setClassName('language-shell');
         $output->setCode("$ php webfiori                                                                                                                       
 |\                /|                          
 | \      /\      / |              |  / \  |

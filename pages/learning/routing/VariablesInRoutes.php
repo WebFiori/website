@@ -55,6 +55,7 @@ class VariablesInRoutes extends RoutingLearnView{
                 . 'URI variiables.'));
         $code03 = new CodeSnippet();
         $code03->setTitle('PHP Code');
+        $code03->getCodeElement()->setClassName('language-php');
         $code03->setCode("class ClosureRoutes {
     public static function create(){
         Router::closure([

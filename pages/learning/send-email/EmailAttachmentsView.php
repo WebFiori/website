@@ -36,6 +36,7 @@ class EmailAttachmentsView extends MailingLearnView{
                 . ''));
         $code01 = new CodeSnippet();
         $code01->setTitle('PHP Code');
+        $code01->getCodeElement()->setClassName('language-php');
         Page::insert($code01);
         $code01->setCode(""
                 . "EmailMessage::createInstance('no-replay-smtp');\n"

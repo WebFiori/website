@@ -30,6 +30,7 @@ class FormattingOutput extends CLILearnView{
                 . 'If the developer would like to output ANSI formatted text, simply he must supply the second argument. In order to change the color of the output, '
                 . 'we must set the value of the index <code>color</code> to the color that we would like to use.' ));
         $code1 = new CodeSnippet();
+        $code1->getCodeElement()->setClassName('language-php');
         $code1->setTitle('PHP');
         $code1->setCode("\$this->print('This is a red text ', [\n"
                 . "    'color' => 'red'\n"
@@ -55,6 +56,7 @@ class FormattingOutput extends CLILearnView{
         $sec1->addChild($this->createParagraph('The following code snippits uses the method <code>CLICommand::println()</code> to show the output. '
                 . ''));
         $code2 = new CodeSnippet();
+        $code2->getCodeElement()->setClassName('language-php');
         $code2->setTitle('PHP');
         $code2->setCode("
 \$this->println(\"Normal Text\");
@@ -90,6 +92,7 @@ class FormattingOutput extends CLILearnView{
         ], false);
         $sec2->addChild($ul2);
         $code3 = new CodeSnippet();
+        $code3->getCodeElement()->setClassName('language-php');
         $code3->setTitle('PHP');
         $code3->setCode("
     \$this->error('Unable to log in.');

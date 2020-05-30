@@ -32,6 +32,7 @@ class UsingArgs extends CLILearnView {
                 . 'lessen. We will add two arguments, <code>--name</code> and <code>--email</code>. If the '
                 . 'name is not provided, we will simply read it when the job starts to execute.'));
         $code1 = new CodeSnippet();
+        $code1->getCodeElement()->setClassName('language-php');
         $code1->setTitle('PHP Code');
         $code1->setCode("<?php
 

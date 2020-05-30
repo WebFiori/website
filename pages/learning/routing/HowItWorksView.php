@@ -41,6 +41,7 @@ class HowItWorksView extends RoutingLearnView{
                 . ''));
         $code2 = new CodeSnippet();
         $code2->setTitle('XML Code');
+        $code2->getCodeElement()->setClassName('language-xml');
         $code2->setCode("<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <configuration>
     <system.webServer>

@@ -46,6 +46,7 @@ class ClassThemeView extends ThemesLearnView{
         Page::insert($this->createParagraph('The following HTML code shows how the'
                 . ' DOM will look like.'));
         $code = new CodeSnippet();
+        $code->getCodeElement()->setClassName('language-html');
         $code->setCode('<!DOCTYPE html>
 <html>
     <head>

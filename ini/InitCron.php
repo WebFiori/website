@@ -26,12 +26,6 @@ namespace webfiori\ini;
 
 use webfiori\entity\cron\Cron;
 
-/**
- * A class that has one method to initialize cron jobs.
- *
- * @author Ibrahim
- * @version 1.0
- */
 class InitCron {
     /**
      * A method that can be used to initialize cron jobs.
@@ -39,17 +33,21 @@ class InitCron {
      * @since 1.0
      */
     public static function init() {
-        //set an optional password to protect jobs from 
-        //unauthorized execution access
-        //default password: 123456
-        Cron::password('8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
-        //enable job execution log
-        Cron::execLog(true);
 
-        //add jobs
-        Cron::dailyJob("13:00", "Test Job", function ()
-        {
-            echo "I'm Running in Background.\n";
+        Cron::createJob('*/10 * * * *', 'Every Minute', function () {
+            echo "Will execute every 10 minutes";
+        });
+        
+        Cron::dailyJob("13:00", "Test Job", function () {
+            echo "Will execute every day at 1:00 PM";
+        });
+        
+        Cron::weeklyJob('sun-15:30', 'Another Job', function () {
+            echo "Will execute every sunday at 3:30 PM";
+        });
+        
+        Cron::monthlyJob(1, '00:00', 'First Day Of Month', function () {
+            echo "Will execute at first day of every month at 12:00 AM";
         });
     }
 }

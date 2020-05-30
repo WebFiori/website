@@ -34,6 +34,7 @@ class BasicUsageView extends IntroLearnView{
                 . 'let\'s assume tha the page has the following code in it:'));
         $code = new CodeSnippet();
         $code->setTitle('HTML Code');
+        $code->getCodeElement()->setClassName('language-html');
         $code->setCode('<!DOCTYPE html>
 <html>
     <head>
@@ -63,6 +64,7 @@ class BasicUsageView extends IntroLearnView{
                 . ''));
         $code2 = new CodeSnippet();
         $code2->setTitle('PHP Code');
+        $code2->getCodeElement()->setClassName('language-php');
         $code2->setCode("class ViewRoutes {
     /**
      * Create all views routes. Include your own here.
