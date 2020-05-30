@@ -92,7 +92,14 @@ class CodeSnippet extends HTMLNode{
      * @since 1.0.2
      */
     private $originalCode;
-    public function __construct() {
+    /**
+     * Creates new instance of the class.
+     * @param string $title The title of the snippit. This will appear at the top 
+     * of the element. It can be something like 'PHP Code' or 'Java Code'.
+     * @param string $code The code that will be displayed by the snippit.
+     * @since 1.0
+     */
+    public function __construct($title = 'Code Snippit', $code = null) {
         parent::__construct();
         $this->originalCode = '';
         $this->codeStrNode = HTMLNode::createTextNode('');
@@ -166,6 +173,15 @@ class CodeSnippet extends HTMLNode{
         $this->codeDisplay->addChild($this->pre);
         $this->pre->addChild($this->code);
         $this->_addLine();
+        $this->setCode($code);
+        $this->setTitle($title);
+    }
+    /**
+     * 
+     * @return HTMLNode
+     */
+    public function getCodeElement() {
+        return $this->code;
     }
     private function _addLine() {
         $span = new HTMLNode('span');
@@ -230,6 +246,7 @@ class CodeSnippet extends HTMLNode{
         }
         //$this->_addLine();
         $this->codeStrNode->setText($xCode."\n");
+        $this->_addLine();
     }
     /**
      * Returns the original text which represents the code.
