@@ -234,6 +234,9 @@ class WebFioriV108 extends APITheme{
     }
     public function getHeadNode(){
         $head = new HeadNode();
+        $head->addLink('icon', 'assets/images/favicon.png',[
+            'type'=>"image/png"
+        ]);
         $head->addCSS(Page::cssDir().'/theme.css');
         $head->addCSS('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css',false);
         $head->addJs('https://code.jquery.com/jquery-3.4.1.slim.min.js',false);
