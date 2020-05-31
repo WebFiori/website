@@ -13,19 +13,19 @@ use webfiori\WebFiori;
 class WebFioriHome extends WebFioriPage{
     public function __construct() {
         parent::__construct();
+        //Page::document()->getBody()->setStyle();
+        $img = $this->createImag('assets/images/WFLogo512.png');
+        $img->setStyle([
+            'background-position' => 'left',
+            'opacity' => '0.6',
+            'position' => 'fixed',
+            'top' => 0,
+            'z-index' => -1,
+        ]);
+        Page::document()->getBody()->addChild($img);
         Page::title('WebFiori Home');
         Page::siteName('WebFiori Framework');
         Page::description('WebFiori Framework. Built to make the web blooming.');
-        $parag1 = new PNode();
-        
-        $parag1->addText('Do you want to build a website with customizable user interface? ');
-        $parag1->addLineBreak();
-        $parag1->addText('Do you want to build a complicated web application with session '
-                . 'management and database access? ');
-        $parag1->addText('Do you want to build web APIs for your mobile app? ');
-        $parag1->addLineBreak();
-        $parag1->addText('If this is the case, then <em>WebFiori Framework</em> is your choice.', array('esc-entities'=>FALSE));
-        Page::insert($parag1);
         $this->createSec1();
         $this->createSec4();
         $this->createSec2();
@@ -80,13 +80,14 @@ class WebFioriHome extends WebFioriPage{
     }
     private function createSec1(){
         $sec = $this->createSection('What is WebFiori Framework?',3);
-        $sec->addChild($this->createParagraph('WebFiori Framework is new web framework which is built using '
+        $sec->addChild($this->createParagraph('WebFiori Framework is new mini web development framework which is built using '
                 . 'PHP language. The framework is fully object oriented (OOP). '
                 . 'It allows the use of the famous model-view-controller (MVC) model '
                 . 'but it does not '
                 . 'force it. The framework comes with many features which can '
                 . 'help in making your website or web application up and running '
-                . 'in no time. Some of the key features are:'));
+                . 'in no time. The framework does not overwhelm the developers with '
+                . 'the features that they don\'t actually need. Some of the key features are:'));
         
         $ul = new UnorderedList();
         $ul->addListItems([

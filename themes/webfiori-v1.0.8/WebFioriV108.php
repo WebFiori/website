@@ -221,7 +221,7 @@ class WebFioriV108 extends APITheme{
                 . 'Code licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.', false);
         $footer->addChild($powerdByNode);
         $img = new HTMLNode('img');
-        $img->setAttribute('src', Page::imagesDir().'/favicon.png');
+        $img->setAttribute('src', 'assets/images/favicon.png');
         $img->setAttribute('alt', 'logo');
         $img->setStyle([
             'height'=>'25px'
@@ -234,6 +234,9 @@ class WebFioriV108 extends APITheme{
     }
     public function getHeadNode(){
         $head = new HeadNode();
+        $head->addLink('icon', 'assets/images/favicon.png',[
+            'type'=>"image/png"
+        ]);
         $head->addCSS(Page::cssDir().'/theme.css');
         $head->addCSS('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css',false);
         $head->addJs('https://code.jquery.com/jquery-3.4.1.slim.min.js',false);
@@ -262,7 +265,7 @@ class WebFioriV108 extends APITheme{
         ]);
         $logo = new HTMLNode('img');
         $logo->setID('main-logo');
-        $logo->setAttribute('src', Page::imagesDir().'/favicon.png');
+        $logo->setAttribute('src', 'assets/images/favicon.png');
         $logo->setAttribute('alt', 'logo');
         $logoLink = new Anchor(WebFiori::getSiteConfig()->getHomePage(), $logo->toHTML());
         $logoLink->setClassName('navbar-brand ml-3');
