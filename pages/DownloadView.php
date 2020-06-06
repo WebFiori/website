@@ -18,6 +18,7 @@ class DownloadView extends WebFioriPage{
             'title'=>'Download',
             'description'=>'Download options of WebFiori Framework.'
         ));
+        Page::document()->getBody()->addChild($this->getWFBG());
         $this->_stableDownloads();
         $this->_betaDownloads();
         $this->_nextSteps();
