@@ -15,6 +15,7 @@ class ContributeView extends WebFioriPage{
             'description'=>'Ways to help in the development process of the '
             . 'framework.'
         ));
+        Page::document()->getBody()->addChild($this->getWFBG());
         Page::insert($this->createParagraph('The framework is open source and '
                 . 'licensed under MIT license. Any one is free to use it '
                 . 'the way they like. There are many ways at which any '
