@@ -14,15 +14,7 @@ class WebFioriHome extends WebFioriPage{
     public function __construct() {
         parent::__construct();
         //Page::document()->getBody()->setStyle();
-        $img = $this->createImag('assets/images/WFLogo512.png');
-        $img->setStyle([
-            'background-position' => 'left',
-            'opacity' => '0.6',
-            'position' => 'fixed',
-            'top' => 0,
-            'z-index' => -1,
-        ]);
-        Page::document()->getBody()->addChild($img);
+        Page::document()->getBody()->addChild($this->getWFBG());
         Page::title('WebFiori Home');
         Page::siteName('WebFiori Framework');
         Page::description('WebFiori Framework. Built to make the web blooming.');
