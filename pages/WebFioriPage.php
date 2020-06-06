@@ -65,6 +65,18 @@ class WebFioriPage {
         $img->setAttribute('alt', $alt);
         return $img;
     }
+    public function getWFBG() {
+        $img = $this->createImag('assets/images/WFLogo512.png');
+        $img->setStyle([
+            'background-position' => 'left',
+            'opacity' => '0.3',
+            'position' => 'fixed',
+            'top' => 0,
+            'left' => '50px',
+            'z-index' => -1,
+        ]);
+        return $img;
+    }
     /**
      * 
      * @param type $link
