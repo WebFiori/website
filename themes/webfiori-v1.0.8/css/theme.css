@@ -34,6 +34,7 @@ a.nav-link{
 }
 #side-content-area{
     background-color: #c1ec9b;
+    background: linear-gradient(90deg, rgba(193,236,155,1) 35%, rgba(255,255,255,0) 100%);
 }
 .block:first-child,
 .method-signator,
