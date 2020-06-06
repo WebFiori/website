@@ -30,6 +30,7 @@ class JobAsClosure extends CronLearnView{
             '<a href="docs/webfiori/entity/cron/Cron#monthlyJob" target="_blank">Cron::monthlyJob()</a>: Schedule a job to run once every month in a specific day and time.',
             '<a href="docs/webfiori/entity/cron/Cron#weeklyJob" target="_blank">Cron::weeklyJob()</a>: Schedule a job to run once every week in a specific day and time.',
         ], false);
+        Page::insert($cronMethodsList);
         Page::insert($this->createParagraph('The following code sample shows how to use each one of the methods to schedule jobs.'));
         $code1 = new CodeSnippet('PHP', "namespace webfiori\ini;
 
@@ -62,7 +63,7 @@ class InitCron {
 }");
         $code1->getCodeElement()->setClassName('language-php');
         Page::insert($code1);
-        Page::insert($cronMethodsList);
+        
         $this->setPrevTopicLink('learn/topics/jobs-scheduling/main-classes', 'Main Classes');
         $this->setNextTopicLink('learn/topics/jobs-scheduling/job-implementation', 'Using The Class "AbstractJob"');
         $this->displayView();
