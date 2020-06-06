@@ -39,8 +39,10 @@ class ImplementingJob extends CronLearnView{
                 . 'AbstractJob::execute() returns <code>true</code> or <code>null</code> (simply return nothing).'));
         Page::insert($this->createParagraph('The method <a href="docs/webfiori/entity/cron/AbstractJob#afterExec" target="_blank">AbstractJob::afterExec()</a> '
                 . 'can have a code which will be executed after the job finished to execute. The code will get executed in both cases, success or fail.'));
-        $this->setPrevTopicLink('learn/topics/jobs-scheduling/job-as-closure', 'Job as Closure');
         
+        Page::insert($this->createParagraph('The developer can place the class that represents the '
+                . 'job i any directory as long as it is in autoload directories. The following code '
+                . 'shows a sample job that writes a text to a file.'));
         $code1 = new CodeSnippet('PHP', "<?php
           
 namespace webfiori\entity\cron;
@@ -77,6 +79,30 @@ class WriteFileJob extends AbstractJob{
 ");
         $code1->getCodeElement()->setClassName('lang-php');
         Page::insert($code1);
+        Page::insert($this->createParagraph('After implementing the job, it must be '
+                . 'registered. The method <a href="docs/webfiori/cron/Cron#scheduleJob" target="_blank">Cron::scheduleJob()</a> '
+                . 'In order to register jobs, the class <a href="docs/webfiori/ini/InitCron">InitCron</a>. '
+                . 'The following code shows how it is done.'));
+        $code2 = new CodeSnippet('PHP', "namespace webfiori\ini;
+
+use webfiori\entity\cron\Cron;
+use webfiori\entity\cron\WriteFileJob;
+
+class InitCron {
+    /**
+     * A method that can be used to initialize cron jobs.
+     * The developer can use this method to create cron jobs.
+     * @since 1.0
+     */
+    public static function init() {
+
+        Cron::scheduleJob(new WriteFileJob());
+    }
+}");
+        $code2->setClassName('lang-php');
+        Page::insert($code2);
+        $this->setNextTopicLink('learn/topics/jobs-scheduling/executing-jobs', 'Jobs Execution');
+        $this->setPrevTopicLink('learn/topics/jobs-scheduling/job-as-closure', 'Job as Closure');
         $this->displayView();
     }
 }
