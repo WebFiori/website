@@ -83,7 +83,7 @@ class WriteFileJob extends AbstractJob{
                 . 'registered. The method <a href="docs/webfiori/cron/Cron#scheduleJob" target="_blank">Cron::scheduleJob()</a> '
                 . 'In order to register jobs, the class <a href="docs/webfiori/ini/InitCron">InitCron</a>. '
                 . 'The following code shows how it is done.'));
-        $code2 = new CodeSnippet('PHP', "namespace webfiori\ini;
+        $code2 = new CodeSnippet('PHP', "<?php\nnamespace webfiori\ini;
 
 use webfiori\entity\cron\Cron;
 use webfiori\entity\cron\WriteFileJob;
