@@ -637,5 +637,16 @@ if (CLI::isCLI() === true) {
     CLI::runCLI();
 } else {
     //route user request.
+    $requested = Util::getRequestedURL();
+    $uriSplit = entity\router\RouterUri::splitURI($requested);
+    if ($uriSplit['authority'] == '//programmingacademia.com'){
+        http_response_code(301);
+        $path = '';
+        for ($x = 1 ; $x < count($uriSplit['path']) ; $x++) {
+            $path .= '/'.$uriSplit['path'][$x];
+        }
+        header('location: https://webfiori.com'.$path);
+        die();
+    }
     Router::route(Util::getRequestedURL());
 }
