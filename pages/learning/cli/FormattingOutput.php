@@ -18,27 +18,27 @@ class FormattingOutput extends CLILearnView{
                 . 'nice, colors can be used as an indicator for warnings or errors during '
                 . 'execution. The framework supports output formatting using colors if the method '
                 . '<a href="docs/webfiori/entity/cli/CLICommand#println" target="_blank">CLICommand::println()</a> '
-                . 'or the method <a href="docs/webfiori/entity/cli/CLICommand#print" target="_blank">CLICommand::print()</a>. In '
+                . 'or the method <a href="docs/webfiori/entity/cli/CLICommand#prints" target="_blank">CLICommand::prints()</a>. In '
                 . 'addition to that, it is possible to format a string using ANSI escape sequences using the '
                 . 'static method <a href="docs/webfiori/entity/cli/CLICommand#formatOutput" target="_blank">CLICommand::formatOutput()</a>. The way '
                 . 'to formate the output '
                 . 'will be the same for the 3 methods.'));
         $sec1 = $this->createSection('How to Use Formatting Options');
         Page::insert($sec1);
-        $sec1->addChild($this->createParagraph('Formatting output is very simple. The method <a href="docs/webfiori/entity/cli/CLICommand#print" target="_blank">CLICommand::print()</a> '
+        $sec1->addChild($this->createParagraph('Formatting output is very simple. The method <a href="docs/webfiori/entity/cli/CLICommand#prints" target="_blank">CLICommand::prints()</a> '
                 . 'takes two parameters, the first one is the output value and the second one is an associative array of formatting options. '
                 . 'If the developer would like to output ANSI formatted text, simply he must supply the second argument. In order to change the color of the output, '
                 . 'we must set the value of the index <code>color</code> to the color that we would like to use.' ));
         $code1 = new CodeSnippet();
         $code1->getCodeElement()->setClassName('language-php');
         $code1->setTitle('PHP');
-        $code1->setCode("\$this->print('This is a red text ', [\n"
+        $code1->setCode("\$this->prints('This is a red text ', [\n"
                 . "    'color' => 'red'\n"
                 . "]);\n"
-                . "\$this->print(', this is blue text ', [\n"
+                . "\$this->prints(', this is blue text ', [\n"
                 . "    'color' => 'blue'\n"
                 . "]);\n"
-                . "\$this->print('and this is green text ', [\n"
+                . "\$this->prints('and this is green text ', [\n"
                 . "    'color' => 'green'\n"
                 . "]);\n");
         $sec1->addChild($code1);

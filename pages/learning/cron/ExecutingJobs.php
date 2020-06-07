@@ -22,6 +22,18 @@ class ExecutingJobs extends CronLearnView{
             'Forceed to execute using command line interface.'
         ]);
         Page::insert($waysList);
+        $sec1 = $this->createSection('CRON Entry');
+        Page::insert($sec1);
+        $sec1->addChild($this->createParagraph('The recomended way is to add a '
+                . 'CRON entry on your server which looks like this one:'));
+        $sec1->addTextNode('<code>* * * * * php webfiori cron p="pass" --check</code>', false);
+        $sec1->addChild($this->createParagraph('This will execute the command <code>cron</code> of the '
+                . 'framework with the option <code>--check</code> every minute. It will simply '
+                . 'check all scheduled jobs and to check if it is time to execute them. Note '
+                . 'that the path to PHP interpreter and the framework my differ. Because of this, '
+                . 'the format of the entry may differ.'));
+        $sec1->addChild($this->createParagraph('If the server is runnig on windows, it '
+                . 'is possible to use "Task Scheduler" to achieve the same result.'));
         $this->setNextTopicLink('learn/topics/jobs-scheduling/job-implementation', 'Using The Class AbstractJob');
         $this->displayView();
     }

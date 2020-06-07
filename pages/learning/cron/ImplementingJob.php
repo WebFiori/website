@@ -77,7 +77,7 @@ class WriteFileJob extends AbstractJob{
 
 }
 ");
-        $code1->getCodeElement()->setClassName('lang-php');
+        $code1->getCodeElement()->setClassName('language-php');
         Page::insert($code1);
         Page::insert($this->createParagraph('After implementing the job, it must be '
                 . 'registered. The method <a href="docs/webfiori/cron/Cron#scheduleJob" target="_blank">Cron::scheduleJob()</a> '
