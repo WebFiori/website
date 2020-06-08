@@ -41,6 +41,10 @@ class ViewRoutes {
             'path'=>'test',
             'route-to'=>'TestView.php'
         ]);
+//        Router::view([
+//            'path' => 'learn/coding-standards',
+//            'route-to' => 'learning\CodingStandards.php'
+//        ]);
         Router::view([
             'path'=>'/learn/video',
             'route-to'=>'/video-tutorials/IndexView.php'
