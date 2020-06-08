@@ -18,28 +18,26 @@ class WebFioriPage {
      * Available options are:
      * <ul>
      * <li><b>title</b>: The title of the page. If not provided, the value 
-     * 'WebFiori Page' is used.<li>
+     * 'WebFiori Page' is used.</li>
      * <li><b>description</b>: The description of the page. If not provided, 
      * the global description which is stored in the class 'SiteConfig' is 
-     * used.<li>
+     * used.</li>
      * <li><b>site-name</b>: The name of the website. If not provided, 
      * the global website which is stored in the class 'SiteConfig' is 
-     * used.<li>
-     * <li><b>canonical</b>: The canonical link of the page.<li>
+     * used.</li>
+     * <li><b>canonical</b>: The canonical link of the page.</li>
      * </ul>
      */
     public function __construct($options=array()) {
         Page::theme('WebFiori V108');
         if(isset($options['title'])){
             Page::title($options['title']);
-        }
-        else{
+        } else {
             Page::title('WebFiori Page');
         }
         if(isset($options['description'])){
             Page::description($options['description']);
-        }
-        else{
+        } else {
             Page::description(WebFiori::getSiteConfig()->getDescriptions()['EN']);
         }
         if(isset($options['canonical'])){
@@ -47,8 +45,7 @@ class WebFioriPage {
         }
         if(isset($options['site-name'])){
             Page::siteName($options['site-name']);
-        }
-        else{
+        } else {
             Page::siteName(WebFiori::getSiteConfig()->getWebsiteNames()['EN']);
         }
         Page::lang('EN');
