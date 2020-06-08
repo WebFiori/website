@@ -665,7 +665,7 @@ class Router {
         if (isset($options['in-sitemap'])) {
             $incInSiteMap = $options['in-sitemap'];
         } else {
-            $incInSiteMap = true;
+            $incInSiteMap = false;
         }
 
         if (isset($options['as-api'])) {
@@ -820,6 +820,19 @@ class Router {
         }
     }
     /**
+     * 
+     * @param RouterUri $uriObj
+     */
+    private function redirectToNonWWW($uriObj) {
+            http_response_code(301);
+            $path = '';
+            $host = substr($uriObj->getHost(),4);
+            for ($x = 1 ; $x < count($uriObj->getPathArray()) ; $x++) {
+                $path .= '/'.$uriObj->getPathArray()[$x];
+            }
+            header('location: '.$uriObj->getScheme().'://'.$host.$path);
+    }
+    /**
      * Route a given URI to its specified resource.
      * If the router has no routes, the router will send back a '418 - I'm A 
      * Teapot' response. If the route is available but the file that the 
@@ -838,6 +851,9 @@ class Router {
 
         if (count($this->routes) != 0) {
             $routeUri = new RouterUri($uri, '');
+            if ($routeUri->hasWWW()) {
+                $this->redirectToNonWWW($routeUri);
+            }
             //first, search for the URI wuthout checking variables
             if ($this->_searchRoute($routeUri, $uri, $loadResource)) {
                 return;
