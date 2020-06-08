@@ -64,7 +64,17 @@ class ExecutingJobs extends CronLearnView{
         $sec3->addChild($subSec1);
         $subSec2  = $this->createSection('Force a Job to Execute Using Command Line Interface', 4);
         $sec3->addChild($subSec2);
-        $this->setNextTopicLink('learn/topics/jobs-scheduling/job-implementation', 'Using The Class AbstractJob');
+        $subSec2->addChild($this->createParagraph('Forcing a job to execute thorugh terminal is useful in case of debugging. '
+                . 'The terminal can be used to show the full output of executing a job. To force execution of a specific job, simply '
+                . 'we have to run the following command:'));
+        $subSec2->addTextNode('<code>php webfiori cron p="pass" --force</code>', false);
+        $subSec2->addChild($this->createParagraph('Once this command is executed, the terminal will ask the user '
+                . 'to select one of the scheduled jobs to force. The following image shows the full terminal output when using '
+                . 'this way to force a job.'));
+        $subSec2->addChild($this->createImag('assets/images/cron02.png', 'Cron force terminal output.'));
+        
+        $this->setPrevTopicLink('learn/topics/jobs-scheduling/job-implementation', 'Using The Class AbstractJob');
+        $this->setNextTopicLink('learn/jobs-scheduling/args', 'Using Arguments With Forced Jobs');
         $this->displayView();
     }
 }
