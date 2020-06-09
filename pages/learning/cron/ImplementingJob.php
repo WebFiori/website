@@ -99,7 +99,7 @@ class InitCron {
         Cron::scheduleJob(new WriteFileJob());
     }
 }");
-        $code2->setClassName('lang-php');
+        $code2->getCodeElement()->setClassName('lang-php');
         Page::insert($code2);
         $this->setNextTopicLink('learn/topics/jobs-scheduling/executing-jobs', 'Jobs Execution');
         $this->setPrevTopicLink('learn/topics/jobs-scheduling/job-as-closure', 'Job as Closure');
