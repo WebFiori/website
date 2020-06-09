@@ -21,6 +21,9 @@ class CodingStandards extends WebFioriPage {
             'The autoloader will throw <code>ClassLoaderException</code> if a class was not found.',
             'It is recomended that a fully qualified class name to have the following form: <code>\&lt;vendorName>(\&lt;subNamespaceNames>)*\&lt;ClassName</code> (names uses camleCase).'
         ], false));
+        $autoloadStandards->addChild($this->createParagraph('The framework can be configured to not '
+                . 'throw an exception. This can be performed during the process of '
+                . 'initializing the autoloader (the class <a href="docs/webfiori/entity/AutoLoader" target="_blank">AutoLoader</a>).'));
         $codingStyleSec = $this->createSection('Coding Style');
         Page::insert($codingStyleSec);
         $codingStyleSec->addChild(new UnorderedList([
@@ -33,6 +36,6 @@ class CodingStandards extends WebFioriPage {
             'Always include access modifiers for class methods even if they are public.'
         ], false));
         Page::render();
-    }
+    } 
 }
 return __NAMESPACE__;
