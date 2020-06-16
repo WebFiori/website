@@ -1,8 +1,8 @@
 <?php
-/*
+/* 
  * The MIT License
  *
- * Copyright 2020 Ibrahim, WebFiori Framework.
+ * Copyright 2020 Ibrahim BinAlshikh, restEasy library.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,42 +24,30 @@
  */
 namespace webfiori\entity\cli;
 
-use webfiori\entity\router\Router;
+use restEasy\WebServices;
 /**
- * A CLI Command which is used to test the result of routing to a specific 
- * route.
- *
+ * A class which is used to hold CLI created services temporary.
+ * This class does not hold any web services. The main aim of this class is 
+ * to hold the services which are created using CLI and later on, create the 
+ * actual class that contains the web services.
  * @author Ibrahim
+ * @version 1.0
  */
-class TestRouteCommand extends CLICommand {
-    /**
-     * Creates new instance of the class.
-     * The command will have name '--route'. In addition to that, 
-     * it will have the following arguments:
-     * <ul>
-     * <li><b>url</b>: The URL at which its route will be tested.</li>
-     * </ul>
-     */
+class ServicesHolder extends WebServices {
     public function __construct() {
-        parent::__construct('route', [
-            '--url' => [
-                'optional' => false,
-                'description' => 'The URL that will be tested if it has a '
-                .'route or not.'
-            ]
-        ], 'Test the result of routing to a URL');
+        parent::__construct();
+        $this->removeServices();
     }
     /**
-     * Execute the command.
-     * @return int If the command executed without any errors, the 
-     * method will return 0. Other than that, it will return false.
-     * @since 1.0
+     * 
+     * @return boolean Always return false.
      */
-    public function exec() {
-        $url = $this->getArgValue('--url');
-        $this->println("Trying to route to \"".$url."\"...");
-        Router::route($url);
-
-        return 0;
+    public function isAuthorized() {
+        return false;
+    }
+    /**
+     * Process the request.
+     */
+    public function processRequest() {
     }
 }

@@ -34,7 +34,7 @@ use webfiori\WebFiori;
  * It is used to create jobs, schedule them and execute them. In order to run 
  * the jobs automatically, the developer must add an entry in the following 
  * formate in crontab:
- * <p><code>* * * * *  /usr/bin/php path/to/webfiori --cron check p=&lt;password&gt;<code></p>
+ * <p><code>* * * * *  /usr/bin/php path/to/webfiori --cron check p=&lt;password&gt;</code></p>
  * Where &lt;password&gt; is the password 
  * that was set by the developer to protect the jobs from unauthorized access. 
  * If no password is set, then it can be removed from the command.
@@ -44,12 +44,6 @@ use webfiori\WebFiori;
  * @version 1.0.9
  */
 class Cron {
-    /**
-     *
-     * @var type 
-     * @since 1.0.9
-     */
-    private $jobsNamesArr;
     /**
      * The password that is used to access and execute jobs.
      * @var string
@@ -82,6 +76,12 @@ class Cron {
      */
     private $isLogEnabled;
     /**
+     *
+     * @var type 
+     * @since 1.0.9
+     */
+    private $jobsNamesArr;
+    /**
      * An array that contains strings which acts as log messages.
      * @var array
      * @since 1.0.8 
@@ -109,27 +109,30 @@ class Cron {
         $this->isLogEnabled = false;
         $this->cronJobsQueue = new Queue();
         $this->_setPassword('');
-        Router::other([
-            'path' => '/cron/login',
-            'route-to' => '/entity/cron/CronLoginView.php'
-        ]);
-        Router::other([
-            'path' => '/cron/apis/{action}',
-            'route-to' => '/entity/cron/CronAPIs.php',
-            'as-api' => true
-        ]);
-        Router::other([
-            'path' => '/cron',
-            'route-to' => '/entity/cron/CronLoginView.php'
-        ]);
-        Router::other([
-            'path' => '/cron/jobs',
-            'route-to' => '/entity/cron/CronTasksView.php'
-        ]);
-        Router::other([
-            'path' => '/cron/jobs/{job-name}',
-            'route-to' => '/entity/cron/CronTaskView.php'
-        ]);
+
+        if (defined('CRON_THROUGH_HTTP') && CRON_THROUGH_HTTP === true) {
+            Router::other([
+                'path' => '/cron/login',
+                'route-to' => '/entity/cron/CronLoginView.php'
+            ]);
+            Router::other([
+                'path' => '/cron/apis/{action}',
+                'route-to' => '/entity/cron/CronAPIs.php',
+                'as-api' => true
+            ]);
+            Router::other([
+                'path' => '/cron',
+                'route-to' => '/entity/cron/CronLoginView.php'
+            ]);
+            Router::other([
+                'path' => '/cron/jobs',
+                'route-to' => '/entity/cron/CronTasksView.php'
+            ]);
+            Router::other([
+                'path' => '/cron/jobs/{job-name}',
+                'route-to' => '/entity/cron/CronTaskView.php'
+            ]);
+        }
     }
     /**
      * Returns an object that represents the job which is currently being executed.
@@ -140,14 +143,6 @@ class Cron {
      */
     public static function activeJob() {
         return self::_get()->activeJob;
-    }
-    /**
-     * Returns an array that contains the names of scheduled jobs.
-     * @return array An array that contains the names of scheduled jobs.
-     * @since 1.0.9
-     */
-    public static function getJobsNames() {
-        return self::_get()->jobsNamesArr;
     }
     /**
      * Creates new job using cron expression.
@@ -279,6 +274,14 @@ class Cron {
         }
 
         return $retVal;
+    }
+    /**
+     * Returns an array that contains the names of scheduled jobs.
+     * @return array An array that contains the names of scheduled jobs.
+     * @since 1.0.9
+     */
+    public static function getJobsNames() {
+        return self::_get()->jobsNamesArr;
     }
     /**
      * Returns the array that contains logged messages.
@@ -555,7 +558,8 @@ class Cron {
                 $job->setJobName('job-'.$this->jobsQueue()->size());
             }
             $retVal = $this->cronJobsQueue->enqueue($job);
-            if ($retVal === true) {
+
+            if ($retVal === true && !in_array($job->getJobName(), $this->jobsNamesArr)) {
                 $this->jobsNamesArr[] = $job->getJobName();
             }
         }

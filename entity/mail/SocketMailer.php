@@ -217,14 +217,11 @@ class SocketMailer {
             if (strlen($addressTrimmed) != 0) {
                 if ($isBcc) {
                     $this->bcc[$addressTrimmed] = $nameTrimmed;
+                } else if ($isCC) {
+                    $this->cc[$addressTrimmed] = $nameTrimmed;
                 } else {
-                    if ($isCC) {
-                        $this->cc[$addressTrimmed] = $nameTrimmed;
-                    } else {
-                        $this->receivers[$addressTrimmed] = $nameTrimmed;
-                    }
+                    $this->receivers[$addressTrimmed] = $nameTrimmed;
                 }
-
                 return true;
             }
         }
@@ -252,10 +249,8 @@ class SocketMailer {
 
             if ($portNum == 465) {
                 $protocol = "ssl://";
-            } else {
-                if ($portNum == 587) {
-                    $protocol = "tls://";
-                }
+            } else  if ($portNum == 587) {
+                $protocol = "tls://";
             }
             $err = 0;
             $errStr = '';
@@ -648,12 +643,10 @@ class SocketMailer {
 
         if ($asInt <= -1) {
             $this->priority = -1;
+        } else if ($asInt >= 1) {
+            $this->priority = 1;
         } else {
-            if ($asInt >= 1) {
-                $this->priority = 1;
-            } else {
-                $this->priority = 0;
-            }
+            $this->priority = 0;
         }
     }
     /**
@@ -707,31 +700,29 @@ class SocketMailer {
                 $this->sendC(self::NL.'.');
                 $this->sendC('QUIT');
             }
-        } else {
-            if (strlen($this->getSenderAddress()) != 0) {
-                $this->_receiversCommand();
-                $this->sendC('DATA');
-                $importanceHeaderVal = $this->_priorityCommand();
+        } else if (strlen($this->getSenderAddress()) != 0) {
+            $this->_receiversCommand();
+            $this->sendC('DATA');
+            $importanceHeaderVal = $this->_priorityCommand();
 
-                $this->sendC('Content-Transfer-Encoding: quoted-printable');
-                $this->sendC('Importance: '.$importanceHeaderVal);
-                $this->sendC('From: "'.$this->getSenderName().'" <'.$this->getSenderAddress().'>');
-                $this->sendC('To: '.$this->getReceiversStr());
-                $this->sendC('CC: '.$this->getCCStr());
-                $this->sendC('BCC: '.$this->getBCCStr());
-                $this->sendC('Date:'.date('r (T)'));
-                $this->sendC('Subject:'.'=?UTF-8?B?'.base64_encode($this->subject).'?=');
-                $this->sendC('MIME-Version: 1.0');
-                $this->sendC('Content-Type: multipart/mixed; boundary="'.$this->boundry.'"'.self::NL);
-                $this->sendC('--'.$this->boundry);
-                $this->sendC('Content-Type: text/html; charset="UTF-8"'.self::NL);
-                $this->sendC($this->_trimControlChars($msg));
+            $this->sendC('Content-Transfer-Encoding: quoted-printable');
+            $this->sendC('Importance: '.$importanceHeaderVal);
+            $this->sendC('From: "'.$this->getSenderName().'" <'.$this->getSenderAddress().'>');
+            $this->sendC('To: '.$this->getReceiversStr());
+            $this->sendC('CC: '.$this->getCCStr());
+            $this->sendC('BCC: '.$this->getBCCStr());
+            $this->sendC('Date:'.date('r (T)'));
+            $this->sendC('Subject:'.'=?UTF-8?B?'.base64_encode($this->subject).'?=');
+            $this->sendC('MIME-Version: 1.0');
+            $this->sendC('Content-Type: multipart/mixed; boundary="'.$this->boundry.'"'.self::NL);
+            $this->sendC('--'.$this->boundry);
+            $this->sendC('Content-Type: text/html; charset="UTF-8"'.self::NL);
+            $this->sendC($this->_trimControlChars($msg));
 
-                if ($sendMessage === true) {
-                    $this->_appendAttachments();
-                    $this->sendC(self::NL.'.');
-                    $this->sendC('QUIT');
-                }
+            if ($sendMessage === true) {
+                $this->_appendAttachments();
+                $this->sendC(self::NL.'.');
+                $this->sendC('QUIT');
             }
         }
     }
@@ -762,12 +753,10 @@ class SocketMailer {
 
         if ($priorityAsInt == -1) {
             $importanceHeaderVal = 'low';
+        } else if ($priorityAsInt == 1) {
+            $importanceHeaderVal = 'High';
         } else {
-            if ($priorityAsInt == 1) {
-                $importanceHeaderVal = 'High';
-            } else {
-                $importanceHeaderVal = 'normal';
-            }
+            $importanceHeaderVal = 'normal';
         }
         $this->sendC('Priority: '.$priorityHeaderVal);
 

@@ -40,6 +40,7 @@ use webfiori\entity\ui\ErrorBox;
 use webfiori\entity\ui\ServerErrView;
 use webfiori\entity\ui\ServiceUnavailableView;
 use webfiori\entity\Util;
+use webfiori\ini\GlobalConstants;
 use webfiori\ini\InitAutoLoad;
 use webfiori\ini\InitCron;
 use webfiori\ini\InitPrivileges;
@@ -51,23 +52,6 @@ use webfiori\logic\WebsiteController;
  * @since 1.1.0
  */
 define('MICRO_START', microtime(true));
-/**
- * This constant is used to tell the core if the application uses composer 
- * packages or not. If set to true, then composer packages will be loaded.
- * @since 1.1.0
- */
-define('LOAD_COMPOSER_PACKAGES', true);
-/**
- * This constant is used to tell the framework if more information should 
- * be displayed if an exception is thrown or an error happens. The main aim 
- * of this constant is to hide some sensitive information from users if the 
- * system is in production environment. Note that the constant will have effect 
- * only if the framework is accessed through HTTP protocol. If used in CLI 
- * environment, everything will appear. Default value of the constant is 
- * false.
- * @since 1.1.0
- */
-define('VERBOSE', false);
 /**
  * The instance of this class is used to control basic settings of 
  * the framework. Also, it is the entry point of any request.
@@ -170,13 +154,8 @@ class WebFiori {
             define('ROOT_DIR',__DIR__);
         }
 
-        /**
-         * Fallback for older php versions that does not
-         * support the constant PHP_INT_MIN
-         */
-        if (!defined('PHP_INT_MIN')) {
-            define('PHP_INT_MIN', ~PHP_INT_MAX);
-        }
+        require_once __DIR__.DIRECTORY_SEPARATOR.'ini'.DIRECTORY_SEPARATOR.'GlobalConstants.php';
+        GlobalConstants::defineConstants();
 
         /**
          * Initialize autoloader.
@@ -495,31 +474,29 @@ class WebFiori {
                 fprintf(STDERR, "Error File       %5s %s\n",":",$errfile);
                 fprintf(STDERR, "Error Line:      %5s %s\n",":",$errline);
                 exit(-1);
-            } else {
-                if (defined('API_CALL')) {
-                    header("HTTP/1.1 500 Server Error");
-                    $j = new JsonX([
+            } else if (defined('API_CALL')) {
+                header("HTTP/1.1 500 Server Error");
+                $j = new JsonX([
                     'message' => $errstr,
                     'type' => Util::ERR_TYPES[$errno]['type'],
                     'description' => Util::ERR_TYPES[$errno]['description'],
                     'error-number' => $errno
                 ], true);
-
-                    if (defined('VERBOSE') && VERBOSE) {
-                        $j->add('file',$errfile);
-                        $j->add('line',$errline);
-                    }
-                    header('content-type: application/json');
-                    die($j);
-                } else {
-                    $errBox = new ErrorBox();
-                    $errBox->setError($errno);
-                    $errBox->setDescription($errno);
-                    $errBox->setFile($errfile);
-                    $errBox->setMessage($errstr);
-                    $errBox->setLine($errline);
-                    echo $errBox;
+                
+                if (defined('VERBOSE') && VERBOSE) {
+                    $j->add('file',$errfile);
+                    $j->add('line',$errline);
                 }
+                header('content-type: application/json');
+                die($j);
+            } else {
+                $errBox = new ErrorBox();
+                $errBox->setError($errno);
+                $errBox->setDescription($errno);
+                $errBox->setFile($errfile);
+                $errBox->setMessage($errstr);
+                $errBox->setLine($errline);
+                echo $errBox;
             }
 
             return true;
@@ -561,10 +538,8 @@ class WebFiori {
                         foreach ($trace as $arr) {
                             if (isset($arr['file'])) {
                                 $stackTrace->add('#'.$index,$arr['file'].' (Line '.$arr['line'].')');
-                            } else {
-                                if (isset($arr['function'])) {
-                                    $stackTrace->add('#'.$index,$arr['function']);
-                                }
+                            } else if (isset($arr['function'])) {
+                                $stackTrace->add('#'.$index,$arr['function']);
                             }
                             $index++;
                         }
@@ -637,16 +612,5 @@ if (CLI::isCLI() === true) {
     CLI::runCLI();
 } else {
     //route user request.
-    $requested = Util::getRequestedURL();
-    $uriSplit = entity\router\RouterUri::splitURI($requested);
-    if ($uriSplit['authority'] == '//programmingacademia.com'){
-        http_response_code(301);
-        $path = '';
-        for ($x = 1 ; $x < count($uriSplit['path']) ; $x++) {
-            $path .= '/'.$uriSplit['path'][$x];
-        }
-        header('location: https://webfiori.com'.$path);
-        die();
-    }
     Router::route(Util::getRequestedURL());
 }

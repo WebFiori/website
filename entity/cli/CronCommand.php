@@ -127,17 +127,21 @@ class CronCommand extends CLICommand {
         $jobName = $this->getArgValue('--job-name');
         $cPass = $this->getArgValue('p');
         $retVal = -1;
-        
-        if ($jobName === null) {
-            $jobName = $this->select('Select one of the scheduled jobs to force:', Cron::getJobsNames());
-        } 
-        
-        $result = Cron::run($cPass,$jobName.'',true, $this);
+        $jobsNamesArr = Cron::getJobsNames();
+        $jobsNamesArr[] = 'Cancel';
 
-        if ($result == 'INV_PASS') {
-            $this->error("Provided password is incorrect.");
+        if ($jobName === null) {
+            $jobName = $this->select('Select one of the scheduled jobs to force:', $jobsNamesArr, count($jobsNamesArr) - 1);
+        } 
+
+        if ($jobName == 'Cancel') {
+            $retVal = 0;
         } else {
-            if ($result == 'JOB_NOT_FOUND') {
+            $result = Cron::run($cPass,$jobName.'',true, $this);
+
+            if ($result == 'INV_PASS') {
+                $this->error("Provided password is incorrect.");
+            } else if ($result == 'JOB_NOT_FOUND') {
                 $this->error("No job was found which has the name '".$jobName."'");
             } else {
                 $this->_printExcResult($result);
@@ -145,7 +149,6 @@ class CronCommand extends CLICommand {
                 $retVal = 0;
             }
         }
-        
 
         return $retVal;
     }
@@ -175,6 +178,7 @@ class CronCommand extends CLICommand {
     }
     private function _showJobArgs() {
         $jobName = $this->getArgValue('--job-name');
+
         if ($jobName === null) {
             $jobName = $this->select('Select one of the scheduled jobs to show supported args:', Cron::getJobsNames());
         } 
@@ -199,7 +203,7 @@ class CronCommand extends CLICommand {
                 $this->println($message);
             }
         } else {
-            $this->print("TIP: ", [
+            $this->prints("TIP: ", [
                 'color' => 'yellow'
             ]);
             $this->println("Supply the argument '--show-log' to show execution log.");

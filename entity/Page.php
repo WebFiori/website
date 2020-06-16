@@ -680,7 +680,7 @@ class Page {
         if ($this->isThemeLoaded()) {
             $loadedTheme = $this->getTheme();
 
-            return Theme::THEMES_DIR.'/'.$loadedTheme->getDirectoryName().'/'.$loadedTheme->getCssDirName();
+            return ThemeLoader::THEMES_DIR.'/'.$loadedTheme->getDirectoryName().'/'.$loadedTheme->getCssDirName();
         }
 
         return '';
@@ -696,7 +696,7 @@ class Page {
         if ($this->isThemeLoaded()) {
             $loadedTheme = $this->getTheme();
 
-            return Theme::THEMES_DIR.'/'.$loadedTheme->getDirectoryName().'/'.$loadedTheme->getImagesDirName();
+            return ThemeLoader::THEMES_DIR.'/'.$loadedTheme->getDirectoryName().'/'.$loadedTheme->getImagesDirName();
         }
 
         return '';
@@ -712,7 +712,7 @@ class Page {
         if ($this->isThemeLoaded()) {
             $loadedTheme = $this->getTheme();
 
-            return Theme::THEMES_DIR.'/'.$loadedTheme->getDirectoryName().'/'.$loadedTheme->getJsDirName();
+            return ThemeLoader::THEMES_DIR.'/'.$loadedTheme->getDirectoryName().'/'.$loadedTheme->getJsDirName();
         }
 
         return '';
@@ -1072,12 +1072,12 @@ class Page {
 
         if ($this->theme !== null) {
             if ($themeName != $this->theme->getName()) {
-                $tmpTheme = Theme::usingTheme($themeName);
+                $tmpTheme = ThemeLoader::usingTheme($themeName);
             } else {
                 return;
             }
         } else {
-            $tmpTheme = Theme::usingTheme($themeName);
+            $tmpTheme = ThemeLoader::usingTheme($themeName);
         }
         $this->theme = $tmpTheme;
         $this->document = new HTMLDoc();

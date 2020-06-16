@@ -135,6 +135,7 @@ class Router {
         $this->onNotFound = function ()
         {
             http_response_code(404);
+
             if (!defined('API_CALL')) {
                 $notFoundView = new NotFoundView();
                 $notFoundView->display();
@@ -820,19 +821,6 @@ class Router {
         }
     }
     /**
-     * 
-     * @param RouterUri $uriObj
-     */
-    private function redirectToNonWWW($uriObj) {
-            http_response_code(301);
-            $path = '';
-            $host = substr($uriObj->getHost(),4);
-            for ($x = 1 ; $x < count($uriObj->getPathArray()) ; $x++) {
-                $path .= '/'.$uriObj->getPathArray()[$x];
-            }
-            header('location: '.$uriObj->getScheme().'://'.$host.$path);
-    }
-    /**
      * Route a given URI to its specified resource.
      * If the router has no routes, the router will send back a '418 - I'm A 
      * Teapot' response. If the route is available but the file that the 
@@ -851,7 +839,8 @@ class Router {
 
         if (count($this->routes) != 0) {
             $routeUri = new RouterUri($uri, '');
-            if ($routeUri->hasWWW()) {
+
+            if ($routeUri->hasWWW() && defined('NO_WWW') && NO_WWW === true) {
                 $this->redirectToNonWWW($routeUri);
             }
             //first, search for the URI wuthout checking variables
@@ -966,5 +955,35 @@ class Router {
         self::$router = new Router();
 
         return self::$router;
+    }
+    /**
+     * Send http 301 response code and redirect the request to non-www URI.
+     * @param RouterUri $uriObj
+     */
+    private function redirectToNonWWW($uriObj) {
+        http_response_code(301);
+        $path = '';
+
+        $host = substr($uriObj->getHost(), strpos($uriObj->getHost(), '.'));
+
+        for ($x = 1 ; $x < count($uriObj->getPathArray()) ; $x++) {
+            $path .= '/'.$uriObj->getPathArray()[$x];
+        }
+        $queryString = '';
+
+        if (strlen($uriObj->getQueryString()) > 0) {
+            $queryString = '?'.$uriObj->getQueryString();
+        }
+        $fragment = '';
+
+        if (strlen($uriObj->getFragment()) > 0) {
+            $fragment = '#'.$uriObj->getFragment();
+        }
+        $port = '';
+
+        if (strlen($uriObj->getPort()) > 0) {
+            $port = ':'.$uriObj->getPort();
+        }
+        header('location: '.$uriObj->getScheme().'://'.$host.$port.$path.$queryString.$fragment);
     }
 }

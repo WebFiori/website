@@ -24,7 +24,6 @@ class VuetifyTheme extends Theme {
         $this->setLicenseName('MIT License');
         $this->setLicenseUrl('https://opensource.org/licenses/MIT');
         $this->setName('Vuetify Theme');
-        $this->setDirectoryName('vuetify-based');
         $this->setJsDirName('js');
         $this->setImagesDirName('img');
         $this->setBeforeLoaded(function()
@@ -247,7 +246,7 @@ class VuetifyTheme extends Theme {
         $node->addCSS('https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css', [], false);
         $node->addJs('https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js', [], false);
         $node->addJs('https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js', [], false);
- 
+
         return $node;
     }
     /**

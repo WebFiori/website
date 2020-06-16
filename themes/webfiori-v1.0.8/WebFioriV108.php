@@ -27,7 +27,6 @@ class WebFioriV108 extends APITheme{
         $this->setName('WebFiori V108');
         $this->setLicenseName('MIT License');
         $this->setLicenseUrl('https://opensource.org/licenses/MIT');
-        $this->setDirectoryName('webfiori-v1.0.8');
         $this->setAfterLoaded(function(){
             Page::document()->getChildByID('page-body')->setClassName('row  ml-0 mr-0');
             Page::document()->getChildByID('page-body')->setStyle([
