@@ -33,7 +33,8 @@ class CodingStandards extends WebFioriPage {
             'Classed names and static attributes names must be decalred in <code>PascalCase</code>.',
             'An opening braces \'{\' must be on the same line.',
             'Never use <code>elseif</code>. Always use <code>else if</code>.',
-            'Always include access modifiers for class methods even if they are public.'
+            'Always include access modifiers for class methods even if they are public.',
+            'Private methods names should always start with underscore.'
         ], false));
         Page::render();
     } 
