@@ -8,7 +8,6 @@ class CustomTheme extends Theme{
     public function __construct() {
         parent::__construct();
         $this->setName('Custom Theme');
-        $this->setDirectoryName('custom-theme');
         $this->setCssDirName('css');
         $this->setJsDirName('js');
         $this->setImagesDirName('images');

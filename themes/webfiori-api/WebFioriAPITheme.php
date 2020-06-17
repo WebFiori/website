@@ -21,7 +21,6 @@ class WebFioriAPITheme extends APITheme{
         $this->setName('WebFiori API Theme');
         $this->setVersion('1.0');
         $this->setDescription('A theme that is used in API description pages.');
-        $this->setDirectoryName('webfiori-api');
         $this->setImagesDirName('images');
         $this->setJsDirName('js');
         $this->setCssDirName('css');
