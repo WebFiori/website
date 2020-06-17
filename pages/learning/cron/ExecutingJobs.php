@@ -74,7 +74,7 @@ class ExecutingJobs extends CronLearnView{
         $subSec2->addChild($this->createImag('assets/images/cron02.png', 'Cron force terminal output.'));
         
         $this->setPrevTopicLink('learn/topics/jobs-scheduling/job-implementation', 'Using The Class AbstractJob');
-        $this->setNextTopicLink('learn/jobs-scheduling/args', 'Using Arguments With Forced Jobs');
+        $this->setNextTopicLink('learn/topics/jobs-scheduling/args', 'Using Arguments With Forced Jobs');
         $this->displayView();
     }
 }
