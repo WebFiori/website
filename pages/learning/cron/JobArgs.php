@@ -24,17 +24,17 @@ class JobArgs extends CronLearnView{
         Page::insert($sec1);
         $sec1->addChild($this->createParagraph('Job arguments are associated with an instance of the '
                 . 'class <code>AbstractJob</code>. In order to add arguments to a job, simply use the method '
-                . '<a href="docs/webfiori/entity/crom/AbstractJob#addExecutionArg" target="_blank">AbstractJob::addExecutionArg()</a>. Also, '
+                . '<a href="docs/webfiori/entity/cron/AbstractJob#addExecutionArg" target="_blank">AbstractJob::addExecutionArg()</a>. Also, '
                 . 'it is possible to add multiple arguments at once using the method '
-                . '<a href="docs/webfiori/entity/crom/AbstractJob#addExecutionArgs" target="_blank">AbstractJob::addExecutionArgs()</a>. Ususlly, '
+                . '<a href="docs/webfiori/entity/cron/AbstractJob#addExecutionArgs" target="_blank">AbstractJob::addExecutionArgs()</a>. Ususlly, '
                 . 'arguments are added to the job when initialized (in the constructor). But it is possible to add them after the '
                 . 'job has been scheduled.'));
         $sec1->addChild($this->createParagraph('The following code sample shows how to add arguments to job.'));
         $code1 = new CodeSnippet('PHP', "<?php
-namespace webfiori\entity\cron;
+namespace webfiori\\entity\cron;
 
-use webfiori\entity\cron\AbstractJob;
-use webfiori\entity\cron\Cron;
+use webfiori\\entity\cron\AbstractJob;
+use webfiori\\entity\cron\Cron;
 
 class GenerateAttendanceReportJob extends AbstractJob {
     public function __construct() {
@@ -87,7 +87,25 @@ class GenerateAttendanceReportJob extends AbstractJob {
         $sec1->addChild($code1);
         $sec2 = $this->createSection('Sending Arguments Throgh CRON Control Panel');
         Page::insert($sec2);
+        $sec2->addChild($this->createParagraph('If the ability to execute cron jobs through HTTP is enabled, it will '
+                . 'be possible to access cron control panel to force execution of a job. The access to the control panel '
+                . 'can be enabled by defining the constant <code>CRON_THROUGH_HTTP</code> and setting its value to <code>true</code>. '
+                . 'Assuming that the server has the URL "https://example.com", the cron control panel can be '
+                . 'accessed throgh "https://example.com/cron".'));
+        $sec2->addChild($this->createParagraph('To supply arguments to '
+                . 'a job when forceing it to execute, simply navigate to the page that shows job information by clicking '
+                . 'on its name in the page that lists all scheduled jobs. In the lower side of the page, '
+                . 'there will be a table at which the user can see the names of the argumens. The next image shows '
+                . 'the whole page that shows the details of the job.'));
+        $sec2->addChild($this->createImag('assets/images/cron03.png', 'Cron control panel.'));
         $sec3 = $this->createSection('Sending Arguments Throgh Terminal');
+        $sec3->addChild($this->createParagraph('Another way to force jobs to execute is to use '
+                . 'command line interface. The command <code>cron</code> is used to force the execution of a job. '
+                . 'To force a job, simply supply the argument "<code>--force<code>" and the argument "<code>--job-name</code>". '
+                . 'Extra arguments to the job can be added as <code>arg-name="arg-val".'));
+        $sec3->addChild($this->createParagraph('The following terminal output image shows how to force the '
+                . 'job that was created using the code at the start of this page.'));
+        $sec3->addChild($this->createImag('', $alt));
         Page::insert($sec3);
         $this->setPrevTopicLink('learn/topics/jobs-scheduling/executing-jobs', 'Executing Jobs');
         $this->setNextTopicLink('learn/topics/jobs-scheduling/sending-notifications', 'Sending Execution Notifications');
