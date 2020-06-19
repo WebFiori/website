@@ -60,6 +60,11 @@ class WebFioriPage {
         $img = new HTMLNode('img', FALSE);
         $img->setAttribute('src', $src);
         $img->setAttribute('alt', $alt);
+        $img->setStyle([
+            'height'=>'auto',
+            'max-width'=>'100%',
+            'border' => '1px solid'
+        ]);
         return $img;
     }
     public function getWFBG() {
