@@ -347,6 +347,10 @@ class ViewRoutes {
             'route-to'=>'learning/cron/JobArgs.php'
         ]);
         Router::view([
+            'path'=>'learn/topics/jobs-scheduling/sending-notifications',
+            'route-to'=>'learning/cron/SendCronNotifications.php'
+        ]);
+        Router::view([
             'path'=>'learn/topics/jobs-scheduling/questions-and-answers',
             'route-to'=>'learning/cron/QuestionsAndAnswers.php'
         ]);

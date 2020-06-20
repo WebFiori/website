@@ -38,7 +38,8 @@ use webfiori\\entity\cron\Cron;
 
 class GenerateAttendanceReportJob extends AbstractJob {
     public function __construct() {
-        parent::__construct('Generate Attendance Report');
+        parent::__construct('
+        ');
         
         //Generate attendance report once the new month start.
         \$this->everyMonthOn(1, '00:00');
@@ -101,11 +102,11 @@ class GenerateAttendanceReportJob extends AbstractJob {
         $sec3 = $this->createSection('Sending Arguments Throgh Terminal');
         $sec3->addChild($this->createParagraph('Another way to force jobs to execute is to use '
                 . 'command line interface. The command <code>cron</code> is used to force the execution of a job. '
-                . 'To force a job, simply supply the argument "<code>--force<code>" and the argument "<code>--job-name</code>". '
-                . 'Extra arguments to the job can be added as <code>arg-name="arg-val".'));
+                . 'To force a job, simply supply the argument "<code>--force</code>"'));
         $sec3->addChild($this->createParagraph('The following terminal output image shows how to force the '
-                . 'job that was created using the code at the start of this page.'));
-        $sec3->addChild($this->createImag('', $alt));
+                . 'job that was created using the code at the start of this page. Notice that if the job '
+                . 'has extra arguments, it asks to supply them.'));
+        $sec3->addChild($this->createImag('assets/images/cron04.png', 'Cron output.'));
         Page::insert($sec3);
         $this->setPrevTopicLink('learn/topics/jobs-scheduling/executing-jobs', 'Executing Jobs');
         $this->setNextTopicLink('learn/topics/jobs-scheduling/sending-notifications', 'Sending Execution Notifications');

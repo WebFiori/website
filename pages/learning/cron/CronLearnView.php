@@ -40,6 +40,10 @@ class CronLearnView extends LearnView {
                 'link'=>'learn/topics/jobs-scheduling/args'
             ],
             [
+                'label'=>'Sending CRON Notifications',
+                'link'=>'learn/topics/jobs-scheduling/sending-notifications'
+            ],
+            [
                 'label'=>'Questions & Answers',
                 'link'=>'learn/topics/jobs-scheduling/questions-and-answers'
             ]
