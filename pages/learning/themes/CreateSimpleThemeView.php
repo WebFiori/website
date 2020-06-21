@@ -76,7 +76,7 @@ class ClassThemeView extends ThemesLearnView{
             . 'something like the following:'));
         $code = new CodeSnippet();
         $code->setTitle('CSS Code');
-        $code->getCodeElement()->setClassName('language-css');
+        $code->getCodeElement()->setClassName('lang-css');
         $code->setCode('
 #page-body{
     color: white;
@@ -137,7 +137,6 @@ class CustomTheme extends Theme{
             . 'following:'));
         $ul = new UnorderedList();
         $ul->addListItem('Set the name of the theme.');
-        $ul->addListItem('Set the name of the directory at which the theme exist.');
         $ul->addListItem('Set the names of theme resource directories (CSS, JS and Images).');
         $ul->addListItem('Implementing the abstract methods of the class \'Theme\'.');
         $sec->addChild($ul);
@@ -161,7 +160,6 @@ class CustomTheme extends Theme{
     public function __construct() {
         parent::__construct();
         $this->setName(\'Custom Theme\');
-        $this->setDirectoryName(\'custom-theme\');
         $this->setCssDirName(\'css\');
         $this->setJsDirName(\'js\');
         $this->setImagesDirName(\'images\');
@@ -209,7 +207,6 @@ class CustomTheme extends Theme{
     public function __construct() {
         parent::__construct();
         $this->setName(\'Custom Theme\');
-        $this->setDirectoryName(\'custom-theme\');
         $this->setCssDirName(\'css\');
         $this->setJsDirName(\'js\');
         $this->setImagesDirName(\'images\');
@@ -265,7 +262,6 @@ class CustomTheme extends Theme{
     public function __construct() {
         parent::__construct();
         $this->setName(\'Custom Theme\');
-        $this->setDirectoryName(\'custom-theme\');
         $this->setCssDirName(\'css\');
         $this->setJsDirName(\'js\');
         $this->setImagesDirName(\'images\');
@@ -349,8 +345,8 @@ class ExamplePage{
         Page::render();
     }
 }
-//initialize the view
-new ExamplePage();');
+//We do that to make the router initialize the view automatically.
+return __NAMESPACE__;');
         $sec->addChild($code);
         $sec->addChild($this->createParagraph('The final step is to add a <a href="learn/topics/routing">route</a> to the view that we have '
              . 'created then navigate using the browser to the view URL.'));
