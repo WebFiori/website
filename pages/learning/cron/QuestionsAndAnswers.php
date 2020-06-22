@@ -28,6 +28,28 @@ class QuestionsAndAnswers extends CronLearnView{
                 . 'For more information about how to schedule jobs using the class <code>AbstractJob</code>, '
                 . '<a href="learn/topics/jobs-scheduling/job-implementation" >check here</a>'
                 . '');
+        $questionsArr[] = $this->createQuestionBox('Is it possible to force execution of a job?', ''
+                . 'Yes it is. There are two ways to do it. One way is to force execution '
+                . 'using command line intreface and the second way is to use cron web interface which can '
+                . 'be activated by defining the constant <code>CRON_THROUGH_HTTP</code> and setting its value to '
+                . '<code>true</code> inside the class <a href="docs/webfiori/ini/GlobalConstants">GlobalConstants</a>. To learn more about this topic, '
+                . '<a href="learn/topics/jobs-scheduling/executing-jobs">check here</a>.'
+                . '');
+        $questionsArr[] = $this->createQuestionBox('What are job arguments?', ''
+                . 'Job arguments are variables which can be set when the job is forced to execute. '
+                . 'They can be used to customize the output of the job based on the given arguments values. '
+                . 'The values of the arguments can be set in command line interface and '
+                . 'also in cron web interface.'
+                . '');
+        $questionsArr[] = $this->createQuestionBox('Is it posible to get notifications about execution status '
+                . 'of a job?', ''
+                . 'It is possible to do that using the class <a href="docs/webfiori/entity/cron/CronEmail">CronEmail</a>. To learn '
+                . 'more about how to use it, <a href="learn/topics/jobs-scheduling/sending-notifications">click here</a>.'
+                . '');
+        $questionsArr[] = $this->createQuestionBox('How to add extra entries to the log file which comes with the notification email?', ''
+                . 'Simply use the method <a href="docs/webfiori/entity/cron/Cron#log">Cron::log()</a>. It is possible to use '
+                . 'it any where in your code.'
+                . '');
         $questionsUl = new UnorderedList();
         Page::insert($questionsUl);
         $qNum = 0;
