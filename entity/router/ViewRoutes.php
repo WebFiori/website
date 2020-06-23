@@ -354,5 +354,31 @@ class ViewRoutes {
             'path'=>'learn/topics/jobs-scheduling/questions-and-answers',
             'route-to'=>'learning/cron/QuestionsAndAnswers.php'
         ]);
+        
+        // Web Services
+        Router::view([
+            'path'=>'learn/topics/web-services',
+            'route-to'=>'learning/web-services/IntroToWebServices.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/web-services/intro',
+            'route-to'=>'learning/web-services/IntroToWebServices.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/web-services/main-classes',
+            'route-to'=>'learning/web-services/MainClasses.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/web-services/create-web-service',
+            'route-to'=>'learning/web-services/CreateAService.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/web-services/authorization',
+            'route-to'=>'learning/web-services/Authorization.php'
+        ]);
+        Router::view([
+            'path'=>'learn/topics/web-services/multiple-services',
+            'route-to'=>'learning/web-services/MultipleServices.php'
+        ]);
     }
 }

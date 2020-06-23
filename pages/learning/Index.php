@@ -46,6 +46,9 @@ class Index extends WebFioriPage{
         $ul->addChild($this->createLinkListItem('learn/topics/mailing', 'Sending Email Messages.'));
         $ul->addChild($this->createLinkListItem('learn/topics/cli', 'Command Line Interface.'));
         $ul->addChild($this->createLinkListItem('learn/topics/jobs-scheduling', 'Task Scheduler.'));
+//        $ul->addChild($this->createLinkListItem('learn/topics/privileges', 'Privileges System.'));
+//        $ul->addChild($this->createLinkListItem('learn/topics/web-services', 'Web Services (APIs).'));
+//        $ul->addChild($this->createLinkListItem('learn/topics/database', 'Database Access.'));
         Page::insert($sec);
     }
 }
