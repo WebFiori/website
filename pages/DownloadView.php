@@ -25,18 +25,21 @@ class DownloadView extends WebFioriPage{
         Page::render();
     }
     private function _stableDownloads() {
-        $sec = $this->createSection('Stable Releases',3);
+        $sec = $this->createSection('Latest Stable Release',3);
         $sec->addChild($this->createParagraph('The latest release of the framework is version '
-                . '1.1.0. You can click <a href="downloads/webfiori-v1.0.9-stable">here</a> in order to start the '
+                . '1.0.9. You can click <a href="downloads/webfiori-v1.0.9-stable">here</a> in order to start the '
                 . 'download process.'));
         Page::insert($sec);
     }
     private function _betaDownloads(){
-        $sec = $this->createSection('Beta Releases and Old Releases',3);
+        $sec = $this->createSection('Previous Releases and Beta Releases',3);
         $sec->addChild($this->createParagraph('Here you will find all beta and historical releases. The given ones are '
                 . 'not good option for production and might have bugs.'));
         $ul = new UnorderedList();
         $ul->addListItems(array(
+            '<a href="downloads/webfiori-v1.1.0-beta-3">WebFiori v1.1.0 beta-3</a>',
+            '<a href="downloads/webfiori-v1.1.0-beta-2">WebFiori v1.1.0 beta-2</a>',
+            '<a href="downloads/webfiori-v1.1.0-beta-1">WebFiori v1.1.0 beta-1</a>',
             //'<a href="downloads/webfiori-v1.0.9-stable">WebFiori v1.0.9 Stable</a>',
             '<a href="downloads/webfiori-v1.0.8-stable">WebFiori v1.0.8 Stable</a>',
             '<a href="downloads/webfiori-v1.0.7-stable">WebFiori v1.0.7 Stable</a>',
