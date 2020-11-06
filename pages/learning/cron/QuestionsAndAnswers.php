@@ -26,8 +26,7 @@ class QuestionsAndAnswers extends CronLearnView{
                 . '<a href="docs/webfiori/entity/cron/AbstractJob" target="_blank">AbstractJob</a>. For more information '
                 . 'about how to schedule jobs as closure, <a href="learn/topics/jobs-scheduling/job-as-closure" >check here</a>. '
                 . 'For more information about how to schedule jobs using the class <code>AbstractJob</code>, '
-                . '<a href="learn/topics/jobs-scheduling/job-implementation" >check here</a>'
-                . '');
+                . '<a href="learn/topics/jobs-scheduling/job-implementation" >check here</a>');
         $questionsArr[] = $this->createQuestionBox('Is it possible to force execution of a job?', ''
                 . 'Yes it is. There are two ways to do it. One way is to force execution '
                 . 'using command line intreface and the second way is to use cron web interface which can '
