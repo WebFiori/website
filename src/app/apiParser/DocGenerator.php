@@ -1,17 +1,14 @@
 <?php
 namespace webfiori\apiParser;
 use webfiori\apiParser\ClassAPI;
-use webfiori\entity\Util;
-use webfiori\entity\Logger;
-use webfiori\entity\cli\CLI;
-use webfiori\entity\AutoLoader;
-use webfiori\entity\Page;
-use phpStructs\Stack;
-use phpStructs\html\HTMLNode;
-use phpStructs\html\UnorderedList;
-use phpStructs\html\ListItem;
+use webfiori\framework\Util;
+use webfiori\framework\Logger;
+use webfiori\framework\cli\CLI;
+use webfiori\framework\Page;
+use webfiori\collections\Stack;
+use webfiori\ui\HTMLNode;
 use Exception;
-use webfiori\entity\File;
+use webfiori\framework\File;
 /**
  * A PHPDoc parser class which is used to generate API docs for PHP classes.
  *
