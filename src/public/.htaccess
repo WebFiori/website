@@ -26,7 +26,7 @@ RewriteRule ^(vendor|apis|conf|framework|ini|logic|logs|pages) - [F,L]
 </FilesMatch>
 #<IfModule lsapi_module>
     # Disable opcache. This might reduce load speed if disabled.
-     php_flag opcache.enable Off
+    # php_flag opcache.enable Off
 #</IfModule>
 
 # Allow CORS. Be careful here.

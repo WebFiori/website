@@ -1,8 +1,8 @@
 <?php
 namespace webfiori\views;
-use webfiori\entity\Page;
-use phpStructs\html\UnorderedList;
-use phpStructs\html\Anchor;
+use webfiori\framework\Page;
+use webfiori\ui\UnorderedList;
+use webfiori\ui\Anchor;
 /**
  * Description of ContributeView
  *

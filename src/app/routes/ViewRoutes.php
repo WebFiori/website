@@ -23,7 +23,7 @@
  * THE SOFTWARE.
  */
 namespace webfiori\framework\router;
-
+use webfiori\examples\views\MdPage;
 /**
  * A class that only has one method to initiate some of system routes.
  * The class is meant to only initiate the routes which uses the method 
@@ -36,15 +36,39 @@ class ViewRoutes {
      * Create all views routes. Include your own here.
      * @since 1.0
      */
-    public static function create() {
+    public static function create(){
         Router::view([
-            'path' => '/', 
-            'route-to' => '/default.html'
+            'path'=>'/learn/video',
+            'route-to'=>'/video-tutorials/IndexView.php'
         ]);
         Router::view([
-            'path' => '/example', 
-            'route-to' => '/ExamplePage.php',
-            'case-sensitive' => false
+            'path'=>'/', 
+            'route-to'=>'/WebFioriHome.php'
         ]);
+        Router::view([
+            'path'=>'/webfiori', 
+            'route-to'=>'/WebFioriHome.php'
+        ]);
+        Router::closure([
+            'path'=>'/learn', 
+            'route-to'=>function () {
+                $mdPage = new MdPage('WebFiori', 'docs', 'index');
+            }
+        ]);
+        Router::closure([
+            'path'=>'/learn/{path}', 
+            'route-to'=>function () {
+                $mdPage = new MdPage('WebFiori', 'docs', Router::getVarValue('path'));
+            }
+        ]);
+        Router::view([
+            'path'=>'/contribute', 
+            'route-to'=>'/ContributeView.php'
+        ]);
+
+        if(class_exists('\docGenerator\DocGeneratorRoutes')){
+            \docGenerator\DocGeneratorRoutes::createRoutes();
+        }
+        Router::incSiteMapRoute();
     }
 }

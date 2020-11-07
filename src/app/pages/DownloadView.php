@@ -1,12 +1,8 @@
 <?php
 namespace webfiori\views;
-use webfiori\entity\Page;
+use webfiori\framework\Page;
 use webfiori\views\WebFioriPage;
-use phpStructs\html\HTMLNode;
-use phpStructs\html\PNode;
-use webfiori\WebFiori;
 use phpStructs\html\UnorderedList;
-use phpStructs\html\ListItem;
 /**
  * Description of DownloadView
  *

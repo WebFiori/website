@@ -1,13 +1,9 @@
 <?php
 namespace webfiori\views\learn;
 use webfiori\views\WebFioriPage;
-use webfiori\entity\Page;
-use phpStructs\html\HTMLNode;
-use phpStructs\html\PNode;
-use phpStructs\html\UnorderedList;
-use phpStructs\html\ListItem;
-use phpStructs\html\Anchor;
-use WebFioriGUI;
+use webfiori\framework\Page;
+use webfiori\ui\UnorderedList;
+use webfiori\ui\Anchor;
 /**
  * Description of Index
  *

@@ -7,11 +7,11 @@
  */
 
 namespace webfiori\apiParser;
-use webfiori\entity\Theme;
-use phpStructs\html\HTMLNode;
-use phpStructs\html\PNode;
+use webfiori\framework\Theme;
+use webfiori\ui\HTMLNode;
+use webfiori\ui\Paragraph;
 use webfiori\apiParser\ClassAPI;
-use webfiori\entity\Page;
+use webfiori\framework\Page;
 /**
  * Description of APITheme
  * @author Ibrahim

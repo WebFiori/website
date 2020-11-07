@@ -1,19 +1,19 @@
 <?php
 namespace webfiori\theme;
 use webfiori\WebFiori;
-use webfiori\entity\Theme;
+use webfiori\framework\Theme;
 use webfiori\apiParser\APITheme;
 use webfiori\apiParser\AttributeDef;
 use webfiori\apiParser\NameSpaceAPI;
 use webfiori\apiParser\FunctionDef;
-use phpStructs\html\HTMLNode;
-use phpStructs\html\HeadNode;
-use phpStructs\html\Anchor;
-use phpStructs\html\ListItem;
-use phpStructs\html\PNode;
-use phpStructs\html\UnorderedList;
-use webfiori\entity\Page;
-use phpStructs\html\JsCode;
+use webfiori\ui\HTMLNode;
+use webfiori\ui\HeadNode;
+use webfiori\ui\Anchor;
+use webfiori\ui\ListItem;
+use webfiori\ui\Paragraph;
+use webfiori\ui\UnorderedList;
+use webfiori\framework\Page;
+use webfiori\ui\JsCode;
 /**
  * WebFiori Theme Which is bundled with v1.0.8 of the framework.
  *
@@ -237,10 +237,10 @@ class WebFioriV108 extends APITheme{
             'type'=>"image/png"
         ]);
         $head->addCSS(Page::cssDir().'/theme.css');
-        $head->addCSS('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css',false);
-        $head->addJs('https://code.jquery.com/jquery-3.4.1.slim.min.js',false);
-        $head->addJs('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js', false);
-        $head->addJs('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js',false);
+        $head->addCSS('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css',[],false);
+        $head->addJs('https://code.jquery.com/jquery-3.4.1.slim.min.js',[],false);
+        $head->addJs('https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js',[], false);
+        $head->addJs('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js',[],false);
         $head->addJs("https://www.googletagmanager.com/gtag/js?id=UA-91825602-2", ['async'=>''], false);
         $jsCode = new JsCode();
         $jsCode->addCode("window.dataLayer = window.dataLayer || [];
@@ -328,7 +328,7 @@ class WebFioriV108 extends APITheme{
     public function createClassDescriptionNode() {
         $class = $this->getClass();
         $node = $this->createHTMLNode(['type'=>'container-fluid']);
-        $packageNode = new PNode();
+        $packageNode = new Paragraph();
         $packageNode->addText('<b class="mono">namespace '.$class->getNameSpace().'</b>',array('esc-entities'=>false));
         $node->addChild($packageNode);
         $titleNode = $this->createHTMLNode([
@@ -342,7 +342,7 @@ class WebFioriV108 extends APITheme{
         $node->addChild($descNode);
         $classV = $class->getVersion();
         if($classV !== null){
-            $vNode = new PNode();
+            $vNode = new Paragraph();
             $vNode->addText('Version: '.$classV);
             $node->addChild($vNode);
         }
@@ -392,7 +392,7 @@ class WebFioriV108 extends APITheme{
         if(count($nsArr) != 0){
             $subNsNode = new HTMLNode();
             $subNsNode->setClassName('sub-ns-container');
-            $label = new PNode();
+            $label = new Paragraph();
             $label->addText('Nested Namespaces:');
             $label->setClassName('block-title');
             $subNsNode->addChild($label);
@@ -410,7 +410,7 @@ class WebFioriV108 extends APITheme{
         if(count($interfaces) != 0){
             $interfacesNode = new HTMLNode();
             $interfacesNode->setClassName('interfaces-container');
-            $label = new PNode();
+            $label = new Paragraph();
             $label->addText('All Interfaces:');
             $label->setClassName('block-title');
             $interfacesNode->addChild($label);
@@ -420,7 +420,7 @@ class WebFioriV108 extends APITheme{
                 $link = new Anchor($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interface->getName(), $interface->getName());
                 $link->setClassName('description attribute-name col-12');
                 $cNode->addChild($link);
-                $descNode = new PNode();
+                $descNode = new Paragraph();
                 $descNode->setClassName('description attribute-description col-12');
                 $descNode->addText($interface->getSummary(),['esc-entities'=>false]);
                 $cNode->addChild($descNode);
@@ -432,7 +432,7 @@ class WebFioriV108 extends APITheme{
         if(count($classes) != 0){
             $classesNode = new HTMLNode();
             $classesNode->setClassName('classes-container');
-            $label = new PNode();
+            $label = new Paragraph();
             $label->addText('All Classes:');
             $label->setClassName('block-title');
             $classesNode->addChild($label);
@@ -443,7 +443,7 @@ class WebFioriV108 extends APITheme{
                 $link = new Anchor($this->getBaseURL().str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$class->getName(), $class->getName());
                 $link->setClassName('description attribute-name col-12');
                 $cNode->addChild($link);
-                $descNode = new PNode();
+                $descNode = new Paragraph();
                 $descNode->setClassName('description attribute-description col-12');
                 $descNode->addText($class->getSummary(),['esc-entities'=>false]);
                 $cNode->addChild($descNode);
