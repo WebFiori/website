@@ -1,5 +1,6 @@
 <?php
 namespace webfiori\apiParser;
+use webfiori\apiParser\APITheme;
 use webfiori\apiParser\ClassAPI;
 use webfiori\framework\Util;
 use webfiori\framework\Logger;
@@ -178,11 +179,16 @@ class DocGenerator {
         foreach ($this->apiReadersArr as $reader){
             Page::lang('EN');
             Page::dir('ltr');
+            
             $theme = Page::theme($themeName);
+            
             if($theme instanceof APITheme){
+                
                 $theme->setBaseURL($this->getBaseURL());
                 Page::siteName($siteName);
+                
                 $classAPI = new ClassAPI($reader,$this->getLinks(),$options);
+                
                 $classAPI->setBaseURL($base);
                 $theme->setClass($classAPI);
                 Page::insert($theme->createBodyNode());
@@ -254,8 +260,8 @@ class DocGenerator {
             $file->setRawData(
                     '<?php'."\r\n"
                     . 'namespace docGenerator'.$ns.";\r\n"
-                    . 'use webfiori\entity\Page as P;'."\r\n"
-                    . 'use phpStructs\html\HTMLNode;'."\r\n"
+                    . 'use webfiori\framework\Page as P;'."\r\n"
+                    . 'use webfiori\ui\HTMLNode;'."\r\n"
                     . 'class '.$classAPI->getName().'View{'."\r\n"
                     . '    public function __construct(){'."\r\n"
                     . '        P::theme(\''.$options['theme'].'\');'."\r\n"
@@ -430,7 +436,7 @@ class DocGenerator {
         $file->setName('DocGeneratorRoutes.php');
         $routesStr = '<?php'."\r\n"
                 .'namespace docGenerator;'."\r\n"
-                .'use webfiori\entity\router\Router;'."\r\n"
+                .'use webfiori\framework\router\Router;'."\r\n"
                 . 'class DocGeneratorRoutes{'."\r\n"
                     . '    public static function createRoutes(){'."\r\n";
             foreach ($this->routerLinks as $link => $routeTo){
@@ -465,8 +471,8 @@ class DocGenerator {
                 $file->setRawData(
                         '<?php'."\r\n"
                         . 'namespace docGenerator'.$ns.";\r\n"
-                        . 'use webfiori\entity\Page as P;'."\r\n"
-                        . 'use phpStructs\html\HTMLNode;'."\r\n"
+                        . 'use webfiori\framework\Page as P;'."\r\n"
+                        . 'use webfiori\ui\HTMLNode;'."\r\n"
                         . 'class NSIndexView{'."\r\n"
                         . '    public function __construct(){'."\r\n"
                         . '        P::theme(\''.$options['theme'].'\');'."\r\n"
