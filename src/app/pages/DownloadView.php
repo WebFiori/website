@@ -2,7 +2,7 @@
 namespace webfiori\views;
 use webfiori\framework\Page;
 use webfiori\views\WebFioriPage;
-use phpStructs\html\UnorderedList;
+use webfiori\ui\UnorderedList;
 /**
  * Description of DownloadView
  *
