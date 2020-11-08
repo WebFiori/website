@@ -22,7 +22,7 @@ class GenerateDocsCommand extends CLICommand{
             'base-url'=> 'https://webfiori.com/docs',
             'theme'=>'WebFiori V108',
             'site-name'=>'WebFiori API Docs',
-            'output-path'=>'C:\\Server\\apache2\\htdocs\\webfiori-docs\\pages\\apis',
+            'output-path'=>'C:\\Server\\apache2\\htdocs\\webfiori-docs\\src\\app\\pages\\apis',
             'route-root-folder'=>'apis',
             'is-dynamic'=>true
         ));
