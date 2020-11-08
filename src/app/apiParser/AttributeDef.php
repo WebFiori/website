@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 namespace webfiori\apiParser;
-use phpStructs\html\HTMLNode;
+use webfiori\ui\HTMLNode;
 /**
  * Definition of class attribute
  *
