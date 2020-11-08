@@ -8,9 +8,6 @@
 
 namespace webfiori\apiParser;
 use webfiori\apiParser\ClassAPI;
-use phpStructs\html\HTMLNode;
-use phpStructs\html\LinkNode;
-use phpStructs\html\PNode;
 /**
  * Description of NameSpace
  *
