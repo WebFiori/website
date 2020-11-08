@@ -6,9 +6,9 @@
  * and open the template in the editor.
  */
 namespace webfiori\apiParser;
-use phpStructs\html\HTMLNode;
-use phpStructs\html\PNode;
-use phpStructs\html\UnorderedList;
+use webfiori\ui\HTMLNode;
+use webfiori\ui\Paragraph;
+use webfiori\ui\UnorderedList;
 /**
  * A class that is used to build a GUI blocks for function definition. 
  *
@@ -55,7 +55,7 @@ class FunctionDef {
             $paramsNode = new HTMLNode();
             $paramsNode->setClassName('method-parameters-block');
             $paramsNode->setID('method-'.$this->getName().'-parameters');
-            $textNode = new PNode();
+            $textNode = new Paragraph();
             $textNode->addText('Parameters:',['bold'=>true]);
             $paramsNode->addChild($textNode);
             $ul = new UnorderedList();
@@ -76,7 +76,7 @@ class FunctionDef {
             $retNode = new HTMLNode();
             $retNode->setClassName('method-return-block');
             $retNode->setID('method-'.$this->getName().'-return');
-            $textNode = new PNode();
+            $textNode = new Paragraph();
             $textNode->addText('<b>Returns:</b> <span class="datatype-name">'.$return.'</span>',array('esc-entities'=>false));
             $retNode->addChild($textNode);
             $descNode = new HTMLNode();
