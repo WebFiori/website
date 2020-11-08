@@ -7,9 +7,9 @@
  */
 
 namespace webfiori\apiParser;
+
 use webfiori\framework\Theme;
 use webfiori\ui\HTMLNode;
-use webfiori\ui\Paragraph;
 use webfiori\apiParser\ClassAPI;
 use webfiori\framework\Page;
 /**
