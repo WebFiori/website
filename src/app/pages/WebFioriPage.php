@@ -78,7 +78,7 @@ class WebFioriPage {
             'left' => '50px',
             'z-index' => -1,
             'border' => '0px solid'
-        ]);
+        ],true);
         return $img;
     }
     /**
