@@ -109,6 +109,12 @@ namespace webfiori\framework\i18n;
 class LanguageEN extends Language {
     public function __construct() {
         parent::__construct('ltr', 'EN', true);
+        $this->createAndSet('menus/main-menu', [
+            'menu-item-1' => 'Download',
+            'menu-item-2' => 'API Docs',
+            'menu-item-3' => 'Learn',
+            'menu-item-4' => 'Contribute',
+        ]);
         $this->createAndSet('general/http-codes/200', [
             'code' => 200,
             'type' => 'OK',
