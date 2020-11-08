@@ -46,6 +46,10 @@ class ViewRoutes {
             'route-to'=>'/WebFioriHome.php'
         ]);
         Router::view([
+            'path'=>'/download', 
+            'route-to'=>'/DownloadView.php'
+        ]);
+        Router::view([
             'path'=>'/webfiori', 
             'route-to'=>'/WebFioriHome.php'
         ]);
