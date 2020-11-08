@@ -73,7 +73,7 @@ class WebFioriHome extends WebFioriPage{
         $sec = $this->createSection('What is WebFiori Framework?',3);
         $sec->addChild($this->createParagraph('WebFiori Framework is new mini web development framework which is built using '
                 . 'PHP language. The framework is fully object oriented (OOP). '
-                . 'It allows the use of the famous model-view-controller (MVC) model '
+                . 'It uses semi-model-view-controller (MVC) model '
                 . 'but it does not '
                 . 'force it. The framework comes with many features which can '
                 . 'help in making your website or web application up and running '
@@ -85,7 +85,7 @@ class WebFioriHome extends WebFioriPage{
             'Theming and the ability to create multiple UIs for the same web page using any CSS or JavaScript framework.',
             'Support for routing that makes the ability of creating search-'
                 . 'engine-friendly links an easy task.',
-            'Creation of web APIs that supports JSON, data filtering and '
+            'Creation of web services that supports JSON, data filtering and '
                 . 'validation.',
             'Basic support for MySQL schema and query building.',
             'Lightweight. The total size of framework core files is '
@@ -94,11 +94,10 @@ class WebFioriHome extends WebFioriPage{
                 . 'of privileges.',
             'The ability to create and manage multiple '
                 . 'sessions at once.',
-            'Support for creating and sending nice-looking emails in a simple way by using SMTP '
-                . 'protocol.',
+            'Support for creating and sending nice-looking emails in a simple way.',
             'Autoloading of user defined classes in addition to composer packages.',
             'The ability to create background tasks and let them '
-                . 'run automatically.',
+                . 'run automatically (CRON Jobs).',
             'Well-defined file upload and file handling sub-system.',
             'Building and manipulating the DOM of a web page using PHP.',
             'Ability to create custom command line interface (CLI) commands.'
