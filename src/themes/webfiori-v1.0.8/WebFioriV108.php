@@ -36,7 +36,7 @@ class WebFioriV108 extends APITheme{
                 'max-height'=>'10px',
                 'height'=>'10px'
             ]);
-            Page::document()->getChildByID('main-content-area')->setClassName('col-10 p-5');
+            Page::document()->getChildByID('main-content-area')->setClassName('col-9 p-5');
         });
     }
     
@@ -70,15 +70,20 @@ class WebFioriV108 extends APITheme{
         else if($nodeType == 'vertical-nav-bar'){
             $mainNav = new HTMLNode('nav');
             $mainNav->setClassName('navbar navbar-expand-lg navbar-light p-0');
+            $mainNav->setStyle([
+                'width' => '300px'
+            ]);
             $navbarId = isset($options['id']) ? $options['id'] : 'nav'.substr(hash('sha256',date('Y-m-d H:i:s')), 0,10);
             $button = new HTMLNode('button');
             $button->setClassName('navbar-toggler');
             $button->addTextNode('<span class="navbar-toggler-icon"></span>', false);
-            $button->setAttribute('data-toggle', 'collapse');
-            $button->setAttribute('data-target', '#'.$navbarId);
-            $button->setAttribute('type', 'button');
-            $button->setAttribute('aria-controls', ''.$navbarId);
-            $button->setAttribute('aria-expanded', 'false');
+            $button->setAttributes([
+                'data-toggle' => 'collapse',
+                'data-target' => '#'.$navbarId,
+                'type' => 'button',
+                'aria-controls' => ''.$navbarId,
+                'aria-expanded' => 'false'
+            ]);
             $mainNav->addChild($button);
 
             $navItemsContainer = new HTMLNode();
@@ -94,7 +99,7 @@ class WebFioriV108 extends APITheme{
                 $linkLabel = isset($listItemArr['label']) ? $listItemArr['label'] : 'Item_Lbl';
                 $itemLink = isset($listItemArr['link']) ? $listItemArr['link'] : '#';
                 $isActive = isset($listItemArr['is-active']) && $listItemArr['is-active'] === true ? true : false;
-                $mainLinksUl->addListItem('<a href="'.$itemLink.'" class="nav-link p-0">'.$linkLabel.'</a>', false);
+                $mainLinksUl->addListItem('<a style="font-size:9pt;font-weight:bold;" href="'.$itemLink.'" class="nav-link p-0">'.$linkLabel.'</a>', false);
                 if($isActive === true){
                     $mainLinksUl->getChild($index)->setClassName('nav-item active');
                 }
@@ -123,7 +128,7 @@ class WebFioriV108 extends APITheme{
                 ]);
                 $liDiv->addChild($textButton);
                 if($link !== null){
-                    $textButton->addTextNode('<a href="'.$link.'">'.$listTxt.'</a>', false);
+                    $textButton->addTextNode('<a style="font-size:9pt;font-weight:bold;" href="'.$link.'">'.$listTxt.'</a>', false);
                 }
                 else{
                     $textButton->addTextNode($listTxt);
@@ -196,7 +201,7 @@ class WebFioriV108 extends APITheme{
 
     public function getAsideNode(){
         $aside = new HTMLNode();
-        $aside->setClassName('col-2');
+        $aside->setClassName('col-3');
         return $aside;
     }
 
