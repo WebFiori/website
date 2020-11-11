@@ -56,7 +56,11 @@ class MdPage {
                         $codeSnippit->getCodeElement()->setClassName($xNode->getChild(0)->getClassName());
                         $super->addChild($codeSnippit);
                     }
-                } else {
+                } else if ($xNode->getNodeName() == 'img') {
+                    $src = $xNode->getAttribute('src');
+                    $xNode->setAttribute('src', "https://raw.githubusercontent.com/$username/$repo/$branch/$src");
+                    $super->addChild($xNode);
+                }else {
                     $super->addChild($xNode);
                 }
                 
