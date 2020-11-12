@@ -60,7 +60,15 @@ class MdPage {
                     $src = $xNode->getAttribute('src');
                     $xNode->setAttribute('src', "https://raw.githubusercontent.com/$username/$repo/$branch/$src");
                     $super->addChild($xNode);
-                }else {
+                } else if ($xNode->getNodeName() == 'table') {
+                    $xNode->setAttributes([
+                        'border' => 1,
+                    ]);
+                    $xNode->setStyle([
+                        'border-collapse' => 'collapse'
+                    ]);
+                    $super->addChild($xNode);
+                } else {
                     $super->addChild($xNode);
                 }
                 
