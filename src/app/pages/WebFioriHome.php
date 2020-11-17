@@ -25,7 +25,7 @@ class WebFioriHome extends WebFioriPage{
     }
     public function createSec4() {
         $sec = $this->createSection('Downloading The Framework',3);
-        $sec->addChild($this->createParagraph('Please go to <a href="'.WebFiori::getSiteConfig()->getBaseURL().'download">downloads page</a> to check the available '
+        $sec->addChild($this->createParagraph('Please go to <a href="'.WebFiori::getSiteConfig()->getBaseURL().'/download">downloads page</a> to check the available '
                 . 'download options. After completing the download process, you can '
                 . 'go to <a href="learn" >learning center</a> in order to get started.'));
         $sec->addChild($this->createParagraph('In addition to the pre-made package, you can use '
