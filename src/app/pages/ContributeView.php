@@ -19,7 +19,7 @@ class ContributeView extends WebFioriPage{
         Page::insert($this->createParagraph('The framework is open source and '
                 . 'licensed under MIT license. Any one is free to use it '
                 . 'the way they like. There are many ways at which any '
-                . 'person can contribute to WebFiori Framework project. '
+                . 'one can contribute to the project. '
                 . 'Here we list some of the ways.'));
         $sec1 = $this->createSection('Using It');
         //Page::insert($sec1);
@@ -33,9 +33,9 @@ class ContributeView extends WebFioriPage{
         $sec2 = $this->createSection('Documentation');
         Page::insert($sec2);
         $sec2->addChild($this->createParagraph(''
-                . 'Another way to contribute is to create project documentation. '
-                . 'Simply, you can go to <a href="https://github.com/usernane/webfiori-docs" target="_blank">documentation repo</a> in GitHub and start '
-                . 'by cloning the repo and create pages that describes different '
+                . 'Another way to contribute is to create or improve project documentation. '
+                . 'Simply, you can go to <a href="https://github.com/webfiori/docs" target="_blank">documentation repo</a> in GitHub and start '
+                . 'by forking the repo and create pages that describes different '
                 . 'aspects of the project.'
                 . ''));
         $sec3 = $this->createSection('Review Code, Add Features, Fix Bugs');
@@ -43,12 +43,17 @@ class ContributeView extends WebFioriPage{
         $sec3->addChild($this->createParagraph('You are free to modify code base of the '
                 . 'framework as you like as long as you follow MIT license rules. '
                 . 'You can grab the source code of the framework from '
-                . 'its <a href="https://github.com/usernane/webfiori" target="_blank">repo</a> in GitHub.'));
+                . 'its <a href="https://github.com/WebFiori/framework" target="_blank">repo</a> in GitHub.'));
         $sec3->addChild($this->createParagraph(''
                 . 'There are many things that you can do with the code. You can create '
                 . 'your own features, customize existing ones or fix the bugs that '
                 . 'you might find.'
                 . ''));
+        $sec = $this->createSection('Tell People About The Framework');
+        $sec->addChild($this->createParagraph('Telling people about the existence of '
+                . 'the framework is another way. Simply, all what you have to do is to '
+                . 'share information about the framework with anyone you like.'));
+        Page::insert($sec);
         $sec4 = $this->createSection('Donate');
         Page::insert($sec4);
         $sec4->addChild($this->createParagraph(''
