@@ -20,3 +20,4 @@ vendor/composer/LICENSE
 vendor/erusev/parsedown/LICENSE.txt
 vendor/erusev/parsedown/README.md
 composer.lock
+/src/app/pages/apis/
