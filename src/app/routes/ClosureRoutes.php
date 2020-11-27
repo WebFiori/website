@@ -24,6 +24,7 @@
  */
 namespace webfiori\framework\router;
 
+use webfiori\http\Response;
 use webfiori\framework\Util;
 /**
  * A class that only has one method to initiate some of system routes.
@@ -44,8 +45,7 @@ class ClosureRoutes {
             'closure-params' => $arrayOfParams,
             'route-to' => function($params)
             {
-                echo 'This is a closure route.';
-                Util::print_r($params, false);
+                Response::write('This is a closure route.<br>/');
             }
         ]);
     }
