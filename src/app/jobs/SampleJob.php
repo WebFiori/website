@@ -17,7 +17,7 @@ class SampleJob extends AbstractJob {
      */
     public function afterExec() {
         $email = new CronEmail('no-reply', [
-            'ibinshikh@hotmail.com' => 'Ibrahim Ali'
+            'webfiori@example.com' => 'Ibrahim Ali'
         ]);
         $email->send();
     }
