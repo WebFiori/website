@@ -28,14 +28,6 @@ class Config {
      */
     private $dbConnections;
     /**
-     * A boolean value. Set to true once system configuration is completed.
-     * 
-     * @var boolean
-     * 
-     * @since 1.0
-     */
-    private $isConfigured;
-    /**
      * The release date of the framework that is used to build the system.
      * 
      * @var string Release date of of the framework that is used to build the system.
@@ -64,9 +56,9 @@ class Config {
      * Initialize configuration.
      */
     private function __construct() {
-        $this->releaseDate = '2020-07-05';
-        $this->version = '1.1.0';
-        $this->versionType = 'Beta 3';
+        $this->releaseDate = '2020-11-15';
+        $this->version = '2.0.0';
+        $this->versionType = 'Beta 1';
         $this->configVision = '1.3.5';
         $this->dbConnections = [
 
@@ -190,9 +182,6 @@ class Config {
      * 
      * @since 1.0
      */
-    public static function isConfig() {
-        return self::get()->_isConfig();
-    }
     private function _getConfigVersion() {
         return $this->configVision;
     }
@@ -205,9 +194,6 @@ class Config {
     }
     private function _getVersionType() {
         return $this->versionType;
-    }
-    private function _isConfig() {
-        return $this->isConfigured;
     }
 
 }

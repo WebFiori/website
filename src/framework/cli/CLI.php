@@ -27,6 +27,7 @@ namespace webfiori\framework\cli;
 use webfiori\framework\Util;
 use webfiori\ini\InitCliCommands;
 use webfiori\framework\cron\Cron;
+use webfiori\framework\WebFiori;
 use Exception;
 /**
  * A class which adds basic support for running the framework through 
@@ -108,12 +109,24 @@ class CLI {
         fprintf(STDERR, "Error Description%5s %s\n",":",Util::ERR_TYPES[$errno]['description']);
         fprintf(STDERR, "Error File       %5s %s\n",":",$errfile);
         fprintf(STDERR, "Error Line      %5s %s\n",":",$errline);
+        fprintf(STDERR, "Stack Trace:\n");
         Cron::log("<".Util::ERR_TYPES[$errno]['type'].">\n");
         Cron::log("Error Message      : $errstr\n");
         Cron::log("Error Number       : $errno\n");
         Cron::log("Error Description  : ".Util::ERR_TYPES[$errno]['description']."\n");
         Cron::log("Error File         : $errfile\n");
         Cron::log("Error Line         : $errline\n");
+        Cron::log("Stack Trace:\n");
+        
+        $trace = debug_backtrace();
+        $num = 0;
+        foreach ($trace as $arr) {
+            $toPrint = self::_traceArrAsString($num, $arr)."\n";
+            fprintf(STDERR, $toPrint);
+            Cron::log($toPrint);
+            $num++;
+        }
+        
         if (defined('STOP_CLI_ON_ERR') && STOP_CLI_ON_ERR === true) {
             exit(-1);
         }
@@ -167,26 +180,10 @@ class CLI {
      * 
      */
     private static function _autoRegister() {
-        if (CLI::isCLI() || (defined('') && CRON_THROUGH_HTTP === true)) {
-            $jobsDir = ROOT_DIR.DS.'app'.DS.'commands';
-            if (Util::isDirectory($jobsDir)) {
-                $dirContent = array_diff(scandir($jobsDir), ['.','..']);
-                foreach ($dirContent as $phpFile) {
-                    $expl = explode('.', $phpFile);
-                    if (count($expl) == 2 && $expl[1] == 'php') {
-                        $instanceNs = require_once $jobsDir.DS.$phpFile;
-                        if (strlen($instanceNs) == 0 || $instanceNs == 1) {
-                            $instanceNs = '';
-                        }
-                        $class = $instanceNs.'\\'.$expl[0];
-                        try {
-                            self::register(new $class());
-                        } catch (\Error $ex) {
-                            
-                        }
-                    }
-                }
-            }
+        if (CLI::isCLI()) {
+            WebFiori::autoRegister('commands', function ($instance){
+                CLI::register($instance);
+            });
         }
     }
     /**

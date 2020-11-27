@@ -26,11 +26,11 @@ namespace webfiori\framework;
 
 use webfiori\json\JsonI;
 use webfiori\json\Json;
-use webfiori\restEasy\WebServicesManager;
+use webfiori\http\WebServicesManager;
 use webfiori\framework\i18n\Language;
 use webfiori\framework\DB;
 use webfiori\framework\ConfigController;
-use webfiori\WebFiori;
+use webfiori\framework\WebFiori;
 use webfiori\framework\session\SessionsManager;
 /**
  * An extension for the class 'WebServicesManager' that adds support for multi-language 
@@ -203,7 +203,7 @@ abstract class ExtendedWebServicesManager extends WebServicesManager {
                 'error-message'=>$dbErr['message'],
                 'error-code'=>$dbErr['code']
             ]);
-            if (defined('VERBOSE') && VERBOSE === true) {
+            if (defined('WF_VERBOSE') && WF_VERBOSE === true) {
                 $json->add('query', $info->getLastQuery());
             }
             $this->sendResponse($message, self::$E, 404, $json);

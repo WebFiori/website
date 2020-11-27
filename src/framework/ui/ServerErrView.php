@@ -28,8 +28,8 @@ use webfiori\ui\HTMLNode;
 use Throwable;
 use webfiori\framework\Page;
 use webfiori\framework\Util;
-use webfiori\WebFiori;
-use webfiori\framework\Response;
+use webfiori\framework\WebFiori;
+use webfiori\http\Response;
 use webfiori\framework\session\SessionsManager;
 /**
  * A page which is used to display exception information when it is thrown or 
@@ -95,12 +95,12 @@ class ServerErrView {
     private function _phpStructsDoesNotexist($throwableOrErr) {
         //this is a fall back if the library php-structs does not exist. 
         //Output HTML as string.
-        Response::append('<!DOCTYPE html>'
+        Response::write('<!DOCTYPE html>'
             .'<html>'
             .'<head>');
 
         if ($throwableOrErr instanceof Throwable) {
-            Response::append('<title>Uncaught Exception</title>'
+            Response::write('<title>Uncaught Exception</title>'
             .'<link href="'.Util::getBaseURL().'/assets/css/server-err.css" rel="stylesheet">'
             .'</head>'
             .'<body>'
@@ -110,8 +110,8 @@ class ServerErrView {
             .'<b class="nice-red mono">Exception Class:</b> <span class="mono">'.get_class($throwableOrErr)."</span><br/>"
             .'<b class="nice-red mono">Exception Message:</b> <span class="mono">'.$throwableOrErr->getMessage()."</span><br/>"
             .'<b class="nice-red mono">Exception Code:</b> <span class="mono">'.$throwableOrErr->getCode()."</span><br/>"); 
-            if (defined('VERBOSE') && VERBOSE) {
-                Response::append('<b class="nice-red mono">File:</b> <span class="mono">'.$throwableOrErr->getFile()."</span><br/>"
+            if (defined('WF_VERBOSE') && WF_VERBOSE) {
+                Response::write('<b class="nice-red mono">File:</b> <span class="mono">'.$throwableOrErr->getFile()."</span><br/>"
                 .'<b class="nice-red mono">Line:</b> <span class="mono">'.$throwableOrErr->getLine()."</span><br>"
                 .'<b class="nice-red mono">Stack Trace:</b> '."<br/>"
                 .'</p>'
@@ -119,9 +119,9 @@ class ServerErrView {
             } else {
                 $this->_showTip();
             }
-            Response::append('</body></html>');
+            Response::write('</body></html>');
         } else {
-            Response::append('<title>Server Error - 500</title>'
+            Response::write('<title>Server Error - 500</title>'
                 .'<link href="'.Util::getBaseURL().'/assets/css/server-err.css" rel="stylesheet">'
                 .'</head>'
                 .'<body style="color:white;background-color:#1a000d;">'
@@ -132,14 +132,14 @@ class ServerErrView {
                 .'<b class="nice-red mono">Description:</b> <span class="mono">'.Util::ERR_TYPES[$throwableOrErr["type"]]['description']."</span><br/>"
                 .'<b class="nice-red mono">Message:</b> <span class="mono">'.$throwableOrErr["message"]."</span><br>");
 
-            if (defined('VERBOSE') && VERBOSE) {
-                Response::append('<b class="nice-red mono">File:</b> <span class="mono">'.$throwableOrErr["file"]."</span><br/>"
+            if (defined('WF_VERBOSE') && WF_VERBOSE) {
+                Response::write('<b class="nice-red mono">File:</b> <span class="mono">'.$throwableOrErr["file"]."</span><br/>"
                 .'<b class="nice-red mono">Line:</b> <span class="mono">'.$throwableOrErr["line"]."</span><br/>");
             } else {
                 $this->_showTip();
             }
         }
-        Response::append('</body></html>');
+        Response::write('</body></html>');
     }
     private function _getSiteName() {
         $siteNames = WebFiori::getSiteConfig()->getWebsiteNames();
@@ -172,7 +172,7 @@ class ServerErrView {
             Page::insert($this->_createMessageLine('Exception Message:', $throwableOrErr->getMessage()));
             Page::insert($this->_createMessageLine('Exception Code:', $throwableOrErr->getCode()));
 
-            if (defined('VERBOSE') && VERBOSE) {
+            if (defined('WF_VERBOSE') && WF_VERBOSE) {
                 Page::insert($this->_createMessageLine('File:', $throwableOrErr->getFile()));
                 Page::insert($this->_createMessageLine('Line:', $throwableOrErr->getLine()));
                 Page::insert($this->_createMessageLine('Stack Trace:', ''));
@@ -189,7 +189,7 @@ class ServerErrView {
             Page::insert($this->_createMessageLine('Description:', Util::ERR_TYPES[$throwableOrErr["type"]]['description']));
             Page::insert($this->_createMessageLine('Message: ', '<pre>'.$throwableOrErr["message"].'</pre>'));
 
-            if (defined('VERBOSE') && VERBOSE) {
+            if (defined('WF_VERBOSE') && WF_VERBOSE) {
                 Page::insert($this->_createMessageLine('File: ', $throwableOrErr["file"]));
                 Page::insert($this->_createMessageLine('Line: ', $throwableOrErr["line"]));
             } else {
@@ -203,13 +203,13 @@ class ServerErrView {
             $paragraph->setClassName('mono');
             $paragraph->addTextNode('<b style="color:yellow">Tip</b>: To'
                 .' display more details about the error, '
-                .'define the constant "VERBOSE" and set its value to "true" in '
+                .'define the constant "WF_VERBOSE" and set its value to "true" in '
                 .'the class "GlobalConstants"', false);
             Page::insert($paragraph);
         } else {
-            Response::append('<p class="mono"><b style="color:yellow">Tip</b>: To'
+            Response::write('<p class="mono"><b style="color:yellow">Tip</b>: To'
                 .' display more details about the error, '
-                .'define the constant "VERBOSE" and set its value to "true" in '
+                .'define the constant "WF_VERBOSE" and set its value to "true" in '
                 .'the class "GlobalConstants".</p>');
         }
     }

@@ -26,7 +26,7 @@ namespace webfiori\framework;
 
 use webfiori\framework\exceptions\NoSuchThemeException;
 use webfiori\framework\router\Router;
-use webfiori\WebFiori;
+use webfiori\framework\WebFiori;
 
 
 /**
@@ -229,7 +229,7 @@ class ThemeLoader {
                         $file = new File($fileDir.DS.$dir.DS.$fileName);
                         $file->view();
                     } else {
-                        Response::append('Resource "'.$themeDirName.'/'.$dir.'/'.$fileName.'" was not found.');
+                        Response::write('Resource "'.$themeDirName.'/'.$dir.'/'.$fileName.'" was not found.');
                         Response::setCode(404);
                     }
                 },

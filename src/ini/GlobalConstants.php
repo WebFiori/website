@@ -96,7 +96,7 @@ class GlobalConstants {
             define('CRON_THROUGH_HTTP', true);
         }
 
-        if (!defined('VERBOSE')) {
+        if (!defined('WF_VERBOSE')) {
             /**
              * This constant is used to tell the framework if more information should 
              * be displayed if an exception is thrown or an error happens. The main aim 
@@ -107,7 +107,7 @@ class GlobalConstants {
              * false.
              * @since 1.0
              */
-            define('VERBOSE', true);
+            define('WF_VERBOSE', true);
         }
 
         if (!defined('NO_WWW')) {

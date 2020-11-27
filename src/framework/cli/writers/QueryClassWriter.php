@@ -182,7 +182,17 @@ class QueryClassWriter extends ClassWriter {
         $fks = $this->tableObj->getForignKeys();
 
         foreach ($fks as $fkObj) {
-            $this->append('$this->addReference('.$this->classInfoArr['fk-info'][$fkObj->getKeyName()].', [', 2);
+            $refTableNs = get_class($fkObj->getSource());
+            $cName = $this->getNamespace().'\\'. $this->getName();
+            
+            if ($cName == $refTableNs) {
+                $refTableClassName = '$this';
+            } else {
+                $nsSplit = explode('\\', $refTableNs);
+                $refTableClassName = 'new '.$nsSplit[count($nsSplit) - 1].'()';
+            }
+            
+            $this->append('$this->addReference('.$refTableClassName.', [', 2);
             $ownerCols = array_keys($fkObj->getOwnerCols());
             $sourceCols = array_keys($fkObj->getSourceCols());
 
@@ -190,6 +200,14 @@ class QueryClassWriter extends ClassWriter {
                 $this->append("'$ownerCols[$x]' => '$sourceCols[$x]',", 3);
             }
             $this->append("], '".$fkObj->getKeyName()."', '".$fkObj->getOnUpdate()."', '".$fkObj->getOnDelete()."');", 2);
+        }
+    }
+    private function addFksTables() {
+        $fks = $this->tableObj->getForignKeys();
+
+        foreach ($fks as $fkObj) {
+            $refTableNs = $refTableNs = get_class($fkObj->getSource());
+            $this->append('use '.$refTableNs.';');
         }
     }
     /**
@@ -257,11 +275,7 @@ class QueryClassWriter extends ClassWriter {
         $this->append("<?php\n");
         $this->append('namespace '.$this->getNamespace().";\n");
         $this->append("use webfiori\database\mysql\MySQLTable;");
-        if (isset($this->classInfoArr['fk-info'])) {
-            foreach ($this->classInfoArr['fk-info'] as $queryClassNS) {
-                $this->append('use '.$queryClassNS.';');
-            }
-        }
+        $this->addFksTables();
         if ($this->entityMapper !== null) {
             $this->append('use '.$this->getEntityNamespace().'\\'.$this->getEntityName().';');
         }

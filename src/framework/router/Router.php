@@ -26,7 +26,7 @@ namespace webfiori\framework\router;
 
 use webfiori\json\Json;
 use webfiori\ui\HTMLNode;
-use webfiori\restEasy\WebServicesManager;
+use webfiori\http\WebServicesManager;
 use webfiori\conf\SiteConfig;
 use webfiori\framework\cli\CLI;
 use webfiori\framework\exceptions\RoutingException;
@@ -34,7 +34,8 @@ use webfiori\framework\ui\NotFoundView;
 use webfiori\framework\Util;
 use webfiori\framework\File;
 use webfiori\framework\ThemeLoader;
-use webfiori\framework\Response;
+use webfiori\http\Response;
+use webfiori\http\Request;
 /**
  * The basic class that is used to route user requests to the correct 
  * location.
@@ -166,7 +167,7 @@ class Router {
                     'message' => 'Requested resource was not found.',
                     'type' => 'error'
                 ]);
-                Response::append($json);
+                Response::write($json);
             }
         };
 
@@ -186,7 +187,7 @@ class Router {
      */
     private function _searchRoute($routeUri, $uri, $loadResource, $withVars = false) {
         $pathArray = $routeUri->getPathArray();
-        $requestMethod = filter_var(getenv('REQUEST_METHOD'));
+        $requestMethod = Request::getMethod();
         $indexToSearch = 'static';
         if ($withVars) {
             $indexToSearch = 'variable';
@@ -255,6 +256,9 @@ class Router {
      * <li><b>vars-values</b>: An optional associative array which contains sub 
      * indexed arrays that contains possible values for URI vars. This one is 
      * used when building the sitemap.</li>
+     * <li><b>middleware</b>: This can be a name of a middleware to assign to the 
+     * route. This also can be a middleware group. In addition to that, this can 
+     * be an array that holds middleware names or middleware groups names.</li>
      * </ul>
      * 
      * @return boolean The method will return true if the route was created. 
@@ -263,7 +267,7 @@ class Router {
      * 
      * @since 1.2
      */
-    public static function addRoute($options) {
+    public static function addRoute(array $options) {
         $options['type'] = Router::CUSTOMIZED;
 
         return Router::get()->_addRoute($options);
@@ -298,6 +302,9 @@ class Router {
      * <li><b>vars-values</b>: An optional associative array which contains sub 
      * indexed arrays that contains possible values for URI vars. This one is 
      * used when building the sitemap.</li>
+     * <li><b>middleware</b>: This can be a name of a middleware to assign to the 
+     * route. This also can be a middleware group. In addition to that, this can 
+     * be an array that holds middleware names or middleware groups names.</li>
      * </ul>
      * 
      * @return boolean The method will return true if the route was created. 
@@ -357,10 +364,15 @@ class Router {
      * <li><b>languages</b>: An indexed array that contains the languages at 
      * which the resource can have. Each language is represented as two 
      * characters such as 'AR'.</li>
-     * </ul>
      * <li><b>vars-values</b>: An optional associative array which contains sub 
      * indexed arrays that contains possible values for URI vars. This one is 
      * used when building the sitemap.</li>
+     * 
+     * <li><b>middleware</b>: This can be a name of a middleware to assign to the 
+     * route. This also can be a middleware group. In addition to that, this can 
+     * be an array that holds middleware names or middleware groups names.</li>
+     * </ul>
+     * 
      * 
      * @return boolean The method will return true if the route was created. 
      * If a route for the given path was already created, the method will return 
@@ -466,7 +478,10 @@ class Router {
      * @since 1.3.8
      */
     public static function hasRoute($path) {
-        return self::get()->_hasRoute($path);
+        $routesArr = self::get()->routes;
+        $trimmed = self::get()->_fixUriPath($path);
+        
+        return isset($routesArr['static'][$trimmed]) || isset($routesArr['variable'][$trimmed]);
     }
     /**
      * Adds a route to a basic xml site map. 
@@ -498,7 +513,7 @@ class Router {
                 }
                 $retVal = '<?xml version="1.0" encoding="UTF-8"?>';
                 $retVal .= $urlSet->toHTML();
-                Response::append($retVal);
+                Response::write($retVal);
                 Response::addHeader('content-type','text/xml');
                 Response::send();
             }
@@ -669,6 +684,9 @@ class Router {
      * <li><b>vars-values</b>: An optional associative array which contains sub 
      * indexed arrays that contains possible values for URI vars. This one is 
      * used when building the sitemap.</li>
+     * <li><b>middleware</b>: This can be a name of a middleware to assign to the 
+     * route. This also can be a middleware group. In addition to that, this can 
+     * be an array that holds middleware names or middleware groups names.</li>
      * </ul>
      * 
      * @return boolean The method will return true if the route was created. 
@@ -731,7 +749,7 @@ class Router {
      * 
      * @since 1.0
      */
-    private function _addRoute($options) {
+    private function _addRoute(array $options) {
         if (!isset($options['route-to'])) {
             return false;
         } else {
@@ -756,7 +774,6 @@ class Router {
         $asApi = $options['as-api'];
         $closureParams = $options['closure-params'] ;
         $path = $options['path'];
-
         if ($routeType != self::CLOSURE_ROUTE) {
             if ($routeType != self::CUSTOMIZED) {
                 $routeTo = ROOT_DIR.$routeType.$this->_fixFilePath($routeTo);
@@ -785,6 +802,10 @@ class Router {
                 $routeUri->addVarValues($varName, $varValues);
             }
             $path = $routeUri->isCaseSensitive() ? $routeUri->getPath() : strtolower($routeUri->getPath());
+            
+            foreach ($options['middleware'] as $mwName) {
+                $routeUri->addMiddleware($mwName);
+            }
             
             if ($routeUri->hasVars()) {
                 $this->routes['variable'][$path] = $routeUri;
@@ -821,7 +842,12 @@ class Router {
         } else {
             $incInSiteMap = false;
         }
-
+        if (isset($options['middleware']) && 
+                gettype($options['middleware']) == 'array') {
+            $mdArr = $options['middleware'];
+        } else {
+            $mdArr = [];
+        }
         if (isset($options['as-api'])) {
             $asApi = $options['as-api'] === true;
         } else {
@@ -841,8 +867,10 @@ class Router {
             'route-to' => $routeTo,
             'closure-params' => $closureParams,
             'languages' => $languages,
-            'vars-values' => $varValues
+            'vars-values' => $varValues,
+            'middleware' => $mdArr
         ];
+        
     }
     private function _fixFilePath($path) {
         if (strlen($path) != 0 && $path != '/') {
@@ -1057,7 +1085,7 @@ class Router {
             }
         } else if ($loadResource === true) {
             Response::setCode(418);
-            Response::append(''
+            Response::write(''
             .'<!DOCTYPE html>'
             .'<html>'
             .'<head>'
@@ -1074,31 +1102,42 @@ class Router {
             Response::send();
         }
     }
+    /**
+     * 
+     * @param RouterUri $route
+     * @param type $loadResource
+     * @return type
+     * @throws RoutingException
+     */
     private function _routeFound($route, $loadResource) {
+        $route->getMiddlewar()->insertionSort(false);
+        foreach ($route->getMiddlewar() as $mw) {
+            $mw->before();
+        }
         if (is_callable($route->getRouteTo())) {
             $this->uriObj = $route;
-
+            
             if ($loadResource === true) {
                 call_user_func_array($route->getRouteTo(),$route->getClosureParams());
-
-                return;
             }
         } else if ($route->getType() == self::API_ROUTE && !defined('API_CALL')) {
             define('API_CALL', true);
-        }
-        $file = $route->getRouteTo();
-        
-        if (gettype($file) == 'string' && file_exists($file)) {
-            $this->uriObj = $route;
+        } else {
+            $file = $route->getRouteTo();
 
-            if ($loadResource === true) {
-                $this->_loadResource($route);
+            if (gettype($file) == 'string' && file_exists($file)) {
+                $this->uriObj = $route;
+
+                if ($loadResource === true) {
+                    $this->_loadResource($route);
+                }
+            } else if ($loadResource === true) {
+                throw new RoutingException('The resource "'.Util::getRequestedURL().'" was availble. '
+                    .'but its route is not configured correctly. '
+                    .'The resource which the route is pointing to was not found ('.$file.').');
             }
-        } else if ($loadResource === true) {
-            throw new RoutingException('The resource "'.Util::getRequestedURL().'" was availble. '
-                .'but its route is not configured correctly. '
-                .'The resource which the route is pointing to was not found ('.$file.').');
         }
+        
     }
     /**
      * Sets a callback to call in case a given rout is not found.

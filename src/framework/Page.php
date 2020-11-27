@@ -33,8 +33,8 @@ use webfiori\conf\SiteConfig;
 use webfiori\framework\exceptions\UIException;
 use webfiori\framework\i18n\Language;
 use webfiori\framework\session\SessionsManager;
-use webfiori\WebFiori;
-use webfiori\framework\Response;
+use webfiori\framework\WebFiori;
+use webfiori\http\Response;
 /**
  * A class used to initialize view components.
  * 
@@ -61,7 +61,7 @@ use webfiori\framework\Response;
  * 
  * @author Ibrahim
  * 
- * @version 1.9.4
+ * @version 1.9.5
  */
 class Page {
     /**
@@ -85,6 +85,13 @@ class Page {
         'side-content-area',
         'page-footer'
     ];
+    /**
+     *
+     * @var boolean 
+     * 
+     * @since 1.9.6
+     */
+    private $includeLables;
     /**
      * An array that contains closures 
      * which will be called before the page is fully rendered.
@@ -480,7 +487,7 @@ class Page {
         if ($returnResult) {
             return Page::get()->getDocument();
         } else {
-            Response::append(Page::get()->getDocument()->toHTML($formatted));
+            Response::write(Page::get()->getDocument()->toHTML($formatted));
         }
     }
     /**
@@ -553,6 +560,25 @@ class Page {
         return $p->getTheme();
     }
     /**
+     * Sets the value of the property which is used to determine if the 
+     * JavaScript variable 'window.i18n' will be included or not.
+     * 
+     * @param boolean|null $bool true to include it. False to not. Passing null 
+     * will cause no change.
+     * 
+     * @return boolean The method will return true if the variable will be included. 
+     * False if not. Default return value is true.
+     * 
+     * @since 1.9.6
+     */
+    public static function includeI18nLables($bool = null) {
+        if ($bool !== null) {
+            self::get()->includeLables = $bool === true;
+        }
+        
+        return self::get()->includeLables;
+    }
+    /**
      * Sets or gets the title of the page.
      * 
      * The format of the title is <b>PAGE_NAME TITLE_SEP WEBSITE_NAME</b>. 
@@ -614,7 +640,7 @@ class Page {
 
         if ($loadedTheme !== null && !$node instanceof HTMLNode) {
             throw new UIException('The the method "'.get_class($loadedTheme).'::getAsideNode()" did not return '
-                    .'an instance of the class "HTMLNode".');
+                    .'an instance of the class "webfiori\\ui\\HTMLNode".');
         } else {
             $node->setID(self::MAIN_ELEMENTS[3]);
         }
@@ -632,7 +658,7 @@ class Page {
 
         if ($loadedTheme !== null && !$node instanceof HTMLNode) {
             throw new UIException('The the method "'.get_class($loadedTheme).'::getFooterNode()" did not return '
-                    .'an instance of the class "HTMLNode".');
+                    .'an instance of the class "webfiori\\ui\\HTMLNode".');
         } else {
             $node->setID(self::MAIN_ELEMENTS[4]);
         }
@@ -654,7 +680,7 @@ class Page {
 
             if (!$headNode instanceof HeadNode) {
                 throw new UIException('The method "'.get_class($loadedTheme).'::getHeadNode()" did not return '
-                        .'an instance of the class "HeadNode".');
+                        .'an instance of the class "webfiori\\ui\\HeadNode".');
             }
         }
         $headNode->addMeta('charset','UTF-8',true);
@@ -679,7 +705,7 @@ class Page {
 
         if ($loadedTheme !== null && !$node instanceof HTMLNode) {
             throw new UIException('The the method "'.get_class($loadedTheme).'::getHeadrNode()" did not return '
-                    .'an instance of the class "HTMLNode".');
+                    .'an instance of the class "webfiori\\ui\\HTMLNode".');
         } else {
             $node->setID(self::MAIN_ELEMENTS[1]);
         }
@@ -725,7 +751,7 @@ class Page {
         $footerNode = new HTMLNode();
         $footerNode->setID(self::MAIN_ELEMENTS[4]);
         $this->document->addChild($footerNode);
-        
+        $this->includeLables = true;
         $session = SessionsManager::getActiveSession();
         $langCode = $session !== null ? $session->getLangCode(true) : null;
 
@@ -735,19 +761,24 @@ class Page {
         $this->contentLang = $langCode;
         $this->usingLanguage();
 
+        $this->_resetBeforeLoaded();
+    }
+    private function _resetBeforeLoaded() {
         $this->beforeRenderParams = [
             0 => []
         ];
         $this->beforeRenderCallbacks = [function ()
         {
-            $translation = Page::translation();
-            $json = new Json();
-            $json->addArray('vars', $translation->getLanguageVars(), true);
-            $i18nJs = new HTMLNode('script');
-            $i18nJs->setAttribute('type', 'text/javascript')
-                    ->text('window.i18n = '.$json.';', false)
-                    ->setID('i18n');
-            Page::get()->document()->getHeadNode()->addChild($i18nJs);
+            if (Page::includeI18nLables()) {
+                $translation = Page::translation();
+                $json = new Json();
+                $json->addArray('vars', $translation->getLanguageVars(), true);
+                $i18nJs = new HTMLNode('script');
+                $i18nJs->setAttribute('type', 'text/javascript')
+                        ->text('window.i18n = '.$json.';', false)
+                        ->setID('i18n');
+                Page::get()->document()->getHeadNode()->addChild($i18nJs);
+            }
 
             //Load Js and CSS automatically
             $pageTheme = Page::theme('');

@@ -26,8 +26,8 @@ namespace webfiori\framework\ui;
 
 use webfiori\ui\HTMLNode;
 use webfiori\framework\Page;
-use webfiori\WebFiori;
-use webfiori\framework\Response;
+use webfiori\framework\WebFiori;
+use webfiori\http\Response;
 use webfiori\framework\session\SessionsManager;
 /**
  * A basic view which is used to display 404 HTTP error code and 

@@ -51,8 +51,10 @@ class UpdateTableCommand extends CLICommand {
         
         $whatToDo = $this->select('What operation whould you like to do with the table?', [
             'Add new column.',
+            'Add foreign key.',
             'Update existing column.',
-            'Drop column.'
+            'Drop column.',
+            'Drop foreign key.'
         ]);
         if ($whatToDo == 'Add new column.') {
             $col = $this->_addColumn($tableObj);
@@ -67,11 +69,138 @@ class UpdateTableCommand extends CLICommand {
             }
         } else if ($whatToDo == 'Drop column.') {
             $this->dropCol($tableObj);
+        } else if ($whatToDo == 'Add foreign key.') {
+            $this->_addFks($tableObj);
         } else if ($whatToDo == 'Update existing column.') {
             $this->updateCol($tableObj);
+        } else if ($whatToDo == 'Drop foreign key.') {
+            $this->_removeFk($tableObj);
         } else {
             $this->error('Option not implemented.');
         }
+    }
+    /**
+     * 
+     * @param Table $tableObj
+     * @return type
+     */
+    private function _getFkCols($tableObj) {
+        $colNumber = 1;
+        $keys = $tableObj->getColsKeys();
+        $fkCols = [];
+
+        do {
+            $colKey = $this->select('Select column #'.$colNumber.':', $keys);
+
+            if (!in_array($colKey, $fkCols)) {
+                $fkCols[] = $colKey;
+                $colNumber++;
+            } else {
+                $this->error('The column is already added.');
+            }
+        } while ($this->confirm('Would you like to add another column to the foreign key?', false));
+
+        return $fkCols;
+    }
+    /**
+     * 
+     * @param Table $tableObj
+     */
+    private function _removeFk($tableObj) {
+        if ($tableObj->getForignKeysCount() == 0) {
+            $this->info('Selected table has no foreign keys.');
+            return;
+        }
+        $fks = $tableObj->getForignKeys();
+        $optionsArr = [];
+        foreach ($fks as $fkObj) {
+            $optionsArr[] = $fkObj->getKeyName();
+        }
+        $toRemove = $this->select('Select the key that you would like to remove:', $optionsArr);
+        $tableObj->removeReference($toRemove);
+        
+        $class = get_class($tableObj);
+        $arr = $this->getClassNs($class);
+
+        $writer = new QueryClassWriter($tableObj, $arr);
+        $writer->writeClass();
+        $db = $this->getDb('Would you like to run a query to '
+                . 'update the table in the database?');
+        
+        if ($db !== null) {
+            $db->addTable($tableObj);
+            $db->table($tableObj->getName())->dropForeignKey($toRemove);
+            $this->runQuery($db);
+        }
+        
+        $this->success('Table updated.');
+    }
+    /**
+     * 
+     * @param Table $tableObj
+     */
+    public function _addFks($tableObj) {
+        $refTable = null;
+        $refTabelsNs = [];
+        do {
+            
+            $refTableName = $this->getInput('Enter the name of the referenced table class (with namespace):');
+            try {
+                $refTable = new $refTableName();
+            } catch (Error $ex) {
+                $this->error($ex->getMessage());
+                continue;
+            }
+
+            if ($refTable instanceof Table) {
+                $fkName = $this->getInput('Enter a name for the foreign key:', null, function ($val) {
+                    $trimmed = trim($val);
+                    if (strlen($trimmed) == 0) {
+                        return false;
+                    }
+                    return true;
+                });
+                $fkCols = $this->_getFkCols($tableObj);
+                $fkColsArr = [];
+
+                foreach ($fkCols as $colKey) {
+                    $fkColsArr[$colKey] = $this->select('Select the column that will be referenced by the column \''.$colKey.'\':', $refTable->getColsKeys());
+                }
+                $onUpdate = $this->select('Choose on update condition:', [
+                    'cascade', 'restrict', 'set null', 'set default', 'no action'
+                ], 1);
+                $onDelete = $this->select('Choose on delete condition:', [
+                    'cascade', 'restrict', 'set null', 'set default', 'no action'
+                ], 1);
+                
+                try {
+                    $tableObj->addReference($refTable, $fkColsArr, $fkName, $onUpdate, $onDelete);
+                    $this->success('Foreign key added.');
+                    $refTabelsNs[$fkName] = $refTableName;
+                } catch (Exception $ex) {
+                    $this->error($ex->getMessage());
+                } 
+            } else {
+                $this->error('The given class is not an instance of the class \'MySQLQuery\'.');
+            }
+
+        } while ($this->confirm('Would you like to add another foreign key?', false));
+        
+        $class = get_class($tableObj);
+        $arr = $this->getClassNs($class);
+        $arr['fk-info'] = $refTabelsNs;
+        $writer = new QueryClassWriter($tableObj, $arr);
+        $writer->writeClass();
+        $db = $this->getDb('Would you like to run a query to '
+                . 'update the table in the database?');
+        
+        if ($db !== null) {
+            $db->addTable($tableObj);
+            $db->table($tableObj->getName())->addForeignKey($fkName);
+            $this->runQuery($db);
+        }
+        
+        $this->success('Table updated.');
     }
     /**
      * 
@@ -189,7 +318,6 @@ class UpdateTableCommand extends CLICommand {
      * @param MySQLColumn $colObj
      */
     private function _setDefaultValue($colObj) {
-        // TODO: Test default value using empty.
         if ($colObj->getDatatype() == 'bool' || $colObj->getDatatype() == 'boolean') {
             $defaultVal = trim($this->getInput('Enter default value (true or false) (Hit "Enter" to skip):', ''));
 
@@ -218,26 +346,6 @@ class UpdateTableCommand extends CLICommand {
             'namespace' => $ns,
             'path' => substr($path, 0, strlen($path) - strlen($cName.'.php'))
         ];
-    }
-    private function finalSteps() {
-        if ($this->confirm('Would you like to create an entity class that maps to the database table?', false)) {
-            $entityInfo = $this->getClassInfo();
-            $entityInfo['implement-jsoni'] = $this->confirm('Would you like from your entity class to implement the interface JsonI?', true);
-            $classInfo['entity-info'] = $entityInfo;
-        }
-
-        if (strlen($classInfo['namespace']) == 0) {
-            $classInfo['namespace'] = 'app\database';
-            $this->warning('The table class will be added to the namespace "'.$classInfo['namespace'].'" since no namespace was provided.');
-        }
-
-        if (isset($classInfo['entity-info']) && strlen($classInfo['entity-info']['namespace']) == 0) {
-            $classInfo['entity-info']['namespace'] = 'app\database';
-            $this->warning('The entity class will be added to the namespace "'.$classInfo['entity-info']['namespace'].'" since no namespace was provided.');
-        }
-        $writer = new QueryClassWriter($tempTable, $classInfo);
-        $writer->writeClass();
-        $this->success('New class created.');
     }
     /**
      * 
