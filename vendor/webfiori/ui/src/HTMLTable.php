@@ -31,7 +31,7 @@ use InvalidArgumentException;
  *
  * @author Ibrahim
  * 
- * @since 1.0
+ * @since 1.0.1
  */
 class HTMLTable extends HTMLNode {
     /**
@@ -95,6 +95,43 @@ class HTMLTable extends HTMLNode {
         }
     }
     /**
+     * Removes a row given its index.
+     * 
+     * @param int $rowIndex The index of the row.
+     * 
+     * @return TableRow|null If the row is removed, the method will return 
+     * an object that represents the removed row. Other than that, the method 
+     * will return null.
+     * 
+     * @since 1.0.2
+     */
+    public function removeRow($rowIndex) {
+        return $this->removeChild($rowIndex);
+    }
+    /**
+     * Removes a column from the table given column index.
+     * 
+     * @param int $colIndex The index of the column.
+     * 
+     * @return array The method will return an array that holds objects that 
+     * represents the cells of the column. If no column was removed, the array 
+     * will be empty.
+     * 
+     * @since 1.0.2
+     */
+    public function removeCol($colIndex) {
+        $colCells = [];
+        
+        if ($colIndex < $this->cols()) {
+            
+            foreach ($this as $row) {
+                $colCells[] = $row->children()->remove($colIndex);
+            }
+        }
+        
+        return $colCells;
+    }
+    /**
      * Adds a new row to the body of the table.
      * 
      * @param TableRow|array $arrOrRowObj This can be an object that represents 
@@ -103,19 +140,37 @@ class HTMLTable extends HTMLNode {
     public function addRow($arrOrRowObj) {
         if ($arrOrRowObj instanceof TableRow) {
             $this->addChild($arrOrRowObj);
-        } else {
-            if (gettype($arrOrRowObj) == 'array') {
-                $row = new TableRow();
+        } else if (gettype($arrOrRowObj) == 'array') {
+            $row = new TableRow();
 
-                for ($x = 0 ; $x < $this->cols() ; $x++) {
-                    if (isset($arrOrRowObj[$x])) {
-                        $row->addCell($arrOrRowObj[$x]);
-                    } else {
-                        $row->addCell('');
-                    }
+            for ($x = 0 ; $x < $this->cols() ; $x++) {
+                if (isset($arrOrRowObj[$x])) {
+                    $row->addCell($arrOrRowObj[$x]);
+                } else {
+                    $row->addCell('');
                 }
-                $this->addChild($row);
             }
+            $this->addChild($row);
+        }
+    }
+    /**
+     * Returns a table cell given its indices.
+     * 
+     * @param int $rowIndex Row index starting from zero.
+     * 
+     * @param int $colIndex Column index starting from zero.
+     * 
+     * @return TableCell|null If a cell at given location exist, it is returned as 
+     * an object. Other than that, the method will return null.
+     * 
+     * @since 1.0.1
+     */
+    public function getCell($rowIndex, $colIndex) {
+        $row = $this->getRow($rowIndex);
+
+        if ($row !== null) {
+            
+            return $row->getCell($colIndex);
         }
     }
     /**

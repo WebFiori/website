@@ -237,7 +237,7 @@ class HTMLNode implements Countable, Iterator {
      * @throws InvalidNodeNameException The method will throw an exception if given node 
      * name is not valid.
      */
-    public function __construct($name = 'div', $attrs = []) {
+    public function __construct($name = 'div', array $attrs = []) {
         $this->null = null;
         $nameUpper = strtoupper(trim($name));
 
@@ -1787,7 +1787,8 @@ class HTMLNode implements Countable, Iterator {
      * Removes a direct child node.
      * 
      * @param HTMLNode|string $nodeInstOrId The node that will be removed. This also can 
-     * be the ID of the child that will be removed.
+     * be the ID of the child that will be removed. In addition to that, this can 
+     * be the index of the element that will be removed starting from 0.
      * 
      * @return HTMLNode|null The method will return the node if removed. 
      * If not removed, the method will return null.
@@ -1804,6 +1805,8 @@ class HTMLNode implements Countable, Iterator {
                 $toRemove = $this->getChildByID($nodeInstOrId);
                 $child = $this->children()->removeElement($toRemove);
                 return $this->_removeChHelper($child);
+            } else if (gettype($nodeInstOrId) == 'integer') {
+                return $this->children()->remove($nodeInstOrId);
             }
         }
     }
@@ -1903,7 +1906,9 @@ class HTMLNode implements Countable, Iterator {
      */
     public function setAttribute($name, $val = null) {
         $trimmedName = trim($name);
-        $trimmedVal = trim($val);
+        if (gettype($val) != 'array') {
+            $trimmedVal = trim($val);
+        }
 
         if (!$this->isTextNode() && !$this->isComment() && strlen($trimmedName) != 0) {
             $lower = strtolower($trimmedName);
