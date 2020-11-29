@@ -6,7 +6,7 @@ use phpStructs\html\PNode;
 use phpStructs\html\UnorderedList;
 use phpStructs\html\ListItem;
 use phpStructs\html\HTMLNode;
-use webfiori\WebFiori;
+use webfiori\framework\Webfiori;
 use WebFioriGUI;
 /**
  * Description of Index

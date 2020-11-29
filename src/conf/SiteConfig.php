@@ -102,8 +102,8 @@ class SiteConfig {
         $this->baseUrl = Util::getBaseURL();
         $this->titleSep = '|';
         $this->primaryLang = 'EN';
-        $this->baseThemeName = 'WebFiori Theme';
-        $this->adminThemeName = 'WebFiori Theme';
+        $this->baseThemeName = 'WebFiori V108';
+        $this->adminThemeName = 'WebFiori V108';
         $this->homePage = Util::getBaseURL();
         $this->descriptions = [
             'EN'=>'',

@@ -7,7 +7,7 @@
  */
 
 namespace webfiori\views\learn\themes;
-use webfiori\WebFiori;
+use webfiori\framework\Webfiori;
 use phpStructs\html\HTMLDoc;
 use webfiori\entity\Page;
 use phpStructs\html\CodeSnippet;

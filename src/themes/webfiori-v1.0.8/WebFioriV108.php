@@ -1,7 +1,7 @@
 <?php
 namespace webfiori\theme;
 
-use webfiori\WebFiori;
+use webfiori\framework\Webfiori;
 use webfiori\apiParser\APITheme;
 use webfiori\apiParser\AttributeDef;
 use webfiori\apiParser\NameSpaceAPI;

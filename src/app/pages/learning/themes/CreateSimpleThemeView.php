@@ -1,7 +1,7 @@
 <?php
 namespace webfiori\views\learn\themes;
 use webfiori\views\WebFioriPage;
-use webfiori\WebFiori;
+use webfiori\framework\Webfiori;
 use webfiori\entity\Page;
 use WebFioriGUI;
 use phpStructs\html\UnorderedList;

@@ -3,7 +3,7 @@ namespace webfiori\views\learn\themes;
 use webfiori\views\WebFioriPage;
 use phpStructs\html\UnorderedList;
 use phpStructs\html\ListItem;
-use webfiori\WebFiori;
+use webfiori\framework\Webfiori;
 use webfiori\entity\Page;
 use phpStructs\html\PNode;
 use phpStructs\html\HTMLNode;

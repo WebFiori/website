@@ -1,6 +1,6 @@
 <?php
 namespace webfiori\views\learn\themes;
-use webfiori\WebFiori;
+use webfiori\framework\Webfiori;
 use webfiori\entity\Page;
 Use phpStructs\html\UnorderedList;
 use phpStructs\html\ListItem;

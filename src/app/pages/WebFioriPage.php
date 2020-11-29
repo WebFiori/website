@@ -1,7 +1,7 @@
 <?php
 namespace webfiori\views;
 use webfiori\framework\Page;
-use webfiori\WebFiori;
+use webfiori\framework\Webfiori;
 use webfiori\ui\ListItem;
 use webfiori\ui\Anchor;
 use webfiori\ui\HTMLNode;

@@ -1,5 +1,5 @@
 <?php
-use webfiori\WebFiori;
+use webfiori\framework\Webfiori;
 use webfiori\framework\Page;
 use webfiori\ui\JsCode;
 use webfiori\ui\ListItem;

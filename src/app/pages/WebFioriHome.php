@@ -3,13 +3,13 @@ namespace webfiori\views;
 use webfiori\framework\Page;
 use webfiori\views\WebFioriPage;
 use webfiori\ui\UnorderedList;
-use webfiori\WebFiori;
+use webfiori\framework\WebFiori;
 /**
  * Description of WebFioriHome
  *
  * @author Ibrahim
  */
-class WebFioriHome extends WebFioriPage{
+class WebFioriHome extends WebFioriPage{ 
     public function __construct() {
         parent::__construct();
         //Page::document()->getBody()->setStyle();

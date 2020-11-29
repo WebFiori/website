@@ -1,6 +1,6 @@
 <?php
 namespace webfiori\views;
-use webfiori\WebFiori;
+use webfiori\framework\Webfiori;
 use phpStructs\html\HTMLNode;
 use webfiori\entity\Page;
 use phpStructs\html\PNode;
