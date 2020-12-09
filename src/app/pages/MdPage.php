@@ -4,7 +4,7 @@ namespace webfiori\examples\views;
 use webfiori\framework\Page;
 use webfiori\ui\HTMLNode;
 use Parsedown;
-use webfiori\framework\Response;
+use webfiori\http\Response;
 use webfiori\ui\CodeSnippet;
 use webfiori\ui\Paragraph;
 use webfiori\ui\Anchor;
