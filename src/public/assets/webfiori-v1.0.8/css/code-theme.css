@@ -21,8 +21,8 @@
     background-color: #71b280;
     font-weight: bold;
 }
-.code{
-    color: white;
+.code, pre > code{
+    color: white !important;
 }
 .code-snippt{
     background-color: rgb(21, 18, 33);
