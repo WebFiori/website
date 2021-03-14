@@ -173,10 +173,10 @@ class Uri {
     /**
      * Returns the base URL of the framework.
      * 
-     * The returned value will depend on the folder where the framework files 
-     * are located. For example, if your domain is 'example.com' and the framework 
+     * The returned value will depend on the folder where the library files 
+     * are located. For example, if your domain is 'example.com' and the library 
      * is placed at the root and the requested resource is 'http://example.com/x/y/z', 
-     * then the base URL will be 'http://example.com/'. If the framework is 
+     * then the base URL will be 'http://example.com/'. If the library is 
      * placed inside a folder in the server which has the name 'system', and 
      * the same resource is requested, then the base URL will be 
      * 'http://example.com/system'.
@@ -202,13 +202,13 @@ class Uri {
         $docRoot = filter_var($_SERVER['DOCUMENT_ROOT']);
         $len = strlen($docRoot);
 
-        if (!defined(ROOT_DIR)) {
+        if (!defined('ROOT_DIR')) {
             define('ROOT_DIR', __DIR__);
         }
         $toAppend = substr(ROOT_DIR, $len, strlen(ROOT_DIR) - $len);
 
-        if (isset($_SERVER['HTTP_WEBFIORI_REMOVE_PATH'])) {
-            $toAppend = str_replace($_SERVER['HTTP_WEBFIORI_REMOVE_PATH'],'' ,$toAppend);
+        if (isset($_SERVER['HTTP_WF_REMOVE_PATH'])) {
+            $toAppend = str_replace($_SERVER['HTTP_WF_REMOVE_PATH'],'' ,$toAppend);
         }
         $xToAppend = str_replace('\\', '/', $toAppend);
 
@@ -579,7 +579,7 @@ class Uri {
      * @since 1.0
      */
     public static function splitURI($uri) {
-        $validate = filter_var($uri,FILTER_VALIDATE_URL);
+        $validate = filter_var(str_replace(' ', '%20', $uri),FILTER_VALIDATE_URL);
 
         if ($validate === false) {
             return false;
@@ -601,11 +601,12 @@ class Uri {
             ],
         ];
         //First step, extract the fragment
-        $split1 = explode('#', $uri);
+        $split1 = self::_queryOrFragment($uri, '#', '%23');
         $retVal['fragment'] = isset($split1[1]) ? $split1[1] : '';
 
         //after that, extract the query string
-        $split2 = explode('?', $split1[0]);
+        $split2 = self::_queryOrFragment($split1[0], '?', '%3F');
+
         $retVal['query-string'] = isset($split2[1]) ? $split2[1] : '';
 
         //next comes the scheme
@@ -650,6 +651,28 @@ class Uri {
         }
 
         return $retVal;
+    }
+    private static function _queryOrFragment($split, $char, $encoded) {
+        $split2 = explode($char, $split);
+        $spCount = count($split2);
+        if ($spCount > 2) {
+            $temp = [];
+            for ($x = 0 ; $x < $spCount - 1 ; $x++) {
+                $temp[] = $split2[$x];
+            }
+            $lastStr = $split2[$spCount - 1];
+            if (strlen($lastStr) == 0) {
+                $split2 = [
+                    implode($encoded, $temp).$encoded
+                ];
+            } else {
+                $split2 = [
+                    implode($encoded, $temp),
+                    $split2[$spCount - 1]
+                ];
+            }
+        }
+        return $split2;
     }
     /**
      * Validate the path part of original URI and the requested one.

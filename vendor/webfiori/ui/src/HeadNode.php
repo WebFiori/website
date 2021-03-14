@@ -189,45 +189,71 @@ class HeadNode extends HTMLNode {
      * 
      * @param array $attrs Not used.
      * 
-     * @param boolean $chainOnParent Not used.
+     * @param boolean $chainOnParent If this parameter is set to true, the method 
+     * will return the same instance at which the child node is added to. If 
+     * set to false, the method will return the child which have been added. 
+     * This can be useful if the developer would like to add a chain of elements 
+     * to the body of the parent or child. Default value is true. It means the 
+     * chaining will happen at parent level.
      * 
-     * @return HeadNote The method will return the instance at which the method 
-     * is called on.
+     * @return HeadNode|HTMLNode|null If the parameter <code>$chainOnParent</code> is set to true, 
+     * the method will return the '$this' instance. If set to false, it will 
+     * return the newly added child. Note that if no child is added, the method will 
+     * return null.
      * 
      * @since 1.0
      */
     public function addChild($node, array $attrs = [], $chainOnParent = true) {
+        $retVal = null;
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
 
             if (in_array($nodeName, self::ALLOWED_CHILDREN)) {
-                if ($nodeName == 'meta') {
-                    $nodeAttrs = $node->getAttributes();
-
-                    foreach ($nodeAttrs as $attr => $val) {
-                        if (strtolower($attr) == 'charset') {
-                            return $this;
-                        }
-                    }
-
-                    if (!$this->hasMeta($node->getAttributeValue('name'))) {
-                        parent::addChild($node);
-                    }
-                } else if ($nodeName == 'base' || $nodeName == 'title') {
-                    return $this;
-                } else if ($nodeName == 'link') {
-                    $relVal = $node->getAttribute('rel');
-
-                    if ($relVal != 'canonical') {
-                        parent::addChild($node);
-                    }
-                } else {
-                    parent::addChild($node);
-                }
+                $retVal = $this->_addChildHelper($node, $attrs);
+            }
+        } else if (gettype($node) == 'string') {
+            $temp = new HTMLNode($node);
+            if (in_array($temp->getNodeName(), self::ALLOWED_CHILDREN)) {
+                $retVal = $this->_addChildHelper($temp, $attrs);
             }
         }
 
+        if (!$chainOnParent) {
+            return $retVal;
+        }
         return $this;
+    }
+    private function _addChildHelper(HTMLNode $node, $attr) {
+        $nodeName = $node->getNodeName();
+        $retVal = null;
+        
+        if ($nodeName == 'meta') {
+            $nodeAttrs = $node->getAttributes();
+
+            foreach ($nodeAttrs as $attr => $val) {
+                if (strtolower($attr) == 'charset') {
+                    return $this;
+                }
+            }
+
+            if (!$this->hasMeta($node->getAttributeValue('name'))) {
+                parent::addChild($node);
+        $retVal = $node;
+            }
+        } else if ($nodeName == 'base' || $nodeName == 'title') {
+            return $this;
+        } else if ($nodeName == 'link') {
+            $relVal = $node->getAttribute('rel');
+
+            if ($relVal != 'canonical') {
+                parent::addChild($node);
+        $relVal = $node;
+            }
+        } else {
+            parent::addChild($node);
+        }
+
+        return $node;
     }
     /**
      * Adds new CSS source file.

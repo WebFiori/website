@@ -30,7 +30,7 @@ namespace webfiori\http;
  * request. Note that it does not comply with PSR-7 in all aspects.
  * @author Ibrahim
  * 
- * @version 1.0
+ * @version 1.0.1
  */
 class Request {
     /**
@@ -91,6 +91,36 @@ class Request {
         $this->requestHeaders = null;
     }
     /**
+     * Returns the value of a GET or POST parameter.
+     * 
+     * This method will apply basic filtering to the value of the parameter before returning 
+     * it.
+     * 
+     * @param string $paramName The name of the parameter. Note that if the value has extra 
+     * spaces, they will be trimmed.
+     * 
+     * @return string|null The method will return the value of the parameter if 
+     * set. Other than that, the method will return null.
+     * 
+     * @since 1.0.1
+     */
+    public static function getParam($paramName) {
+        $requMethod = self::getMethod();
+        $trimmed = trim($paramName);
+        $val = null;
+        
+        if ($requMethod == 'POST' || $requMethod == 'PUT') {
+            $val = filter_input(INPUT_POST, $trimmed);
+        } else if ($requMethod == 'DELETE' || $requMethod == 'GET') {
+            $val = filter_input(INPUT_GET, $trimmed);
+        }
+        
+        if ($val === false) {
+            return null;
+        }
+        return $val;
+    }
+    /**
      * Returns the IP address of the user who is connected to the server.
      * 
      * @return string The IP address of the user who is connected to the server. 
@@ -132,8 +162,14 @@ class Request {
      * @since 1.0
      */
     public static function getMethod() {
-        $method = filter_var(getenv('REQUEST_METHOD'), FILTER_SANITIZE_STRING);
-
+        $meth = getenv('REQUEST_METHOD');
+        
+        if ($meth === false) {
+            $meth = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '';
+        }
+        $method = filter_var($meth, FILTER_SANITIZE_STRING);
+        
+        
         if (!in_array($method, self::METHODS)) {
             $method = 'GET';
         }
@@ -150,9 +186,17 @@ class Request {
     public static function getRequestedURL() {
         if (self::get()->requestedUri === null) {
             $base = Uri::getBaseURL();
+            $uri = getenv('REQUEST_URI');
 
-            $requestedURI = trim(filter_var(getenv('REQUEST_URI')),'/');
-            self::get()->requestedUri = $base.'/'.$requestedURI;
+            if ($uri === false) {
+                // Using built-in server, it will be false
+                $path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
+                self::get()->requestedUri = $base.'/'.trim(filter_var($path),'/');
+            } else {
+                $requestedURI = trim(filter_var($uri),'/');
+
+                self::get()->requestedUri = $base.'/'.$requestedURI;
+            }
         }
 
 
@@ -184,8 +228,10 @@ class Request {
                 foreach ($headers as $k => $v) {
                     self::get()->requestHeaders[strtolower($k)] = filter_var($v, FILTER_SANITIZE_STRING);
                 }
-            } else if (isset($_SERVER)) {
-                self::get()->requestHeaders = self::_getRequestHeadersFromServer();
+            } 
+            
+            if (isset($_SERVER)) {
+                self::get()->requestHeaders = array_merge(self::get()->requestHeaders, self::_getRequestHeadersFromServer());
             }
         }
 
