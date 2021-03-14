@@ -24,9 +24,8 @@
  */
 namespace webfiori\framework\session;
 
-use webfiori\framework\File;
-use webfiori\framework\Util;
 use webfiori\framework\cli\CLI;
+use webfiori\framework\File;
 /**
  * The default sessions storage engine.
  *
@@ -48,8 +47,15 @@ class DefaultSessionStorage implements SessionStorage {
      * @since 1.0
      */
     public function __construct() {
-        $this->storeLoc = ROOT_DIR.DS.'app'.DS.'storage'.DS.'sessions';
-        Util::isDirectory($this->storeLoc, true);
+        if (defined('__PHPUNIT_PHAR__')) {
+            $this->storeLoc = ROOT_DIR.DS.'src'.DS.'app'.DS.'storage'.DS.'sessions';
+        } else {
+            $this->storeLoc = ROOT_DIR.DS.'app'.DS.'storage'.DS.'sessions';
+        }
+
+        if (!file_exists($this->storeLoc)) {
+            mkdir($this->storeLoc, '0777', true);
+        }
     }
     /**
      * Removes all inactive sessions.

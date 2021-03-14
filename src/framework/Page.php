@@ -25,16 +25,15 @@
 namespace webfiori\framework;
 
 use Exception;
+use webfiori\framework\exceptions\UIException;
+use webfiori\framework\i18n\Language;
+use webfiori\framework\session\SessionsManager;
+use webfiori\http\Request;
+use webfiori\http\Response;
 use webfiori\json\Json;
 use webfiori\ui\HeadNode;
 use webfiori\ui\HTMLDoc;
 use webfiori\ui\HTMLNode;
-use webfiori\conf\SiteConfig;
-use webfiori\framework\exceptions\UIException;
-use webfiori\framework\i18n\Language;
-use webfiori\framework\session\SessionsManager;
-use webfiori\framework\WebFiori;
-use webfiori\http\Response;
 /**
  * A class used to initialize view components.
  * 
@@ -62,6 +61,8 @@ use webfiori\http\Response;
  * @author Ibrahim
  * 
  * @version 1.9.5
+ * 
+ * @deprecated since version 2.1 Use the class 'WebPage' instead.
  */
 class Page {
     /**
@@ -85,13 +86,6 @@ class Page {
         'side-content-area',
         'page-footer'
     ];
-    /**
-     *
-     * @var boolean 
-     * 
-     * @since 1.9.6
-     */
-    private $includeLables;
     /**
      * An array that contains closures 
      * which will be called before the page is fully rendered.
@@ -179,6 +173,13 @@ class Page {
      * @since 1.2 
      */
     private $incHeader;
+    /**
+     *
+     * @var boolean 
+     * 
+     * @since 1.9.6
+     */
+    private $includeLables;
     /**
      * A single instance of the class.
      * 
@@ -409,9 +410,29 @@ class Page {
         return Page::get()->getThemeImagesDir();
     }
     /**
+     * Sets the value of the property which is used to determine if the 
+     * JavaScript variable 'window.i18n' will be included or not.
+     * 
+     * @param boolean|null $bool true to include it. False to not. Passing null 
+     * will cause no change.
+     * 
+     * @return boolean The method will return true if the variable will be included. 
+     * False if not. Default return value is true.
+     * 
+     * @since 1.9.6
+     */
+    public static function includeI18nLables($bool = null) {
+        if ($bool !== null) {
+            self::get()->includeLables = $bool === true;
+        }
+
+        return self::get()->includeLables;
+    }
+    /**
      * Adds a child node inside the body of a node given its ID.
      * 
-     * @param HTMLNode $node The node that will be inserted.
+     * @param HTMLNode|string $node The node that will be inserted. Also, 
+     * this can be the tag name of the node such as 'div'.
      * 
      * @param string $parentNodeId The ID of the node that the given node 
      * will be inserted to.
@@ -422,6 +443,9 @@ class Page {
      * @since 1.9
      */
     public static function insert($node,$parentNodeId = self::MAIN_ELEMENTS[2]) {
+        if (gettype($node) == 'string') {
+            $node = new HTMLNode($node);
+        }
         if (Page::get()->insertNode($node, $parentNodeId)) {
             return $node;
         }
@@ -487,6 +511,7 @@ class Page {
         if ($returnResult) {
             return Page::get()->getDocument();
         } else {
+            $formatted = $formatted === true || (defined('WF_VERBOSE') && WF_VERBOSE);
             Response::write(Page::get()->getDocument()->toHTML($formatted));
         }
     }
@@ -560,25 +585,6 @@ class Page {
         return $p->getTheme();
     }
     /**
-     * Sets the value of the property which is used to determine if the 
-     * JavaScript variable 'window.i18n' will be included or not.
-     * 
-     * @param boolean|null $bool true to include it. False to not. Passing null 
-     * will cause no change.
-     * 
-     * @return boolean The method will return true if the variable will be included. 
-     * False if not. Default return value is true.
-     * 
-     * @since 1.9.6
-     */
-    public static function includeI18nLables($bool = null) {
-        if ($bool !== null) {
-            self::get()->includeLables = $bool === true;
-        }
-        
-        return self::get()->includeLables;
-    }
-    /**
      * Sets or gets the title of the page.
      * 
      * The format of the title is <b>PAGE_NAME TITLE_SEP WEBSITE_NAME</b>. 
@@ -629,6 +635,24 @@ class Page {
 
         return null;
     }
+    /**
+     * Sets the language of the page based on session language or 
+     * request.
+     */
+    private function _checkLang() {
+        $session = SessionsManager::getActiveSession();
+        $langCodeFromSession = $session !== null ? $session->getLangCode(true) : null;
+
+        if ($langCodeFromSession !== null) {
+            $this->setLang($langCodeFromSession);
+        } else {
+            $langCodeFromRequest = Request::getParam('lang');
+
+            if ($langCodeFromRequest !== null) {
+                $this->setLang($langCodeFromRequest);
+            }
+        }
+    }
 
     private function _getAside() {
         $loadedTheme = $this->getTheme();
@@ -673,7 +697,7 @@ class Page {
             $headNode = new HeadNode(
                 $this->getTitle().$this->getTitleSep().$this->getWebsiteName(),
                 $this->getCanonical(),
-                SiteConfig::getBaseURL()
+                WebFioriApp::getAppConfig()->getBaseURL()
             );
         } else {
             $headNode = $loadedTheme->getHeadNode();
@@ -685,7 +709,7 @@ class Page {
         }
         $headNode->addMeta('charset','UTF-8',true);
         $headNode->setTitle($this->getTitle().$this->getTitleSep().$this->getWebsiteName());
-        $headNode->setBase(SiteConfig::getBaseURL());
+        $headNode->setBase(WebFioriApp::getAppConfig()->getBaseURL());
         $headNode->setCanonical($this->getCanonical());
 
         if ($this->getDescription() != null) {
@@ -712,18 +736,48 @@ class Page {
 
         return $node;
     }
+    private function _loadByThemeName($themeNameOrClass) {
+        if ($themeNameOrClass === null && $this->theme === null) {
+            $themeNameOrClass = WebFioriApp::getAppConfig()->getBaseURL();
+        } else {
+            $themeNameOrClass = trim($themeNameOrClass);
+
+            if (strlen($themeNameOrClass) == 0) {
+                return;
+            }
+        }
+
+        if ($this->theme !== null) {
+            if ($themeNameOrClass != $this->theme->getName()) {
+                $tmpTheme = ThemeLoader::usingTheme(null, $themeNameOrClass);
+            } else {
+                return;
+            }
+        } else {
+            $tmpTheme = ThemeLoader::usingTheme(null, $themeNameOrClass);
+        }
+
+        return $tmpTheme;
+    }
     private function _reset() {
         $this->document = new HTMLDoc();
         $this->setTitle('Hello World');
-        $siteNames = WebFiori::getSiteConfig()->getWebsiteNames();
-        
-        if (isset($siteNames[WebFiori::getSiteConfig()->getPrimaryLanguage()])) {
-            $this->setWebsiteName($siteNames[WebFiori::getSiteConfig()->getPrimaryLanguage()]);
+        $siteNames = WebFioriApp::getAppConfig()->getWebsiteNames();
+        $primaryLang = WebFioriApp::getAppConfig()->getPrimaryLanguage();
+        $this->setLang($primaryLang);
+
+        if (isset($siteNames[$primaryLang])) {
+            $this->setWebsiteName($siteNames[$primaryLang]);
         } else {
             $this->setWebsiteName('Hello Website');
         }
-        
-        
+
+        $siteDescriptions = WebFioriApp::getAppConfig()->getDescriptions();
+
+        if (isset($siteDescriptions[$primaryLang])) {
+            $this->setDescription($siteDescriptions[$primaryLang]);
+        }
+
         $this->setTitleSep('|');
         $this->contentDir = 'ltr';
         $this->description = null;
@@ -732,7 +786,7 @@ class Page {
         $this->theme = null;
         $this->incAside = true;
         $this->setWritingDir();
-        $this->setCanonical(Util::getRequestedURL());
+        $this->setCanonical(Request::getRequestedURL());
         $this->document->setLanguage($this->getLang());
         $headNode = $this->_getHead();
         $this->document->setHeadNode($headNode);
@@ -752,15 +806,9 @@ class Page {
         $footerNode->setID(self::MAIN_ELEMENTS[4]);
         $this->document->addChild($footerNode);
         $this->includeLables = true;
-        $session = SessionsManager::getActiveSession();
-        $langCode = $session !== null ? $session->getLangCode(true) : null;
 
-        if ($langCode === null) {
-            $langCode = WebFiori::getSiteConfig()->getPrimaryLanguage();
-        }
-        $this->contentLang = $langCode;
+        $this->_checkLang();
         $this->usingLanguage();
-
         $this->_resetBeforeLoaded();
     }
     private function _resetBeforeLoaded() {
@@ -773,10 +821,11 @@ class Page {
                 $translation = Page::translation();
                 $json = new Json();
                 $json->addArray('vars', $translation->getLanguageVars(), true);
-                $i18nJs = new HTMLNode('script');
-                $i18nJs->setAttribute('type', 'text/javascript')
-                        ->text('window.i18n = '.$json.';', false)
-                        ->setID('i18n');
+                $i18nJs = new HTMLNode('script', [
+                    'type' => 'text/javascript',
+                    'id' => 'i18n'
+                ]);
+                $i18nJs->text('window.i18n = '.$json.';', false);
                 Page::get()->document()->getHeadNode()->addChild($i18nJs);
             }
 
@@ -785,17 +834,22 @@ class Page {
 
             if ($pageTheme !== null) {
                 $themeAssetsDir = 'assets'.DS.$pageTheme->getDirectoryName();
-                
+
                 $jsDir = $themeAssetsDir.DS.$pageTheme->getJsDirName();
 
                 if (Util::isDirectory($jsDir)) {
                     $filesInDir = array_diff(scandir($jsDir), ['.','..']);
                     $fileBase = Page::jsDir().'/';
+
                     foreach ($filesInDir as $fileName) {
                         $expl = explode('.', $fileName);
 
-                        if (count($expl) == 2 && $expl[1] == 'js') {
-                            Page::get()->document()->getHeadNode()->addJs($fileBase.$fileName);
+                        if (count($expl) > 0) {
+                            $ext = $expl[count($expl) - 1];
+
+                            if ($ext == 'js') {
+                                Page::get()->document()->getHeadNode()->addJs($fileBase.$fileName);
+                            }
                         }
                     }
                 }
@@ -805,11 +859,16 @@ class Page {
                 if (Util::isDirectory($cssDir)) {
                     $filesInDir = array_diff(scandir($cssDir), ['.','..']);
                     $fileBase = Page::cssDir().'/';
+
                     foreach ($filesInDir as $fileName) {
                         $expl = explode('.', $fileName);
 
-                        if (count($expl) == 2 && $expl[1] == 'css') {
-                            Page::get()->document()->getHeadNode()->addCSS($fileBase.$fileName);
+                        if (count($expl) > 0) {
+                            $ext = $expl[count($expl) - 1];
+
+                            if ($ext == 'css') {
+                                Page::get()->document()->getHeadNode()->addCSS($fileBase.$fileName);
+                            }
                         }
                     }
                 }
@@ -1328,12 +1387,13 @@ class Page {
     /**
      * Loads a theme given its name.
      * 
-     * @param string $themeName The name of the theme as specified by the 
+     * @param string $themeNameOrClass The name of the theme as specified by the 
      * variable 'name' in theme definition. If the given name is 'null', the 
      * method will load the default theme as specified by the method 
      * 'SiteConfig::getBaseThemeName()'. Note that once the theme is updated, 
      * the document content of the page will reset if it was set before calling this 
-     * method.
+     * method. This also can be the value which can be taken from 'ClassName::class'. 
+     * 
      * 
      * @throws Exception The method will throw 
      * an exception if no theme was found which has the given name. Another case is 
@@ -1342,50 +1402,46 @@ class Page {
      * @since 1.4
      * @see Theme::usingTheme()
      */
-    private function usingTheme($themeName = null) {
-        if ($themeName === null && $this->theme === null) {
-            $themeName = SiteConfig::getBaseThemeName();
-        } else {
-            $themeName = trim($themeName);
+    private function usingTheme($themeNameOrClass = null) {
+        $xthemeName = '\\'.$themeNameOrClass;
 
-            if (strlen($themeName) == 0) {
-                return;
-            }
-        }
+        if (class_exists($xthemeName)) {
+            $tmpTheme = new $xthemeName();
 
-        if ($this->theme !== null) {
-            if ($themeName != $this->theme->getName()) {
-                $tmpTheme = ThemeLoader::usingTheme($themeName);
-            } else {
-                return;
+            if (!($tmpTheme instanceof Theme)) {
+                $tmpTheme = $this->_loadByThemeName($themeNameOrClass);
             }
         } else {
-            $tmpTheme = ThemeLoader::usingTheme($themeName);
-        }
-        $this->theme = $tmpTheme;
-
-        $mainContentArea = Page::document()->getChildByID(self::MAIN_ELEMENTS[2]);
-
-        if ($mainContentArea === null) {
-            $mainContentArea = new HTMLNode();
-            $mainContentArea->setID(self::MAIN_ELEMENTS[2]);
+            $tmpTheme = $this->_loadByThemeName($themeNameOrClass);
         }
 
-        $this->document = new HTMLDoc();
-        $headNode = $this->_getHead();
-        $footerNode = $this->_getFooter();
-        $asideNode = $this->_getAside();
-        $headerNode = $this->_getHeader();
-        $this->document->setLanguage($this->getLang());
-        $this->document->setHeadNode($headNode);
-        $this->document->addChild($headerNode);
-        $body = new HTMLNode();
-        $body->setID(self::MAIN_ELEMENTS[0]);
-        $body->addChild($asideNode);
+        if ($tmpTheme !== null) {
+            $this->theme = $tmpTheme;
 
-        $body->addChild($mainContentArea);
-        $this->document->addChild($body);
-        $this->document->addChild($footerNode);
-        $this->theme->invokeAfterLoaded();
+            $mainContentArea = Page::document()->getChildByID(self::MAIN_ELEMENTS[2]);
+
+            if ($mainContentArea === null) {
+                $mainContentArea = new HTMLNode();
+                $mainContentArea->setID(self::MAIN_ELEMENTS[2]);
+            }
+
+            $this->document = new HTMLDoc();
+            $headNode = $this->_getHead();
+            $footerNode = $this->_getFooter();
+            $asideNode = $this->_getAside();
+            $headerNode = $this->_getHeader();
+            $this->document->setLanguage($this->getLang());
+            $this->document->setHeadNode($headNode);
+            $this->document->addChild($headerNode);
+            $body = new HTMLNode();
+            $body->setID(self::MAIN_ELEMENTS[0]);
+            $body->addChild($asideNode);
+
+            $body->addChild($mainContentArea);
+            $this->document->addChild($body);
+            $this->document->addChild($footerNode);
+
+            $this->theme->invokeAfterLoaded();
+        }
     }
 }

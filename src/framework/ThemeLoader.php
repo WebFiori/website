@@ -26,8 +26,7 @@ namespace webfiori\framework;
 
 use webfiori\framework\exceptions\NoSuchThemeException;
 use webfiori\framework\router\Router;
-use webfiori\framework\WebFiori;
-
+use webfiori\framework\ui\WebPage;
 
 /**
  * A class which has utility methods which are related to themes loading.
@@ -158,6 +157,8 @@ class ThemeLoader {
      * 
      * @param string $themeName The name of the theme. 
      * 
+     * @param WebPage|null $page The page that the theme will be applied to.
+     * 
      * @return Theme The method will return an object of type Theme once the 
      * theme is loaded. The object will contain all theme information.
      * 
@@ -166,9 +167,9 @@ class ThemeLoader {
      * 
      * @since 1.0
      */
-    public static function usingTheme($themeName = null) {
+    public static function usingTheme($page = null, $themeName = null) {
         if ($themeName === null) {
-            $themeName = WebFiori::getSiteConfig()->getBaseThemeName();
+            $themeName = WebFioriApp::getAppConfig()->getBaseThemeName();
         }
         $themeToLoad = null;
 
@@ -186,6 +187,9 @@ class ThemeLoader {
 
         if (isset($themeToLoad)) {
             self::$loadedThemes[$themeToLoad->getName()] = $themeToLoad;
+            if ($page !== null) {
+                $themeToLoad->setPage($page);
+            }
             $themeToLoad->invokeBeforeLoaded();
 
             $themeDir = THEMES_PATH.DS.$themeToLoad->getDirectoryName();
@@ -223,8 +227,10 @@ class ThemeLoader {
         if (strlen($dir) != 0 && Util::isDirectory($themeRootDir.DS.$dir)) {
             Router::closure([
                 'path' => $themeDirName.'/'.$dir.'/{file-name}',
-                'route-to' => function ($fileDir, $themeDirName, $dir) {
+                'route-to' => function ($fileDir, $themeDirName, $dir)
+                {
                     $fileName = Router::getVarValue('file-name');
+
                     if (file_exists($fileDir.DS.$dir.DS.$fileName)) {
                         $file = new File($fileDir.DS.$dir.DS.$fileName);
                         $file->view();

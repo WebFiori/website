@@ -24,11 +24,11 @@
  */
 namespace webfiori\framework\cron;
 
-use webfiori\ui\HTMLNode;
-use webfiori\ui\TableRow;
 use webfiori\framework\File;
 use webfiori\framework\mail\EmailMessage;
-use webfiori\framework\WebFiori;
+use webfiori\framework\WebFioriApp;
+use webfiori\ui\HTMLNode;
+use webfiori\ui\TableRow;
 /**
  * A class which can be used to send an email regarding the status of 
  * background job execution.
@@ -65,14 +65,13 @@ class CronEmail extends EmailMessage {
         $activeJob = Cron::activeJob();
 
         if ($activeJob !== null) {
-
             if (gettype($receivers) == 'array' && count($receivers) != 0) {
                 foreach ($receivers as $addr => $name) {
                     $this->addReceiver($name, $addr);
                 }
             }
 
-            $this->subject('Background Task Status: Task \''.$activeJob->getJobName().'\'');
+
             $this->importance(1);
             $this->document()->getBody()->setStyle([
                 'font-family' => 'monospace'
@@ -86,11 +85,13 @@ class CronEmail extends EmailMessage {
             ]);
 
             if ($activeJob->isSuccess()) {
+                $this->subject('Background Task Status: Task \''.$activeJob->getJobName().'\' 😃');
                 $text = 'This automatic system email is sent to notify you that the background job '
                         .'\''.$activeJob->getJobName().'\' was <b style="color:green">successfully completed '
                         .'without any issues</b>. For more details about execution process, '
                         .'please check the attached execution log file.</p>';
             } else {
+                $this->subject('Background Task Status: Task \''.$activeJob->getJobName().'\' 😲');
                 $text = 'This automatic email is sent to notify you that the background job '
                         .'\''.$activeJob->getJobName().'\' <b style="color:red">did not successfully complet due some error(s)'
                         .'</b>. To investigate the cause of failure, '
@@ -127,7 +128,7 @@ class CronEmail extends EmailMessage {
         $jobTable->addChild($this->_createTableRow('Check Started:', Cron::timestamp()));
         $jobTable->addChild($this->_createTableRow('Run Time:', date('Y-m-d H:i:s')));
         $jobTable->addChild($this->_createTableRow('PHP Version:', PHP_VERSION));
-        $jobTable->addChild($this->_createTableRow('Framework Version:', WebFiori::getConfig()->getVersion()));
+        $jobTable->addChild($this->_createTableRow('Framework Version:', WF_VERSION));
         $jobTable->addChild($this->_createTableRow('Root Directory:', ROOT_DIR));
 
         if ($job->isSuccess()) {

@@ -23,31 +23,28 @@
  * THE SOFTWARE.
  */
 namespace webfiori\framework;
-use webfiori\http\Response;
-use webfiori\json\Json;
-use webfiori\conf\Config;
-use webfiori\conf\MailConfig;
-use webfiori\conf\SiteConfig;
-use webfiori\framework\AutoLoader;
+
+use app\AppConfig;
 use webfiori\framework\cli\CLI;
 use webfiori\framework\exceptions\InitializationException;
+use webfiori\framework\middleware\MiddlewareManager;
 use webfiori\framework\router\APIRoutes;
 use webfiori\framework\router\ClosureRoutes;
 use webfiori\framework\router\OtherRoutes;
 use webfiori\framework\router\Router;
 use webfiori\framework\router\RouterUri;
 use webfiori\framework\router\ViewRoutes;
-use webfiori\framework\ThemeLoader;
+use webfiori\framework\session\SessionsManager;
 use webfiori\framework\ui\ErrorBox;
 use webfiori\framework\ui\ServerErrView;
-use webfiori\framework\Util;
+use webfiori\http\Request;
+use webfiori\http\Response;
 use webfiori\ini\GlobalConstants;
 use webfiori\ini\InitAutoLoad;
 use webfiori\ini\InitCron;
+use webfiori\ini\InitMiddleware;
 use webfiori\ini\InitPrivileges;
-use webfiori\framework\ConfigController;
-use webfiori\framework\middleware\MiddlewareManager;
-use webfiori\framework\session\SessionsManager;
+use webfiori\json\Json;
 /**
  * The time at which the framework was booted in microseconds as a float.
  * 
@@ -62,7 +59,8 @@ define('MICRO_START', microtime(true));
  * 
  * @version 1.3.6
  */
-class WebFiori {
+class WebFioriApp {
+    private $appConfig;
     /**
      * An instance of autoloader class.
      * 
@@ -91,7 +89,7 @@ class WebFiori {
     /**
      * A single instance of the class.
      * 
-     * @var WebFiori
+     * @var WebFioriApp
      * 
      * @since 1.0 
      */
@@ -123,16 +121,58 @@ class WebFiori {
          * first, check for php streams if they are open or not.
          */
         if (!defined('STDIN')) {
+            /**
+             * A constant that represents standard input stream of PHP.
+             * 
+             * The value of the constant is a 'resource' which can be used with 
+             * all file related PHP functions.
+             * 
+             */
             define('STDIN', fopen('php://stdin', 'r'));
         }
 
         if (!defined('STDOUT')) {
+            /**
+             * A constant that represents standard output stream of PHP.
+             * 
+             * The value of the constant is a 'resource' which can be used with 
+             * all file related PHP functions.
+             */
             define('STDOUT', fopen('php://stdout', 'w'));
         }
 
         if (!defined('STDERR')) {
+            /**
+             * A constant that represents standard error output stream of PHP.
+             * 
+             * The value of the constant is a 'resource' which can be used with 
+             * all file related PHP functions.
+             * 
+             */
             define('STDERR',fopen('php://stderr', 'w'));
         }
+        /**
+         * A constant that represents version number of the framework.
+         * 
+         * @since 2.1
+         */
+        define('WF_VERSION', '2.1.0');
+        /**
+         * A constant that tells the type of framework version.
+         * 
+         * The constant can have values such as 'Alpha', 'Beta' or 'Stable'.
+         * 
+         * @since 2.1
+         */
+        define('WF_VERSION_TYPE', 'Beta 1');
+        /**
+         * The date at which the framework version was released.
+         * 
+         * The value of the constant will be a string in the format YYYY-MM-DD.
+         * 
+         * @since 2.1
+         */
+        define('WF_RELEASE_DATE', '2021-03-01');
         /**
          * Change encoding of mb_ functions to UTF-8
          */
@@ -143,12 +183,12 @@ class WebFiori {
             mb_http_input($encoding);
             mb_regex_encoding($encoding);
         }
-        
+
         if (!class_exists('webfiori\ini\GlobalConstants')) {
-            require_once ROOT_DIR.DIRECTORY_SEPARATOR.'ini'.DIRECTORY_SEPARATOR.'GlobalConstants.php';
+            require_once ROOT_DIR.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'ini'.DIRECTORY_SEPARATOR.'GlobalConstants.php';
         }
         GlobalConstants::defineConstants();
-        
+
         /**
          * Set memory limit.
          */
@@ -158,7 +198,7 @@ class WebFiori {
          * Change this as needed.
          */
         date_default_timezone_set(DATE_TIMEZONE);
-        
+
         /**
          * Initialize autoloader.
          */
@@ -167,42 +207,48 @@ class WebFiori {
         }
         self::$AU = AutoLoader::get();
         InitAutoLoad::init();
-        
-        $this->_setHandlers();
-        $this->_checkStandardLibs();
-        
-        //Initialize privileges.
-        //This step must be done before initializing any controler.
-        InitPrivileges::init();
-        
 
         //Initialize CLI
         CLI::init();
         
+
+        $this->_initThemesPath();
+        $this->_setHandlers();
+        $this->_checkStandardLibs();
+
+        //Initialize privileges.
+        //This step must be done before initializing any controler.
+        InitPrivileges::init();
+
         self::$SF = ConfigController::get();
 
         $this->sysStatus = Util::checkSystemStatus();
-
+        
         if ($this->sysStatus == Util::MISSING_CONF_FILE || $this->sysStatus == Util::MISSING_SITE_CONF_FILE) {
-            self::$SF->createConfigFile();
-            self::$SF->createSiteConfigFile();
-            self::$SF->createEmailConfigFile();
+            self::$SF->createAppConfigFile();
             $this->sysStatus = Util::checkSystemStatus();
         }
 
+        $this->appConfig = new AppConfig();
+        
         if (gettype($this->sysStatus) == 'array') {
             $this->dbErrDetails = $this->sysStatus;
             $this->sysStatus = Util::DB_NEED_CONF;
         }
-        WebFiori::autoRegister('middleware', function($inst) {
+        WebFioriApp::autoRegister('middleware', function($inst)
+        {
             MiddlewareManager::register($inst);
         });
+        InitMiddleware::init();
         $this->_initRoutes();
         $this->_initCRON();
-        Response::beforeSend(function () {
-            register_shutdown_function(function() {
+        Response::beforeSend(function ()
+        {
+            register_shutdown_function(function()
+            {
                 SessionsManager::validateStorage();
                 $uriObj = Router::getRouteUri();
+
                 if ($uriObj !== null) {
                     foreach ($uriObj->getMiddlewar() as $mw) {
                         $mw->afterTerminate();
@@ -210,12 +256,15 @@ class WebFiori {
                 }
             });
             $sessionsCookiesHeaders = SessionsManager::getCookiesHeaders();
+
             foreach ($sessionsCookiesHeaders as $headerVal) {
                 Response::addHeader('set-cookie', $headerVal);
             }
             $uriObj = Router::getRouteUri();
+
             if ($uriObj !== null) {
                 $uriObj->getMiddlewar()->insertionSort();
+
                 foreach ($uriObj->getMiddlewar() as $mw) {
                     $mw->after();
                 }
@@ -225,21 +274,6 @@ class WebFiori {
         self::$classStatus = 'INITIALIZED';
 
         define('INITIAL_SYS_STATUS', $this->_getSystemStatus());
-    }
-    private function _initRoutes() {
-        APIRoutes::create();
-        ViewRoutes::create();
-        ClosureRoutes::create();
-        OtherRoutes::create();
-    }
-    private function _initCRON() {
-        $uriObj = new RouterUri(Util::getRequestedURL(), '');
-        $pathArr = $uriObj->getPathArray();
-        if (CLI::isCLI() || (defined('CRON_THROUGH_HTTP') && CRON_THROUGH_HTTP && count($pathArr) != 0 && $pathArr[0] == 'cron')) {
-            //initialize cron jobs only if in CLI or cron is enabled throgh HTTP.
-            //
-            InitCron::init();
-        }
     }
     /**
      * Register CLI commands or cron jobs.
@@ -253,12 +287,16 @@ class WebFiori {
      */
     public static function autoRegister($folder, $regCallback) {
         $jobsDir = ROOT_DIR.DS.'app'.DS.$folder;
+
         if (Util::isDirectory($jobsDir)) {
             $dirContent = array_diff(scandir($jobsDir), ['.','..']);
+
             foreach ($dirContent as $phpFile) {
                 $expl = explode('.', $phpFile);
+
                 if (count($expl) == 2 && $expl[1] == 'php') {
                     $instanceNs = require_once $jobsDir.DS.$phpFile;
+
                     if (strlen($instanceNs) == 0 || $instanceNs == 1) {
                         $instanceNs = '';
                     }
@@ -266,7 +304,6 @@ class WebFiori {
                     try {
                         call_user_func_array($regCallback, [new $class()]);
                     } catch (\Error $ex) {
-
                     }
                 }
             }
@@ -276,7 +313,7 @@ class WebFiori {
      * Initiate the framework and return a single instance of the class that can 
      * be used to control basic settings of the framework.
      * 
-     * @return WebFiori An instance of the class.
+     * @return WebFioriApp An instance of the class.
      * 
      * @since 1.0
      */
@@ -284,13 +321,24 @@ class WebFiori {
         if (self::$classStatus == 'NONE') {
             if (self::$LC === null) {
                 self::$classStatus = 'INITIALIZING';
-                self::$LC = new WebFiori();
+                self::$LC = new WebFioriApp();
             }
         } else if (self::$classStatus == 'INITIALIZING') {
             throw new InitializationException('Using the core class while it is not fully initialized.');
         }
 
         return self::$LC;
+    }
+    /**
+     * 
+     * @return AppConfig
+     */
+    public static function getAppConfig() {
+        if (self::$LC !== null) {
+            return self::$LC->appConfig;
+        }
+
+        return new AppConfig();
     }
     /**
      * Returns a reference to an instance of 'AutoLoader'.
@@ -315,26 +363,6 @@ class WebFiori {
     public static function getClassStatus() {
         return self::$classStatus;
     }
-
-    /**
-     * Returns an instance of the class 'Config'.
-     * 
-     * The class will contain some of framework settings in addition to 
-     * database connection information.
-     * 
-     * @return Config|null If class file is exist and the class is loaded, 
-     * an object of type 'Config' is returned. Other than that, the method 
-     * will return null.
-     * 
-     * @since 1.3.3
-     */
-    public static function getConfig() {
-        if (class_exists('webfiori\conf\Config')) {
-            return Config::get();
-        }
-
-        return null;
-    }
     /**
      * Returns an associative array that contains database connection error 
      * information.
@@ -350,42 +378,6 @@ class WebFiori {
      */
     public static function getDBErrDetails() {
         return self::getAndStart()->dbErrDetails;
-    }
-    /**
-     * Returns an instance of the class 'MailConfig'.
-     * 
-     * The class will contain SMTP accounts information.
-     * 
-     * @return MailConfig|null If class file is exist and the class is loaded, 
-     * an object of type 'MailConfig' is returned. Other than that, the method 
-     * will return null.
-     * 
-     * @since 1.3.3
-     */
-    public static function getMailConfig() {
-        if (class_exists('webfiori\conf\MailConfig')) {
-            return MailConfig::get();
-        }
-
-        return null;
-    }
-    /**
-     * Returns an instance of the class 'SiteConfig'.
-     * 
-     * The class will contain website settings such as main language and theme.
-     * 
-     * @return SiteConfig|null If class file is exist and the class is loaded, 
-     * an object of type 'SiteConfig' is returned. Other than that, the method 
-     * will return null.
-     * 
-     * @since 1.3.3
-     */
-    public static function getSiteConfig() {
-        if (class_exists('webfiori\conf\SiteConfig')) {
-            return SiteConfig::get();
-        }
-
-        return null;
     }
     /**
      * Returns a reference to an instance of 'ConfigController'.
@@ -432,7 +424,7 @@ class WebFiori {
         if (!class_exists('webfiori\collections\Node')) {
             throw new InitializationException("The standard library 'webfiori/collections' is missing.");
         }
-        
+
         if (!class_exists('webfiori\ui\HTMLNode')) {
             throw new InitializationException("The standard library 'webfiori/ui' is missing.");
         }
@@ -440,12 +432,12 @@ class WebFiori {
         if (!class_exists('webfiori\json\Json')) {
             throw new InitializationException("The standard library 'webfiori/jsonx' is missing.");
         }
-        
+
         if (!class_exists('webfiori\database\ResultSet')) {
             throw new InitializationException("The standard library 'webfiori/database' is missing.");
         }
 
-        if (!class_exists('webfiori\http\WebServicesManager')) {
+        if (!class_exists('webfiori\http\Response')) {
             throw new InitializationException("The standard library 'webfiori/http' is missing.");
         }
     }
@@ -455,9 +447,9 @@ class WebFiori {
      * @return boolean|string
      * @since 1.0
      */
-    private function _getSystemStatus($refresh = true,$testDb = false) {
+    private function _getSystemStatus($refresh = true) {
         if ($refresh === true) {
-            $this->sysStatus = Util::checkSystemStatus($testDb);
+            $this->sysStatus = Util::checkSystemStatus();
 
             if (gettype($this->sysStatus) == 'array') {
                 $this->dbErrDetails = $this->sysStatus;
@@ -467,12 +459,40 @@ class WebFiori {
 
         return $this->sysStatus;
     }
+    private function _initCRON() {
+        $uriObj = new RouterUri(Util::getRequestedURL(), '');
+        $pathArr = $uriObj->getPathArray();
+
+        if (CLI::isCLI() || (defined('CRON_THROUGH_HTTP') && CRON_THROUGH_HTTP && count($pathArr) != 0 && $pathArr[0] == 'cron')) {
+            //initialize cron jobs only if in CLI or cron is enabled throgh HTTP.
+            //
+            InitCron::init();
+        }
+    }
+    private function _initRoutes() {
+        APIRoutes::create();
+        ViewRoutes::create();
+        ClosureRoutes::create();
+        OtherRoutes::create();
+    }
+    private function _initThemesPath() {
+        if (!defined('THEMES_PATH')) {
+            $themesDirName = 'themes';
+            $themesPath = ROOT_DIR.DS.$themesDirName;
+            /**
+             * This constant represents the directory at which themes exist.
+             * @since 1.0
+             */
+            define('THEMES_PATH', $themesPath);
+        }
+    }
     private function _setErrHandler() {
         set_error_handler(function($errno, $errstr, $errfile, $errline)
         {
             $isCli = class_exists('webfiori\framework\cli\CLI') ? CLI::isCLI() : http_response_code() === false;
             Response::clear();
             $routerObj = Router::getUriObjByURL(Util::getRequestedURL());
+
             if ($isCli) {
                 if (class_exists('webfiori\framework\cli\CLI')) {
                     CLI::displayErr($errno, $errstr, $errfile, $errline);
@@ -484,6 +504,7 @@ class WebFiori {
                     fprintf(STDERR, "Error File       %5s %s\n",":",$errfile);
                     fprintf(STDERR, "Error Line:      %5s %s\n",":",$errline);
                 }
+
                 if (defined('STOP_CLI_ON_ERR') && STOP_CLI_ON_ERR === true) {
                     exit(-1);
                 }
@@ -499,6 +520,19 @@ class WebFiori {
                 if (defined('WF_VERBOSE') && WF_VERBOSE) {
                     $j->add('file',$errfile);
                     $j->add('line',$errline);
+                    $stackTrace = new Json([], true);
+                    $index = 0;
+                    $trace = debug_backtrace();
+
+                    foreach ($trace as $arr) {
+                        if (isset($arr['file'])) {
+                            $stackTrace->add('#'.$index,$arr['file'].' (Line '.$arr['line'].')');
+                        } else if (isset($arr['function'])) {
+                            $stackTrace->add('#'.$index,$arr['function']);
+                        }
+                        $index++;
+                    }
+                    $j->add('stack-trace',$stackTrace);
                 }
                 Response::addHeader('content-type', 'application/json');
                 Response::write($j);
@@ -511,6 +545,7 @@ class WebFiori {
                     $errBox->setFile($errfile);
                     $errBox->setMessage($errstr);
                     $errBox->setLine($errline);
+                    $errBox->setTrace();
                     Response::write($errBox);
                 }
             }
@@ -521,12 +556,16 @@ class WebFiori {
     private function _setExceptionHandler() {
         set_exception_handler(function($ex)
         {
+            $useResponsClass = class_exists('webfiori\\http\\Response');
             $isCli = class_exists('webfiori\framework\cli\CLI') ? CLI::isCLI() : php_sapi_name() == 'cli';
-            Response::clear();
+
+            if ($useResponsClass) {
+                Response::clear();
+            }
+
             if ($isCli) {
                 CLI::displayException($ex);
             } else {
-                Response::setCode(500);
                 $routeUri = Router::getUriObjByURL(Util::getRequestedURL());
 
                 if ($routeUri !== null) {
@@ -561,11 +600,19 @@ class WebFiori {
                         }
                         $j->add('stack-trace',$stackTrace);
                     }
-                    Response::addHeader('content-type', 'application/json');
-                    Response::write($j);
-                    Response::send();
+
+                    if ($useResponsClass) {
+                        Response::addHeader('content-type', 'application/json');
+                        Response::write($j);
+                        Response::setCode(500);
+                        Response::send();
+                    } else {
+                        http_response_code(500);
+                        header('content-type:application/json');
+                        echo $j;
+                    }
                 } else {
-                    $exceptionView = new ServerErrView($ex);
+                    $exceptionView = new ServerErrView($ex, $useResponsClass);
                     $exceptionView->show(500);
                 }
             }
@@ -580,40 +627,53 @@ class WebFiori {
         $this->_setExceptionHandler();
         register_shutdown_function(function()
         {
-            Response::clear();
-            $isCli = class_exists('webfiori\framework\cli\CLI') ? CLI::isCLI() : php_sapi_name() == 'cli';
-            $error = error_get_last();
+            if (!Response::isSent()) {
+                $isCli = class_exists('webfiori\framework\cli\CLI') ? CLI::isCLI() : php_sapi_name() == 'cli';
+                $error = error_get_last();
 
-            if ($error !== null) {
-                $errNo = $error['type'];
+                if ($error !== null) {
+                    Response::clear();
+                    $errNo = $error['type'];
 
-                if ($errNo == E_WARNING || 
-                   $errNo == E_NOTICE || 
-                   $errNo == E_USER_ERROR || 
-                   $errNo == E_USER_NOTICE) {
-                    return;
+                    if ($errNo == E_WARNING || 
+                       $errNo == E_NOTICE || 
+                       $errNo == E_USER_ERROR || 
+                       $errNo == E_USER_NOTICE) {
+                        return;
+                    }
+
+                    if (!$isCli) {
+                        Response::setCode(500);
+                    }
+                    $uri = Router::getUriObjByURL(Request::getRequestedURL());
+
+                    if ($uri !== null) {
+                        if ($uri->getType() == Router::API_ROUTE) {
+                            $j = new Json([
+                                'message' => $error["message"],
+                                'type' => 'error',
+                                'error-number' => $error["type"],
+                            ], true);
+
+                            if (defined('WF_VERBOSE') && WF_VERBOSE) {
+                                $j->add('file', $error["file"]);
+                                $j->add('line', $error["line"]);
+                            }
+                            Response::write($j);
+                        } else {
+                            $errPage = new ServerErrView($error);
+                            $errPage->show(500);
+                        }
+                    } else {
+                        if ($isCli) {
+                            CLI::displayErr($error['type'], $error["message"], $error["file"], $error["line"]);
+                        } else {
+                            $errPage = new ServerErrView($error);
+                            $errPage->show(500);
+                        }
+                    }
                 }
-
-                if (!$isCli) {
-                    Response::setCode(500);
-                }
-
-                if (defined('API_CALL')) {
-                    $j = new Json([
-                        'message' => $error["message"],
-                        'type' => 'error',
-                        'error-number' => $error["type"],
-                        'file' => $error["file"],
-                        'line' => $error["line"]
-                    ], true);
-                    Response::write($j);
-                    Response::send();
-                } else if ($isCli) {
-                    CLI::displayErr($error['type'], $error["message"], $error["file"], $error["line"]);
-                } else {
-                    $errPage = new ServerErrView($error);
-                    $errPage->show(500);
-                }
+                Response::send();
             }
         });
     }

@@ -23,9 +23,9 @@
  * THE SOFTWARE.
  */
 namespace webfiori\framework\session;
+use Exception;
+use ErrorException;
 
-use webfiori\framework\cli\CLI;
-use webfiori\http\Response;
 /**
  * A class which is used to manage user sessions.
  *
@@ -72,17 +72,22 @@ class SessionsManager {
      */
     private function __construct() {
         $this->sesstionsArr = [];
-        $this->sesstionStorage = new DefaultSessionStorage();
-    }
-    /**
-     * Reset sessions manager to defaults.
-     * 
-     * @since 1.0
-     */
-    public static function reset() {
-        self::_get()->sesstionsArr = [];
-        self::_get()->sesstionStorage = new DefaultSessionStorage();
-        self::_get()->activeSesstion = null;
+        if (defined('WF_SESSION_STORAGE')) {
+            
+            try {
+                $constructor = WF_SESSION_STORAGE.'';
+                $classObj = new $constructor();
+
+                if (is_subclass_of($classObj, '\webfiori\framework\session\SessionStorage')) {
+                    $this->sesstionStorage = $classObj;
+                }
+            } catch (Exception $ex) {} 
+            catch (ErrorException $ex) {}
+        }
+        
+        if ($this->sesstionStorage === null) {
+            $this->sesstionStorage = new DefaultSessionStorage();
+        }
     }
     /**
      * Saves the state of the active session and close it.
@@ -169,11 +174,11 @@ class SessionsManager {
     public static function getCookiesHeaders() {
         $sessions = self::getSessions();
         $retVal = [];
-        
+
         foreach ($sessions as $session) {
             $retVal[] = $session->getCookieHeader();
         }
-        
+
         return $retVal;
     }
     /**
@@ -209,7 +214,7 @@ class SessionsManager {
     public static function getSessionIDFromRequest($seesionName) {
         $trimmedSName = trim($seesionName);
         $sid = self::getSessionIDFromCookie($trimmedSName);
-        
+
         if ($sid === false) {
             if (isset($_GET[$trimmedSName])) {
                 $sid = filter_var($_GET[$seesionName], FILTER_SANITIZE_STRING);
@@ -219,7 +224,7 @@ class SessionsManager {
                 if (isset($_POST[$trimmedSName])) {
                     $sid = filter_var($_POST[$seesionName], FILTER_SANITIZE_STRING);
                 } 
-                
+
                 if ($sid === null || $sid === false) {
                     return false;
                 }
@@ -342,6 +347,16 @@ class SessionsManager {
         return false;
     }
     /**
+     * Reset sessions manager to defaults.
+     * 
+     * @since 1.0
+     */
+    public static function reset() {
+        self::_get()->sesstionsArr = [];
+        self::_get()->sesstionStorage = new DefaultSessionStorage();
+        self::_get()->activeSesstion = null;
+    }
+    /**
      * Sets session variable. 
      * 
      * Note that session variable will be set only if there was an active session.
@@ -377,7 +392,7 @@ class SessionsManager {
      * @since 1.0
      */
     public static function setStorage($storage) {
-        if ($storage instanceof SesstionStorage) {
+        if (is_subclass_of($storage, '\webfiori\framework\session\SessionStorage')) {
             self::_get()->sesstionStorage = $storage;
         }
     }
@@ -458,6 +473,7 @@ class SessionsManager {
      */
     private static function _checkAndLoadFromCookie($sName) {
         $sId = self::getSessionIDFromRequest($sName);
+
         if ($sId !== false) {
             $tempSesstion = new Session([
                 'session-id' => $sId,

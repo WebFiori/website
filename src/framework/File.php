@@ -24,10 +24,10 @@
  */
 namespace webfiori\framework;
 
-use webfiori\json\JsonI;
-use webfiori\json\Json;
 use webfiori\framework\exceptions\FileException;
 use webfiori\http\Response;
+use webfiori\json\Json;
+use webfiori\json\JsonI;
 /**
  * A class that represents a file.
  * 
@@ -36,7 +36,7 @@ use webfiori\http\Response;
  * 
  * @author Ibrahim
  * 
- * @version 1.1.7
+ * @version 1.1.9
  */
 class File implements JsonI {
     /**
@@ -359,7 +359,7 @@ class File implements JsonI {
      * @since 1.1.7
      */
     public function getLastModified($format = null) {
-        if (file_exists($this->getAbsolutePath())) {
+        if ($this->isExist()) {
             clearstatcache();
 
             if ($format !== null) {
@@ -482,7 +482,27 @@ class File implements JsonI {
      * @since 1.1.6
      */
     public function isExist() {
-        return file_exists($this->getAbsolutePath());
+        return self::isFileExist($this->getAbsolutePath());
+    }
+    /**
+     * Checks if file exist or not without throwing errors.
+     * 
+     * This method uses the function 'file_exists()' to check if a file is exist 
+     * or not given its path. The only difference is that it will not 
+     * throw an error if path is invalid.
+     * 
+     * @param string $path File path.
+     * 
+     * @since 1.1.8
+     */
+    public static function isFileExist($path) {
+        set_error_handler(function ()
+        {
+        });
+        $isExist = file_exists($path);
+        restore_error_handler();
+
+        return $isExist;
     }
     /**
      * Reads the file in binary mode.
@@ -531,7 +551,7 @@ class File implements JsonI {
      * @since 1.1.2
      */
     public function remove() {
-        if (file_exists($this->getAbsolutePath())) {
+        if ($this->isExist()) {
             unlink($this->getAbsolutePath());
 
             return true;
@@ -633,6 +653,16 @@ class File implements JsonI {
         return $retVal;
     }
     /**
+     * Appends a string of data to the already existing data.
+     * 
+     * @param string $data A string that represents the extra data.
+     * 
+     * @since 1.1.9
+     */
+    public function append($data) {
+        $this->rawData .= $data;
+    }
+    /**
      * Sets the binary representation of the file.
      * 
      * The raw data is simply a string. It can be binary string or any basic 
@@ -665,6 +695,7 @@ class File implements JsonI {
             $this->read();
         } catch (FileException $ex) {
         }
+
         return new Json([
             'id' => $this->getID(),
             'mime' => $this->getFileMIMEType(),
@@ -674,7 +705,6 @@ class File implements JsonI {
             'sizeInKBytes' => $this->getSize() / 1024,
             'sizeInMBytes' => ($this->getSize() / 1024) / 1024
         ]);
-
     }
     /**
      * Display the file. 
@@ -764,8 +794,9 @@ class File implements JsonI {
     private function _extractMimeFromName() {
         $exp = explode('.', $this->getName());
 
-        if (count($exp) == 2) {
-            $this->setMIMEType(self::getMIMEType($exp[1]));
+        if (count($exp) > 1) {
+            $ext = $exp[count($exp) - 1];
+            $this->setMIMEType(self::getMIMEType($ext));
         }
     }
     private function _extractPathAndName($absPath) {
@@ -890,6 +921,7 @@ class File implements JsonI {
     private function _writeHelper($fPath, $append = true, $createIfNotExist = false) {
         if (!$this->isExist()) {
             if ($createIfNotExist) {
+                Util::isDirectory($this->getDir(), true);
                 $resource = $this->_createResource('wb', $fPath);
             } else {
                 throw new FileException("File not found: '$fPath'.");

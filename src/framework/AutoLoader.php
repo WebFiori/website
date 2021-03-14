@@ -508,7 +508,7 @@ class AutoLoader {
         if (!$vendorFound && is_dir($vendorPath.$vendorFolderName)) {
             $vendorDirs[] = $vendorPath.$vendorFolderName;
         }
-        
+
         return array_reverse($vendorDirs);
     }
     /**
@@ -530,25 +530,23 @@ class AutoLoader {
         $loaded = false;
         $DS = DIRECTORY_SEPARATOR;
         $root = $this->getRoot();
-        
+
         if ($appendRoot === true) {
             $f = $root.$value.$DS.$className.'.php';
         } else {
             $f = $value.$DS.$className.'.php';
         }
         $isFileLoaded = in_array($f, $allPaths);
-        
+
         if (!$isFileLoaded) {
-            
             if ($classNameToLower) {
-                
                 if ($appendRoot === true) {
-                    $f = $root.$value.$DS. strtolower($className).'.php';
+                    $f = $root.$value.$DS.strtolower($className).'.php';
                 } else {
-                    $f = $value.$DS. strtolower($className).'.php';
+                    $f = $value.$DS.strtolower($className).'.php';
                 }
             }
-            
+
             if (file_exists($f)) {
                 require_once $f;
                 $ns = count(explode('\\', $classWithNs)) == 1 ? '\\' : substr($classWithNs, 0, strlen($classWithNs) - strlen($className) - 1);
@@ -561,11 +559,12 @@ class AutoLoader {
                 $loaded = true;
             }
         }
+
         return $loaded;
     }
     private function _loadFromCache($classNS, $className) {
         $loaded = false;
-        
+
         if (isset($this->casheArr[$classNS])) {
             foreach ($this->casheArr[$classNS] as $location) {
                 if (file_exists($location)) {
@@ -581,7 +580,7 @@ class AutoLoader {
                 }
             }
         }
-        
+
         return $loaded;
     }
     /**
@@ -590,7 +589,12 @@ class AutoLoader {
      * @since 1.1.6
      */
     private function _readCache() {
-        $autoloadCache = $this->getRoot().DIRECTORY_SEPARATOR.self::CACHE_NAME;
+        if (defined('__PHPUNIT_PHAR__')) {
+            $autoloadCachePath = $this->getRoot().DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'storage';
+        } else {
+            $autoloadCachePath = $this->getRoot().DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'storage';
+        }
+        $autoloadCache = $autoloadCachePath.DIRECTORY_SEPARATOR.self::CACHE_NAME;
         //For first run, the cache file might not exist.
         if (file_exists($autoloadCache)) {
             $casheStr = file_get_contents($autoloadCache);
@@ -615,6 +619,12 @@ class AutoLoader {
                     }
                 }
             }
+        } else {
+            if (!file_exists($autoloadCachePath)) {
+                mkdir($autoloadCachePath, '0777', true);
+            }
+            $h = fopen($autoloadCache, 'w');
+            fclose($h);
         }
     }
     /**
@@ -625,7 +635,7 @@ class AutoLoader {
      * @since 1.1.6
      */
     private function _updateCache() {
-        $autoloadCache = $this->getRoot().DIRECTORY_SEPARATOR.self::CACHE_NAME;
+        $autoloadCache = $this->getRoot().DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.self::CACHE_NAME;
         $h = fopen($autoloadCache, 'w');
 
         foreach ($this->loadedClasses as $classArr) {
@@ -692,17 +702,17 @@ class AutoLoader {
         $cArr = explode('\\', $classWithNs);
         $className = $cArr[count($cArr) - 1];
         $classNs = implode('\\', array_slice($cArr, 0, count($cArr) - 1));
-        
+
         if (self::isLoaded($className, $classNs)) {
             return;
         }
-        
+
         $loaded = false;
         //checks if the class is cached or not.
         if ($this->_loadFromCache($classWithNs, $className)) {
             return;
         }
-        
+
         $allPaths = self::getClassPath($className);
 
         foreach ($this->searchFolders as $value => $appendRoot) {
@@ -711,16 +721,8 @@ class AutoLoader {
             if (!$loaded) {
                 $loaded = $this->_loadClassHelper($className, $classWithNs, $value, $appendRoot, $allPaths, true);
             }
-
-            if ($loaded && (PHP_MAJOR_VERSION < 7 || (PHP_MAJOR_VERSION == 7 && PHP_MINOR_VERSION <= 3))) {
-                //in php 7.2 and lower, if same class is loaded 
-                //from two namespaces with same name, it will 
-                //rise a fatal error with message 
-                // 'Cannot redeclare class'
-                break;
-            }
         }
-        
+
         if ($loaded === false) {
             if (is_callable($this->onFail)) {
                 call_user_func($this->onFail);

@@ -24,11 +24,11 @@
  */
 namespace webfiori\framework;
 
-use webfiori\json\JsonI;
-use webfiori\json\Json;
-use webfiori\ui\HTMLNode;
 use ReflectionClass;
-use webfiori\conf\SiteConfig;
+use webfiori\json\Json;
+use webfiori\json\JsonI;
+use webfiori\ui\HTMLNode;
+use webfiori\framework\ui\WebPage;
 /**
  * A base class that is used to construct web site UI.
  * 
@@ -43,9 +43,17 @@ use webfiori\conf\SiteConfig;
  * 
  * @author Ibrahim
  * 
- * @version 1.2.6
+ * @version 1.2.7
  */
 abstract class Theme implements JsonI {
+    /**
+     * The web page at which the theme will be applied to.
+     * 
+     * @var WebPage|null
+     * 
+     * @since 1.2.7 
+     */
+    private $page;
     /**
      * A callback function to call after the theme is loaded.
      * 
@@ -179,6 +187,28 @@ abstract class Theme implements JsonI {
         $this->beforeLoadedParams = [];
     }
     /**
+     * Sets the page at which the theme will be applied to.
+     * 
+     * @param WebPage $page The page that the theme is applied to.
+     * 
+     * @since 1.2.7
+     */
+    public function setPage(WebPage $page) {
+        $this->page = $page;
+    }
+    /**
+     * Returns the page at which the theme will be applied to.
+     * 
+     * @return WebPage|null If the theme is applied to a page, the 
+     * method will return it as an object. If theme is not applied to 
+     * any page, the method will return null.
+     * 
+     * @since 1.2.7
+     */
+    public function getPage() {
+        return $this->page;
+    }
+    /**
      * Adds a single component to the set of theme components.
      * 
      * Theme components are a set of PHP files that must exist inside theme 
@@ -241,7 +271,7 @@ abstract class Theme implements JsonI {
         }
         $nodeName = isset($options['name']) ? $options['name'] : 'div';
         $attributes = isset($options['attributes']) ? $options['attributes'] : [];
-        
+
         return new HTMLNode($nodeName, $attributes);
     }
     /**
@@ -293,7 +323,7 @@ abstract class Theme implements JsonI {
         if ($this->baseUrl !== null) {
             return $this->baseUrl;
         } else {
-            return SiteConfig::getBaseURL();
+            return WebFioriApp::getAppConfig()->getBaseURL();
         }
     }
     /**
@@ -774,20 +804,21 @@ abstract class Theme implements JsonI {
      * @return Json An object of type Json.
      */
     public function toJSON() {
-        $j = new Json();
-        $j->add('themesPath', THEMES_PATH);
-        $j->add('name', $this->getName());
-        $j->add('url', $this->getUrl());
-        $j->add('license', $this->getLicenseName());
-        $j->add('licenseUrl', $this->getLicenseUrl());
-        $j->add('version', $this->getVersion());
-        $j->add('author', $this->getAuthor());
-        $j->add('authorUrl', $this->getAuthorUrl());
-        $j->add('imagesDirName', $this->getImagesDirName());
-        $j->add('themeDirName', $this->getDirectoryName());
-        $j->add('cssDirName', $this->getCssDirName());
-        $j->add('jsDirName', $this->getJsDirName());
-        $j->add('components', $this->getComponents());
+        $j = new Json([
+            'themesPath' => THEMES_PATH,
+            'name' => $this->getName(),
+            'url' => $this->getUrl(),
+            'license' => $this->getLicenseName(),
+            'licenseUrl' => $this->getLicenseUrl(),
+            'version' => $this->getVersion(),
+            'author' => $this->getAuthor(),
+            'authorUrl' => $this->getAuthorUrl(),
+            'imagesDirName' => $this->getImagesDirName(),
+            'themeDirName' => $this->getDirectoryName(),
+            'cssDirName' => $this->getCssDirName(),
+            'jsDirName' => $this->getJsDirName(),
+            'components' => $this->getComponents()
+        ]);
 
         return $j;
     }

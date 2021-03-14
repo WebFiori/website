@@ -26,11 +26,13 @@ namespace webfiori\framework\cron;
 
 use Exception;
 use webfiori\collections\Queue;
-use webfiori\framework\router\Router;
 use webfiori\framework\cli\CLI;
-use webfiori\framework\Util;
-use webfiori\framework\WebFiori;
 use webfiori\framework\cli\CLICommand;
+use webfiori\framework\cron\webServices\CronServicesManager;
+use webfiori\framework\router\Router;
+use webfiori\framework\session\SessionsManager;
+use webfiori\framework\Util;
+use webfiori\framework\WebFioriApp;
 /**
  * A class that is used to manage scheduled background jobs.
  * 
@@ -50,11 +52,6 @@ use webfiori\framework\cli\CLICommand;
  */
 class Cron {
     /**
-     *
-     * @var CLICommand 
-     */
-    private $command;
-    /**
      * The password that is used to access and execute jobs.
      * 
      * @var string
@@ -70,6 +67,11 @@ class Cron {
      * @since 1.0.4 
      */
     private $activeJob;
+    /**
+     *
+     * @var CLICommand 
+     */
+    private $command;
     /**
      * A queue which contains all cron jobs.
      * 
@@ -141,7 +143,7 @@ class Cron {
             ]);
             Router::addRoute([
                 'path' => '/cron/apis/{action}',
-                'route-to' => '/framework/cron/web-services/CronServicesManager.php',
+                'route-to' => CronServicesManager::class,
                 'as-api' => true
             ]);
             Router::addRoute([
@@ -156,17 +158,6 @@ class Cron {
                 'path' => '/cron/jobs/{job-name}',
                 'route-to' => '/framework/cron/CronTaskView.php'
             ]);
-        }
-    }
-    /**
-     * The main aim of this method is to automatically schedule any job which 
-     * exist inside the folder 'app/jobs'.
-     */
-    private static function _registerJobs() {
-        if (CLI::isCLI() || (defined('CRON_THROUGH_HTTP') && CRON_THROUGH_HTTP === true)) {
-            WebFiori::autoRegister('jobs', function ($job) {
-                Cron::scheduleJob($job);
-            });
         }
     }
     /**
@@ -399,7 +390,7 @@ class Cron {
      */
     public static function log($message) {
         self::_get()->logsArray[] = $message;
-        
+
         if (self::_get()->command !== null && self::_get()->command->isArgProvided('--show-log')) {
             self::_get()->command->println($message);
         }
@@ -532,8 +523,10 @@ class Cron {
      */
     public static function run($pass = '',$jobName = null,$force = false, $command = null) {
         self::log('Running job(s) check...');
+        $activeSession = SessionsManager::getActiveSession();
+        $isSessionLogged = $activeSession !== null ? $activeSession->get('cron-login-status') : false;
 
-        if (Cron::password() != 'NO_PASSWORD' && \webfiori\framework\session\SessionsManager::getActiveSession()->get('cron-login-status') !== true && hash('sha256',$pass) != Cron::password()) {
+        if (Cron::password() != 'NO_PASSWORD' && $isSessionLogged !== true && hash('sha256',$pass) != Cron::password()) {
             self::log('Error: Given password is incorrect.');
             self::log('Check finished.');
 
@@ -687,10 +680,12 @@ class Cron {
     private static function _get() {
         if (self::$executer === null) {
             self::$executer = new Cron();
+
             if (CLI::isCLI() || defined('CRON_THROUGH_HTTP') && CRON_THROUGH_HTTP === true) {
                 self::_registerJobs();
             }
         }
+
         return self::$executer;
     }
     /**
@@ -738,9 +733,10 @@ class Cron {
 
     private function _logJobExecution($job,$forced = false) {
         if ($this->isLogEnabled) {
-            $logFile = ROOT_DIR.DS.'logs'.DS.'cron.log';
+            $logsPath = ROOT_DIR.DS.'app'.DS.'storage'.DS.'logs';
+            $logFile = $logsPath.DS.'cron.log';
 
-            if (Util::isDirectory(ROOT_DIR.DS.'logs', true)) {
+            if (Util::isDirectory($logsPath, true)) {
                 if (!file_exists($logFile)) {
                     $file = fopen($logFile, 'w');
                 } else {
@@ -755,6 +751,18 @@ class Cron {
         }
     }
     /**
+     * The main aim of this method is to automatically schedule any job which 
+     * exist inside the folder 'app/jobs'.
+     */
+    private static function _registerJobs() {
+        if (CLI::isCLI() || (defined('CRON_THROUGH_HTTP') && CRON_THROUGH_HTTP === true)) {
+            WebFioriApp::autoRegister('jobs', function ($job)
+            {
+                Cron::scheduleJob($job);
+            });
+        }
+    }
+    /**
      * 
      * @param type $retVal
      * @param AbstractJob $job
@@ -764,6 +772,8 @@ class Cron {
         if ($job->isTime() || $xForce) {
             if ($command !== null) {
                 self::_get()->command = $command;
+                $job->setCommand($command);
+
                 foreach ($job->getExecArgsNames() as $attr) {
                     $command->addArg($attr);
                     $val = $command->getArgValue($attr);

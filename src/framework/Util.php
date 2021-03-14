@@ -24,11 +24,9 @@
  */
 namespace webfiori\framework;
 
-use webfiori\http\Response;
-use webfiori\conf\Config;
 use webfiori\framework\cli\CLI;
 use webfiori\framework\ui\MessageBox;
-use webfiori\framework\WebFiori;
+use webfiori\http\Response;
 /**
  * Framework utility class.
  * 
@@ -184,48 +182,6 @@ class Util {
 
         return false;
     }
-    /**
-     * Test a connection to system database or external one.
-     * 
-     * @param array $dbAttrs An associative array. The array can 
-     * have 4 indices:
-     * <ul>
-     * <li><b>host</b>: The name of database host. It can be a URL, an IP address 
-     * or 'localhost'.</li>
-     * <li><b>user</b>: The username of the user that will be used to connect to 
-     * the database.</li>
-     * <li><b>pass</b>: The password of the user.</li>
-     * <li><b>db-name</b>: The name of the database.</li>
-     * </ul>
-     * If the given parameter is not provided, the method will try to test 
-     * database settings that where set in the class 'Config'.
-     * 
-     * @return boolean|string If the connection was established, the method will 
-     * return true. If no connection was established, the method will 
-     * return 'Util::DB_NEED_CONF'.
-     * 
-     * @since 1.3.2
-     */
-    public static function checkDbConnection($dbAttrs = []) {
-        $C = Config::get();
-        $host = isset($dbAttrs['host']) ? $dbAttrs['host'] : $C->getDBHost();
-        $user = isset($dbAttrs['user']) ? $dbAttrs['user'] : $C->getDBHost();
-        $pass = isset($dbAttrs['pass']) ? $dbAttrs['pass'] : $C->getDBHost();
-        $dbName = isset($dbAttrs['db-name']) ? $dbAttrs['db-name'] : $C->getDBHost();
-        self::$dbTestInstance = new DatabaseLink($host, $user, $pass);
-
-        if (self::$dbTestInstance->isConnected()) {
-            if (self::$dbTestInstance->setDB($dbName)) {
-                $returnValue = true;
-            } else {
-                $returnValue = Util::DB_NEED_CONF;
-            }
-        } else {
-            $returnValue = Util::DB_NEED_CONF;
-        }
-
-        return $returnValue;
-    }
 
     /**
      * Check the overall status of the system.
@@ -238,22 +194,23 @@ class Util {
      * was fine. If the file 'Config.php' was not found, The method will return 
      * 'Util::MISSING_CONF_FILE'. If the file 'SiteConfig.php' was not found, The method will return 
      * 'Util::MISSING_CONF_FILE'. If the system is not configured yet, the method 
-     * will return 'Util::NEED_CONF'. If the system is unable to connect to 
-     * the database, the method will return an associative array 
-     * with two indices that contains connection error info. The first 
-     * one is 'error-code' and the second one is 'error-message'.
+     * will return 'Util::NEED_CONF'. 
      * 
      * @since 1.2
      */
-    public static function checkSystemStatus($checkDb = false,$dbName = '') {
+    public static function checkSystemStatus() {
         $returnValue = '';
 
         if (class_exists('webfiori\conf\Config')) {
             if (class_exists('webfiori\conf\SiteConfig')) {
-                if (WebFiori::getClassStatus() == 'INITIALIZING') {
-                    $returnValue = true;
+                if (class_exists('app\AppConfig')) {
+                    if (WebFioriApp::getClassStatus() == 'INITIALIZING') {
+                        $returnValue = true;
+                    } else {
+                        $returnValue = Util::NEED_CONF;
+                    }
                 } else {
-                    $returnValue = Util::NEED_CONF;
+                    $returnValue = Util::MISSING_SITE_CONF_FILE;
                 }
             } else {
                 $returnValue = Util::MISSING_SITE_CONF_FILE;
@@ -328,7 +285,7 @@ class Util {
             $toAppend = str_replace($_SERVER['HTTP_WEBFIORI_REMOVE_PATH'],'' ,$toAppend);
         }
         $xToAppend = str_replace('\\', '/', $toAppend);
-        
+
         if (strlen($xToAppend) == 0) {
             return $protocol.$host;
         } else {
@@ -461,9 +418,16 @@ class Util {
      */
     public static function getRequestedURL() {
         $base = self::getBaseURL();
-        
-        $requestedURI = trim(filter_var(getenv('REQUEST_URI')),'/');
-        
+        $uri = getenv('REQUEST_URI');
+
+        if ($uri === false) {
+            // Using builtin server, it will be false
+            $uri = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '';
+
+            return $base.'/'.$uri;
+        }
+        $requestedURI = trim(filter_var($uri),'/');
+
         return $base.'/'.$requestedURI;
     }
     /**
@@ -612,13 +576,16 @@ class Util {
         $lineNumber = $lastTrace['line'];
         $file = $lastTrace['file'];
         $readable = print_r($expr, true);
+
         if (CLI::isCLI()) {
             fprintf(STDOUT, "%s - %s:\n%s\n",$file, $lineNumber, $readable);
         } else {
             $htmlEntityAdded = str_replace('<', '&lt;', str_replace('>', '&gt;', $readable));
-            $toOutput = '<pre>'. $htmlEntityAdded .'</pre>';
+            $toOutput = '<pre>'.$htmlEntityAdded.'</pre>';
+
             if ($asMessageBox === true) {
                 $messageBox = new MessageBox();
+
                 if ($messageBox->getBody() !== null) {
                     $messageBox->getBody()->addTextNode($toOutput,false);
                     $messageBox->getHeader()->text($file.' - '.$lineNumber);
