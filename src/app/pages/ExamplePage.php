@@ -24,34 +24,13 @@
  */
 namespace webfiori\examples\views;
 
-use webfiori\framework\Page;
+use webfiori\framework\ui\WebPage;
 
-class ExamplePage {
+class ExamplePage extends WebPage {
     public function __construct() {
-        //load UI components (JS, CSS, ...)
-        //Experement with all themes.
-        //it is optional. to use a theme but recomended
-        //Page::theme('Vuetify Theme');
-        //Page::theme('Vuetify Template');
-        //Page::theme('WebFiori V108');
-        //Page::theme('Bootstrap Theme');
-        //Page::theme('Greeny By Ibrahim Ali');
-        //Page::theme('Template Theme');
-        Page::theme('WebFiori Theme');
-        //Load language. Used to make the page i18n compatable.
-        $translation = Page::translation();
+        parent::__construct();
         
-        Page::title($translation->get('pages/sample-page/title'));
-        Page::description($translation->get('pages/sample-page/description'));
-        
-        $mainContentArea = Page::document()->getChildByID('main-content-area');
-        
-        //Load HTML component and insert it in the body of the page.
-        $templateDir = ROOT_DIR.DS.'app'.DS.'pages'.DS.'example-template.html';
-        $mainContentArea->component($templateDir, $translation->get('pages/sample-page'));
-        
-        Page::render();
+        $div = $this->insert('div');
+        $div->text("Hello World!");
     }
 }
-
-return __NAMESPACE__;

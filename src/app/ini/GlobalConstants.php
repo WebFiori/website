@@ -56,6 +56,23 @@ class GlobalConstants {
              */
             define('SCRIPT_MEMORY_LIMIT', '2048M');
         }
+        if (!defined('WF_SESSION_STORAGE')) {
+            /**
+             * A constant which holds the class name of sessions storage 
+             * engine alongside its namespace.
+             * 
+             * The value of this constant is used to configure session storage 
+             * engine. For example, if the name of the class that represents 
+             * storage engine is 'MySessionStorage' and the class exist in the 
+             * namespace 'extras\util', then the value of the constant should be 
+             * '\extras\util\MySessionStorage'.
+             * 
+             * @var string
+             * 
+             * @since 2.1.0
+             */
+            define('WF_SESSION_STORAGE', '\webfiori\framework\session\DefaultSessionStorage');
+        }
         if (!defined('DATE_TIMEZONE')) {
             /**
              * Define the timezone at which the system will operate in.
@@ -67,6 +84,7 @@ class GlobalConstants {
              */
             define('DATE_TIMEZONE', 'Asia/Riyadh');
         }
+
         if (!defined('PHP_INT_MIN')) {
             /**
              * Fallback for older php versions that does not support the constant 
@@ -125,15 +143,6 @@ class GlobalConstants {
             define('NO_WWW', false);
         }
 
-        if (!defined('THEMES_PATH')) {
-            $themesDirName = 'themes';
-            $themesPath = substr(__DIR__, 0, strlen(__DIR__) - strlen('/ini')).DIRECTORY_SEPARATOR.$themesDirName;
-            /**
-             * This constant represents the directory at which themes exist.
-             * @since 1.0
-             */
-            define('THEMES_PATH', $themesPath);
-        }
         if (!defined('MAX_BOX_MESSAGES')) {
             /**
              * The maximum number of message boxes to show in one page.
@@ -148,6 +157,7 @@ class GlobalConstants {
              */
             define('MAX_BOX_MESSAGES', 15);
         }
+
         if (!defined('CLI_HTTP_HOST')) {
             /**
              * Host name to use in case the system is executed through CLI.
@@ -159,6 +169,7 @@ class GlobalConstants {
              */
             define('CLI_HTTP_HOST', 'example.com');
         }
+
         if (!defined('DS')) {
             /**
              * Directory separator.
@@ -168,6 +179,17 @@ class GlobalConstants {
              */
             define('DS', DIRECTORY_SEPARATOR);
         }
+
+        if (!defined('THEMES_PATH')) {
+            $themesDirName = 'themes';
+            $themesPath = substr(__DIR__, 0, strlen(__DIR__) - strlen('/app/ini')).DIRECTORY_SEPARATOR.$themesDirName;
+            /**
+             * This constant represents the directory at which themes exist.
+             * @since 1.0
+             */
+            define('THEMES_PATH', $themesPath);
+        }
+
         if (!defined('USE_HTTP')) {
             /**
              * Sets the framework to use 'http://' or 'https://' for base URIs.

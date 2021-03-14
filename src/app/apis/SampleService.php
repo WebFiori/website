@@ -1,10 +1,9 @@
 <?php
-
 namespace webfiori\examples\webApis;
 
 use webfiori\framework\ExtendedWebServicesManager;
-use webfiori\restEasy\AbstractWebService;
-use webfiori\framework\WebFiori;
+use webfiori\framework\WebFioriApp;
+use webfiori\http\AbstractWebService;
 /**
  * A sample service that can be used as a reference when creating web services.
  *
@@ -16,15 +15,15 @@ class SampleService extends AbstractWebService {
         $this->addRequestMethod('get');
     }
     public function isAuthorized() {
-        
     }
 
     public function processRequest() {
         $manager = $this->getManager();
+
         if ($manager instanceof ExtendedWebServicesManager) {
             $lang = $manager->getTranslation()->getCode();
         } else {
-            WebFiori::getSiteConfig()->getPrimaryLanguage();
+            WebFioriApp::getAppConfig()->getPrimaryLanguage();
         }
 
         if ($lang == 'AR') {
@@ -33,5 +32,4 @@ class SampleService extends AbstractWebService {
             $this->send('text/html', '<html><head><title>Say Hello</title></head><body><p>hello world!</p></body></html>');
         }
     }
-
 }

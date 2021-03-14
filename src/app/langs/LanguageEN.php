@@ -109,11 +109,17 @@ namespace webfiori\framework\i18n;
 class LanguageEN extends Language {
     public function __construct() {
         parent::__construct('ltr', 'EN', true);
-        $this->createAndSet('menus/main-menu', [
-            'menu-item-1' => 'Download',
-            'menu-item-2' => 'API Docs',
-            'menu-item-3' => 'Learn',
-            'menu-item-4' => 'Contribute',
+        $this->createAndSet('general', [
+            'framework-name' => 'WebFiori Framework',
+        ]);
+        $this->createAndSet('general/social-media-names', [
+            'linkedin' => 'LinkedIn',
+            'github' => 'GitHub',
+            'twitter' => 'Twitter',
+            'telegram' => 'Telegram',
+            'reddit' => 'Reddit',
+            'facebook' => 'Facebook',
+            'whatsapp' => 'WhatsApp'
         ]);
         $this->createAndSet('general/http-codes/200', [
             'code' => 200,
@@ -187,7 +193,8 @@ class LanguageEN extends Language {
             'next' => 'Next',
             'previous' => 'Previous',
             'skip' => 'Skip',
-            'finish' => 'Finish'
+            'finish' => 'Finish',
+            'add' => 'Add'
         ]);
 
         $this->createAndSet('general/error', [
@@ -211,7 +218,9 @@ class LanguageEN extends Language {
             'printed' => 'Printed.',
             'connecting' => 'Connecting...',
             'connected' => 'Connected.',
-            'disconnected' => 'Disconnected.'
+            'disconnected' => 'Disconnected.',
+            'adding' => 'Adding...',
+            'added' => 'Added.'
         ]);
 
         $this->createAndSet('general/error', [
@@ -219,7 +228,8 @@ class LanguageEN extends Language {
             'remove' => 'Unable to remove!',
             'delete' => 'Unable to delete!',
             'print' => 'Unable to print!',
-            'connect' => 'Unable to connect!'
+            'connect' => 'Unable to connect!',
+            'add' => 'Unable to add!'
         ]);
 
         $this->createAndSet('general/week-day', [
@@ -261,7 +271,7 @@ class LanguageEN extends Language {
             'm11' => 'Dhū al-Qa‘dah',
             'm12' => 'Dhū al-Ḥijjah',
         ]);
-        
+
         $this->createAndSet('pages/sample-page', [
             'title' => 'Sample Page',
             'description' => 'This is a sample page which is used to show basic usage of the framework.',
@@ -288,6 +298,10 @@ class LanguageEN extends Language {
                 'Building and manipulating the DOM of a web page using PHP language.',
                 'Basic support for running the framework throgh CLI.'
             ]
+        ]);
+        $this->createAndSet('main-menu/lang-switch', [
+            'AR' => 'العربية',
+            'EN' => 'English'
         ]);
     }
 }

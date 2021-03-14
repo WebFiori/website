@@ -24,32 +24,26 @@
  */
 namespace webfiori\ini;
 
-use webfiori\framework\cron\Cron;
-
+use webfiori\framework\AutoLoader;
 /**
- * A class that has one method to initialize cron jobs.
+ * A class that has one method to initialize user-defined autoload directories.
  *
  * @author Ibrahim
  * @version 1.0
  */
-class InitCron {
+class InitAutoLoad {
     /**
-     * A method that can be used to initialize cron jobs.
-     * The developer can use this method to create cron jobs.
-     * @since 1.0
+     * Add user-defined directories to the set of directories at which the framework 
+     * will search for classes.
+     * The developer can use the method AutoLoader::newSearchFolder() to add 
+     * new search directory. Note that the developer does not have to 
+     * register the folder 'vendor' as it will be auto-registered.
      */
     public static function init() {
-        //set an optional password to protect jobs from 
-        //unauthorized execution access
-        //default password: 123456
-        Cron::password('8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
-        //enable job execution log
-        Cron::execLog(true);
+        $AU = AutoLoader::get();
 
-        //add jobs
-        Cron::dailyJob("13:00", "Test Job", function ()
-        {
-            echo "I'm Running in Background.\n";
-        });
+        //this is a sample code that shows how to add folders.
+        $AU->newSearchFolder('my-system');
+        $AU->newSearchFolder('my-entities', false);
     }
 }

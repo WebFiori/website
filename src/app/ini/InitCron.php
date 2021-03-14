@@ -2,7 +2,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Ibrahim, WebFiori Framework.
+ * Copyright 2019 Ibrahim, WebFiori Framework.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,26 +24,36 @@
  */
 namespace webfiori\ini;
 
-use webfiori\framework\cli\CLI;
-use webfiori\framework\cli\GenerateDocsCommand;
+use webfiori\framework\cron\Cron;
+
 /**
- * A class that contains one method for registering custom CLI 
- * commands.
+ * A class that has one method to initialize cron jobs.
  *
  * @author Ibrahim
+ * @version 1.0
  */
-class InitCliCommands {
+class InitCron {
     /**
-     * Register user defined CLI commands.
-     * This method can be used by the developers to add any custom 
-     * CLI command that they have created. Assuming that we have a 
-     * custom command with the name 'ProcessEmailCommand', then it 
-     * can be registered as follows:<br/>
-     * <code>
-     * CLI::register(new ProcessEmailCommand());
-     * </code>
+     * A method that can be used to initialize cron jobs.
+     * 
+     * The main aim of this method is to give the developer a way to register 
+     * the jobs which are created outside the folder 'app/jobs'. To register 
+     * any job, use the method Cron::scheduleJob().
+     * 
+     * @since 1.0
      */
     public static function init() {
-        CLI::register(new GenerateDocsCommand());
+        //set an optional password to protect jobs from 
+        //unauthorized execution access
+        //default password: 123456
+        Cron::password('8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92');
+        //enable job execution log
+        Cron::execLog(true);
+
+        //add jobs
+        Cron::dailyJob("13:00", "Test Job", function ()
+        {
+            echo "I'm Running in Background.\n";
+        });
     }
 }
