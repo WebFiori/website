@@ -1,13 +1,12 @@
 <?php
-
 namespace webfiori;
 
-use webfiori\framework\WebFiori;
-use webfiori\framework\Util;
-use webfiori\framework\session\SessionsManager;
 use webfiori\framework\cli\CLI;
-use webfiori\http\Response;
 use webfiori\framework\router\Router;
+use webfiori\framework\session\SessionsManager;
+use webfiori\framework\WebFioriApp;
+use webfiori\http\Request;
+use webfiori\http\Response;
 /**
  * The entry point of all requests.
  *
@@ -15,21 +14,13 @@ use webfiori\framework\router\Router;
  */
 class Index {
     private static $instance;
-    /**
-     * Creates a single instance of the class.
-     */
-    public static function create() {
-        if (self::$instance === null) {
-            self::$instance = new Index();
-        }
-    }
     private function __construct() {
         /**
          * The root directory that is used to load all other required system files.
          */
         if (!defined('ROOT_DIR')) {
             $publicFolder = DIRECTORY_SEPARATOR.'public';
-            
+
             if (substr(__DIR__, strlen(__DIR__) - strlen($publicFolder)) == $publicFolder) {
                 //HTTP run
                 define('ROOT_DIR', substr(__DIR__,0, strlen(__DIR__) - strlen(DIRECTORY_SEPARATOR.'public')));
@@ -38,22 +29,30 @@ class Index {
                 define('ROOT_DIR', __DIR__);
             }
         }
-        require_once ROOT_DIR.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'WebFiori.php';
+        require_once ROOT_DIR.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'WebFioriApp.php';
         /**
          * This where magic will start.
          * 
          * Planting application seed into the ground and make your work bloom.
          */
-        WebFiori::getAndStart();
-        
+        WebFioriApp::getAndStart();
+
         if (CLI::isCLI() === true) {
             CLI::registerCommands();
             CLI::runCLI();
         } else {
             //route user request.
             SessionsManager::start('wf-session');
-            Router::route(Util::getRequestedURL());
+            Router::route(Request::getRequestedURL());
             Response::send();
+        }
+    }
+    /**
+     * Creates a single instance of the class.
+     */
+    public static function create() {
+        if (self::$instance === null) {
+            self::$instance = new Index();
         }
     }
 }
