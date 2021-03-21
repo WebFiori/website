@@ -29,13 +29,14 @@ class Index {
                 define('ROOT_DIR', __DIR__);
             }
         }
+        
         require_once ROOT_DIR.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'WebFioriApp.php';
         /**
          * This where magic will start.
          * 
          * Planting application seed into the ground and make your work bloom.
          */
-        WebFioriApp::getAndStart();
+        WebFioriApp::start();
 
         if (CLI::isCLI() === true) {
             CLI::registerCommands();
