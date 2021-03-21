@@ -1750,7 +1750,16 @@ class HTMLNode implements Countable, Iterator {
                 if ($val === null) {
                     $retVal .= ' '.$attr;
                 } else {
-                    $retVal .= ' '.$attr.'="'.str_replace('"', '\"', $val).'"';
+                    $valType = gettype($val);
+                    if ($valType == "integer" || $valType == 'double') {
+                        $retVal .= ' '.$attr.'='.$val;
+                    } else {
+                        if ($val != '' && strpos($val, '"') === false && strpos($val, ' ') === false && strpos($val, '-') === false) {
+                            $retVal .= ' '.$attr.'='.$val;
+                        } else {
+                            $retVal .= ' '.$attr.'="'.str_replace('"', '\"', $val).'"';
+                        }
+                    }
                 }
             }
             $retVal .= '>';
@@ -1973,7 +1982,7 @@ class HTMLNode implements Countable, Iterator {
             if ($isValid) {
                 if ($lower == 'dir') {
                     return $this->setWritingDir($val);
-                } else if ($trimmedName == 'style') {
+                } else if ($lower == 'style') {
                     if (gettype($val) == 'array') {
                         return $this->setStyle($val);
                     } else {
@@ -2838,6 +2847,9 @@ class HTMLNode implements Countable, Iterator {
         $trimmed = trim($str);
 
         if (strlen($trimmed) != 0) {
+            if ($isEqualFound && !$inSingleQouted && !$inDoubleQueted) {
+                $queue->enqueue('=');
+            }
             $queue->enqueue($trimmed);
         }
         $retVal = [];
