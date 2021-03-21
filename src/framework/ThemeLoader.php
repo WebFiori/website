@@ -26,7 +26,8 @@ namespace webfiori\framework;
 
 use webfiori\framework\exceptions\NoSuchThemeException;
 use webfiori\framework\router\Router;
-use webfiori\framework\ui\WebPage;
+use webfiori\framework\WebFioriApp;
+
 
 /**
  * A class which has utility methods which are related to themes loading.
@@ -150,32 +151,45 @@ class ThemeLoader {
         self::$loadedThemes = [];
     }
     /**
-     * Loads a theme given its name.
+     * Loads a theme given its name or class name.
      * 
-     * If the given name is null, the method will load the default theme as 
-     * specified by the method SiteConfig::getBaseThemeName().
+     * If the given name is null or empty string, the method will load the default theme as 
+     * specified by the method AppConfig::getBaseThemeName().
      * 
-     * @param string $themeName The name of the theme. 
-     * 
-     * @param WebPage|null $page The page that the theme will be applied to.
+     * @param string $themeName The name of the theme. This also can be the name of 
+     * theme class including its namespace (e.g. Theme::class). 
      * 
      * @return Theme The method will return an object of type Theme once the 
-     * theme is loaded. The object will contain all theme information.
+     * theme is loaded. The object will contain all theme information. If provided 
+     * theme name is empty string, the method will return null.
      * 
      * @throws NoSuchThemeException The method will throw 
      * an exception if no theme was found which has the given name.
      * 
      * @since 1.0
      */
-    public static function usingTheme($page = null, $themeName = null) {
-        if ($themeName === null) {
+    public static function usingTheme($themeName = null) {
+        $trimmedName = trim($themeName);
+        if (strlen($trimmedName) != 0) {
+            $themeName = $trimmedName;
+        } else {
             $themeName = WebFioriApp::getAppConfig()->getBaseThemeName();
         }
+        
         $themeToLoad = null;
+        $xName = '\\'.$themeName;
+        if (class_exists($xName)) {
+            $tmpTheme = new $xName();
 
+            if ($tmpTheme instanceof Theme) {
+                $themeToLoad = $tmpTheme;
+                $themeName = $themeToLoad->getName();
+            }
+        }
+        
         if (self::isThemeLoaded($themeName)) {
             $themeToLoad = self::$loadedThemes[$themeName];
-        } else {
+        } else if ($themeToLoad === null) {
             $themes = self::getAvailableThemes();
 
             if (isset($themes[$themeName])) {
@@ -187,9 +201,6 @@ class ThemeLoader {
 
         if (isset($themeToLoad)) {
             self::$loadedThemes[$themeToLoad->getName()] = $themeToLoad;
-            if ($page !== null) {
-                $themeToLoad->setPage($page);
-            }
             $themeToLoad->invokeBeforeLoaded();
 
             $themeDir = THEMES_PATH.DS.$themeToLoad->getDirectoryName();

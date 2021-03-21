@@ -39,6 +39,7 @@ use webfiori\ui\HeadNode;
 use webfiori\ui\HTMLDoc;
 use webfiori\ui\HTMLNode;
 use webfiori\framework\session\Session;
+use webfiori\framework\exceptions\MissingLangException;
 /**
  * A base class that can be used to implement web pages.
  *
@@ -205,6 +206,9 @@ class WebPage {
      * @since 1.0
      */
     private $websiteName;
+    /**
+     * Creates new instance of the class.
+     */
     public function __construct() {
         $this->reset();
     }
@@ -216,7 +220,8 @@ class WebPage {
      * page is displayed. It is possible to have multiple callbacks.
      * 
      * @param callback $callable A PHP function that will be get executed. before 
-     * the page is rendered.
+     * the page is rendered. Note that the first argument of the function will 
+     * always be an object of type "WebPage".
      * 
      * @param array $params An array of parameters which will be passed to the 
      * callback. The parameters can be accessed in the callback in the 
@@ -252,7 +257,7 @@ class WebPage {
      * 
      * @param string $content The value of the property 'content'.
      * 
-     * @param boolean $override A boolean attribute. If a meta node was found 
+     * @param boolean $override A boolean parameter. If a meta node was found 
      * which has the given name and this attribute is set to true, 
      * the content of the meta will be overridden by the passed value. 
      * 
@@ -298,6 +303,19 @@ class WebPage {
         }
         $this->getDocument()->getHeadNode()->addJs($src, $attrs);
     }
+    /**
+     * Returns the value of a language label.
+     * 
+     * @param string $label A directory to the language variable 
+     * (such as 'pages/login/login-label').
+     * 
+     * @return string|array If the given directory represents a label, the 
+     * method will return its value. If it represents an array, the array will 
+     * be returned. If nothing was found, the returned value will be the passed 
+     * value to the method.
+     * 
+     * @since 1.0 
+     */
     public function get($label) {
         $langObj = $this->getTranslation();
 
@@ -331,6 +349,20 @@ class WebPage {
         return $this->document;
     }
     /**
+     * Removes a child node from the document of the page.
+     * 
+     * @param HTMLNode|string $node The node that will be removed.  This also 
+     * can be the value of the attribute ID of the node that will be removed.
+     * 
+     * @return HTMLNode|null The method will return the node if removed. 
+     * If not removed, the method will return null.
+     * 
+     * @since 1.0
+     */
+    public function removeChild($node) {
+        return $this->getDocument()->removeChild($node);
+    }
+    /**
      * Returns the language code of the page.
      * 
      * @return string|null Two digit language code. In case language is not set, the 
@@ -342,18 +374,44 @@ class WebPage {
         return $this->contentLang;
     }
     /**
+     * Returns an object which holds applied theme information.
      * 
-     * @return Theme
+     * @return Theme|null If no theme is applied, the method will return null. 
+     * Other than than, the method will return an object that holds applied 
+     * theme info.
+     * 
+     * @since 1.0
      */
     public function getTheme() {
         return $this->theme;
     }
     /**
-     * Returns the directory at which CSS files of the theme exists.
+     * Create HTML node based on the method which exist on the applied theme.
+     * 
+     * This method can be only used if a theme is applied and the method 
+     * Theme::createHTMLNode() is implemented.
+     * 
+     * @param array $nodeInfo An array that holds node information.
+     * 
+     * @return HTMLNode|null The returned HTML node will depend on how the 
+     * developer has implemented the method Theme::createHTMLNode(). If 
+     * no theme is applied, the method will return null.
+     * 
+     * @since 1.0
+     */
+    public function createHTMLNode($nodeInfo) {
+        $theme = $this->getTheme();
+        if ($theme !== null) {
+            return $theme->createHTMLNode($nodeInfo);
+        }
+    }
+    /**
+     * Returns the name of the directory at which CSS files of the applied theme exists.
      * 
      * @return string The directory at which CSS files of the theme exists 
-     * (e.g. 'assets/my-theme/css' ). 
-     * If the theme is not loaded, the method will return empty string.
+     * (e.g. 'assets/my-theme/css' ). The folder will always exist inside the folder 
+     * 'public/assets'.
+     * If no theme is applied, the method will return empty string.
      * 
      * @since 1.0
      */
@@ -367,11 +425,29 @@ class WebPage {
         return '';
     }
     /**
-     * Returns the directory at which JavaScript files of the theme exists.
+     * Returns the name of the directory at which image files of the applied theme exists.
+     * 
+     * @return string The directory at which image files of the theme exists 
+     * (e.g. 'assets/my-theme/images' ).
+     * If no theme is applied, the method will return empty string.
+     * 
+     * @since 1.0
+     */
+    public function getThemeImagesDir() {
+        if ($this->isThemeLoaded()) {
+            $loadedTheme = $this->getTheme();
+
+            return 'assets/'.$loadedTheme->getDirectoryName().'/'.$loadedTheme->getImagesDirName();
+        }
+
+        return '';
+    }
+    /**
+     * Returns the name of the directory at which JavaScript files of the applied theme exists.
      * 
      * @return string The directory at which JavaScript files of the theme exists 
      * (e.g. 'assets/my-theme/js' ). 
-     * If the theme is not loaded, the method will return empty string.
+     * If no theme is applied, the method will return empty string.
      * 
      * @since 1.0
      */
@@ -384,6 +460,7 @@ class WebPage {
 
         return '';
     }
+    
     /**
      * Returns the title of the page.
      * 
@@ -410,8 +487,12 @@ class WebPage {
         return $this->titleSep;
     }
     /**
+     * Returns an object which holds i18n labels.
      * 
-     * @return Language
+     * @return Language The returned object labels will be based on the 
+     * language of the page.
+     * 
+     * @since 1.0
      */
     public function getTranslation() {
         return $this->tr;
@@ -510,6 +591,11 @@ class WebPage {
             Response::write($this->getDocument()->toHTML($formatted));
         }
     }
+    /**
+     * Resets page attributes to default values.
+     * 
+     * @since 1.0
+     */
     public function reset() {
         $this->document = new HTMLDoc();
         $this->_checkLang();
@@ -521,8 +607,8 @@ class WebPage {
         $websiteDesc = WebFioriApp::getAppConfig()->getDescription($this->getLangCode());
         $websiteDesc !== null ? $this->setWebsiteName($websiteDesc) : '';
 
-        $pageTitle = WebFioriApp::getAppConfig()->getWebsiteName($this->getLangCode());
-        $pageTitle !== null ? $this->setTitle($websiteName) : $this->setTitle('Hello World');
+        $pageTitle = WebFioriApp::getAppConfig()->getDefaultTitle($this->getLangCode());
+        $pageTitle !== null ? $this->setTitle($pageTitle) : $this->setTitle('Hello World');
 
 
         $this->setTitleSep(WebFioriApp::getAppConfig()->getTitleSep());
@@ -570,7 +656,7 @@ class WebPage {
      * this can be the tag name of the node such as 'div'.
      * 
      * @param string $parentNodeId The ID of the node that the given node 
-     * will be inserted to.
+     * will be inserted to. Default value is 'main-content-area'.
      * 
      * @return HTMLNode|null The method will return the inserted 
      * node if it was inserted. If it is not, the method will return null.
@@ -581,7 +667,7 @@ class WebPage {
         if (gettype($node) == 'string') {
             $node = new HTMLNode($node);
         }
-        $parent = $this->getDocument()->getChildByID($parentNodeId);
+        $parent = $this->getChildByID($parentNodeId);
         if ($parent !== null) {
             $parent->addChild($node);
             return $node;
@@ -610,30 +696,26 @@ class WebPage {
      * Sets the description of the page.
      * 
      * @param string $val The description of the page. 
-     * If <b>null</b> is given, 
+     * If null is given, 
      * the description meta tag will be removed from the &lt;head&gt; node. If 
      * empty string is given, nothing will change.
      * 
      * @since 1.0
      */
     public function setDescription($val) {
-        if ($val === null) {
+        if ($val !== null) {
+            $trim = trim($val);
+
+            if (strlen($trim) !== 0) {
+                $this->description = $trim;
+                $this->document->getHeadNode()->addMeta('description', $trim, true);
+            }
+        } else {
             $descNode = $this->document->getHeadNode()->getMeta('description');
             $this->document->getHeadNode()->removeChild($descNode);
             $this->description = null;
-
-            if (strlen($desc) !== 0) {
-                $this->description = $desc;
-                $this->document->getHeadNode()->addMeta('description', $desc, true);
-            } else {
-                $descNode = $this->document->getHeadNode()->getMeta('description');
-                $this->document->getHeadNode()->removeChild($descNode);
-                $this->description = null;
-            }
-        } else {
         }
     }
-
     /**
      * Sets the property that is used to check if page has an aside section or not.
      * 
@@ -659,15 +741,13 @@ class WebPage {
                         $mainContentArea->addChild($children->get($x));
                     }
                 }
-            } else {
-                if ($this->incAside && !$bool) {
-                    //remove aside
-                    $aside = $this->document->getChildByID(self::MAIN_ELEMENTS[3]);
+            } else if ($this->incAside && !$bool) {
+                //remove aside
+                $aside = $this->document->getChildByID(self::MAIN_ELEMENTS[3]);
 
-                    if ($aside instanceof HTMLNode) {
-                        $this->document->removeChild($aside);
-                        $this->incAside = false;
-                    }
+                if ($aside instanceof HTMLNode) {
+                    $this->document->removeChild($aside);
+                    $this->incAside = false;
                 }
             }
         }
@@ -685,13 +765,11 @@ class WebPage {
         if (gettype($bool) == self::$BoolType) {
             if (!$this->incFooter && $bool) {
                 $this->document->addChild($this->_getFooter());
-            } else {
-                if ($this->incFooter && !$bool) {
-                    $footer = $this->document->getChildByID(self::MAIN_ELEMENTS[4]);
+            } else if ($this->incFooter && !$bool) {
+                $footer = $this->document->getChildByID(self::MAIN_ELEMENTS[4]);
 
-                    if ($footer instanceof HTMLNode) {
-                        $this->document->removeChild($footer);
-                    }
+                if ($footer instanceof HTMLNode) {
+                    $this->document->removeChild($footer);
                 }
             }
             $this->incFooter = $bool;
@@ -717,14 +795,12 @@ class WebPage {
                 for ($x = 0 ; $x < $currentChCount ; $x++) {
                     $this->document->addChild($children->get($x));
                 }
-            } else {
-                if ($this->incHeader && !$bool) {
-                    //remove header
-                    $header = $this->document->getChildByID(self::MAIN_ELEMENTS[1]);
+            } else if ($this->incHeader && !$bool) {
+                //remove header
+                $header = $this->document->getChildByID(self::MAIN_ELEMENTS[1]);
 
-                    if ($header instanceof HTMLNode) {
-                        $this->document->removeChild($header);
-                    }
+                if ($header instanceof HTMLNode) {
+                    $this->document->removeChild($header);
                 }
             }
             $this->incHeader = $bool;
@@ -736,35 +812,30 @@ class WebPage {
      * @param string $themeNameOrClass The name of the theme as specified by the 
      * variable 'name' in theme definition. If the given name is 'null', the 
      * method will load the default theme as specified by the method 
-     * 'SiteConfig::getBaseThemeName()'. Note that once the theme is updated, 
+     * 'AppConfig::getBaseThemeName()'. Note that once the theme is updated, 
      * the document content of the page will reset if it was set before calling this 
      * method. This also can be the value which can be taken from 'ClassName::class'. 
-     * 
      * 
      * @throws Exception The method will throw 
      * an exception if no theme was found which has the given name. Another case is 
      * when the file 'theme.php' of the theme is missing. 
      * Finally, an exception will be thrown if theme component is not found.
+     * 
      * @since 1.0
+     * 
      * @see Theme::usingTheme()
      */
     public function setTheme($themeNameOrClass = null) {
-        $xthemeName = '\\'.$themeNameOrClass;
-
-        if (class_exists($xthemeName)) {
-            $tmpTheme = new $xthemeName();
-
-            if (!($tmpTheme instanceof Theme)) {
-                $tmpTheme = $this->_loadByThemeName($themeNameOrClass);
-            }
-
-            $tmpTheme->setPage($this);
-            $tmpTheme->invokeBeforeLoaded();
-        } else {
-            $tmpTheme = $this->_loadByThemeName($themeNameOrClass);
+        if ($themeNameOrClass !== null && strlen(trim($themeNameOrClass)) == 0) {
+            return;
         }
+        $xthemeName = $themeNameOrClass === null ? WebFioriApp::getAppConfig()->getBaseThemeName() : $themeNameOrClass;
+        $tmpTheme = ThemeLoader::usingTheme($xthemeName);
 
         if ($tmpTheme !== null) {
+            if ($this->theme !== null && $tmpTheme->getName() == $this->theme->getName()) {
+                return;
+            }
             $this->theme = $tmpTheme;
             $this->theme->setPage($this);
             $mainContentArea = $this->getDocument()->getChildByID(self::MAIN_ELEMENTS[2]);
@@ -807,7 +878,7 @@ class WebPage {
      * @since 1.0
      */
     public function setTitle($val) {
-        if ($val != null) {
+        if ($val !== null) {
             $this->title = $val;
             $this->document->getHeadNode()->setTitle($this->getTitle().$this->getTitleSep().$this->getWebsiteName());
         }
@@ -979,29 +1050,6 @@ class WebPage {
 
         return $node;
     }
-    private function _loadByThemeName($themeNameOrClass) {
-        if ($themeNameOrClass === null && $this->theme === null) {
-            $themeNameOrClass = WebFioriApp::getAppConfig()->getBaseThemeName();
-        } else {
-            $themeNameOrClass = trim($themeNameOrClass);
-
-            if (strlen($themeNameOrClass) == 0) {
-                return;
-            }
-        }
-
-        if ($this->theme !== null) {
-            if ($themeNameOrClass != $this->theme->getName()) {
-                $tmpTheme = ThemeLoader::usingTheme($this, $themeNameOrClass);
-            } else {
-                return;
-            }
-        } else {
-            $tmpTheme = ThemeLoader::usingTheme($this, $themeNameOrClass);
-        }
-
-        return $tmpTheme;
-    }
     private function _resetBeforeLoaded() {
         $this->beforeRenderParams = [
             0 => [$this]
@@ -1024,7 +1072,6 @@ class WebPage {
             $pageTheme = $page->getTheme();
 
             if ($pageTheme !== null) {
-                $sysV = WebFioriApp::getAppConfig()->getVersion();
                 $themeAssetsDir = 'assets'.DS.$pageTheme->getDirectoryName();
 
                 $jsDir = $themeAssetsDir.DS.$pageTheme->getJsDirName();
@@ -1079,7 +1126,7 @@ class WebPage {
      * 
      * @since 1.0
      */
-    private function getCanonical() {
+    public function getCanonical() {
         return $this->canonical;
     }
     /**
@@ -1090,7 +1137,7 @@ class WebPage {
      * 
      * @since 1.0
      */
-    private function getDescription() {
+    public function getDescription() {
         return $this->description;
     }
     /**
@@ -1102,7 +1149,7 @@ class WebPage {
      * 
      * @since 1.0
      */
-    private function getWebsiteName() {
+    public function getWebsiteName() {
         return $this->websiteName;
     }
     /**
@@ -1112,7 +1159,7 @@ class WebPage {
      * 
      * @since 1.0
      */
-    private function isThemeLoaded() {
+    public function isThemeLoaded() {
         return $this->theme instanceof Theme;
     }
     /**
@@ -1121,19 +1168,21 @@ class WebPage {
      * The length of the given string must be 2 characters in order to set the 
      * language code.
      * 
-     * @param string $lang a two digit language code such as AR or EN.
+     * @param string $lang a two digit language code such as AR or EN. Default 
+     * value is 'EN'.
      * 
      * @since 1.0
      */
-    private function setLang($lang = 'EN') {
+    public function setLang($lang = 'EN') {
         $langU = strtoupper(trim($lang));
 
         if (strlen($lang) == 2) {
             $this->contentLang = $langU;
 
-            if ($this->document != null) {
+            if ($this->document !== null) {
                 $this->document->setLanguage($langU);
             }
+            $this->usingLanguage();
         }
     }
     /**
@@ -1157,11 +1206,21 @@ class WebPage {
      * will be based on the value returned by the method Page::getLanguageCode(). If 
      * the language of the page is not set, The method will throw an exception.
      * 
+     * @throws MissingLangException An exception will be thrown if no language file 
+     * was found that matches the given language code. Language files must 
+     * have the name 'LanguageXX.php' where 'XX' is language code. Also the function 
+     * will throw an exception when the translation file is loaded but no object 
+     * of type 'Language' was stored in the set of loaded translations.
+     * 
      * @since 1.0
      */
     private function usingLanguage() {
         if ($this->getLangCode() !== null) {
-            $this->tr = Language::loadTranslation($this->getLangCode());
+            try {
+                $this->tr = Language::loadTranslation($this->getLangCode());
+            } catch (MissingLangException $ex) {
+                throw new MissingLangException($ex->getMessage());
+            }
             $pageLang = $this->getTranslation();
             $this->setWritingDir($pageLang->getWritingDir());
         }

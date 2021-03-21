@@ -24,13 +24,34 @@
  */
 namespace webfiori\examples\views;
 
+use ibrahim\themes\IbrahimTheme;
+use webfiori\framework\Page;
 use webfiori\framework\ui\WebPage;
-
+use webfiori\theme\vutifyTheme\VuetifyTheme;
+use webfiori\theme\WebFioriV108;
 class ExamplePage extends WebPage {
     public function __construct() {
         parent::__construct();
-        
-        $div = $this->insert('div');
-        $div->text("Hello World!");
+        //load UI components (JS, CSS, ...)
+        //Experement with all themes.
+        //it is optional. to use a theme but recomended
+        //$this->setTheme(VuetifyTheme::class);
+        //$this->setTheme(IbrahimTheme::class);
+        //$this->setTheme('Vuetify Template');
+        //$this->setTheme('Bootstrap Theme');
+        //$this->setTheme('Greeny By Ibrahim Ali');
+        //Page::theme('Template Theme');
+        $this->setTheme('WebFiori Theme');
+        //$this->setTheme(WebFioriV108::class);
+        //Load language. Used to make the page i18n compatable.
+
+        $this->setTitle($this->get('pages/sample-page/title'));
+        $this->setDescription($this->get('pages/sample-page/description'));
+
+        $mainContentArea = $this->getDocument()->getChildByID('main-content-area');
+
+        //Load HTML component and insert it in the body of the page.
+        $templateDir = ROOT_DIR.DS.'app'.DS.'pages'.DS.'example-template.html';
+        $mainContentArea->component($templateDir, $this->get('pages/sample-page'));
     }
 }

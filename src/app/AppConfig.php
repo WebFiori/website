@@ -453,15 +453,6 @@ class AppConfig {
      */
     private function initDbConnections() {
         $this->dbConnections = [
-            'db-connection-0' => new ConnectionInfo('mysql','root', '123456', 'testing_db', '127.0.0.1', 3306, [
-                'connection-name' => 'db-connection-0'
-            ]),
-            'db-connection-1' => new ConnectionInfo('mysql','root', '123456', 'testing_db', '127.0.0.1', 3306, [
-                'connection-name' => 'db-connection-1'
-            ]),
-            'db-connection-2' => new ConnectionInfo('mysql','root', '123456', 'testing_db', '127.0.0.1', 3306, [
-                'connection-name' => 'db-connection-2'
-            ]),
         ];
     }
     /**
@@ -471,59 +462,28 @@ class AppConfig {
         $this->webSiteNames = [
             'EN' => 'WebFiori',
             'AR' => 'ويب فيوري',
-            'FR' => 'Fran',
-            'DE' => 'De Name',
-            'LK' => 'LK Name',
-            'PO' => 'PO Name',
-            'DS' => 'DSGDDD',
         ];
     
         $this->defaultPageTitles = [
-            'EN' => 'WebFiori OO',
-            'AR' => 'ويب فيوري',
-            'FR' => 'Fran',
-            'DE' => 'De Name',
-            'LK' => 'LK Name',
-            'PO' => 'PO Name',
-            'DS' => 'DSGDDD',
+            'EN' => 'Hello World',
+            'AR' => 'اهلا و سهلا',
         ];
         $this->descriptions = [
-            'EN' => 'WebFiori',
-            'AR' => 'ويب فيوري',
-            'FR' => 'Fran',
-            'DE' => 'De Desc',
-            'LK' => 'LK Desc',
-            'PO' => 'PO Desc',
-            'DS' => 'FFFFFFFFFFFFFFff',
+            'EN' => '',
+            'AR' => '',
         ];
         $this->baseUrl = Uri::getBaseURL();
-        $this->titleSep = ' | ';
+        $this->titleSep = '|';
         $this->primaryLang = 'EN';
         $this->baseThemeName = \webfiori\theme\WebFioriV108::class;
         $this->adminThemeName = \webfiori\theme\WebFioriV108::class;
-        $this->homePage = 'https://example.com';
+        $this->homePage = Uri::getBaseURL();
     }
     /**
      * @since 1.0
      */
     private function initSmtpConnections() {
         $this->emailAccounts = [
-            'smtp-connection-0' => new SMTPAccount([
-                'port' => 465,
-                'user' => 'ibinshikh@gmail.com',
-                'pass' => '1329704803',
-                'sender-name' => 'Ibrahim Ali',
-                'sender-address' => 'ibinshikh@gmail.com',
-                'account-name' => 'smtp-connection-0'
-            ]),
-            'smtp-connection-1' => new SMTPAccount([
-                'port' => 465,
-                'user' => 'ibinshikh@gmail.com',
-                'pass' => '1329704803',
-                'sender-name' => 'Ibrahim XY\'s Super',
-                'sender-address' => 'ibinshikh@gmail.com',
-                'account-name' => 'smtp-connection-1'
-            ]),
         ];
     }
     /**
