@@ -67,7 +67,10 @@ class NewWebFiori extends Theme {
         $itemsPanel->addChild('v-expansion-panels', [], false)
         ->addChild(
                 $this->createDrawerMenuItem(
-                $this->createButton(['text', 'block', 'href' => $this->getBaseURL().'/about-me'], $page->get('main-menu/about-me'), 'mdi-information-variant')));
+                $this->createButton([
+                    'text', 'block', 
+                    'href' => $this->getBaseURL().'/about-me'
+                    ], $page->get('main-menu/about-me'), 'mdi-information-variant')));
         return $sideDrawer;
     }
 
@@ -129,12 +132,13 @@ class NewWebFiori extends Theme {
         
         $vAppBar = new HTMLNode('v-app-bar', [
             'app',
-            'color' => 'green',
+            //'color' => 'green',
             //'src' => $this->getBaseURL().'/assets/images/WFLogo512.png',
             //'hide-on-scroll',
             //'elevate-on-scroll',
             'fixed',
-            'height' => '80px'
+            'height' => '80px',
+            'flat'
         ]);
         
         $vAppBar->addChild('v-app-bar-nav-icon', [
@@ -160,27 +164,24 @@ class NewWebFiori extends Theme {
                     'style' => [
                         'width' => '80px'
                     ]
-                ])
-                ->getParent()
-                ->getParent()
-                ->addChild(HTMLNode::createTextNode('<template v-slot:img="{ props }">
-                <v-img
-                  v-bind="props"
-                  gradient="to top right, rgba(19,84,122,.5), rgba(128,208,199,.8)"
-                ></v-img>
-              </template>', false));
+                ]);
         $vAppBar->addChild('v-spacer');
         $navLinksContainer = new HTMLNode('v-container', [
             'class' => 'd-none d-md-flex'
         ]);
         $vAppBar->addChild($navLinksContainer);
         $navLinksContainer->addChild(
-                self::createButton(['text', 'href' => $this->getBaseURL().'/about-me'], $page->get('main-menu/about-me'), 'mdi-information-variant'))
+                self::createButton(['text', 
+                    'href' => $this->getBaseURL().'/docs/webfiori'], 'API Reference'))
                 ->addChild(
-                self::createButton(['text', 'href' => $this->getBaseURL().'/contact-me'], $page->get('main-menu/contact-me'), 'mdi-comment-plus-outline'))
-                ->addChild(
-                self::createButton(['text', 'href' => $this->getBaseURL().'/tools'], $page->get('main-menu/tools'), 'mdi-tools'))
+                self::createButton(['text', 'href' => $this->getBaseURL().'/learn'], 'Learn'))
                 ->getParent()->addChild('v-spacer');
+        $searchContainer = new HTMLNode('v-container');
+        $vAppBar->addChild($searchContainer);
+        $searchContainer->addChild('v-text-field', [
+            'outlined', 'prepend-inner-icon' => 'mdi-magnify',
+            'dense', 'rounded'
+        ]);
         return $vAppBar;
     }
     public static function createButton($props = [], $text = null, $icon = null, $iconProps = []) {

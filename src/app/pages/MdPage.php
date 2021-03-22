@@ -8,14 +8,15 @@ use webfiori\http\Response;
 use webfiori\ui\CodeSnippet;
 use webfiori\ui\Paragraph;
 use webfiori\ui\Anchor;
+use webfiori\views\WebFioriPage;
 /**
  * Description of MdPage
  *
  * @author Ibrahim
  */
-class MdPage {
+class MdPage extends WebFioriPage{
     public function __construct($username, $repo, $filePath, $branch = 'master') {
-        Page::theme('WebFiori V108');
+        parent::__construct();
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
@@ -34,17 +35,17 @@ class MdPage {
             $asTxt = $parsedown->text($exeResult);
             $node = HTMLNode::fromHTMLText($asTxt);
             $super = new HTMLNode();
-            Page::insert($super);
-            $base = Page::canonical();
+            $this->insert($super);
+            $base = $this->getCanonical();
             
             foreach ($node as $xNode) {
                 if ($xNode->getNodeName() == 'h1') {
                     $title = $xNode->getChild(0) !== null ? $xNode->getChild(0)->getText() : 'Default';
-                    Page::title($title);
+                    $this->setTitle($title);
                 }
                 if (in_array($xNode->getNodeName(), ['h1','h2','h3','h4','h5','h6'])) {
                     $id = $this->getNodeBodyAsTxt($xNode);
-                    $links = Page::document()->getChildrenByAttributeValue('href', '#'.$id);
+                    $links = $this->getDocument()->getChildrenByAttributeValue('href', '#'.$id);
                     if ($links->size() == 1) {
                         $links->get(0)->setAttribute('href', $base.'#'.$id);
                     }
@@ -79,7 +80,6 @@ class MdPage {
             $paragraph->text('<b>Found a mistake or want to contribute?</b> You can edit this '
                     . "page on $anchor.", false);
             $super->addChild($paragraph);
-            Page::render();
         }
     }
     /**

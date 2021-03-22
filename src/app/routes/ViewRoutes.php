@@ -57,12 +57,14 @@ class ViewRoutes {
             'path'=>'/learn', 
             'route-to'=>function () {
                 $mdPage = new MdPage('WebFiori', 'docs', 'index');
+                $mdPage->render();
             }
         ]);
         Router::closure([
             'path'=>'/learn/{path}', 
             'route-to'=>function () {
                 $mdPage = new MdPage('WebFiori', 'docs', Router::getVarValue('path'));
+                $mdPage->render();
             }
         ]);
         Router::view([

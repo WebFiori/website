@@ -14,7 +14,7 @@ window.app = new Vue({
     vuetify: new Vuetify({
         rtl:window.data.is_rtl,
         theme: {
-            dark:window.data.dark,
+            //dark:window.data.dark,
             themes: {
                 light: {
                     

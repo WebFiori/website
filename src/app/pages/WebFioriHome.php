@@ -3,6 +3,7 @@ namespace webfiori\views;
 use webfiori\views\WebFioriPage;
 use webfiori\ui\UnorderedList;
 use webfiori\framework\WebFioriApp;
+use webfiori\ui\HTMLNode;
 /**
  * Description of WebFioriHome
  *
@@ -15,9 +16,70 @@ class WebFioriHome extends WebFioriPage{
             'description' => 'WebFiori Framework. Built to make the web blooming.'
         ]);
 
-        $this->createSec1();
-        $this->createSec4();
-        $this->createSec2();
+        $row = new HTMLNode('v-row');
+        $this->insert($row);
+        $col = $row->addChild('v-col', [
+            'cols' => 12,
+            'md' => 4,
+            'sm' => 12
+        ], false);
+        $col->addChild('v-img', [
+            'src' => 'assets/images/WFLogo512.png',
+            'width' => '300px',
+            'height' => '300px'
+        ]);
+        $rightCol = $row->addChild('v-col', [
+            'cols' => 12,
+            'md' => 8,
+            'sm' => 12,
+            'style' => [
+                'font-size' => '3.2rem'
+            ]
+        ], false);
+        $rightColRow = $rightCol->addChild('v-row', [], false);
+        $rightColRow->addChild('v-col', [
+            'cols' => 12
+        ], false)->text('The Awesome PHP Web Develepment Framework');
+        $rightColRow->addChild('v-col', [
+            'cols' => 12,
+            'md' => 4,
+            'sm' => 6,
+            'xs' => 12
+        ], false)->addChild('v-btn', [
+            'rounded','x-large',
+            'color' => '#a6dc20', 'outlined',
+            'href' => 'learn/introduction'
+        ], false)->addChild('v-btn', [
+            'fab', 'small','oulined','depressed', 
+            'color' => 'white',
+            'href' => 'learn/introduction',
+            'style' => [
+                'margin-right' => '5px'
+            ]], false)
+            ->addChild('v-icon', [
+            'rounded', 
+        ], false)->text('mdi-flag-checkered')
+        ->getParent()->getParent()->text('Get Started');
+        $rightColRow->addChild('v-col', [
+            'cols' => 12,
+            'md' => 4,
+            'sm' => 6,
+            'xs' => 12
+        ], false)->addChild('v-btn', [
+            'rounded','x-large',
+            'color' => 'gray', 'outlined',
+            'href' => 'https://github.com/webfiori/framework',
+        ], false)->addChild('v-btn', [
+            'fab', 'small','oulined','depressed', 
+            'color' => 'white',
+            'href' => 'https://github.com/webfiori/framework',
+            'style' => [
+                'margin-right' => '5px'
+            ]], false)
+            ->addChild('v-icon', [
+            'rounded', 
+        ], false)->text('mdi-github')
+        ->getParent()->getParent()->text('GitHub');
         //$this->createSec3();
     }
     public function createSec4() {

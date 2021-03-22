@@ -10,6 +10,7 @@ use webfiori\collections\Stack;
 use webfiori\ui\HTMLNode;
 use Exception;
 use webfiori\framework\File;
+use webfiori\framework\ui\WebPage;
 /**
  * A PHPDoc parser class which is used to generate API docs for PHP classes.
  *
@@ -148,20 +149,23 @@ class DocGenerator {
         $base = $this->getBaseURL();
         $outputPath = $this->getOutputPath();
         $options = $this->getOptions();
+        $page = new WebPage();
         foreach ($this->getNSAPIObjcts() as $nsObj){
-            $theme = Page::theme($themeName);
+            
+            $page->setTheme($themeName);
+            $theme = $page->getTheme();
             if($theme instanceof APITheme){
                 $theme->setBaseURL($this->getBaseURL());
-                Page::siteName($siteName);
-                Page::insert($theme->createNamespaceContentBlock($nsObj));
+                $page->setWebsiteName($siteName);
+                $page->insert($theme->createNamespaceContentBlock($nsObj));
                 //$page = new APIPage($classAPI);
                 $canonical = trim($base,'/'). str_replace('\\', '/', $nsObj->getName());
-                Page::canonical($canonical);
-                Page::description('All classes and sub-namespaces in the namespace \''.$nsObj->getName().'\'.');
-                Page::title('Namespace '.$nsObj->getName());
+                $page->setCanonical($canonical);
+                $page->setDescription('All classes and sub-namespaces in the namespace \''.$nsObj->getName().'\'.');
+                $page->setTitle('Namespace '.$nsObj->getName());
                 $this->_createAsideNav();
-                $this->createNSIndexFile($outputPath,$nsObj->getName(), $options);
-                Page::reset();
+                $this->createNSIndexFile($outputPath,$nsObj->getName(), $options, $page);
+                $page->reset();
             }
         }
     }
@@ -176,31 +180,31 @@ class DocGenerator {
         $base = $this->getBaseURL();
         $options = $this->getOptions();
         $count = 1;
+        $page = new WebPage();
         foreach ($this->apiReadersArr as $reader){
-            Page::lang('EN');
-            Page::dir('ltr');
-            
-            $theme = Page::theme($themeName);
+            $page->setLang('EN');
+            $page->setTheme($themeName);
+            $theme = $page->getTheme();
             
             if($theme instanceof APITheme){
                 
                 $theme->setBaseURL($this->getBaseURL());
-                Page::siteName($siteName);
+                $page->setWebsiteName($siteName);
                 
                 $classAPI = new ClassAPI($reader,$this->getLinks(),$options);
                 
                 $classAPI->setBaseURL($base);
                 $theme->setClass($classAPI);
-                Page::insert($theme->createBodyNode());
+                $page->insert($theme->createBodyNode());
                 //$page = new APIPage($classAPI);
                 $canonical = $base. str_replace('\\', '/', $classAPI->getNameSpace()).'/'.$classAPI->getName();
-                Page::canonical($canonical);
-                Page::description($classAPI->getSummary());
+                $page->setCanonical($canonical);
+                $page->setDescription($classAPI->getSummary());
                 $this->_createAsideNav();
-                $this->_createAPIPage($classAPI, $options);
+                $this->_createAPIPage($classAPI, $options, $page);
                 self::logMessage($count.' Page Created.');
                 $count++;
-                Page::reset();
+                $page->reset();
             }
             else{
                 throw new Exception('The selected theme is not a sub-class of \'APITheme\'.');
@@ -234,12 +238,12 @@ class DocGenerator {
      * @param type $classAPI
      * @param type $options
      */
-    private function _createAPIPage($classAPI,$options){
+    private function _createAPIPage($classAPI,$options, WebPage $p){
         if($this->isDynamicPage()){
-            $this->createPHPFile($classAPI,$options['output-path'], $options);
+            $this->createPHPFile($classAPI,$options['output-path'], $options, $p);
         }
         else{
-            $this->createHTMLFile($classAPI,$options['output-path']);
+            $this->createHTMLFile($classAPI,$options['output-path'], $p);
         }
     }
     private function isDynamicPage() {
@@ -247,7 +251,7 @@ class DocGenerator {
     }
     public function createPHPFile($classAPI, $path,$options=array(
         
-    )) {
+    ), WebPage $page) {
         $savePath = $path.$classAPI->getNameSpace();
         if(Util::isDirectory($savePath, true)){
             $file = new File();
@@ -260,22 +264,22 @@ class DocGenerator {
             $file->setRawData(
                     '<?php'."\r\n"
                     . 'namespace docGenerator'.$ns.";\r\n"
-                    . 'use webfiori\framework\Page as P;'."\r\n"
+                    . 'use webfiori\framework\ui\WebPage as P;'."\r\n"
                     . 'use webfiori\ui\HTMLNode;'."\r\n"
-                    . 'class '.$classAPI->getName().'View{'."\r\n"
+                    . 'class '.$classAPI->getName().'View extends WebPage {'."\r\n"
                     . '    public function __construct(){'."\r\n"
-                    . '        P::theme(\''.$options['theme'].'\');'."\r\n"
-                    . '        P::document()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
-                    . '        P::description(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::description())).'\');'."\r\n"
-                    . '        P::siteName(\''.Page::siteName().'\');'."\r\n"
-                    . '        P::title(\''.Page::title().'\');'."\r\n"
+                    . '        parent::__construct();'."\r\n"
+                    . '        $this->setTheme(\''.$options['theme'].'\');'."\r\n"
+                    . '        $this->getDocument()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
+                    . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getDescription())).'\');'."\r\n"
+                    . '        $this->setWebsiteName(\''.$page->getWebsiteName().'\');'."\r\n"
+                    . '        $this->setTitle(\''.$page->getTitle().'\');'."\r\n"
                     . '        $pageBody = new HTMLNode();'."\r\n"
                     . '        $pageBody->addTextNode(\''."\r\n"
-                    . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
+                    . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
                     . '        ,false);'."\r\n"
-                    . '        $body = P::document()->getChildByID(\'page-body\');'."\r\n"
-                    . '        P::document()->getBody()->replaceChild($body, $pageBody);'."\r\n"
-                    . '        P::render();'."\r\n"
+                    . '        $body = $this->getChildByID(\'page-body\');'."\r\n"
+                    . '        $this->getDocument()->getBody()->replaceChild($body, $pageBody);'."\r\n"
                     . '    }'."\r\n"
                     . '}'."\r\n"
                     . 'new '.$classAPI->getName().'View();'
@@ -285,13 +289,13 @@ class DocGenerator {
         }
         return FALSE;
     }
-    public function createHTMLFile($class,$path) {
+    public function createHTMLFile($class,$path, WebPage $p) {
         $savePath = $path.$class->getNameSpace();
         if(Util::isDirectory($savePath, true)){
             $file = new File();
             $file->setName($class->getName().'View.html');
             $file->setPath($savePath);
-            $file->setRawData(Page::document()->toHTML());
+            $file->setRawData($p->getDocument()->toHTML());
             $file->write(false, true);
             return TRUE;
         }
@@ -401,7 +405,7 @@ class DocGenerator {
      * Creates aside navigation menu which contains 
      * all system classes along packages.
      */
-    private function _createAsideNav(){
+    private function _createAsideNav(WebPage $page){
         if($this->asideNavNode === null){
             $linksArr = [];
             $base = trim($this->getBaseURL(),'/');
@@ -413,9 +417,9 @@ class DocGenerator {
                 ];
                 $linksArr[] = $subList;
             }
-            $this->asideNavNode = Page::theme()->createNSAside($linksArr);
+            $this->asideNavNode = $page->getTheme()->createNSAside($linksArr);
         }
-        $aside = Page::document()->getChildByID('side-content-area');
+        $aside = $page->getChildByID('side-content-area');
         $aside->addChild($this->asideNavNode);
     }
     /**
@@ -457,7 +461,7 @@ class DocGenerator {
      * @param type $options
      * @return boolean
      */
-    private function createNSIndexFile($path,$ns,$options){
+    private function createNSIndexFile($path,$ns,$options, WebPage $p){
         $ns = trim($ns,'\\');
         if(strlen($ns) != 0){
             $ns = '\\'.$ns;
@@ -471,29 +475,29 @@ class DocGenerator {
                 $file->setRawData(
                         '<?php'."\r\n"
                         . 'namespace docGenerator'.$ns.";\r\n"
-                        . 'use webfiori\framework\Page as P;'."\r\n"
+                        . 'use webfiori\framework\ui\WebPage as P;'."\r\n"
                         . 'use webfiori\ui\HTMLNode;'."\r\n"
-                        . 'class NSIndexView{'."\r\n"
+                        . 'class NSIndexView extends P {'."\r\n"
                         . '    public function __construct(){'."\r\n"
-                        . '        P::theme(\''.$options['theme'].'\');'."\r\n"
-                        . '        P::document()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
-                        . '        P::description(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::description())).'\');'."\r\n"
-                        . '        P::siteName(\''.Page::siteName().'\');'."\r\n"
-                        . '        P::title(\''. str_replace('\\', '\\\\', Page::title()).'\');'."\r\n"
+                        . '        parent::__construct();'."\r\n"
+                        . '        $this->setTheme(\''.$options['theme'].'\');'."\r\n"
+                        . '        $this->getDocument()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
+                        . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $p->getDescription())).'\');'."\r\n"
+                        . '        $this->setWebsiteName(\''.$p->getWebsiteName().'\');'."\r\n"
+                        . '        $this->setTitle(\''. str_replace('\\', '\\\\', $p->getTitle()).'\');'."\r\n"
                         . '        $pageBody = new HTMLNode();'."\r\n"
                         . '        $pageBody->addTextNode(\''."\r\n"
-                        . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', Page::document()->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
+                        . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', $p->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
                         . '        ,false);'."\r\n"
-                        . '        $body = P::document()->getChildByID(\'page-body\');'."\r\n"
-                        . '        P::document()->getBody()->replaceChild($body, $pageBody);'."\r\n"
-                        . '        P::render();'."\r\n"
+                        . '        $body = $this->getChildByID(\'page-body\');'."\r\n"
+                        . '        $this->getDocument()->getBody()->replaceChild($body, $pageBody);'."\r\n"
                         . '    }'."\r\n"
                         . '}'."\r\n"
                         . 'return __NAMESPACE__;'
                 );
             } else {
                 $file->setName('NSIndexView.html');
-                $file->setRawData(Page::document()->toHTML());
+                $file->setRawData($p->toHTML());
             }
             $file->write(false, true);
             return true;
