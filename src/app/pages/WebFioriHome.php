@@ -1,9 +1,8 @@
 <?php
 namespace webfiori\views;
-use webfiori\framework\Page;
 use webfiori\views\WebFioriPage;
 use webfiori\ui\UnorderedList;
-use webfiori\framework\WebFiori;
+use webfiori\framework\WebFioriApp;
 /**
  * Description of WebFioriHome
  *
@@ -11,28 +10,26 @@ use webfiori\framework\WebFiori;
  */
 class WebFioriHome extends WebFioriPage{ 
     public function __construct() {
-        parent::__construct();
-        //Page::document()->getBody()->setStyle();
-        Page::document()->getBody()->addChild($this->getWFBG());
-        Page::title('WebFiori Home');
-        Page::siteName('WebFiori Framework');
-        Page::description('WebFiori Framework. Built to make the web blooming.');
+        parent::__construct([
+            'title' => 'WebFiori Home',
+            'description' => 'WebFiori Framework. Built to make the web blooming.'
+        ]);
+
         $this->createSec1();
         $this->createSec4();
         $this->createSec2();
         //$this->createSec3();
-        Page::render();
     }
     public function createSec4() {
         $sec = $this->createSection('Downloading The Framework',3);
-        $sec->addChild($this->createParagraph('Please go to <a href="'.WebFiori::getSiteConfig()->getBaseURL().'/download">downloads page</a> to check the available '
+        $sec->addChild($this->createParagraph('Please go to <a href="'.WebFioriApp::getAppConfig()->getBaseURL().'/download">downloads page</a> to check the available '
                 . 'download options. After completing the download process, you can '
                 . 'go to <a href="learn" >learning center</a> in order to get started.'));
         $sec->addChild($this->createParagraph('In addition to the pre-made package, you can use '
                 . 'composer to download the framework and its dependencies. just issue the '
                 . 'following composer command to download the framework:'));
         $sec->addChild($this->createParagraph('<code>composer require webfiori/framework</code>'));
-        Page::insert($sec);
+        $this->insert($sec);
     }
     public function createSec2(){
         $sec = $this->createSection('Is it free to use?',3);
@@ -40,7 +37,7 @@ class WebFioriHome extends WebFioriPage{
                 . 'addition, it is open source. This means you can modify the '
                 . 'source code of the framework the way you like as long as you '
                 . 'follow MIT license regarding open source software modifications.'));
-        Page::insert($sec);
+        $this->insert($sec);
     }
     public function createSec3(){
         $sec = $this->createSection('Why did you build such framework since there are many '
@@ -67,7 +64,7 @@ class WebFioriHome extends WebFioriPage{
                 . 'new concepts which I did not know about while I was student '
                 . 'at university. Building something new from scratch was a good '
                 . 'chance to learn new things and to put my skills into something that can help me and others.'));
-        Page::insert($sec);
+        $this->insert($sec);
     }
     private function createSec1(){
         $sec = $this->createSection('What is WebFiori Framework?',3);
@@ -103,7 +100,7 @@ class WebFioriHome extends WebFioriPage{
             'Ability to create custom command line interface (CLI) commands.'
         ]);
         $sec->addChild($ul);
-        Page::insert($sec);
+        $this->insert($sec);
     }
 }
-new WebFioriHome();
+return __NAMESPACE__;

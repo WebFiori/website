@@ -6,12 +6,27 @@ use webfiori\ui\ListItem;
 use webfiori\ui\Anchor;
 use webfiori\ui\HTMLNode;
 use webfiori\ui\Paragraph;
+use webfiori\framework\ui\WebPage;
+use webfiori\json\Json;
+use webfiori\ui\JsCode;
 /**
  * Description of WebFioriPage
  *
  * @author Ibrahim
  */
-class WebFioriPage {
+class WebFioriPage extends WebPage{
+    /**
+     *
+     * @var JsCode 
+     */
+    private $topInlineJs;
+    /**
+     * A json object that holds backend data. Used to send data to 
+     * frontend.
+     * 
+     * @var Json 
+     */
+    private $jsonData;
     /**
      * Creates new instance of the class.
      * @param array $options An associative array of options. 
@@ -29,26 +44,24 @@ class WebFioriPage {
      * </ul>
      */
     public function __construct($options=array()) {
-        Page::theme('WebFiori V108');
+        parent::__construct();
+        
+        $this->setTheme();
         if(isset($options['title'])){
-            Page::title($options['title']);
-        } else {
-            Page::title('WebFiori Page');
+            $this->setTitle($options['title']);
         }
         if(isset($options['description'])){
-            Page::description($options['description']);
-        } else {
-            Page::description(WebFiori::getSiteConfig()->getDescriptions()['EN']);
+            $this->setDescription($options['description']);
         }
-        if(isset($options['canonical'])){
-            Page::canonical($options['canonical']);
-        }
-        if(isset($options['site-name'])){
-            Page::siteName($options['site-name']);
-        } else {
-            Page::siteName(WebFiori::getSiteConfig()->getWebsiteNames()['EN']);
-        }
-        Page::lang('EN');
+        $this->jsonData = new Json([
+            'snackbar' => new Json([
+                'visible' => false,
+                'color' => '',
+                'text' => '',
+            ]),
+            'is_rtl' => $this->getTranslation()->getWritingDir() == 'rtl'
+        ]);
+        $this->topInlineJs = new JsCode();
     }
     /**
      * Creates HTML node of type 'img'
@@ -115,22 +128,14 @@ class WebFioriPage {
      * @return HTMLNode
      */
     public function createSection($title,$hLevel=3,$secId=null) {
-        $sec = Page::theme()->createHTMLNode([
-            'type'=>'section',
-            'title'=>$title,
-            'element-id'=>$secId,
-            'h-level'=>$hLevel
-        ]);
         
-        if($sec == null){
-            $sec = new HTMLNode('section');
-            $hLevelX = $hLevel > 0 && $hLevel < 7 ? $hLevel : 1;
-            $h = new HTMLNode('h'.$hLevelX);
-            $h->addTextNode($title);
-            $sec->addChild($h);
-            if($secId !== null){
-                $h->setID($secId);
-            }
+        $sec = new HTMLNode('section');
+        $hLevelX = $hLevel > 0 && $hLevel < 7 ? $hLevel : 1;
+        $h = new HTMLNode('h'.$hLevelX);
+        $h->addTextNode($title);
+        $sec->addChild($h);
+        if($secId !== null){
+            $h->setID($secId);
         }
         return $sec;
     }
@@ -164,16 +169,45 @@ class WebFioriPage {
         return $questionSec;
     }
     /**
-     * Creates a generic HTMLNode based on the loaded theme.
-     * @param array $options An array of options. The options depends on the 
-     * loaded theme.
-     * @return HTMLNode
+     * Adds an inline JavAscript code to the &gt;head&lt; tag of the page.
+     * 
+     * this is mainly used to initialize JavAscript variables that might be used 
+     * in front-end.
+     * 
+     * @param string $code A valid JavaScript code as string.
      */
-    public function createNode($options) {
-        return Page::theme()->createHTMLNode($options);
+    public function addInlineJs($code) {
+        $this->getTopInlineJs()->addCode($code."\n");
     }
-    public function displayView() {
-        Page::render();
+    /**
+     * Returns the object that holds the inline JavaScript code.
+     * 
+     * @return JsCode
+     */
+    public function getTopInlineJs() {
+        return $this->topInlineJs;
     }
-    
+    /**
+     * Returns an object of type Json that contains all JSON attributes.
+     * 
+     * Initially, the object will contain all common attributes for all pages.
+     * 
+     * @return Json
+     * 
+     */
+    public function getJson() {
+        return $this->jsonData;
+    }
+    /**
+     * Adds a set of attributes to the json data.
+     * 
+     * @param array $arrOfAttrs An associative array. The indices of the array 
+     * are attributes names and the value of each index is the value that will 
+     * be passed.
+     */
+    public function addToJson($arrOfAttrs) {
+        foreach ($arrOfAttrs as $attrKey => $attrVal) {
+            $this->getJson()->add($attrKey, $attrVal);
+        }
+    }
 }

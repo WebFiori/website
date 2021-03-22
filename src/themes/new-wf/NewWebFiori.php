@@ -4,6 +4,8 @@ namespace webfiori\theme;
 use webfiori\framework\Theme;
 use webfiori\framework\ui\WebPage;
 use webfiori\ui\HTMLNode;
+use webfiori\ui\HeadNode;
+use webfiori\ui\Anchor;
 
 /**
  * The new WebFiori framework website theme.
@@ -39,7 +41,7 @@ class NewWebFiori extends Theme {
             $page->removeChild($header);
             $page->removeChild($body);
             $page->removeChild($footer);
-            $page->addChild($appDiv);
+            $page->getDocument()->addChild($appDiv);
             $page->getChildByID('main-content-area')->setClassName('container');
             $page->addBeforeRender(function (WebPage $page) {
                 $page->getDocument()->getBody()->addChild('script', [
@@ -59,7 +61,6 @@ class NewWebFiori extends Theme {
             'width' => '250px',
             'app', 'temporary',
         ]);
-        $sideDrawer->addChild($this->createAvatar());
         $sideDrawer->addChild('v-divider');
         $itemsPanel = new HTMLNode('template');
         $sideDrawer->addChild($itemsPanel);
@@ -73,9 +74,10 @@ class NewWebFiori extends Theme {
     public function getFooterNode() {
         $page = $this->getPage();
         $footer = new HTMLNode('v-footer', [
-            'padless'
+            'padless',
         ]);
-        $card = new HTMLNode('v-card', ['flat', 'tile', 'class' => 'flex', 'dark']);
+        $card = new HTMLNode('v-card', [
+            'flat', 'tile', 'class' => 'flex text-center', 'dark']);
         $footer->addChild($card);
         $card->addChild('v-card-text', [], false)
                 ->addChild($this->createButton([
@@ -110,7 +112,6 @@ class NewWebFiori extends Theme {
     }
 
     public function getHeadNode() {
-        $page = $this->getPage();
         $head = new HeadNode();
         $head->addJs('https://unpkg.com/vue@2.x.x');
         $head->addCSS('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
@@ -120,18 +121,20 @@ class NewWebFiori extends Theme {
         $head->addJs('https://cdn.jsdelivr.net/gh/usernane/AJAXRequestJs@1.x.x/AJAXRequest.js',[
             'revision' => true
         ]);
+        return $head;
     }
 
     public function getHeadrNode() {
-        
+        $page = $this->getPage();
         
         $vAppBar = new HTMLNode('v-app-bar', [
             'app',
             'color' => 'green',
             //'src' => $this->getBaseURL().'/assets/images/WFLogo512.png',
-            'hide-on-scroll',
-            'elevate-on-scroll',
-            'fixed'
+            //'hide-on-scroll',
+            //'elevate-on-scroll',
+            'fixed',
+            'height' => '80px'
         ]);
         
         $vAppBar->addChild('v-app-bar-nav-icon', [
@@ -142,14 +145,23 @@ class NewWebFiori extends Theme {
                         'min-width' => '250px'
                     ]
                 ], false)
-                ->addChild(new Anchor($this->getBaseURL(), $page->getWebsiteName()), [
+                ->addChild(new Anchor($this->getBaseURL(), 
+                        //$page->getWebsiteName()
+                        ''
+                        ), [
                     'style' => [
                         'color' => 'white',
                         'text-decoration' => 'none',
                         'font-weight' => 'bold'
                     ],
                     'class' => 'site-name'
+                ], false)->addChild('img', [
+                    'src' => 'assets/images/WFLogo512.png',
+                    'style' => [
+                        'width' => '80px'
+                    ]
                 ])
+                ->getParent()
                 ->getParent()
                 ->addChild(HTMLNode::createTextNode('<template v-slot:img="{ props }">
                 <v-img
@@ -163,15 +175,34 @@ class NewWebFiori extends Theme {
         ]);
         $vAppBar->addChild($navLinksContainer);
         $navLinksContainer->addChild(
-                $this->createButton(['text', 'href' => $this->getBaseURL().'/about-me'], $page->get('main-menu/about-me'), 'mdi-information-variant'))
+                self::createButton(['text', 'href' => $this->getBaseURL().'/about-me'], $page->get('main-menu/about-me'), 'mdi-information-variant'))
                 ->addChild(
-                $this->createButton(['text', 'href' => $this->getBaseURL().'/contact-me'], $page->get('main-menu/contact-me'), 'mdi-comment-plus-outline'))
+                self::createButton(['text', 'href' => $this->getBaseURL().'/contact-me'], $page->get('main-menu/contact-me'), 'mdi-comment-plus-outline'))
                 ->addChild(
-                $this->createButton(['text', 'href' => $this->getBaseURL().'/tools'], $page->get('main-menu/tools'), 'mdi-tools'))
+                self::createButton(['text', 'href' => $this->getBaseURL().'/tools'], $page->get('main-menu/tools'), 'mdi-tools'))
                 ->getParent()->addChild('v-spacer');
-        $this->createDarkSwitch($vAppBar);
-        $this->createLangSwitch($vAppBar);
         return $vAppBar;
     }
-
+    public static function createButton($props = [], $text = null, $icon = null, $iconProps = []) {
+        $btn = new HTMLNode('v-btn', $props);
+        
+        if ($text !== null) {
+            $btn->text($text);
+        }
+        if ($icon !== null) {
+            $btn->addChild('v-icon', $iconProps, false)->text($icon);
+        }
+        return $btn;
+    }
+    private function createDrawerMenuItem($listTitle) {
+        $item = new HTMLNode('v-list-item');
+        $last = $item->addChild('v-list-item-content', [], false)
+             ->addChild('v-list-item-title', [], false);
+        if ($listTitle instanceof HTMLNode) {
+            $last->addChild($listTitle);
+        } else {
+            $last->text($listTitle);
+        }
+        return $item;
+    }
 }

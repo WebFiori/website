@@ -159,7 +159,7 @@ class WebFioriAPITheme extends APITheme {
 
     public function getHeadNode() {
         $headTag = new HeadNode();
-        $headTag->setBase(WebFiori::getSiteConfig()->getBaseURL());
+        $headTag->setBase(WebFioriApp::getAppConfig()->getBaseURL());
         $headTag->addLink('icon', Page::imagesDir().'/favicon.png');
         $analId = 'UA-91825602-1';
         $headTag->addJs('https://www.googletagmanager.com/gtag/js?id='.$analId, [
