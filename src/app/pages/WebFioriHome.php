@@ -21,7 +21,9 @@ class WebFioriHome extends WebFioriPage{
         $col = $row->addChild('v-col', [
             'cols' => 12,
             'md' => 4,
-            'sm' => 12
+            'sm' => 12,
+            'xl' => 12,
+            'align' => 'center'
         ], false);
         $col->addChild('v-img', [
             'src' => 'assets/images/WFLogo512.png',
@@ -32,14 +34,18 @@ class WebFioriHome extends WebFioriPage{
             'cols' => 12,
             'md' => 8,
             'sm' => 12,
+            'xl' => 12,
+            'align' => 'center',
             'style' => [
                 'font-size' => '3.2rem'
             ]
         ], false);
-        $rightColRow = $rightCol->addChild('v-row', [], false);
+        $rightColRow = $rightCol->addChild('v-row', [
+            'justify' => 'center'
+        ], false);
         $rightColRow->addChild('v-col', [
             'cols' => 12
-        ], false)->text('The Awesome PHP Web Develepment Framework');
+        ], false)->text('The Framework That Makes Web Development The Way We Like');
         $rightColRow->addChild('v-col', [
             'cols' => 12,
             'md' => 4,
