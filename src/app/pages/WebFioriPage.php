@@ -210,4 +210,21 @@ class WebFioriPage extends WebPage{
             $this->getJson()->add($attrKey, $attrVal);
         }
     }
+    /**
+     * Specify the script that will be used to initialize vue.
+     * 
+     * @param string $vueScript The location of the JavaScript file. Usually, 
+     * a file somewhere in the directory 'assets'.
+     */
+    public function setVue($vueScript) {
+        if (strlen($vueScript) > 0) {
+            $this->addBeforeRender(function(WebPage $p, $v){
+                $p->getDocument()->addChild('script', [
+                    'src' => $v,
+                    'type' => 'text/javascript'
+                ]);
+                $this->removeChild('default-vue-init');
+            }, [$vueScript]);
+        }
+    }
 }
