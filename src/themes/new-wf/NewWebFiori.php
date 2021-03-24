@@ -6,6 +6,7 @@ use webfiori\framework\ui\WebPage;
 use webfiori\ui\HTMLNode;
 use webfiori\ui\HeadNode;
 use webfiori\ui\Anchor;
+use webfiori\ui\JsCode;
 
 /**
  * The new WebFiori framework website theme.
@@ -49,6 +50,10 @@ class NewWebFiori extends Theme {
                     'src' => 'assets/new-wf/default.js',
                     'id' => 'default-vue-init'
                 ]);
+                $page->getDocument()->getBody()->addChild('script', [
+                    'src' => 'assets/js/prism.js',
+                    'type' => 'text/javascript'
+                ], false);
             });
         });
     }
@@ -116,6 +121,9 @@ class NewWebFiori extends Theme {
 
     public function getHeadNode() {
         $head = new HeadNode();
+        $head->addCSS('assets/css/prism.css');
+        $head->addCSS('assets/css/code-theme.css');
+        
         $head->addJs('https://unpkg.com/vue@2.x.x');
         $head->addCSS('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
         $head->addCSS('https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css');
@@ -124,6 +132,15 @@ class NewWebFiori extends Theme {
         $head->addJs('https://cdn.jsdelivr.net/gh/usernane/AJAXRequestJs@1.x.x/AJAXRequest.js',[
             'revision' => true
         ]);
+        
+        $head->addJs("https://www.googletagmanager.com/gtag/js?id=UA-91825602-2", ['async'=>''], false);
+        $jsCode = new JsCode();
+        $jsCode->addCode("window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-91825602-2');");
+        $head->addChild($jsCode);
         return $head;
     }
 
@@ -132,7 +149,7 @@ class NewWebFiori extends Theme {
         
         $vAppBar = new HTMLNode('v-app-bar', [
             'app',
-            //'color' => 'green',
+            'color' => '#d2ed9a',
             //'src' => $this->getBaseURL().'/assets/images/WFLogo512.png',
             //'hide-on-scroll',
             //'elevate-on-scroll',
@@ -170,7 +187,7 @@ class NewWebFiori extends Theme {
                         $page->getWebsiteName()
                         ), [
                     'style' => [
-                        'color' => 'white',
+                        'color' => 'black',
                         'text-decoration' => 'none',
                         'font-weight' => 'bold'
                     ],
