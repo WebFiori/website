@@ -17,6 +17,7 @@ use webfiori\views\WebFioriPage;
 class MdPage extends WebFioriPage{
     public function __construct($username, $repo, $filePath, $branch = 'master') {
         parent::__construct();
+        $this->setVue('assets/new-wf/md-default.js');
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
@@ -34,17 +35,25 @@ class MdPage extends WebFioriPage{
             $parsedown = new Parsedown();
             $asTxt = $parsedown->text($exeResult);
             $node = HTMLNode::fromHTMLText($asTxt);
-            $super = new HTMLNode();
-            $this->insert($super);
-            $base = $this->getCanonical();
             
+            
+            $parent = new HTMLNode('v-row');
+            $super = new HTMLNode('v-col', [
+                'cols' => 12,
+                'md' => 12
+            ]);
+            $parent->addChild($super);
+            $this->insert($parent);
+            $base = $this->getCanonical();
+            $headingsArr = [];
             foreach ($node as $xNode) {
                 if ($xNode->getNodeName() == 'h1') {
                     $title = $xNode->getChild(0) !== null ? $xNode->getChild(0)->getText() : 'Default';
                     $this->setTitle($title);
                 }
-                if (in_array($xNode->getNodeName(), ['h1','h2','h3','h4','h5','h6'])) {
+                if (in_array($xNode->getNodeName(), ['h2','h3','h4','h5','h6'])) {
                     $id = $this->getNodeBodyAsTxt($xNode);
+                    $headingsArr[$id] = $this->getTxt($xNode);
                     $links = $this->getDocument()->getChildrenByAttributeValue('href', '#'.$id);
                     if ($links->size() == 1) {
                         $links->get(0)->setAttribute('href', $base.'#'.$id);
@@ -74,12 +83,48 @@ class MdPage extends WebFioriPage{
                 }
                 
             }
+            $this->insert($this->createSideDrawer($headingsArr));
             $paragraph = new Paragraph();
             $link = "https://github.com/$username/$repo/blob/$branch/$filePath.md";
             $anchor = new Anchor($link, 'GitHub', '_blank');
             $paragraph->text('<b>Found a mistake or want to contribute?</b> You can edit this '
                     . "page on $anchor.", false);
             $super->addChild($paragraph);
+        }
+    }
+    private function createSideDrawer($headingsArr) {
+        if (count($headingsArr) != 0) {
+            $drawer = new HTMLNode('v-navigation-drawer', [
+                'v-model' => "drawer_md",
+                'fixed', 'app', 'width' => '300px',
+                ':mini-variant.sync'=>"mini"
+            ]);
+            
+            $drawer->addChild('v-list-item', [], false)
+            ->addChild('v-list-item-icon', [], false)
+                     ->addChild('v-icon', [], false)
+                     ->text('mdi-send-circle')
+                     ->getParent()->getParent()
+            ->addChild('v-list-item-title', [], false)->text('Page Content')
+            ->getParent()->addChild('v-btn', [
+                'icon', '@click.stop' => 'mini = !mini'
+            ], false)->addChild('v-icon', [], false)->text('mdi-chevron-left');
+            $drawer->addChild('v-divider');
+            $list = $drawer->addChild('v-list', ['dense'], false);
+            foreach ($headingsArr as $id => $txt) {
+                $list->addChild('v-list-item', [], false)
+                     ->addChild('v-list-item-icon', [], false)
+                     ->addChild('v-icon', [], false)
+                     ->text('mdi-menu-right')
+                     ->getParent()->getParent()
+                     ->addChild('v-list-item-content', [], false)
+                     ->addChild('v-list-item-title', [], false)
+                     ->addChild('a', [
+                         'href' => '#'.$id
+                     ], false)
+                     ->text($txt);
+            }
+            return $drawer;
         }
     }
     /**
@@ -96,5 +141,20 @@ class MdPage extends WebFioriPage{
             }
         }
         return strtolower(str_replace(' ', '-', str_replace('(', '', str_replace(')', '', $txt))));
+    }
+    /**
+     * 
+     * @param HTMLNode $heading
+     */
+    private function getTxt($heading) {
+        $txt = '';
+        foreach ($heading->children() as $child) {
+            if ($child->getNodeName() == '#TEXT') {
+                $txt .= $child->getText();
+            } else {
+                $txt .= $this->getNodeBodyAsTxt($child);
+            }
+        }
+        return $txt;
     }
 }
