@@ -98,6 +98,21 @@ class FunctionDef {
         $node->addChild($descNode);
         return $node;
     }
+    public function getDetailsSignatorNode() {
+        $methSig = $this->getAccessModofier().' '. str_replace('&', '&amp;', $this->getName()).'(';
+        $count = count($this->getParameters());
+        for($x = 0 ; $x < $count ; $x++){
+            $param = $this->getParameters()['param-'.$x];
+            if($x + 1 == $count){
+                $methSig .= $param['var-type'].' '. str_replace('&', '&amp', $param['var-name']);
+            }
+            else{
+                $methSig .= $param['var-type'].' '.str_replace('&', '&amp', $param['var-name']).', ';
+            }
+        }
+        $methSig .= ')';
+        return $methSig;
+    }
     public function getMethodSignatorNode() {
         $nodeText = $this->getAccessModofier().' <a href="'.
                 $this->getPageURL().'/'. 

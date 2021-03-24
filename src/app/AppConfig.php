@@ -475,7 +475,7 @@ class AppConfig {
         $this->baseUrl = Uri::getBaseURL();
         $this->titleSep = '|';
         $this->primaryLang = 'EN';
-        $this->baseThemeName = \webfiori\theme\NewWebFiori::class;
+        $this->baseThemeName = \webfiori\theme\NewFiori::class;
         $this->adminThemeName = \webfiori\theme\WebFioriV108::class;
         $this->homePage = Uri::getBaseURL();
     }

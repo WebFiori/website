@@ -47,6 +47,12 @@ class AttributeDef {
                 .'/'.$this->getOwnerClass()->getName().'#'.$this->getName().'">'
                 .$this->getName().'</a>';
     }
+    public function getHref() {
+        $pUrl = $this->getPageURL();
+        $classUrl = str_replace('\\', '/', trim($this->getOwnerClass()->getNameSpace(), '\\'))
+                .'/'.$this->getOwnerClass()->getName();
+        return $pUrl.'/'.$classUrl.'#'.$this->getName();
+    }
     /**
      * Returns an instance of the class 'HTMLNode' that represents class 
      * attribute details block.

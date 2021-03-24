@@ -175,11 +175,15 @@ class DocGenerator {
      */
     private function _generateClassesAPIPages() {
         $themeName = $this->getThemeName();
+        $this->logMessage('Theme To Use: '.$themeName);
         $siteName = $this->getSiteName();
+        $this->logMessage('Website Name: '.$siteName);
         $base = $this->getBaseURL();
+        $this->logMessage('Base: '.$base);
         $options = $this->getOptions();
         $count = 1;
         $page = new WebPage();
+        $this->logMessage('Processing pages...');
         foreach ($this->apiReadersArr as $reader){
             $page->setLang('EN');
             $page->setTheme($themeName);
