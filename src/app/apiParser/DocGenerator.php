@@ -5,7 +5,6 @@ use webfiori\apiParser\ClassAPI;
 use webfiori\framework\Util;
 use webfiori\framework\Logger;
 use webfiori\framework\cli\CLI;
-use webfiori\framework\Page;
 use webfiori\collections\Stack;
 use webfiori\ui\HTMLNode;
 use Exception;
@@ -249,9 +248,7 @@ class DocGenerator {
     private function isDynamicPage() {
         return $this->isDynamic;
     }
-    public function createPHPFile($classAPI, $path,$options=array(
-        
-    ), WebPage $page) {
+    public function createPHPFile($classAPI, $path,$options, WebPage $page) {
         $savePath = $path.$classAPI->getNameSpace();
         if(Util::isDirectory($savePath, true)){
             $file = new File();
