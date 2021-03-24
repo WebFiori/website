@@ -1,24 +1,19 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace webfiori\apiParser;
 
 use webfiori\framework\Theme;
 use webfiori\ui\HTMLNode;
 use webfiori\apiParser\ClassAPI;
-use webfiori\framework\Page;
 /**
- * Description of APITheme
+ * A class which can be used to build themes which can be used to show 
+ * PHP docs.
+ * 
  * @author Ibrahim
  */
 abstract class APITheme extends Theme{
     /**
      * The class that the theme will use to create APIs description page.
+     * 
      * @var ClassAPI 
      */
     private $class;
@@ -27,18 +22,21 @@ abstract class APITheme extends Theme{
     }
     /**
      * Sets the class that the theme will use to create APIs description page.
+     * 
      * This function will also set the title of the page to the name of the 
      * given class.
+     * 
      * @param ClassAPI $class
      */
     public function setClass($class) {
         if($class instanceof ClassAPI){
             $this->class = $class;
-            Page::title($class->getAccessModifier().' '.$class->getName());
+            $this->getPage()->setTitle($class->getAccessModifier().' '.$class->getName());
         }
     }
     /**
      * Creates HTML div node that contains the body of the page.
+     * 
      * The node will have the following sub-nodes:
      * <ul>
      * <li>Class description node.</li>
@@ -47,6 +45,7 @@ abstract class APITheme extends Theme{
      * <li>Class attributes details node.</li>
      * <li>Class functions details node.</li>
      * </ul>
+     * 
      * @return HTMLNode
      */
     public function createBodyNode() {
@@ -61,8 +60,10 @@ abstract class APITheme extends Theme{
     }
     /**
      * Returns the class that the theme will use to create APIs description page.
+     * 
      * @return ClassAPI|NULL The class that the theme will use to create APIs description page. 
      * if no class is set, the function will return NULL.
+     * 
      */
     public function getClass() {
         return $this->class;
@@ -70,21 +71,27 @@ abstract class APITheme extends Theme{
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the summary of class functions.
+     * 
+     * @param string $nodeName The name of the tag that will hold the summary.
+     * 
      * @return HTMLNode|NULL If the class has functions, the function will return 
      * an object of type HTMLNode that contains all functions summary. 
      * If the class has no functions, the function will return NULL.
+     * 
      */
-    public function createMethodsSummaryBlock(){
+    public function createMethodsSummaryBlock($nodeName = 'div'){
         $class = $this->getClass();
         if($class !== null){
             $funcs = $class->getClassMethods();
             if(count($funcs) > 0){
-                $summaryNode = new HTMLNode();
-                $summaryNode->setAttribute('class', 'summary-block');
-                $summaryNode->setID('methods-summary');
-                $titleNode = new HTMLNode('h3');
-                $titleNode->setClassName('block-title');
-                $titleNode->addTextNode('Class Methods Summary');
+                $summaryNode = new HTMLNode($nodeName, [
+                    'class' => 'summary-block methods-summary-block',
+                    'id' => 'methods-summary'
+                ]);
+                $titleNode = new HTMLNode('h3', [
+                    'class' => 'block-title methods-block-title'
+                ]);
+                $titleNode->text('Class Methods Summary');
                 $summaryNode->addChild($titleNode);
                 foreach ($class->getClassMethods() as $method){
                     $summaryNode->addChild($this->createMethodSummaryBlock($method));
@@ -97,21 +104,25 @@ abstract class APITheme extends Theme{
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the details of class functions.
+     * 
+     * @param string $nodeName The name of the tag that will hold the summary.
+     * 
      * @return HTMLNode|NULL If the class has functions, the function will return 
      * an object of type HTMLNode that contains all functions details. 
      * If the class has no functions, the function will return NULL.
      */
-    public function createMethodsDetailsBlock(){
+    public function createMethodsDetailsBlock($nodeName = 'div'){
         $class = $this->getClass();
         if($class !== NULL){
             $funcs = $class->getClassMethods();
             if(count($funcs) > 0){
-                $detailsNode = new HTMLNode();
-                $detailsNode->setAttribute('class', 'details-block');
-                $detailsNode->setID('methods-details');
-                $titleNode = new HTMLNode('h3');
-                $titleNode->setClassName('block-title');
-                $titleNode->addTextNode('Class Methods Details');
+                $detailsNode = new HTMLNode($nodeName, [
+                    'class' => 'details-block methods-details-block '
+                ]);
+                $titleNode = new HTMLNode('h3', [
+                    'class' => 'block-title methods-details-block-title'
+                ]);
+                $titleNode->text('Class Methods Details');
                 $detailsNode->addChild($titleNode);
                 foreach ($class->getClassMethods() as $method){
                     $detailsNode->addChild($this->createMethodDetailsBlock($method));
@@ -124,21 +135,27 @@ abstract class APITheme extends Theme{
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the summary of class attributes.
+     * 
+     * @param string $nodeName The name of the tag that will hold the summary.
+     * 
      * @return HTMLNode|NULL If the class has attributes, the function will return 
      * an object of type HTMLNode that contains all attributes summary. 
      * If the class has no attributes, the function will return NULL.
+     * 
      */
-    public function createAttrsSummaryBlock(){
+    public function createAttrsSummaryBlock($nodeName = 'div'){
         $class = $this->getClass();
         if($class !== null){
             $attrs = $class->getClassAttributes();
             if(count($attrs) > 0){
-                $summaryNode = new HTMLNode();
-                $summaryNode->setAttribute('class', 'summary-block');
-                $summaryNode->setID('attrs-summary');
-                $titleNode = new HTMLNode('h3');
-                $titleNode->setClassName('block-title');
-                $titleNode->addTextNode('Class Attributes Summary');
+                $summaryNode = new HTMLNode($nodeName, [
+                    'class' => 'summary-block attrs-summary-block',
+                    'id' => 'attrs-summary'
+                ]);
+                $titleNode = new HTMLNode('h3', [
+                    'class' => 'block-title attrs-summary-block-title'
+                ]);
+                $titleNode->text('Class Attributes Summary');
                 $summaryNode->addChild($titleNode);
                 foreach ($class->getClassAttributes() as $attr){
                         $summaryNode->addChild($this->createAttributeSummaryBlock($attr));
@@ -151,20 +168,24 @@ abstract class APITheme extends Theme{
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the details of class attributes.
+     * 
      * @return HTMLNode|NULL If the class has attributes, the function will return 
      * an object of type HTMLNode that contains all details. If the class has 
      * no attributes, the function will return NULL.
+     * 
      */
-    public function createAttrsDetailsBlock(){
+    public function createAttrsDetailsBlock($nodeName = 'div'){
         $class = $this->getClass();
         $attrs = $class->getClassAttributes();
         if($class !== NULL){
             if(count($attrs) > 0){
-                $detailsNode = new HTMLNode();
-                $detailsNode->setAttribute('class', 'details-block');
-                $detailsNode->setID('attrs-details');
-                $titleNode = new HTMLNode('h3');
-                $titleNode->setClassName('block-title');
+                $detailsNode = new HTMLNode($nodeName, [
+                    'class' => 'details-block attrs-details-block',
+                    'id' => 'attrs-details'
+                ]);
+                $titleNode = new HTMLNode('h3', [
+                    'class' => 'block-title'
+                ]);
                 $titleNode->addTextNode('Class Attributes Details');
                 $detailsNode->addChild($titleNode);
                 foreach ($class->getClassAttributes() as $attr){
@@ -177,48 +198,59 @@ abstract class APITheme extends Theme{
     }
     /**
      * Creates HTMLNode object that contains class function summary.
+     * 
      * @param FunctionDef $func An object of type FunctionDef.
+     * 
      * @return HTMLNode The function must be implemented in a way that it returns 
      * an object of type HTMLNode which represents summary block of the 
      * function.
      */
-    abstract public function createMethodSummaryBlock($func);
+    abstract public function createMethodSummaryBlock(FunctionDef $func);
     /**
      * Creates HTMLNode object that contains class function details.
+     * 
      * @param FunctionDef $func An object of type FunctionDef.
+     * 
      * @return HTMLNode The function must be implemented in a way that it returns 
      * an object of type HTMLNode which represents details block of the 
      * function.
      */
-    abstract public function createMethodDetailsBlock($func);
+    abstract public function createMethodDetailsBlock(FunctionDef $func);
     /**
      * Creates HTMLNode object that contains class attribute summary.
+     * 
      * @param AttributeDef $attr An object of type AttributeDef.
+     * 
      * @return HTMLNode The function must be implemented in a way that it returns 
      * an object of type HTMLNode which represents summary block of the 
      * attribute.
      */
-    abstract public function createAttributeSummaryBlock($attr);
+    abstract public function createAttributeSummaryBlock(AttributeDef $attr);
     /**
      * Creates HTMLNode object that contains class attribute details.
+     * 
      * @param AttributeDef $attr An object of type AttributeDef.
+     * 
      * @return HTMLNode The function must be implemented in a way that it returns 
      * an object of type HTMLNode which represents details block of the 
      * attribute.
      */
-    abstract public function createAttributeDetailsBlock($attr);
+    abstract public function createAttributeDetailsBlock(AttributeDef $attr);
     /**
      * Creates HTMLNode object that contains class description.
+     * 
      * @return HTMLNode The function must be implemented in a way that it returns 
      * an object of type HTMLNode which represents class description block.
+     * 
      */
     abstract public function createClassDescriptionNode();
     /**
      * Creates HTMLNode object that contains namespace index file content.
+     * 
      * @param NameSpaceAPI $nsObj An object of type NameSpaceAPI.
      * @return HTMLNode The function must be implemented in a way that it returns 
      * an object of type HTMLNode which represents namespace index file content.
      */
-    abstract public function createNamespaceContentBlock($nsObj);
+    abstract public function createNamespaceContentBlock(NameSpaceAPI $nsObj);
     abstract public function createNSAside($links);
 }
