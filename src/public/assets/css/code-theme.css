@@ -23,6 +23,7 @@
 }
 .code, pre > code{
     color: white !important;
+    padding: 0 !important;
 }
 .code-snippt{
     background-color: rgb(21, 18, 33);
