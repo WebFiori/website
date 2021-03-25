@@ -258,6 +258,7 @@ class DocGenerator {
             $file = new File();
             $file->setName($classAPI->getName().'View.php');
             $file->setPath($savePath);
+            $file->remove();
             $ns = trim($classAPI->getNameSpace(),'\\');
             if(strlen($ns) != 0){
                 $ns = '\\'.$ns;
@@ -275,8 +276,8 @@ class DocGenerator {
                     . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getDescription())).'\');'."\r\n"
                     . '        $this->setWebsiteName(\''.$page->getWebsiteName().'\');'."\r\n"
                     . '        $this->setTitle(\''.$page->getTitle().'\');'."\r\n"
-                    . '        $pageBody = new HTMLNode();'."\r\n"
-                    . '        $pageBody->addTextNode(\''."\r\n"
+                    . '        $pageBody = $this->getDocument()->getBody();'."\r\n"
+                    . '        $pageBody->text(\''."\r\n"
                     . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
                     . '        ,false);'."\r\n"
                     . '        $body = $this->getChildByID(\'page-body\');'."\r\n"
@@ -296,7 +297,9 @@ class DocGenerator {
             $file = new File();
             $file->setName($class->getName().'View.html');
             $file->setPath($savePath);
-            $file->setRawData($p->getDocument()->toHTML());
+            $file->remove();
+            $doc = $p->render(true, true);
+            $file->setRawData($doc->toHTML());
             $file->write(false, true);
             return TRUE;
         }
@@ -437,8 +440,10 @@ class DocGenerator {
     private function _createRoutesFile(){
         $ext = $this->isDynamicPage() ? 'php' : 'html';
         $file = new File();
+        
         $file->setPath($this->getOutputPath());
         $file->setName('DocGeneratorRoutes.php');
+        $file->remove();
         $routesStr = '<?php'."\r\n"
                 .'namespace docGenerator;'."\r\n"
                 .'use webfiori\framework\router\Router;'."\r\n"
@@ -446,9 +451,9 @@ class DocGenerator {
                     . '    public static function createRoutes(){'."\r\n";
             foreach ($this->routerLinks as $link => $routeTo){
                 $routesStr .= '        Router::view(['."\n"
-                        . '            \'path\'=>\'docs'.$link.'\','."\n"
-                        . '            \'route-to\'=>\''.$routeTo.'View.'.$ext.'\','."\n"
-                        . '            \'in-sitemap\'=>true'."\n"
+                        . '            \'path\' => \'docs'.$link.'\','."\n"
+                        . '            \'route-to\' => \''.$routeTo.'View.'.$ext.'\','."\n"
+                        . '            \'in-sitemap\' => true'."\n"
                         . '        ]);'."\r\n";
             }
         $routesStr .= '    }'."\r\n}";
@@ -473,6 +478,7 @@ class DocGenerator {
             $file->setPath($savePath);
             if($this->isDynamicPage()){
                 $file->setName('NSIndexView.php');
+                $file->remove();
                 $file->setRawData(
                         '<?php'."\r\n"
                         . 'namespace docGenerator'.$ns.";\r\n"
@@ -486,19 +492,18 @@ class DocGenerator {
                         . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $p->getDescription())).'\');'."\r\n"
                         . '        $this->setWebsiteName(\''.$p->getWebsiteName().'\');'."\r\n"
                         . '        $this->setTitle(\''. str_replace('\\', '\\\\', $p->getTitle()).'\');'."\r\n"
-                        . '        $pageBody = new HTMLNode();'."\r\n"
-                        . '        $pageBody->addTextNode(\''."\r\n"
+                        . '        $pageBody = $this->getDocument()->getBody();'."\r\n"
+                        . '        $pageBody->text(\''."\r\n"
                         . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', $p->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
                         . '        ,false);'."\r\n"
-                        . '        $body = $this->getChildByID(\'page-body\');'."\r\n"
-                        . '        $this->getDocument()->getBody()->replaceChild($body, $pageBody);'."\r\n"
                         . '    }'."\r\n"
                         . '}'."\r\n"
                         . 'return __NAMESPACE__;'
                 );
             } else {
                 $file->setName('NSIndexView.html');
-                $file->setRawData($p->toHTML());
+                $doc = $p->render(true, true);
+                $file->setRawData($doc->toHTML());
             }
             $file->write(false, true);
             return true;
