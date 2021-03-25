@@ -70,28 +70,28 @@ class WebFioriAPITheme extends APITheme {
         $body->setClassName('pa-row '.$body->getAttributeValue('class'));
         return $body;
     }
-    public function createAttrsSummaryBlock(){
+    public function createAttrsSummaryBlock($nodeName = 'div'){
         $node = parent::createAttrsSummaryBlock();
         if($node !== NULL){
             $node->setClassName('pa-row '.$node->getAttributeValue('class'));
         }
         return $node;
     }
-    public function createAttrsDetailsBlock(){
+    public function createAttrsDetailsBlock($nodeName = 'div'){
         $node = parent::createAttrsDetailsBlock();
         if($node !== NULL){
             $node->setClassName('pa-row '.$node->getAttributeValue('class'));
         }
         return $node;
     }
-    public function createMethodsSummaryBlock(){
-        $node = parent::createMethodsSummaryBlock();
+    public function createMethodsSummaryBlock($nodeName = 'div'){
+        $node = parent::createMethodsSummaryBlock($nodeName);
         if($node !== NULL){
             $node->setClassName('pa-row '.$node->getAttributeValue('class'));
         }
         return $node;
     }
-    public function createMethodsDetailsBlock(){
+    public function createMethodsDetailsBlock($nodeName = 'div'){
         $node = parent::createMethodsDetailsBlock();
         if($node !== NULL){
             $node->setClassName('pa-row '.$node->getAttributeValue('class'));

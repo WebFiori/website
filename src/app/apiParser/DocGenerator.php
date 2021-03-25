@@ -162,7 +162,7 @@ class DocGenerator {
                 $page->setCanonical($canonical);
                 $page->setDescription('All classes and sub-namespaces in the namespace \''.$nsObj->getName().'\'.');
                 $page->setTitle('Namespace '.$nsObj->getName());
-                $this->_createAsideNav();
+                $this->_createAsideNav($page);
                 $this->createNSIndexFile($outputPath,$nsObj->getName(), $options, $page);
                 $page->reset();
             }
@@ -203,7 +203,7 @@ class DocGenerator {
                 $canonical = $base. str_replace('\\', '/', $classAPI->getNameSpace()).'/'.$classAPI->getName();
                 $page->setCanonical($canonical);
                 $page->setDescription($classAPI->getSummary());
-                $this->_createAsideNav();
+                $this->_createAsideNav($page);
                 $this->_createAPIPage($classAPI, $options, $page);
                 self::logMessage($count.' Page Created.');
                 $count++;
@@ -267,7 +267,7 @@ class DocGenerator {
                     . 'namespace docGenerator'.$ns.";\r\n"
                     . 'use webfiori\framework\ui\WebPage as P;'."\r\n"
                     . 'use webfiori\ui\HTMLNode;'."\r\n"
-                    . 'class '.$classAPI->getName().'View extends WebPage {'."\r\n"
+                    . 'class '.$classAPI->getName().'View extends P {'."\r\n"
                     . '    public function __construct(){'."\r\n"
                     . '        parent::__construct();'."\r\n"
                     . '        $this->setTheme(\''.$options['theme'].'\');'."\r\n"
@@ -283,7 +283,7 @@ class DocGenerator {
                     . '        $this->getDocument()->getBody()->replaceChild($body, $pageBody);'."\r\n"
                     . '    }'."\r\n"
                     . '}'."\r\n"
-                    . 'new '.$classAPI->getName().'View();'
+                    . 'return __NAMESPACE__;'
             );
             $file->write(false, true);
             return TRUE;

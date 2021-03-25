@@ -339,7 +339,7 @@ class NewFioriAPI extends APITheme {
                     'href' => $this->getBaseURL().'/'.str_replace('\\', '/', $nsName)
                 ], false)
                 ->addChild('v-list-item-content', [], false)
-                ->addChild('v-list-item-title', false)->text($nsName);
+                ->addChild('v-list-item-title',[], false)->text($nsName);
             }
         }
         $interfaces = $nsObj->getInterfaces();
@@ -354,7 +354,7 @@ class NewFioriAPI extends APITheme {
                     'href' => $this->getBaseURL().'/'.str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interface->getName()
                 ], false)
                 ->addChild('v-list-item-content', [], false)
-                ->addChild('v-list-item-title', false)->text($interface->getName());
+                ->addChild('v-list-item-title',[], false)->text($interface->getName());
             }
         }
         $classes = $nsObj->getClasses();
@@ -369,7 +369,7 @@ class NewFioriAPI extends APITheme {
                     'href' => $this->getBaseURL().'/'.str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$class->getName()
                 ], false)
                 ->addChild('v-list-item-content', [], false)
-                ->addChild('v-list-item-title', false)->text($class->getName());
+                ->addChild('v-list-item-title',[], false)->text($class->getName());
             }
         }
         return $block;

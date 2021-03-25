@@ -22,3 +22,4 @@ vendor/erusev/parsedown/README.md
 composer.lock
 /src/app/pages/apis/
 /src/app/storage/
+/vendor/
