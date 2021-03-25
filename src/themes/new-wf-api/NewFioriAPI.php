@@ -12,6 +12,7 @@ use webfiori\apiParser\AttributeDef;
 use webfiori\ui\UnorderedList;
 use webfiori\ui\Paragraph;
 use webfiori\apiParser\NameSpaceAPI;
+use webfiori\ui\JsCode;
 
 
 /**
@@ -56,6 +57,10 @@ class NewFioriAPI extends APITheme {
                     'src' => 'assets/new-wf/default.js',
                     'id' => 'default-vue-init'
                 ]);
+                $page->getDocument()->getBody()->addChild('script', [
+                    'src' => 'assets/js/prism.js',
+                    'type' => 'text/javascript'
+                ], false);
             });
         });
     }
@@ -123,6 +128,9 @@ class NewFioriAPI extends APITheme {
 
     public function getHeadNode() {
         $head = new HeadNode();
+        $head->addCSS('assets/css/prism.css');
+        $head->addCSS('assets/css/code-theme.css');
+        
         $head->addJs('https://unpkg.com/vue@2.x.x');
         $head->addCSS('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
         $head->addCSS('https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css');
@@ -131,6 +139,15 @@ class NewFioriAPI extends APITheme {
         $head->addJs('https://cdn.jsdelivr.net/gh/usernane/AJAXRequestJs@1.x.x/AJAXRequest.js',[
             'revision' => true
         ]);
+        
+        $head->addJs("https://www.googletagmanager.com/gtag/js?id=UA-91825602-2", ['async'=>''], false);
+        $jsCode = new JsCode();
+        $jsCode->addCode("window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-91825602-2');");
+        $head->addChild($jsCode);
         return $head;
     }
 
@@ -139,7 +156,7 @@ class NewFioriAPI extends APITheme {
         
         $vAppBar = new HTMLNode('v-app-bar', [
             'app',
-            //'color' => 'green',
+            'color' => '#d2ed9a',
             //'src' => $this->getBaseURL().'/assets/images/WFLogo512.png',
             //'hide-on-scroll',
             //'elevate-on-scroll',
@@ -156,21 +173,32 @@ class NewFioriAPI extends APITheme {
                         'min-width' => '250px'
                     ]
                 ], false)
-                ->addChild(new Anchor($this->getBaseURL(), 
-                        //$page->getWebsiteName()
-                        ''
-                        ), [
-                    'style' => [
-                        'color' => 'white',
-                        'text-decoration' => 'none',
-                        'font-weight' => 'bold'
-                    ],
-                    'class' => 'site-name'
+                ->addChild('v-row',[
+                    'class' => 'd-none d-md-flex'
+                ],false)
+                ->addChild('v-col', [
+                    'cols' => 12,
+                    'md' => 4
                 ], false)->addChild('img', [
                     'src' => 'assets/images/WFLogo512.png',
                     'style' => [
                         'width' => '80px'
                     ]
+                ])->getParent()
+                ->addChild('v-col', [
+                    'cols' => 12,
+                    'md' => 8,
+                    'class' => 'align-center d-flex'
+                ], false)
+                ->addChild(new Anchor($this->getBaseURL(), 
+                        $page->getWebsiteName()
+                        ), [
+                    'style' => [
+                        'color' => 'black',
+                        'text-decoration' => 'none',
+                        'font-weight' => 'bold'
+                    ],
+                    'class' => 'site-name align-center'
                 ]);
         $vAppBar->addChild('v-spacer');
         $navLinksContainer = new HTMLNode('v-container', [
@@ -183,11 +211,13 @@ class NewFioriAPI extends APITheme {
                 ->addChild(
                 self::createButton(['text', 'href' => $this->getBaseURL().'/learn'], 'Learn'))
                 ->getParent()->addChild('v-spacer');
-        $searchContainer = new HTMLNode('v-container');
+        $searchContainer = new HTMLNode('v-container', [
+            'class' => 'd-flex align-center d-none d-md-flex'
+        ]);
         $vAppBar->addChild($searchContainer);
         $searchContainer->addChild('v-text-field', [
             'outlined', 'prepend-inner-icon' => 'mdi-magnify',
-            'dense', 'rounded'
+            'dense', 'rounded', 'hide-details',
         ]);
         return $vAppBar;
     }
