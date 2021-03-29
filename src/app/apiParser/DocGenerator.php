@@ -263,6 +263,11 @@ class DocGenerator {
             if(strlen($ns) != 0){
                 $ns = '\\'.$ns;
             }
+            $html = '';
+            $body = $page->getChildByID('main-content-area');
+            foreach ($body->children() as $node) {
+                $html.=$node;
+            }
             $file->setRawData(
                     '<?php'."\r\n"
                     . 'namespace docGenerator'.$ns.";\r\n"
@@ -281,7 +286,9 @@ class DocGenerator {
                     . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
                     . '        ,false);'."\r\n"
                     . '        $body = $this->getChildByID(\'page-body\');'."\r\n"
-                    . '        $this->getDocument()->getBody()->replaceChild($body, $pageBody);'."\r\n"
+                    . '        $newBody = new HTMLNode($body->getNodeName());'."\r\n"
+                    . '        $newBody->text(\''. str_replace("'", "\'", $html).'\',false);'."\r\n"
+                    . '        $this->getDocument()->getDocumentRoot()->replaceChild($body, $newBody);'."\r\n"
                     . '    }'."\r\n"
                     . '}'."\r\n"
                     . 'return __NAMESPACE__;'
