@@ -513,11 +513,23 @@ class DocGenerator {
         return false;
     }
     private function toPHPCode(HTMLNode $node, $suffex = 0, $parentSuffex = null) {
+        
         if ($parentSuffex !== null) {
-            $code = "        \$el".$parentSuffex."->addChiled('".$node->getNodeName()."'".$this->getAttrsStr($node).");\r\n";
+            if ($node->isTextNode()) {
+                $code = "        \$el".$parentSuffex."->text('". htmlspecialchars(str_replace("'", "\'", $node->getText()))."');\r\n";
+            } else {
+                if ($node->childrenCount() != 0) {
+                    $code = "        \$el".$parentSuffex."Ch = \$el".$parentSuffex."->addChild('".$node->getNodeName()."'".$this->getAttrsStr($node).", false);\r\n";
+                    foreach ($node->children() as $child) {
+                        $code .= $this->toPHPCode($child, 0, $parentSuffex);
+                    }
+                } else {
+                    $code = "        \$el".$parentSuffex."->addChild('".$node->getNodeName()."'".$this->getAttrsStr($node).");\r\n";
+                }
+            }
         } else {
             $code = "        \$el$suffex = new HTMLNode('".$node->getNodeName()."'".$this->getAttrsStr($node).");"."\r\n";
-            $code .= "       \$this->insert(\$el$suffex);"."\r\n";
+            $code .= "        \$this->insert(\$el$suffex);"."\r\n";
             foreach ($node->children() as $child) {
                 $code .= $this->toPHPCode($child, 0, $suffex);
             }
@@ -537,6 +549,7 @@ class DocGenerator {
                 }
                 return $retVal.'        ]';
             }
+            return ', []';
         }
     }
     /**
