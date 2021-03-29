@@ -246,15 +246,18 @@ class NewFioriAPI extends APITheme {
 
     public function createAttributeDetailsBlock(AttributeDef $attr): HTMLNode {
         $block = new HTMLNode('v-row');
-        $block->addChild('v-col', [
+        $col = $block->addChild('v-col', [
             'cols' => 12
-        ], false)->text($attr->getAccessModofier().' ')
-        ->addChild('p', [
+        ], false);
+        $vCard = $col->addChild('v-card', [], false);
+        $vCard->addChild('v-card-title', [
             'id' => $attr->getName()
-        ], false)->text($attr->getName());
-        $block->addChild('v-col', [
-            'cols' => 12
-        ], false)->text($attr->getDescription());
+        ], false)->text($attr->getAccessModofier().' '.$attr->getName());
+        
+        $vCard->addChild('v-card-text', [
+            'v-html' => $attr->getDescription()
+        ]);
+        
         return $block;
     }
 
@@ -311,12 +314,15 @@ class NewFioriAPI extends APITheme {
             $count = count($func->getParameters());
             for($x = 0 ; $x < $count ; $x++){
                 $param = $func->getParameters()['param-'.$x];
-                $text = '<span style="font-family: monospace;">'.$param['var-type'].' '.$param['var-name'].'</span>';
+                $optionalTxt = '';
                 if($param['is-optional'] === true){
-                    $text .= ' [Optional]';
+                    $optionalTxt = ' [Optional]';
                 }
-                $text .= ' '.$param['var-desc'];
-                $ul->addListItem($text,false);
+                $ul->addChild('span', [
+                    'style' => [
+                        'font-family' => 'monospace'
+                    ]
+                ], false)->text($param['var-type'].' '.$param['var-name'].$optionalTxt);
             }
         }
         $return = $func->getMethodReturnTypesStr();
@@ -329,7 +335,10 @@ class NewFioriAPI extends APITheme {
                     'font-weight' => 'bold'
                 ]
             ], false)
-            ->text('Returns: <span class="mono">'.$return.'</span>', false);
+            ->text('Returns: ', false)
+            ->addChild('span', [
+                'class' => 'mono'
+            ], false)->text($return);
             $retCol->addChild('p', [], false)->text($func->getMethodReturnDescription());
         }
         return $block;
