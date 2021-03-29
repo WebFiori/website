@@ -268,7 +268,7 @@ class DocGenerator {
             foreach ($body->children() as $node) {
                 $html.=$node;
             }
-            $file->setRawData(
+            $rawData = 
                     '<?php'."\r\n"
                     . 'namespace docGenerator'.$ns.";\r\n"
                     . 'use webfiori\framework\ui\WebPage as P;'."\r\n"
@@ -280,19 +280,14 @@ class DocGenerator {
                     . '        $this->getDocument()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
                     . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getDescription())).'\');'."\r\n"
                     . '        $this->setWebsiteName(\''.$page->getWebsiteName().'\');'."\r\n"
-                    . '        $this->setTitle(\''.$page->getTitle().'\');'."\r\n"
-                    . '        $pageBody = $this->getDocument()->getBody();'."\r\n"
-                    . '        $pageBody->text(\''."\r\n"
-                    . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
-                    . '        ,false);'."\r\n"
-                    . '        $body = $this->getChildByID(\'page-body\');'."\r\n"
-                    . '        $newBody = new HTMLNode($body->getNodeName());'."\r\n"
-                    . '        $newBody->text(\''. str_replace("'", "\'", $html).'\',false);'."\r\n"
-                    . '        $this->getDocument()->getDocumentRoot()->replaceChild($body, $newBody);'."\r\n"
-                    . '    }'."\r\n"
+                    . '        $this->setTitle(\''.$page->getTitle().'\');'."\r\n";
+            foreach ($page->getChildByID('main-content-area')->children() as $node) {
+                $rawData .= $this->toPHPCode($node);
+            }
+            $rawData .= '    }'."\r\n"
                     . '}'."\r\n"
-                    . 'return __NAMESPACE__;'
-            );
+                    . 'return __NAMESPACE__;';
+            $file->setRawData($rawData);
             $file->write(false, true);
             return TRUE;
         }
@@ -486,8 +481,7 @@ class DocGenerator {
             if($this->isDynamicPage()){
                 $file->setName('NSIndexView.php');
                 $file->remove();
-                $file->setRawData(
-                        '<?php'."\r\n"
+                $rawData = '<?php'."\r\n"
                         . 'namespace docGenerator'.$ns.";\r\n"
                         . 'use webfiori\framework\ui\WebPage as P;'."\r\n"
                         . 'use webfiori\ui\HTMLNode;'."\r\n"
@@ -498,15 +492,16 @@ class DocGenerator {
                         . '        $this->getDocument()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
                         . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $p->getDescription())).'\');'."\r\n"
                         . '        $this->setWebsiteName(\''.$p->getWebsiteName().'\');'."\r\n"
-                        . '        $this->setTitle(\''. str_replace('\\', '\\\\', $p->getTitle()).'\');'."\r\n"
-                        . '        $pageBody = $this->getDocument()->getBody();'."\r\n"
-                        . '        $pageBody->text(\''."\r\n"
-                        . '        '. str_replace('\'', '\\\'', str_replace('\\', '\\\\', $p->getChildByID('page-body')->toHTML(true))).'\''."\r\n"
-                        . '        ,false);'."\r\n"
-                        . '    }'."\r\n"
+                        . '        $this->setTitle(\''. str_replace('\\', '\\\\', $p->getTitle()).'\');'."\r\n";
+                $index = 0;
+                foreach ($p->getChildByID('main-content-area')->children() as $node) {
+                    $rawData .= $this->toPHPCode($node, $index);
+                    $index++;
+                }
+                $rawData .=  '    }'."\r\n"
                         . '}'."\r\n"
-                        . 'return __NAMESPACE__;'
-                );
+                        . 'return __NAMESPACE__;';
+                $file->setRawData($rawData);
             } else {
                 $file->setName('NSIndexView.html');
                 $doc = $p->render(true, true);
@@ -516,6 +511,33 @@ class DocGenerator {
             return true;
         }
         return false;
+    }
+    private function toPHPCode(HTMLNode $node, $suffex = 0, $parentSuffex = null) {
+        if ($parentSuffex !== null) {
+            $code = "        \$el".$parentSuffex."->addChiled('".$node->getNodeName()."'".$this->getAttrsStr($node).");\r\n";
+        } else {
+            $code = "        \$el$suffex = new HTMLNode('".$node->getNodeName()."'".$this->getAttrsStr($node).");"."\r\n";
+            $code .= "       \$this->insert(\$el$suffex);"."\r\n";
+            foreach ($node->children() as $child) {
+                $code .= $this->toPHPCode($child, 0, $suffex);
+            }
+        }
+        return $code;
+    }
+    private function getAttrsStr(HTMLNode $node) {
+        if (!$node->isComment() && !$node->isTextNode()) {
+            if (count($node->getAttributes()) != 0) {
+                $retVal = ', ['."\r\n";
+                foreach ($node->getAttributes() as $attrName => $attrVal) {
+                    if (gettype($attrName) == 'integer') {
+                        $retVal .= "            '".$attrVal."',\r\n";
+                    } else {
+                        $retVal .= "            '".$attrName."' => '".$attrVal."',\r\n";
+                    }
+                }
+                return $retVal.'        ]';
+            }
+        }
     }
     /**
      * Scan a specific path for all .php files.
