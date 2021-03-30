@@ -89,6 +89,10 @@ class MdPage extends WebFioriPage{
             $anchor = new Anchor($link, 'GitHub', '_blank');
             $paragraph->text('<b>Found a mistake or want to contribute?</b> You can edit this '
                     . "page on $anchor.", false);
+            $lastMod = $this->getLastModified($username, $repo, $branch, $filePath);
+            $super->addChild($paragraph);
+            $paragraph = new Paragraph();
+            $paragraph->text('Last Modified: '.$lastMod);
             $super->addChild($paragraph);
         }
     }
@@ -141,6 +145,30 @@ class MdPage extends WebFioriPage{
             }
         }
         return strtolower(str_replace(' ', '-', str_replace('(', '', str_replace(')', '', $txt))));
+    }
+    public function getLastModified($username, $repo, $branch, $file) {
+        $link = "https://api.github.com/repos/$username/$repo/commits?sha=$branch&path=$file.md&page=1&per_page=1";
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $link,
+            CURLOPT_HTTPHEADER => [
+                'user-agent:php'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION
+            ]
+        ]);
+        $exeResult = curl_exec($curl);
+        if($exeResult === false){
+            Response::append('False');
+            Response::send();
+        } else if ($exeResult == '404: Not Found') {
+            Response::setCode(404);
+            Response::append('Not found.');
+            Response::send();
+        } else {
+            $decoded = json_decode($exeResult, true);
+            $time = $decoded[0]['commit']['committer']['date'];
+            return date('Y-m-d H:i:s', strtotime($time));
+        }
     }
     /**
      * 
