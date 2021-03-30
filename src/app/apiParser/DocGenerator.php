@@ -280,10 +280,8 @@ class DocGenerator {
                     . '        $this->getDocument()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
                     . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getDescription())).'\');'."\r\n"
                     . '        $this->setWebsiteName(\''.$page->getWebsiteName().'\');'."\r\n"
-                    . '        $this->setTitle(\''.$page->getTitle().'\');'."\r\n";
-            foreach ($page->getChildByID('main-content-area')->children() as $node) {
-                $rawData .= $this->toPHPCode($node);
-            }
+                    . '        $this->setTitle(\''.$page->getTitle().'\');'."\r\n"
+                    . $this->createMethodsArrStr($classAPI);
             $rawData .= '    }'."\r\n"
                     . '}'."\r\n"
                     . 'return __NAMESPACE__;';
@@ -589,6 +587,37 @@ class DocGenerator {
         }
         self::logMessage('Scan finished.');
         $this->files = $retVal;
+    }
+    /**
+     * 
+     * @param ClassAPI $classAPi
+     */
+    private function createMethodsArrStr($classAPi) {
+        $arr = '        $classMethodsArr = ['."\r\n";
+        foreach ($classAPi->getClassMethods() as $meth) {
+            $meth instanceof FunctionDef;
+            $arr .= '            new FunctionDef(['."\r\n"
+                    . "                'name' => '".$meth->getName()."',"."\r\n"
+                    . "                'access-modifier' => '".$meth->getAccessModofier()."',"."\r\n"
+                    . "                'summary' => '". str_replace("'", "\'", $meth->getSummary())."',"."\r\n"
+                    . "                'description' => '".str_replace("'", "\'",$meth->getDescription())."',"."\r\n"
+                    . "                '@params' => ".$this->createParamsArr($meth).""."\r\n"
+                    . "            ]),";
+        }
+        return $arr;
+    }
+    private function createParamsArr(FunctionDef $def) {
+        $arr = '['."\r\n";
+        foreach ($def->getParameters() as $p) {
+            $p instanceof MethodParameter;
+            $arr .= '                    ['."\r\n";
+            $arr .= "                        new MethodParameter(\r\n'".$p->getName()."',\r\n'"
+                    . "                        ".$p->getType()."',\r\n'"
+                    . "                        ". str_replace("'", "\'", $p->getDescription())."',\r\n"
+                    . "                        ".($p->isOptional() === true ? 'true' : 'false')."),\r\n";
+            $arr .= '                    ],'."\r\n";
+        }
+        return $arr .= '                ],';
     }
     /**
      * 

@@ -84,16 +84,22 @@ class MdPage extends WebFioriPage{
                 
             }
             $this->insert($this->createSideDrawer($headingsArr));
-            $paragraph = new Paragraph();
-            $link = "https://github.com/$username/$repo/blob/$branch/$filePath.md";
-            $anchor = new Anchor($link, 'GitHub', '_blank');
-            $paragraph->text('<b>Found a mistake or want to contribute?</b> You can edit this '
-                    . "page on $anchor.", false);
+            $row = $this->insert('v-row');
+            
+            $row->addChild('v-col', [
+                'cols' => '12',
+                'md' => 6,
+                'sm' => 12
+            ], false)->text('View this page on ')
+            ->addChild('a', [
+                'href' => "https://github.com/$username/$repo/blob/$branch/$filePath.md"
+            ], false)->text('GitHub');
             $lastMod = $this->getLastModified($username, $repo, $branch, $filePath);
-            $super->addChild($paragraph);
-            $paragraph = new Paragraph();
-            $paragraph->text('Last Modified: '.$lastMod);
-            $super->addChild($paragraph);
+            $row->addChild('v-col', [
+                'cols' => 12,
+                'md' => 6,
+                'sm' => 12
+            ], false)->text('Last modified: '.$lastMod);
         }
     }
     private function createSideDrawer($headingsArr) {

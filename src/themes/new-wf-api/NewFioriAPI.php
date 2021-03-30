@@ -313,16 +313,16 @@ class NewFioriAPI extends APITheme {
             $ul = $paramsCol->addChild(new UnorderedList(), [], false);
             $count = count($func->getParameters());
             for($x = 0 ; $x < $count ; $x++){
-                $param = $func->getParameters()['param-'.$x];
+                $param = $func->getParameters()[$x];
                 $optionalTxt = '';
-                if($param['is-optional'] === true){
+                if($param->isOptional() === true){
                     $optionalTxt = ' [Optional]';
                 }
                 $ul->addChild('span', [
                     'style' => [
                         'font-family' => 'monospace'
                     ]
-                ], false)->text($param['var-type'].' '.$param['var-name'].$optionalTxt);
+                ], false)->text($param->getType().' '.$param->getName().$optionalTxt);
             }
         }
         $return = $func->getMethodReturnTypesStr();

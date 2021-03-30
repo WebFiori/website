@@ -9,6 +9,7 @@ namespace webfiori\apiParser;
 use webfiori\ui\HTMLNode;
 use webfiori\ui\Paragraph;
 use webfiori\ui\UnorderedList;
+use webfiori\apiParser\MethodParameter;
 /**
  * A class that is used to build a GUI blocks for function definition. 
  *
@@ -28,111 +29,76 @@ class FunctionDef {
     private $pageUrl;
     private $ns;
     private $ownerClass;
-    public function __construct() {
-        $this->funcParams = array();
+    /**
+     * 
+     * @param array $options
+     */
+    public function __construct(array $options = []) {
+        if (isset($options['name'])) {
+            $this->setName($options['name']);
+        }
+        $this->funcParams = [];
+        if (isset($options['@params']) && gettype($options['params']) == 'array') {
+            foreach ($options['@params'] as $param) {
+                $this->addFuncParam($param);
+            }
+        }
         $this->funcReturns = array(
             'return-types'=>array(),
             'description'=>''
         );
-        
-        $this->accessMofifier = '';
-    }
-    public function getDetailsNode() {
-        $node = new HTMLNode();
-        $node->setClassName('block method-details-block');
-        $node->setID($this->getName());
-        $methNameNode = $this->getMethodSignatorNode();
-        $methNameNode->setID('method-'.$this->getName().'-signator');
-        $node->addChild($methNameNode);
-        $descNode = new HTMLNode();
-        $descNode->addTextNode($this->getDescription(),false);
-        $descNode->setID('method-'.$this->getName().'-description');
-        $descNode->setClassName('method-description-block');
-        $node->addChild($descNode);
-        $params = $this->getParameters();
-        $count = count($params);
-        if($count != 0){
-            $paramsNode = new HTMLNode();
-            $paramsNode->setClassName('method-parameters-block');
-            $paramsNode->setID('method-'.$this->getName().'-parameters');
-            $textNode = new Paragraph();
-            $textNode->addText('Parameters:',['bold'=>true]);
-            $paramsNode->addChild($textNode);
-            $ul = new UnorderedList();
-            for($x = 0 ; $x < $count ; $x++){
-                $param = $params['param-'.$x];
-                $text = '<span class="datatype-name">'.$param['var-type'].' '.$param['var-name'].'</span>';
-                if($param['is-optional'] === true){
-                    $text .= ' [Optional]';
-                }
-                $text .= ' '.$param['var-desc'];
-                $ul->addListItem($text,false);
+        if (isset($options['returns'])) {
+            if (isset($options['returns']['return-types']) && isset($options['returns']['description'])) {
+                $this->funcReturns = $options['returns'];
             }
-            $paramsNode->addChild($ul);
-            $node->addChild($paramsNode);
         }
-        $return = $this->getMethodReturnTypesStr();
-        if($return !== null){
-            $retNode = new HTMLNode();
-            $retNode->setClassName('method-return-block');
-            $retNode->setID('method-'.$this->getName().'-return');
-            $textNode = new Paragraph();
-            $textNode->addText('<b>Returns:</b> <span class="datatype-name">'.$return.'</span>',array('esc-entities'=>false));
-            $retNode->addChild($textNode);
-            $descNode = new HTMLNode();
-            $descNode->addTextNode($this->getMethodReturnDescription(),false);
-            $descNode->setClassName('method-return-description-block');
-            $retNode->addChild($descNode);
-            $node->addChild($retNode);
+        $this->accessMofifier = '';
+        if (isset($options['access-modifier'])) {
+            $this->accessMofifier = $options['access-modifier'];
         }
-        return $node;
+        if (isset($options['summary'])) {
+            $this->setSummary($options['summary']);
+        }
+        if (isset($options['description'])) {
+            $this->setDescription($options['description']);
+        }
     }
-    public function getSummaryNode() {
-        $node = new HTMLNode();
-        $node->setClassName('block method-summary-block');
-        $sigNode = $this->getMethodSignatorNode();
-        $node->addChild($sigNode);
-        $descNode = new HTMLNode();
-        $descNode->addTextNode($this->getSummary());
-        $descNode->setClassName('method-description');
-        $node->addChild($descNode);
-        return $node;
-    }
+    
     public function getDetailsSignatorNode() {
         $methSig = $this->getAccessModofier().' '. str_replace('&', '&amp;', $this->getName()).'(';
-        $count = count($this->getParameters());
-        for($x = 0 ; $x < $count ; $x++){
-            $param = $this->getParameters()['param-'.$x];
-            if($x + 1 == $count){
-                $methSig .= $param['var-type'].' '. str_replace('&', '&amp', $param['var-name']);
-            }
-            else{
-                $methSig .= $param['var-type'].' '.str_replace('&', '&amp', $param['var-name']).', ';
-            }
+        $comma = '';
+        foreach($this->getParameters() as $paramObj){
+            $methSig .= $comma.$paramObj->getType().' '. str_replace('&', '&amp', $paramObj->getName());
+            $comma = ', ';
         }
         $methSig .= ')';
         return $methSig;
     }
     public function getMethodSignatorNode() {
-        $nodeText = $this->getAccessModofier().' <a href="'.
-                $this->getPageURL().'/'. 
-                str_replace('\\', '/', trim($this->getOwnerClass()->getNameSpace(), '\\')).
-                '/'.$this->getOwnerClass()->getName().'#'.str_replace('&', '', $this->getName()).
-                '">'. str_replace('&', '&amp;', $this->getName()).'</a>(';
-        $count = count($this->getParameters());
-        for($x = 0 ; $x < $count ; $x++){
-            $param = $this->getParameters()['param-'.$x];
-            if($x + 1 == $count){
-                $nodeText .= '<span class="datatype-name">'.$param['var-type'].'</span> <span class="attribute-name">'.$param['var-name'].'</span>';
-            }
-            else{
-                $nodeText .= '<span class="datatype-name">'.$param['var-type'].'</span> <span class="attribute-name">'.$param['var-name'].'</span>, ';
-            }
-        }
-        $nodeText .= ')';
         $retVal = new HTMLNode();
+        $retVal->text($this->getAccessModofier().' ')
+        ->addChild('a', [
+            'href' => $this->getPageURL().'/'. 
+                str_replace('\\', '/', trim($this->getOwnerClass()->getNameSpace(), '\\')).
+                '/'.$this->getOwnerClass()->getName().'#'.str_replace('&', '', $this->getName())
+        ], false)->text(str_replace('&', '&amp;', $this->getName()));
+        $retVal->text('(');
+        $comma = '';
+        foreach ($this->getParameters() as $p) {
+            $p instanceof MethodParameter;
+            if (strlen($comma) != 0) {
+                $retVal->text($comma);
+            }
+            $retVal->addChild('span', [
+                'class' => 'datatype-name'
+            ], false)->text($p->getType().' ');
+            $retVal->addChild('span', [
+                'class' => 'attribute-name'
+            ], false)->text($p->getName());
+            $comma = ', ';
+        }
+        $retVal->text(')');
         $retVal->setClassName('method-signator');
-        $retVal->addTextNode($nodeText,false);
         return $retVal;
     }
     /**
@@ -243,21 +209,11 @@ class FunctionDef {
         return $this->fName;
     }
     /**
-     * Adds new function parameter.
-     * @param string $varName The name of the parameter.
-     * @param string $varType Data type of the parameter.
-     * @param string $description The description of the parameter.
-     * @param boolean $isOptional A boolean value to indicate if the 
-     * parameter is optional or not.
+     * 
+     * @param MethodParameter $attr
      */
-    public function addFuncParam($varName,$varType,$description, $isOptional=false) {
-        $paramNum = count($this->funcParams);
-        $this->funcParams['param-'.$paramNum] = array(
-            'var-name'=> str_replace('&', '&amp;', $varName),
-            'var-type'=>$varType,
-            'var-desc'=>$description,
-            'is-optional'=>$isOptional
-        );
+    public function addFuncParam(MethodParameter $attr) {
+        $this->funcParams[] = $attr;
     }
     /**
      * Sets method return values and description.

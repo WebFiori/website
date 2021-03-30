@@ -217,7 +217,7 @@ class ClassAPI {
                             $typesStr = 'unkown_type';
                         }
                         $description = isset($param['description']) ? $param['description'] : '';
-                        $api->addFuncParam($param['name'], $typesStr, $description, $isOptional);
+                        $api->addFuncParam(new MethodParameter($param['name'], $typesStr, $description, $isOptional));
                     }
                 }
                 if(isset($docBlock['@return']) && gettype($docBlock['@return']['return-types']) == 'array'){
@@ -241,6 +241,7 @@ class ClassAPI {
         $this->ns = $classAPIReader->getNamespace();
         $this->setSummary($classAPIReader->getClassSummary());
     }
+    
     /**
      * Sets the base URL.
      * The base URL is a URL which the view will be using 
