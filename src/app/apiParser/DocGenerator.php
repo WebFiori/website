@@ -281,7 +281,11 @@ class DocGenerator {
                     . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getDescription())).'\');'."\r\n"
                     . '        $this->setWebsiteName(\''.$page->getWebsiteName().'\');'."\r\n"
                     . '        $this->setTitle(\''.$page->getTitle().'\');'."\r\n"
-                    . $this->createMethodsArrStr($classAPI);
+                    . $this->createAttrsArrStr($classAPI)
+                    . $this->createMethodsArrStr($classAPI)
+                    . '        foreach($classMethodsArr as $meth) {'."\r\n"
+                    . '            $this->insert($this->getTheme()->createMethodDetailsBlock($meth));'."\r\n"
+                    . '        }'."\r\n";
             $rawData .= '    }'."\r\n"
                     . '}'."\r\n"
                     . 'return __NAMESPACE__;';
@@ -588,6 +592,20 @@ class DocGenerator {
         self::logMessage('Scan finished.');
         $this->files = $retVal;
     }
+    private function createAttrsArrStr(ClassAPI $classAPi) {
+        $arr = '        $classAttrsArr = ['."\r\n";
+        foreach ($classAPi->getClassAttributes() as $attr) {
+            $attr instanceof AttributeDef;
+            $arr .= "            new AttributeDef("
+                    . "            '".$attr->getAccessModofier()."',"
+                    . "            '".$attr->getType()."',"
+                    . "            '".$attr->getName()."',"
+                    . "            '". str_replace("'", "\'", $attr->getSummary())."',"
+                    . "            '". str_replace("'", "\'", $attr->getDescription())."',"
+                    . "            ]),\r\n";
+        }
+        return $arr.'        ];'."\r\n";
+    }
     /**
      * 
      * @param ClassAPI $classAPi
@@ -602,18 +620,19 @@ class DocGenerator {
                     . "                'summary' => '". str_replace("'", "\'", $meth->getSummary())."',"."\r\n"
                     . "                'description' => '".str_replace("'", "\'",$meth->getDescription())."',"."\r\n"
                     . "                '@params' => ".$this->createParamsArr($meth).""."\r\n"
-                    . "            ]),";
+                    . "            ]),\r\n";
         }
-        return $arr;
+        return $arr.'        ];'."\r\n";
     }
     private function createParamsArr(FunctionDef $def) {
         $arr = '['."\r\n";
         foreach ($def->getParameters() as $p) {
             $p instanceof MethodParameter;
             $arr .= '                    ['."\r\n";
-            $arr .= "                        new MethodParameter(\r\n'".$p->getName()."',\r\n'"
-                    . "                        ".$p->getType()."',\r\n'"
-                    . "                        ". str_replace("'", "\'", $p->getDescription())."',\r\n"
+            $arr .= "                        new MethodParameter(\r\n"
+                    . "                        '".$p->getName()."',\r\n"
+                    . "                        '".$p->getType()."',\r\n"
+                    . "                        '". str_replace("'", "\'", $p->getDescription())."',\r\n"
                     . "                        ".($p->isOptional() === true ? 'true' : 'false')."),\r\n";
             $arr .= '                    ],'."\r\n";
         }

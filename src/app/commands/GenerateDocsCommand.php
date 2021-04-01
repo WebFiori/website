@@ -13,17 +13,17 @@ class GenerateDocsCommand extends CLICommand{
         //    $r = new APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
         //    Util::print_r($r->getParsedInfo());
         $reader = new DocGenerator(array(
-            'path'=>'C:\Server\apache2\htdocs\framework\src',
+            'path'=>'C:\Server2\apache2\htdocs\webfiori\src',
             'exclude-path'=>array(
-                'C:\Server\apache2\htdocs\framework\src\app\pages',
-                'C:\Server\apache2\htdocs\framework\src\app\apis',
-                'C:\Server\apache2\htdocs\framework\src\themes',
+                'C:\Server2\apache2\htdocs\webfiori\src\app\pages',
+                'C:\Server2\apache2\htdocs\webfiori\src\app\apis',
+                'C:\Server2\apache2\htdocs\webfiori\src\themes',
                 //'C:\Server\apache2\htdocs\webfiori\src\app'
             ),
             'base-url'=> 'http://localhost:8989/docs',
             'theme'=> NewFioriAPI::class,
             'site-name'=>'WebFiori API Docs',
-            'output-path'=>'C:\\Server\\apache2\\htdocs\\website\\src\\app\\pages\\apis',
+            'output-path'=>'C:\\Server2\\apache2\\htdocs\\webfiori-docs\\src\\app\\pages\\apis',
             'route-root-folder'=>'apis',
             'is-dynamic'=>true
         ));

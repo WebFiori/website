@@ -21,6 +21,13 @@ class AttributeDef {
     private $pageUrl;
     private $ns;
     private $ownerClass;
+    public function __construct($accsessMod = '', $type = '', $name = '', $summary = '', $desc = '') {
+        $this->setAccessModifier($accsessMod);
+        $this->setName($name);
+        $this->setSummary($summary);
+        $this->setDescription($desc);
+        $this->setType($type);
+    }
     /**
      * Sets attribute access modifier.
      * @param string $mod Attribute access modifier (e.g. 'public', 'protected', 'const').
