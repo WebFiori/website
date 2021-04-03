@@ -10,6 +10,7 @@ use webfiori\ui\HTMLNode;
 use Exception;
 use webfiori\framework\File;
 use webfiori\framework\ui\WebPage;
+use webfiori\ui\Anchor;
 /**
  * A PHPDoc parser class which is used to generate API docs for PHP classes.
  *
@@ -316,6 +317,13 @@ class DocGenerator {
     public function getNSAPIObjcts() {
         return $this->nsApiObjecsArr;
     }
+    /**
+     * Returns an associative array that holds all generated links for all classes 
+     * and types.
+     * 
+     * @return array The indices will be datatypes such as 'int' and the 
+     * values are objects of type 'Anchor'.
+     */
     public function getLinks() {
         return $this->linksArr;
     }
@@ -348,25 +356,26 @@ class DocGenerator {
      */
     private function _buildLinks() {
         $nsClasses = array();
-        $this->linksArr['boolean'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">boolean</a>';
-        $this->linksArr['null'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.null.php" target="_blank">null</a>';
-        $this->linksArr['true'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">true</a>';
-        $this->linksArr['false'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">false</a>';
-        $this->linksArr['NULL'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.null.php" target="_blank">NULL</a>';
-        $this->linksArr['TRUE'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">TRUE</a>';
-        $this->linksArr['FALSE'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.boolean.php" target="_blank">FALSE</a>';
-        $this->linksArr['int'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.integer.php" target="_blank">int</a>';
-        $this->linksArr['array'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.array.php" target="_blank">array</a>';
-        $this->linksArr['string'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.string.php" target="_blank">string</a>';
-        $this->linksArr['callable'] = '<aclass="datatype-name" href="http://php.net/manual/en/language.types.callable.php" target="_blank">callable</a>';
-        $this->linksArr['float'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.float.php" target="_blank">float</a>';
-        $this->linksArr['double'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.float.php" target="_blank">double</a>';
-        $this->linksArr['resource'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.resource.php" target="_blank">resource</a>';
-        $this->linksArr['Iterable'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.iterable.php" target="_blank">iterable</a>';
-        $this->linksArr['object'] = '<a class="datatype-name" href="http://php.net/manual/en/language.types.object.php" target="_blank">object</a>';
-        $this->linksArr['Iterator'] = '<a class="datatype-name" href="https://www.php.net/manual/en/class.iterator.php">Iterator</a>';
-        $this->linksArr['Countable'] = '<a class="datatype-name" href="https://www.php.net/manual/en/class.countable.php">Countable</a>';
-        $this->linksArr['Exception'] = '<a class="datatype-name" href="https://www.php.net/manual/en/class.exception.php">Exception</a>';
+        $this->linksArr['boolean'] = new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean', '_blank');
+        $this->linksArr['null'] = new Anchor('http://php.net/manual/en/language.types.null.php', 'null', '_blank');
+        $this->linksArr['true'] = new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean', '_blank');
+        $this->linksArr['false'] = new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean', '_blank');
+        $this->linksArr['NULL'] = new Anchor('http://php.net/manual/en/language.types.null.php', 'null', '_blank');
+        $this->linksArr['TRUE'] = new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean', '_blank');
+        $this->linksArr['FALSE'] = new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean', '_blank');
+        $this->linksArr['int'] = new Anchor('http://php.net/manual/en/language.types.integer.php', 'int', '_blank');
+        $this->linksArr['array'] = new Anchor('http://php.net/manual/en/language.types.array.php', 'array', '_blank');
+        $this->linksArr['string'] = new Anchor('http://php.net/manual/en/language.types.string.php', 'string', '_blank');
+        $this->linksArr['callable'] = new Anchor('http://php.net/manual/en/language.types.callable.php', 'callable', '_blank');
+        $this->linksArr['float'] = new Anchor('http://php.net/manual/en/language.types.float.php', 'float', '_blank');
+        $this->linksArr['double'] = new Anchor('http://php.net/manual/en/language.types.float.php', 'double', '_blank');
+        $this->linksArr['resource'] = new Anchor('http://php.net/manual/en/language.types.resource.php', 'resource', '_blank');
+        $this->linksArr['Iterable'] = new Anchor('http://php.net/manual/en/language.types.iterable.php', 'Iterable', '_blank');
+        $this->linksArr['boolean'] = new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean', '_blank');
+        $this->linksArr['Iterator'] = new Anchor('https://www.php.net/manual/en/class.iterator.php', 'Iterator', '_blank');
+        $this->linksArr['Countable'] = new Anchor('https://www.php.net/manual/en/class.countable.php', 'Countable', '_blank');
+        $this->linksArr['Exception'] = new Anchor('https://www.php.net/manual/en/class.exception.php', 'Exception', '_blank');
+        
         $base = $this->getBaseURL();
         foreach ($this->apiReadersArr as $apiReader){
             $namespaceLink = $apiReader->getNamespace();
@@ -383,17 +392,17 @@ class DocGenerator {
                 $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/NSIndex';
             }
-            $this->linksArr[$cName] = '<a class="datatype-name" href="'.$classLink.'">'.$cName.'</a>';
+            $this->linksArr[$cName] = new Anchor($classLink, $cName);
             $this->classesLinksByNS[$nsName][] = [
                 'label'=>$cName,
                 'link'=>$classLink
             ];
             $nsClasses[$nsName][] = new ClassAPI($apiReader);
             foreach ($apiReader->getConstantsNames() as $name){
-                $this->linksArr[$cName.'::'.$name] = '<a class="datatype-name" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'</a>';
+                $this->linksArr[$cName.'::'.$name] = new Anchor($classLink.'#'.$name, $cName.'::'.$name);
             }
             foreach ($apiReader->getMethodsNames() as $name){
-                $this->linksArr[$cName.'::'.$name.'()'] = '<a class="datatype-name" href="'.$classLink.'#'.$name.'">'.$cName.'::'.$name.'()</a>';
+                $this->linksArr[$cName.'::'.$name.'()'] = new Anchor($classLink.'#'.$name, $cName.'::'.$name.'()');
             }
         }
         $namespacesNames = array_keys($nsClasses);

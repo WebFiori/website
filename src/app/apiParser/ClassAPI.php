@@ -3,6 +3,7 @@ namespace webfiori\apiParser;
 use webfiori\entity\Util;
 use WebFioriGUI;
 use phpStructs\html\PNode;
+use webfiori\ui\HTMLNode;
 /**
  * A class that is used to construct a GUI to view class API.
  *
@@ -194,30 +195,21 @@ class ClassAPI {
                         $isOptional = isset($param['is-optional']) ? $param['is-optional'] : FALSE;
                         if(isset($param['type'])){
                             $paramTypes = explode('|', $param['type']);
-                            $typesStr = '';
-                            $index = 0;
-                            $count = count($paramTypes);
+                            $typesNode = new ParameterType();
                             foreach ($paramTypes as $t){
                                 if(isset($linksArr[$t])){
-                                    $tp = $linksArr[$t];
+                                    $typesNode->add($linksArr[$t]);
                                 }
                                 else{
-                                    $tp = $t;
+                                    $typesNode->add($t);
                                 }
-                                if($index + 1 == $count){
-                                    $typesStr .= $tp;
-                                }
-                                else{
-                                    $typesStr .= $tp.'|';
-                                }
-                                $index++;
                             }
                         }
                         else{
-                            $typesStr = 'unkown_type';
+                            $typesNode->text('unkown_type');
                         }
                         $description = isset($param['description']) ? $param['description'] : '';
-                        $api->addFuncParam(new MethodParameter($param['name'], $typesStr, $description, $isOptional));
+                        $api->addFuncParam(new MethodParameter($param['name'], $typesNode, $description, $isOptional));
                     }
                 }
                 if(isset($docBlock['@return']) && gettype($docBlock['@return']['return-types']) == 'array'){

@@ -300,7 +300,7 @@ class NewFioriAPI extends APITheme {
                 'font-family' => 'monospace',
                 'font-weight' => 'bold'
             ]
-        ], false)->text($func->getDetailsSignatorNode());
+        ], false)->addChild($func->getDetailsSignatorNode());
         $vCardTxt = $block->addChild('v-card-text', [], false);
         $row = $vCardTxt->addChild('v-row');
         $row->addChild('v-col', [
@@ -328,8 +328,9 @@ class NewFioriAPI extends APITheme {
                 $ul->addChild('span', [
                     'style' => [
                         'font-family' => 'monospace'
-                    ]
-                ], false)->text($param->getType().' '.$param->getName().$optionalTxt);
+                    ],
+                    'v-html' => "'".$param->getType().' '.$param->getName().$optionalTxt."'"
+                ]);
             }
         }
         $return = $func->getMethodReturnTypesStr();

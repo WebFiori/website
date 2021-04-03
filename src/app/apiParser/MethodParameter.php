@@ -7,6 +7,7 @@
  */
 
 namespace webfiori\apiParser;
+use webfiori\ui\HTMLNode;
 
 /**
  * A class that represents method attribute.
@@ -18,7 +19,7 @@ class MethodParameter {
     private $attrType;
     private $attrDescription;
     private $isOptional;
-    public function __construct($name = '', $type = 'unkown', $desc = '', $isOptional = false) {
+    public function __construct($name = '', ParameterType $type = null, $desc = '', $isOptional = false) {
         $this->setName($name);
         $this->setType($type);
         $this->setDescription($desc);
@@ -27,7 +28,11 @@ class MethodParameter {
     public function setName($name) {
         $this->attrName = $name;
     }
-    public function setType($type) {
+    /**
+     * 
+     * @param HTMLNode $type
+     */
+    public function setType(ParameterType $type) {
         $this->attrType = $type;
     }
     public function setDescription($desc) {
@@ -39,6 +44,10 @@ class MethodParameter {
     public function getName() {
         return $this->attrName;
     }
+    /**
+     * 
+     * @return HTMLNode
+     */
     public function getType() {
         return $this->attrType;
     }

@@ -38,7 +38,8 @@ class FunctionDef {
             $this->setName($options['name']);
         }
         $this->funcParams = [];
-        if (isset($options['@params']) && gettype($options['params']) == 'array') {
+        if (isset($options['@params']) && gettype($options['@params']) == 'array') {
+            
             foreach ($options['@params'] as $param) {
                 $this->addFuncParam($param);
             }
@@ -65,6 +66,7 @@ class FunctionDef {
     }
     
     public function getDetailsSignatorNode() {
+        $node = new HTMLNode('span');
         $methSig = $this->getAccessModofier().' '. str_replace('&', '&amp;', $this->getName()).'(';
         $comma = '';
         foreach($this->getParameters() as $paramObj){
@@ -72,7 +74,8 @@ class FunctionDef {
             $comma = ', ';
         }
         $methSig .= ')';
-        return $methSig;
+        $node->text($methSig);
+        return $node;
     }
     public function getMethodSignatorNode() {
         $retVal = new HTMLNode();
