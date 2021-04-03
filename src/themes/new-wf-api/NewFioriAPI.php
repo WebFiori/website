@@ -275,7 +275,7 @@ class NewFioriAPI extends APITheme {
         return $block;
     }
 
-    public function createClassDescriptionNode(): HTMLNode {
+    public function createClassDescriptionNode($accessMod = '', $className = '', $ns= '', $description= ''): HTMLNode {
         $block = new HTMLNode('v-row');
         $class = $this->getClass();
         $block->addChild('v-col', [
@@ -283,26 +283,33 @@ class NewFioriAPI extends APITheme {
         ], false)->addChild('p', [], false)
         ->addChild('b', [
             'class' => 'mono'
-        ], false)->text('namespace '.$class->getNameSpace());
+        ], false)->text('namespace '.$ns);
         $block->addChild('v-col', [
             'cols' => 12
-        ], false)->addChild('h1', [], false)->text($class->getAccessModifier().' '.$class->getName());
+        ], false)->addChild('h1', [], false)->text($accessMod.' '.$className);
         $block->addChild('v-col', [
             'cols' => 12
-        ], false)->text($class->getSummary().' '.$class->getDescription());
+        ], false)->text($description);
         return $block;
     }
 
     public function createMethodDetailsBlock(FunctionDef $func): HTMLNode {
-        $block = new HTMLNode('v-row');
-        $block->addChild('v-col', [
-            'cols' => 12
+        $block = new HTMLNode('v-card');
+        $block->addChild('v-card-title', [
+            'style' => [
+                'font-family' => 'monospace',
+                'font-weight' => 'bold'
+            ]
         ], false)->text($func->getDetailsSignatorNode());
-        $block->addChild('v-col', [
-            'cols' => 12
-        ], false)->text($func->getDescription());
+        $vCardTxt = $block->addChild('v-card-text', [], false);
+        $row = $vCardTxt->addChild('v-row');
+        $row->addChild('v-col', [
+            'cols' => 12,
+            'v-html' => "'".$func->getDescription()."'"
+        ]);
+        
         if (count($func->getParameters()) != 0) {
-            $paramsCol = $block->addChild('v-col', [
+            $paramsCol = $row->addChild('v-col', [
                 'cols' => 12
             ], false);
             $paramsCol->addChild('p', [
@@ -327,7 +334,7 @@ class NewFioriAPI extends APITheme {
         }
         $return = $func->getMethodReturnTypesStr();
         if($return !== null){
-            $retCol = $block->addChild('v-col', [
+            $retCol = $row->addChild('v-col', [
                 'cols' => 12
             ], false);
             $retCol->addChild('p', [

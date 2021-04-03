@@ -48,16 +48,16 @@ abstract class APITheme extends Theme{
      * 
      * @return HTMLNode
      */
-    public function createBodyNode() {
-        $body = new HTMLNode();
-        $body->setID('api-page-body');
-        $body->addChild($this->createClassDescriptionNode());
-        $body->addChild($this->createAttrsSummaryBlock());
-        $body->addChild($this->createMethodsSummaryBlock());
-        $body->addChild($this->createAttrsDetailsBlock());
-        $body->addChild($this->createMethodsDetailsBlock());
-        return $body;
-    }
+//    public function createBodyNode() {
+//        $body = new HTMLNode();
+//        $body->setID('api-page-body');
+//        $body->addChild($this->createClassDescriptionNode());
+//        $body->addChild($this->createAttrsSummaryBlock());
+//        $body->addChild($this->createMethodsSummaryBlock());
+//        $body->addChild($this->createAttrsDetailsBlock());
+//        $body->addChild($this->createMethodsDetailsBlock());
+//        return $body;
+//    }
     /**
      * Returns the class that the theme will use to create APIs description page.
      * 
@@ -243,7 +243,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode which represents class description block.
      * 
      */
-    abstract public function createClassDescriptionNode();
+    abstract public function createClassDescriptionNode($accessMod = '', $className = '', $ns = '', $description = '');
     /**
      * Creates HTMLNode object that contains namespace index file content.
      * 

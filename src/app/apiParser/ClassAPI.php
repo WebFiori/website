@@ -103,7 +103,7 @@ class ClassAPI {
         $this->cName = $classAPIReader->getClassName();
         $this->baseUrl = $options['base-url'];
         $this->setSummary($classAPIReader->getClassSummary());
-        $this->setDescription($classAPIReader->getClassDescription());
+        $this->setDescription($classAPIReader->getClassSummary().' '.$classAPIReader->getClassDescription());
         $this->setClassAccessModifier($classAPIReader->getParsedInfo()['class-def']['access-modifier']);
         $extendsClasses = $classAPIReader->getParsedInfo()['class-def']['extends'];
         if(count($extendsClasses) != 0){

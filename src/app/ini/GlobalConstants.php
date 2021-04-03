@@ -167,7 +167,7 @@ class GlobalConstants {
              * the constant. Default value of the constant is 'example.com'.
              * @since 1.0
              */
-            define('CLI_HTTP_HOST', 'example.com');
+            define('CLI_HTTP_HOST', 'localhost:8989');
         }
 
         if (!defined('DS')) {

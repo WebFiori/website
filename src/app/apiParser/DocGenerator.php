@@ -198,7 +198,7 @@ class DocGenerator {
                 
                 $classAPI->setBaseURL($base);
                 $theme->setClass($classAPI);
-                $page->insert($theme->createBodyNode());
+                //$page->insert($theme->createBodyNode());
                 //$page = new APIPage($classAPI);
                 $canonical = $base. str_replace('\\', '/', $classAPI->getNameSpace()).'/'.$classAPI->getName();
                 $page->setCanonical($canonical);
@@ -252,7 +252,7 @@ class DocGenerator {
     private function isDynamicPage() {
         return $this->isDynamic;
     }
-    public function createPHPFile($classAPI, $path,$options, WebPage $page) {
+    public function createPHPFile(ClassAPI $classAPI, $path,$options, WebPage $page) {
         $savePath = $path.$classAPI->getNameSpace();
         if(Util::isDirectory($savePath, true)){
             $file = new File();
@@ -273,6 +273,9 @@ class DocGenerator {
                     . 'namespace docGenerator'.$ns.";\r\n"
                     . 'use webfiori\framework\ui\WebPage as P;'."\r\n"
                     . 'use webfiori\ui\HTMLNode;'."\r\n"
+                    . 'use webfiori\apiParser\FunctionDef;'."\r\n"
+                    . 'use webfiori\apiParser\AttributeDef;'."\r\n"
+                    . 'use webfiori\apiParser\MethodParameter;'."\r\n"
                     . 'class '.$classAPI->getName().'View extends P {'."\r\n"
                     . '    public function __construct(){'."\r\n"
                     . '        parent::__construct();'."\r\n"
@@ -281,6 +284,7 @@ class DocGenerator {
                     . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getDescription())).'\');'."\r\n"
                     . '        $this->setWebsiteName(\''.$page->getWebsiteName().'\');'."\r\n"
                     . '        $this->setTitle(\''.$page->getTitle().'\');'."\r\n"
+                    . '        $this->insert($this->getTheme()->createClassDescriptionNode(\''.$classAPI->getAccessModifier().'\', \''.$classAPI->getName().'\', \''.$classAPI->getNameSpace().'\', \''.$classAPI->getDescription().'\'));'."\r\n"
                     . $this->createAttrsArrStr($classAPI)
                     . $this->createMethodsArrStr($classAPI)
                     . '        foreach($classMethodsArr as $meth) {'."\r\n"
@@ -596,13 +600,13 @@ class DocGenerator {
         $arr = '        $classAttrsArr = ['."\r\n";
         foreach ($classAPi->getClassAttributes() as $attr) {
             $attr instanceof AttributeDef;
-            $arr .= "            new AttributeDef("
-                    . "            '".$attr->getAccessModofier()."',"
-                    . "            '".$attr->getType()."',"
-                    . "            '".$attr->getName()."',"
-                    . "            '". str_replace("'", "\'", $attr->getSummary())."',"
-                    . "            '". str_replace("'", "\'", $attr->getDescription())."',"
-                    . "            ]),\r\n";
+            $arr .= "            new AttributeDef(\r\n"
+                    . "            '".$attr->getAccessModofier()."',\r\n"
+                    . "            '".$attr->getType()."',\r\n"
+                    . "            '".$attr->getName()."',\r\n"
+                    . "            '". str_replace("'", "\'", $attr->getSummary())."',\r\n"
+                    . "            '". str_replace("'", "\'", $attr->getDescription())."',\r\n"
+                    . "            ),\r\n";
         }
         return $arr.'        ];'."\r\n";
     }
@@ -628,13 +632,13 @@ class DocGenerator {
         $arr = '['."\r\n";
         foreach ($def->getParameters() as $p) {
             $p instanceof MethodParameter;
-            $arr .= '                    ['."\r\n";
-            $arr .= "                        new MethodParameter(\r\n"
-                    . "                        '".$p->getName()."',\r\n"
-                    . "                        '".$p->getType()."',\r\n"
-                    . "                        '". str_replace("'", "\'", $p->getDescription())."',\r\n"
-                    . "                        ".($p->isOptional() === true ? 'true' : 'false')."),\r\n";
-            $arr .= '                    ],'."\r\n";
+            $arr .= '                    '."\r\n";
+            $arr .= "                    new MethodParameter(\r\n"
+                    . "                    '".$p->getName()."',\r\n"
+                    . "                    '".$p->getType()."',\r\n"
+                    . "                    '". str_replace("'", "\'", $p->getDescription())."',\r\n"
+                    . "                    ".($p->isOptional() === true ? 'true' : 'false')."),\r\n";
+            $arr .= '                    '."\r\n";
         }
         return $arr .= '                ],';
     }
