@@ -64,17 +64,44 @@ class FunctionDef {
             $this->setDescription($options['description']);
         }
     }
-    
-    public function getDetailsSignatorNode() {
+    public function getSummarySignatorNode() {
         $node = new HTMLNode('span');
-        $methSig = $this->getAccessModofier().' '. str_replace('&', '&amp;', $this->getName()).'(';
+        $node->text($this->getAccessModofier().' ');
+        $node->addChild('a', [
+            'href' => '#'.$this->getName()
+        ], false)->text(str_replace('&', '&amp;', $this->getName()));
+        $node->text(')');
         $comma = '';
         foreach($this->getParameters() as $paramObj){
-            $methSig .= $comma.$paramObj->getType().' '. str_replace('&', '&amp', $paramObj->getName());
+            if ($comma != '') {
+                $node->text($comma);
+            }
+            $paramObj instanceof MethodParameter;
+            $node->addChild($paramObj->getType());
+            $node->text($paramObj->getName());
+            
+            
             $comma = ', ';
         }
-        $methSig .= ')';
-        $node->text($methSig);
+        $node->text(')');
+        return $node;
+    }
+    public function getDetailsSignatorNode() {
+        $node = new HTMLNode('span');
+        $node->text($this->getAccessModofier().' '. str_replace('&', '&amp;', $this->getName()).'(');
+        $comma = '';
+        foreach($this->getParameters() as $paramObj){
+            if ($comma != '') {
+                $node->text($comma);
+            }
+            $paramObj instanceof MethodParameter;
+            $node->addChild($paramObj->getType());
+            $node->text($paramObj->getName());
+            
+            
+            $comma = ', ';
+        }
+        $node->text(')');
         return $node;
     }
     public function getMethodSignatorNode() {
