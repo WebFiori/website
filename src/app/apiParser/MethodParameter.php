@@ -19,6 +19,16 @@ class MethodParameter {
     private $attrType;
     private $attrDescription;
     private $isOptional;
+    /**
+     * Creates new  instance of the class.
+     * 
+     * @param string $name The name of the parameter such as '$arg1'.
+     * 
+     * @param ParameterType $type The type (or types) of the parameter.
+     * 
+     * @param type $desc
+     * @param type $isOptional
+     */
     public function __construct($name = '', ParameterType $type = null, $desc = '', $isOptional = false) {
         $this->setName($name);
         $this->setType($type);
@@ -36,6 +46,7 @@ class MethodParameter {
         $this->attrType = $type;
     }
     public function setDescription($desc) {
+        
         $this->attrDescription = $desc;
     }
     public function setIsOptional($bool) {
