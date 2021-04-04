@@ -294,7 +294,9 @@ class NewFioriAPI extends APITheme {
     }
 
     public function createMethodDetailsBlock(FunctionDef $func): HTMLNode {
-        $block = new HTMLNode('v-card');
+        $block = new HTMLNode('v-card', [
+            'id' => $func->getName()
+        ]);
         $block->addChild('v-card-title', [
             'style' => [
                 'font-family' => 'monospace',
@@ -323,14 +325,23 @@ class NewFioriAPI extends APITheme {
                 $param = $func->getParameters()[$x];
                 $optionalTxt = '';
                 if($param->isOptional() === true){
-                    $optionalTxt = ' [Optional]';
+                    $optionalTxt = '[Optional] ';
                 }
-                $ul->addChild('span', [
+                $li = new \webfiori\ui\ListItem();
+                $ul->addChild($li, [
                     'style' => [
                         'font-family' => 'monospace'
-                    ],
-                    'v-html' => "'".$param->getType().' '.$param->getName().$optionalTxt."'"
+                    ]
                 ]);
+                $li->addChild($param->getType())
+                        ->text($param->getName().' ')
+                        ->text($optionalTxt)
+                        ->addChild('span', [
+                            'style' => [
+                                'font-family' => 'roboto'
+                            ]
+                        ], false)
+                        ->text($param->getDescription());
             }
         }
         $return = $func->getMethodReturnTypesStr();
@@ -353,13 +364,19 @@ class NewFioriAPI extends APITheme {
     }
 
     public function createMethodSummaryBlock(FunctionDef $func): HTMLNode {
-        $block = new HTMLNode('v-row');
-        $block->addChild('v-col', [
-            'cols' => 12
-        ], false)->addChild($func->getMethodSignatorNode());
-        $block->addChild('v-col', [
-            'cols' => 12
-        ], false)->text($func->getSummary());
+        $block = new HTMLNode('v-card');
+        $block->addChild('v-card-title', [
+            'style' => [
+                'font-family' => 'monospace',
+                'font-weight' => 'bold'
+            ]
+        ], false)->addChild($func->getSummarySignatorNode());
+        $vCardTxt = $block->addChild('v-card-text', [], false);
+        $row = $vCardTxt->addChild('v-row');
+        $row->addChild('v-col', [
+            'cols' => 12,
+            'v-html' => "'".$func->getSummary()."'"
+        ]);
         return $block;
     }
 
