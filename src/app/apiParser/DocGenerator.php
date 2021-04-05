@@ -151,7 +151,7 @@ class DocGenerator {
         $options = $this->getOptions();
         $page = new WebPage();
         foreach ($this->getNSAPIObjcts() as $nsObj){
-            
+            $nsObj instanceof NameSpaceAPI;
             $page->setTheme($themeName);
             $theme = $page->getTheme();
             if($theme instanceof APITheme){
@@ -277,6 +277,9 @@ class DocGenerator {
                     . 'use webfiori\apiParser\FunctionDef;'."\r\n"
                     . 'use webfiori\apiParser\AttributeDef;'."\r\n"
                     . 'use webfiori\apiParser\MethodParameter;'."\r\n"
+                    . 'use webfiori\ui\Anchor;'."\r\n"
+                    . 'use webfiori\apiParser\ParameterType;'."\r\n"
+                    . "\r\n"
                     . 'class '.$classAPI->getName().'View extends P {'."\r\n"
                     . '    public function __construct(){'."\r\n"
                     . '        parent::__construct();'."\r\n"
@@ -288,9 +291,10 @@ class DocGenerator {
                     . '        $this->insert($this->getTheme()->createClassDescriptionNode(\''.$classAPI->getAccessModifier().'\', \''.$classAPI->getName().'\', \''.$classAPI->getNameSpace().'\', \''.$classAPI->getDescription().'\'));'."\r\n"
                     . $this->createAttrsArrStr($classAPI)
                     . $this->createMethodsArrStr($classAPI)
-                    . '        foreach($classMethodsArr as $meth) {'."\r\n"
-                    . '            $this->insert($this->getTheme()->createMethodDetailsBlock($meth));'."\r\n"
-                    . '        }'."\r\n";
+                    . '        $this->insert($this->getTheme()->createAttrsSummaryBlock($classAttrsArr));'."\r\n"
+                    . '        $this->insert($this->getTheme()->createMethodsSummaryBlock($classMethodsArr));'."\r\n"
+                    . '        $this->insert($this->getTheme()->createAttrsDetailsBlock($classAttrsArr));'."\r\n"
+                    . '        $this->insert($this->getTheme()->createMethodsDetailsBlock($classMethodsArr));'."\r\n";
             $rawData .= '    }'."\r\n"
                     . '}'."\r\n"
                     . 'return __NAMESPACE__;';
@@ -508,11 +512,7 @@ class DocGenerator {
                         . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $p->getDescription())).'\');'."\r\n"
                         . '        $this->setWebsiteName(\''.$p->getWebsiteName().'\');'."\r\n"
                         . '        $this->setTitle(\''. str_replace('\\', '\\\\', $p->getTitle()).'\');'."\r\n";
-                $index = 0;
-                foreach ($p->getChildByID('main-content-area')->children() as $node) {
-                    $rawData .= $this->toPHPCode($node, $index);
-                    $index++;
-                }
+                
                 $rawData .=  '    }'."\r\n"
                         . '}'."\r\n"
                         . 'return __NAMESPACE__;';
@@ -643,11 +643,21 @@ class DocGenerator {
             $p instanceof MethodParameter;
             $arr .= '                    '."\r\n";
             $arr .= "                    new MethodParameter(\r\n"
-                    . "                    '".$p->getName()."',\r\n"
-                    . "                    '".$p->getType()."',\r\n"
-                    . "                    '". str_replace("'", "\'", $p->getDescription())."',\r\n"
-                    . "                    ".($p->isOptional() === true ? 'true' : 'false')."),\r\n";
-            $arr .= '                    '."\r\n";
+                    . "                        '".$p->getName()."',\r\n"
+                    . "                        new ParameterType([\r\n";
+            foreach ($p->getType()->children() as $node) {
+                $node instanceof \webfiori\ui\HTMLNode;
+                if ($node->getNodeName() != HTMLNode::TEXT_NODE) {
+                    $arr .= "                            new Anchor('".$node->getAttribute('href')."','".$node->getChild(0)->getText()."'),"."\r\n";
+                } else {
+                    $arr .= '                            HTMLNode::createTextNode(\''.$node->getText().'\'),'."\r\n";
+                }
+            }
+            
+            $arr .= "                        ]),\r\n";
+            $arr        .= "                        '". str_replace("'", "\'", $p->getDescription())."',\r\n"
+                    . "                        ".($p->isOptional() === true ? 'true' : 'false').",\r\n";
+            $arr .= '                    ),'."\r\n";
         }
         return $arr .= '                ],';
     }
