@@ -245,7 +245,10 @@ class NewFioriAPI extends APITheme {
     }
 
     public function createAttributeDetailsBlock(AttributeDef $attr): HTMLNode {
-        $block = new HTMLNode('v-row');
+        $block = new HTMLNode('v-row', [
+            'hover', 'outlined', 
+            'id' => $attr->getName()
+        ]);
         $col = $block->addChild('v-col', [
             'cols' => 12
         ], false);
@@ -283,7 +286,9 @@ class NewFioriAPI extends APITheme {
         ], false)->addChild('p', [], false)
         ->addChild('b', [
             'class' => 'mono'
-        ], false)->text('namespace '.$ns);
+        ], false)->text('namespace ')->addChild('a', [
+            'href' => $this->getBaseURL()."/". str_replace('\\', '/', $ns)
+        ], false)->text($ns);
         $block->addChild('v-col', [
             'cols' => 12
         ], false)->addChild('h1', [], false)->text($accessMod.' '.$className);
@@ -295,7 +300,8 @@ class NewFioriAPI extends APITheme {
 
     public function createMethodDetailsBlock(FunctionDef $func): HTMLNode {
         $block = new HTMLNode('v-card', [
-            'id' => $func->getName()
+            'id' => $func->getName(),
+            'hover', 'outlined', 
         ]);
         $block->addChild('v-card-title', [
             'style' => [
@@ -364,7 +370,10 @@ class NewFioriAPI extends APITheme {
     }
 
     public function createMethodSummaryBlock(FunctionDef $func): HTMLNode {
-        $block = new HTMLNode('v-card');
+        $block = new HTMLNode('v-card', [
+            'height' => '85',
+            'hover', 'outlined', 
+        ]);
         $block->addChild('v-card-title', [
             'style' => [
                 'font-family' => 'monospace',
@@ -393,11 +402,12 @@ class NewFioriAPI extends APITheme {
         ], false)->text('Namespace '.$nsObj->getName());
         $nsArr = $nsObj->getSubNamespaces();
         if(count($nsArr) !=0 ){
-            $nsNode = $block->addChild('v-col', [
-                'cols' => 12
+            $nsNode = $block->addChild('v-card', [
+                'hover', 'outlined', 
             ], false);
-            $nsNode->addChild('h2', [], false)->text('All Sub-namespaces:');
-            $list = $nsNode->addChild('v-list', ['dense'], false);
+            $nsNode->addChild('v-card-title', [], false)->text('All Sub-namespaces:');
+            $list = $nsNode->addChild('v-card-text', [], false)
+                    ->addChild('v-list', ['dense'], false);
             foreach ($nsArr as $nsName){
                 $list->addChild('v-list-item', [
                     'href' => $this->getBaseURL().'/'.str_replace('\\', '/', $nsName)
@@ -408,11 +418,11 @@ class NewFioriAPI extends APITheme {
         }
         $interfaces = $nsObj->getInterfaces();
         if(count($interfaces) != 0){
-            $nsNode = $block->addChild('v-col', [
-                'cols' => 12
+            $nsNode = $block->addChild('v-card', [
+                'hover', 'outlined', 
             ], false);
-            $nsNode->addChild('h2', [], false)->text('All Interfaces:');
-            $list = $nsNode->addChild('v-list', ['dense'], false);
+            $nsNode->addChild('v-card-title', [], false)->text('All Interfaces:');
+            $list = $nsNode->addChild('v-card-text',[], false)->addChild('v-list', ['dense'], false);
             foreach ($interfaces as $interface){
                 $list->addChild('v-list-item', [
                     'href' => $this->getBaseURL().'/'.str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interface->getName()
@@ -437,6 +447,62 @@ class NewFioriAPI extends APITheme {
             }
         }
         return $block;
+    }
+
+    public function createAttrsDetailsBlock($classAttrsArr) {
+        if (count($classAttrsArr) != 0) {
+            $node = new HTMLNode('v-row');
+            $node->addChild('v-col', [
+                'cols' => 12
+            ], false)->addChild('h3', [], false)->text('Class Attributes Details');
+            $col = $node->addChild('v-col', [], false);
+            foreach ($classAttrsArr as $attrObj) {
+                $col->addChild($this->createAttributeDetailsBlock($attrObj));
+            }
+            return $node;
+        }
+    }
+
+    public function createAttrsSummaryBlock($classAttrsArr) {
+        if (count($classAttrsArr) != 0) {
+            $node = new HTMLNode('v-row');
+            $node->addChild('v-col', [
+                'cols' => 12
+            ], false)->addChild('h3', [], false)->text('Class Attributes Summary');
+            $col = $node->addChild('v-col', [], false);
+            foreach ($classAttrsArr as $attrObj) {
+                $col->addChild($this->createAttributeSummaryBlock($attrObj));
+            }
+            return $node;
+        }
+    }
+
+    public function createMethodsDetailsBlock($classMethodsArr) {
+        if (count($classMethodsArr) != 0) {
+            $node = new HTMLNode('v-row');
+            $node->addChild('v-col', [
+                'cols' => 12
+            ], false)->addChild('h3', [], false)->text('Class Methods Details');
+            $col = $node->addChild('v-col', [], false);
+            foreach ($classMethodsArr as $methObj) {
+                $col->addChild($this->createMethodDetailsBlock($methObj));
+            }
+            return $node;
+        }
+    }
+
+    public function createMethodsSummaryBlock($classMethodsArr) {
+        if (count($classMethodsArr) != 0) {
+            $node = new HTMLNode('v-row');
+            $node->addChild('v-col', [
+                'cols' => 12
+            ], false)->addChild('h3', [], false)->text('Class Methods Summary');
+            $col = $node->addChild('v-col', [], false);
+            foreach ($classMethodsArr as $methObj) {
+                $col->addChild($this->createMethodSummaryBlock($methObj));
+            }
+            return $node;
+        }
     }
 
 }
