@@ -70,7 +70,7 @@ class FunctionDef {
         $node->addChild('a', [
             'href' => '#'.$this->getName()
         ], false)->text(str_replace('&', '&amp;', $this->getName()));
-        $node->text(')');
+        $node->text('(');
         $comma = '';
         foreach($this->getParameters() as $paramObj){
             if ($comma != '') {
