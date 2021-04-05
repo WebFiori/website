@@ -17,7 +17,7 @@ class NameSpaceAPI{
     private $name;
     private $classes;
     private $subNamespaces;
-    public function __construct() {
+    public function __construct($ns = '', $classes = [], $subNsArr = []) {
         $this->name = '\\';
         $this->classes = array();
         $this->subNamespaces = [];
