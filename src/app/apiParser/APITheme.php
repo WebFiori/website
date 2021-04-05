@@ -72,130 +72,52 @@ abstract class APITheme extends Theme{
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the summary of class functions.
      * 
-     * @param string $nodeName The name of the tag that will hold the summary.
+     * @param string $classMethodsArr An array that holds objects which holds 
+     * class methods details.
      * 
      * @return HTMLNode|NULL If the class has functions, the function will return 
      * an object of type HTMLNode that contains all functions summary. 
      * If the class has no functions, the function will return NULL.
      * 
      */
-    public function createMethodsSummaryBlock($nodeName = 'div'){
-        $class = $this->getClass();
-        if($class !== null){
-            $funcs = $class->getClassMethods();
-            if(count($funcs) > 0){
-                $summaryNode = new HTMLNode($nodeName, [
-                    'class' => 'summary-block methods-summary-block',
-                    'id' => 'methods-summary'
-                ]);
-                $titleNode = new HTMLNode('h3', [
-                    'class' => 'block-title methods-block-title'
-                ]);
-                $titleNode->text('Class Methods Summary');
-                $summaryNode->addChild($titleNode);
-                foreach ($class->getClassMethods() as $method){
-                    $summaryNode->addChild($this->createMethodSummaryBlock($method));
-                }
-                return $summaryNode;
-            }
-        }
-        return null;
-    }
+    public abstract function createMethodsSummaryBlock($classMethodsArr);
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the details of class functions.
      * 
-     * @param string $nodeName The name of the tag that will hold the summary.
+     * @param string $classMethodsArr The name of the tag that will hold the summary.
      * 
      * @return HTMLNode|NULL If the class has functions, the function will return 
      * an object of type HTMLNode that contains all functions details. 
      * If the class has no functions, the function will return NULL.
      */
-    public function createMethodsDetailsBlock($nodeName = 'div'){
-        $class = $this->getClass();
-        if($class !== NULL){
-            $funcs = $class->getClassMethods();
-            if(count($funcs) > 0){
-                $detailsNode = new HTMLNode($nodeName, [
-                    'class' => 'details-block methods-details-block '
-                ]);
-                $titleNode = new HTMLNode('h3', [
-                    'class' => 'block-title methods-details-block-title'
-                ]);
-                $titleNode->text('Class Methods Details');
-                $detailsNode->addChild($titleNode);
-                foreach ($class->getClassMethods() as $method){
-                    $detailsNode->addChild($this->createMethodDetailsBlock($method));
-                }
-                return $detailsNode;
-            }
-        }
-        return NULL;
-    }
+    public abstract function createMethodsDetailsBlock($classMethodsArr);
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the summary of class attributes.
      * 
-     * @param string $nodeName The name of the tag that will hold the summary.
+     * @param string $classAttrsArr An array that holds objects which holds 
+     * attributes details.
      * 
      * @return HTMLNode|NULL If the class has attributes, the function will return 
      * an object of type HTMLNode that contains all attributes summary. 
      * If the class has no attributes, the function will return NULL.
      * 
      */
-    public function createAttrsSummaryBlock($nodeName = 'div'){
-        $class = $this->getClass();
-        if($class !== null){
-            $attrs = $class->getClassAttributes();
-            if(count($attrs) > 0){
-                $summaryNode = new HTMLNode($nodeName, [
-                    'class' => 'summary-block attrs-summary-block',
-                    'id' => 'attrs-summary'
-                ]);
-                $titleNode = new HTMLNode('h3', [
-                    'class' => 'block-title attrs-summary-block-title'
-                ]);
-                $titleNode->text('Class Attributes Summary');
-                $summaryNode->addChild($titleNode);
-                foreach ($class->getClassAttributes() as $attr){
-                        $summaryNode->addChild($this->createAttributeSummaryBlock($attr));
-                }
-                return $summaryNode;
-            }
-        }
-        return NULL;
-    }
+    public abstract function createAttrsSummaryBlock($classAttrsArr);
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the details of class attributes.
+     * 
+     * @param string $classAttrsArr An array that holds objects which holds 
+     * attributes details.
      * 
      * @return HTMLNode|NULL If the class has attributes, the function will return 
      * an object of type HTMLNode that contains all details. If the class has 
      * no attributes, the function will return NULL.
      * 
      */
-    public function createAttrsDetailsBlock($nodeName = 'div'){
-        $class = $this->getClass();
-        $attrs = $class->getClassAttributes();
-        if($class !== NULL){
-            if(count($attrs) > 0){
-                $detailsNode = new HTMLNode($nodeName, [
-                    'class' => 'details-block attrs-details-block',
-                    'id' => 'attrs-details'
-                ]);
-                $titleNode = new HTMLNode('h3', [
-                    'class' => 'block-title'
-                ]);
-                $titleNode->addTextNode('Class Attributes Details');
-                $detailsNode->addChild($titleNode);
-                foreach ($class->getClassAttributes() as $attr){
-                     $detailsNode->addChild($this->createAttributeDetailsBlock($attr));
-                }
-                return $detailsNode;
-            }
-        }
-        return NULL;
-    }
+    public abstract function createAttrsDetailsBlock($classAttrsArr);
     /**
      * Creates HTMLNode object that contains class function summary.
      * 
