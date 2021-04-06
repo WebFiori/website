@@ -57,7 +57,7 @@ class MethodParameter {
     }
     /**
      * 
-     * @return HTMLNode
+     * @return ParameterType
      */
     public function getType() {
         return $this->attrType;

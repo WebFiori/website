@@ -74,20 +74,8 @@ class AttributeDef {
      </pre>
      */
     public function getDetailsNode() {
-        $node = new HTMLNode();
-        $node->setID($this->getName());
-        $node->setClassName('block attribute-block');
-        $attrNameNode = new HTMLNode();
-        $attrNameNode->setClassName('attribute-name');
-        $attrNameNode->setID('attribute-'.$this->getName().'-name');
-        $nodeText = $this->getAccessModofier().' <span class="class-attribute attribute-name>">'.$this->getName().'</span>';
-        $attrNameNode->addTextNode($nodeText,false);
-        $node->addChild($attrNameNode);
-        $descNode = new HTMLNode();
-        $descNode->setID('attribute-'.$this->getName().'-details');
-        $descNode->addTextNode($this->getDescription(),false);
-        $descNode->setClassName('attribute-details');
-        $node->addChild($descNode);
+        $node = new HTMLNode('span');
+        $node->text($this->getAccessModofier().' '.$this->getName());
         return $node;
     }
     /**
@@ -142,17 +130,11 @@ class AttributeDef {
      * @return HTMLNode
      */
     public function getSummaryNode() {
-        $node = new HTMLNode();
-        $node->setClassName('block attribute-summary-block');
-        $attrSummaryLink = $this->getSummaryLink();
-        $attrNameNode = new HTMLNode();
-        $attrNameNode->setClassName('attribute-name');
-        $attrNameNode->addTextNode($attrSummaryLink, false);
-        $node->addChild($attrNameNode);
-        $descNode = new HTMLNode();
-        $descNode->setClassName('description attribute-description');
-        $descNode->addTextNode($this->getSummary(),false);
-        $node->addChild($descNode);
+        $node = new HTMLNode('span');
+        $node->text($this->getAccessModofier().' ');
+        $node->addChild('a', [
+            'href' => '#'.$this->getName()
+        ], false)->text($this->getName());
         return $node;
     }
     /**

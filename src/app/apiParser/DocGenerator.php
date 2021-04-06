@@ -410,6 +410,7 @@ class DocGenerator {
                 $this->linksArr[$cName.'::'.$name.'()'] = new Anchor($classLink.'#'.$name, $cName.'::'.$name.'()');
             }
         }
+        var_dump($this->linksArr);
         $namespacesNames = array_keys($nsClasses);
         foreach ($nsClasses as $nsName => $classes){
             $ns = new NameSpaceAPI();

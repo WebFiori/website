@@ -192,10 +192,10 @@ class ClassAPI {
                 }
                 if(isset($docBlock['@param'])){
                     foreach ($docBlock['@param'] as $param){
+                        $typesNode = new ParameterType();
                         $isOptional = isset($param['is-optional']) ? $param['is-optional'] : FALSE;
                         if(isset($param['type'])){
                             $paramTypes = explode('|', $param['type']);
-                            $typesNode = new ParameterType();
                             foreach ($paramTypes as $t){
                                 if(isset($linksArr[$t])){
                                     $typesNode->add($linksArr[$t]);

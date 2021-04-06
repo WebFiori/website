@@ -78,7 +78,7 @@ class FunctionDef {
             }
             $paramObj instanceof MethodParameter;
             $node->addChild($paramObj->getType());
-            $node->text($paramObj->getName());
+            $node->text(' '.$paramObj->getName());
             
             
             $comma = ', ';
@@ -96,7 +96,7 @@ class FunctionDef {
             }
             $paramObj instanceof MethodParameter;
             $node->addChild($paramObj->getType());
-            $node->text($paramObj->getName());
+            $node->text(' '.$paramObj->getName());
             
             
             $comma = ', ';
@@ -121,10 +121,10 @@ class FunctionDef {
             }
             $retVal->addChild('span', [
                 'class' => 'datatype-name'
-            ], false)->text($p->getType().' ');
+            ], false)->text($p->getType());
             $retVal->addChild('span', [
                 'class' => 'attribute-name'
-            ], false)->text($p->getName());
+            ], false)->text(' '.$p->getName());
             $comma = ', ';
         }
         $retVal->text(')');

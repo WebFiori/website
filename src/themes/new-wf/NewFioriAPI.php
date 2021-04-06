@@ -245,42 +245,47 @@ class NewFioriAPI extends APITheme {
     }
 
     public function createAttributeDetailsBlock(AttributeDef $attr): HTMLNode {
-        $block = new HTMLNode('v-row', [
+        $block = new HTMLNode('v-card', [
+            'id' => $attr->getName(),
             'hover', 'outlined', 
-            'id' => $attr->getName()
         ]);
-        $col = $block->addChild('v-col', [
-            'cols' => 12
-        ], false);
-        $vCard = $col->addChild('v-card', [], false);
-        $vCard->addChild('v-card-title', [
-            'id' => $attr->getName()
-        ], false)->text($attr->getAccessModofier().' '.$attr->getName());
-        
-        $vCard->addChild('v-card-text', [
-            'v-html' => $attr->getDescription()
+        $block->addChild('v-card-title', [
+            'style' => [
+                'font-family' => 'monospace',
+                'font-weight' => 'bold'
+            ]
+        ], false)->addChild($attr->getDetailsNode());
+        $vCardTxt = $block->addChild('v-card-text', [], false);
+        $row = $vCardTxt->addChild('v-row');
+        $row->addChild('v-col', [
+            'cols' => 12,
+            'v-html' => "'". str_replace("'", "\'", $attr->getDescription())."'"
         ]);
-        
         return $block;
     }
 
     public function createAttributeSummaryBlock(AttributeDef $attr): HTMLNode {
-        $block = new HTMLNode('v-row');
-        $block->addChild('v-col', [
-            'cols' => 12
-        ], false)->text($attr->getAccessModofier().' ')
-        ->addChild('a', [
-            'href' => $attr->getHref()
-        ], false)->text($attr->getName());
-        $block->addChild('v-col', [
-            'cols' => 12
-        ], false)->text($attr->getSummary());
+        $block = new HTMLNode('v-card', [
+            'height' => '85',
+            'hover', 'outlined', 
+        ]);
+        $block->addChild('v-card-title', [
+            'style' => [
+                'font-family' => 'monospace',
+                'font-weight' => 'bold'
+            ]
+        ], false)->addChild($attr->getSummaryNode());
+        $vCardTxt = $block->addChild('v-card-text', [], false);
+        $row = $vCardTxt->addChild('v-row');
+        $row->addChild('v-col', [
+            'cols' => 12,
+            'v-html' => "'". str_replace("'", "\'", $attr->getSummary())."'"
+        ]);
         return $block;
     }
 
     public function createClassDescriptionNode($accessMod = '', $className = '', $ns= '', $description= ''): HTMLNode {
         $block = new HTMLNode('v-row');
-        $class = $this->getClass();
         $block->addChild('v-col', [
             'cols' => 12
         ], false)->addChild('p', [], false)
@@ -313,7 +318,7 @@ class NewFioriAPI extends APITheme {
         $row = $vCardTxt->addChild('v-row');
         $row->addChild('v-col', [
             'cols' => 12,
-            'v-html' => "'".$func->getDescription()."'"
+            'v-html' => "'". str_replace("'", "\'", $func->getDescription())."'"
         ]);
         
         if (count($func->getParameters()) != 0) {
@@ -340,14 +345,14 @@ class NewFioriAPI extends APITheme {
                     ]
                 ]);
                 $li->addChild($param->getType())
-                        ->text($param->getName().' ')
+                        ->text(' '.$param->getName())
                         ->text($optionalTxt)
                         ->addChild('span', [
                             'style' => [
                                 'font-family' => 'roboto'
                             ]
                         ], false)
-                        ->text($param->getDescription());
+                        ->text(' '.$param->getDescription());
             }
         }
         $return = $func->getMethodReturnTypesStr();
@@ -384,15 +389,43 @@ class NewFioriAPI extends APITheme {
         $row = $vCardTxt->addChild('v-row');
         $row->addChild('v-col', [
             'cols' => 12,
-            'v-html' => "'".$func->getSummary()."'"
+            'v-html' => "'". str_replace("'", "\'", $func->getSummary())."'"
         ]);
         return $block;
     }
 
     public function createNSAside($links) {
-        $block = new HTMLNode('v-navigation-drawer');
-        
-        return $block;
+        $drawer = new HTMLNode('v-navigation-drawer', [
+            'v-model' => "drawer_md",
+            'fixed', 'app', 'width' => '300px',
+            ':mini-variant.sync'=>"mini"
+        ]);
+
+        $drawer->addChild('v-list-item', [], false)
+        ->addChild('v-list-item-icon', [], false)
+                 ->addChild('v-icon', [], false)
+                 ->text('mdi-send-circle')
+                 ->getParent()->getParent()
+        ->addChild('v-list-item-title', [], false)->text('Page Content')
+        ->getParent()->addChild('v-btn', [
+            'icon', '@click.stop' => 'mini = !mini'
+        ], false)->addChild('v-icon', [], false)->text('mdi-chevron-left');
+        $drawer->addChild('v-divider');
+        $list = $drawer->addChild('v-list', ['dense'], false);
+//        foreach ($headingsArr as $id => $txt) {
+//            $list->addChild('v-list-item', [], false)
+//                 ->addChild('v-list-item-icon', [], false)
+//                 ->addChild('v-icon', [], false)
+//                 ->text('mdi-menu-right')
+//                 ->getParent()->getParent()
+//                 ->addChild('v-list-item-content', [], false)
+//                 ->addChild('v-list-item-title', [], false)
+//                 ->addChild('a', [
+//                     'href' => '#'.$id
+//                 ], false)
+//                 ->text($txt);
+//        }
+        return $drawer;
     }
 
     public function createNamespaceContentBlock(NameSpaceAPI $nsObj): HTMLNode {

@@ -22,6 +22,7 @@ class ParameterType extends HTMLNode {
         }
     }
     public function add($type) {
+        $trimmed = trim($type, '|');
         if ($this->childrenCount() != 0) {
             $this->text('|');
         }
