@@ -11,6 +11,7 @@ use Exception;
 use webfiori\framework\File;
 use webfiori\framework\ui\WebPage;
 use webfiori\ui\Anchor;
+use webfiori\apiParser\NameSpaceAPI;
 /**
  * A PHPDoc parser class which is used to generate API docs for PHP classes.
  *
@@ -164,7 +165,7 @@ class DocGenerator {
                 $page->setDescription('All classes and sub-namespaces in the namespace \''.$nsObj->getName().'\'.');
                 $page->setTitle('Namespace '.$nsObj->getName());
                 $this->_createAsideNav($page);
-                $this->createNSIndexFile($outputPath,$nsObj->getName(), $options, $page);
+                $this->createNSIndexFile($outputPath,$nsObj, $options, $page);
                 $page->reset();
             }
         }
@@ -284,11 +285,11 @@ class DocGenerator {
                     . '    public function __construct(){'."\r\n"
                     . '        parent::__construct();'."\r\n"
                     . '        $this->setTheme(\''.$options['theme'].'\');'."\r\n"
-                    . '        $this->getDocument()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
+                    . '        $this->getTheme()->setBaseURL(\''.$options['base-url'].'\');'."\r\n"
                     . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getDescription())).'\');'."\r\n"
                     . '        $this->setWebsiteName(\''.$page->getWebsiteName().'\');'."\r\n"
                     . '        $this->setTitle(\''.$page->getTitle().'\');'."\r\n"
-                    . '        $this->insert($this->getTheme()->createClassDescriptionNode(\''.$classAPI->getAccessModifier().'\', \''.$classAPI->getName().'\', \''.$classAPI->getNameSpace().'\', \''.$classAPI->getDescription().'\'));'."\r\n"
+                    . '        $this->insert($this->getTheme()->createClassDescriptionNode(\''.$classAPI->getAccessModifier().'\', \''.$classAPI->getName().'\', \''.$classAPI->getNameSpace().'\', \''. str_replace("'", "\'", $classAPI->getDescription()).'\'));'."\r\n"
                     . $this->createAttrsArrStr($classAPI)
                     . $this->createMethodsArrStr($classAPI)
                     . '        $this->insert($this->getTheme()->createAttrsSummaryBlock($classAttrsArr));'."\r\n"
@@ -414,7 +415,10 @@ class DocGenerator {
             $ns = new NameSpaceAPI();
             $ns->setName($nsName);
             foreach ($classes as $class){
-                $ns->addClass($class);
+                $ns->add($class->getName(), [
+                    'access-modifier' => $class->getAccessModifier(),
+                    'summary' => $class->getSummary()
+                ]);
             }
             $len = strlen($nsName);
             foreach ($namespacesNames as $nsXName){
@@ -484,16 +488,13 @@ class DocGenerator {
     /**
      * 
      * @param type $path
-     * @param type $ns
+     * @param NameSpaceAPI $nsObj
      * @param type $options
      * @return boolean
      */
-    private function createNSIndexFile($path,$ns,$options, WebPage $p){
-        $ns = trim($ns,'\\');
-        if(strlen($ns) != 0){
-            $ns = '\\'.$ns;
-        }
-        $savePath = $path.$ns;
+    private function createNSIndexFile($path,$nsObj,$options, WebPage $p){
+
+        $savePath = $path.$nsObj->getName();
         if(Util::isDirectory($savePath, TRUE)){
             $file = new File();
             $file->setPath($savePath);
@@ -501,18 +502,31 @@ class DocGenerator {
                 $file->setName('NSIndexView.php');
                 $file->remove();
                 $rawData = '<?php'."\r\n"
-                        . 'namespace docGenerator'.$ns.";\r\n"
+                        . 'namespace docGenerator'.$nsObj->getName().";\r\n"
                         . 'use webfiori\framework\ui\WebPage as P;'."\r\n"
-                        . 'use webfiori\ui\HTMLNode;'."\r\n"
+                        . 'use webfiori\apiParser\NameSpaceAPI;'."\r\n"
+                        . "\r\n"
                         . 'class NSIndexView extends P {'."\r\n"
                         . '    public function __construct(){'."\r\n"
                         . '        parent::__construct();'."\r\n"
                         . '        $this->setTheme(\''.$options['theme'].'\');'."\r\n"
-                        . '        $this->getDocument()->getHeadNode()->setBase(\''.$options['base-url'].'\');'."\r\n"
+                        . '        $this->getTheme()->setBaseURL(\''.$options['base-url'].'\');'."\r\n"
                         . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $p->getDescription())).'\');'."\r\n"
                         . '        $this->setWebsiteName(\''.$p->getWebsiteName().'\');'."\r\n"
                         . '        $this->setTitle(\''. str_replace('\\', '\\\\', $p->getTitle()).'\');'."\r\n";
-                
+                $rawData .= '        $nsObj = new NameSpaceAPI(\''.$nsObj->getName().'\',['."\r\n";
+                foreach ($nsObj->getAll() as $name => $info) {
+                    $rawData .= '        "'.$name.'" => ['."\r\n"
+                            . '            "access-modifier" => "'.$info['access-modifier'].'",'."\r\n"
+                            . '            "summary" => "'.$info['summary'].'"'."\r\n"
+                            . '        ],'."\r\n";
+                }
+                $rawData .= '        ], ['."\r\n";
+                foreach ($nsObj->getSubNamespaces() as $subNs) {
+                    $rawData .= "            '$subNs',\r\n";
+                }
+                $rawData .= '        ]);'."\r\n";
+                $rawData .= '        $this->insert($this->getTheme()->createNamespaceContentBlock($nsObj));'."\r\n";
                 $rawData .=  '    }'."\r\n"
                         . '}'."\r\n"
                         . 'return __NAMESPACE__;';
