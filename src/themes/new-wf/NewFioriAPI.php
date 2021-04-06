@@ -399,7 +399,7 @@ class NewFioriAPI extends APITheme {
         $block = new HTMLNode('v-row');
         $block->addChild('v-col', [
             'cols' => 12
-        ], false)->text('Namespace '.$nsObj->getName());
+        ], false)->addChild('h1', [], false)->text('Namespace '.$nsObj->getName());
         $nsArr = $nsObj->getSubNamespaces();
         if(count($nsArr) !=0 ){
             $nsNode = $block->addChild('v-card', [
@@ -423,27 +423,35 @@ class NewFioriAPI extends APITheme {
             ], false);
             $nsNode->addChild('v-card-title', [], false)->text('All Interfaces:');
             $list = $nsNode->addChild('v-card-text',[], false)->addChild('v-list', ['dense'], false);
-            foreach ($interfaces as $interface){
+            foreach ($interfaces as $interfaceName => $infoArr){
+                $link = $this->getBaseURL().'/'.str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interfaceName;
+                
                 $list->addChild('v-list-item', [
-                    'href' => $this->getBaseURL().'/'.str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$interface->getName()
+                    'href' => $link
                 ], false)
                 ->addChild('v-list-item-content', [], false)
-                ->addChild('v-list-item-title',[], false)->text($interface->getName());
+                ->addChild('v-list-item-title',[], false)->text($interfaceName)
+                ->getParent()->addChild('v-list-item-subtitle', [], false)
+                ->text($infoArr['summary']);
             }
         }
         $classes = $nsObj->getClasses();
         if(count($classes) != 0){
-            $nsNode = $block->addChild('v-col', [
-                'cols' => 12
+            $nsNode = $block->addChild('v-card', [
+                'hover', 'outlined', 
             ], false);
-            $nsNode->addChild('h2', [], false)->text('All Classes:');
-            $list = $nsNode->addChild('v-list', ['dense'], false);
-            foreach ($classes as $class){
+            $nsNode->addChild('v-card-title', [], false)->text('All Classes:');
+            $list = $nsNode->addChild('v-card-text',[], false)->addChild('v-list', ['dense'], false);
+            foreach ($classes as $className => $infoArr){
+                $link = $this->getBaseURL().'/'.str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$className;
+                
                 $list->addChild('v-list-item', [
-                    'href' => $this->getBaseURL().'/'.str_replace('\\', '/', trim($nsObj->getName(),'\\')).'/'.$class->getName()
+                    'href' => $link
                 ], false)
                 ->addChild('v-list-item-content', [], false)
-                ->addChild('v-list-item-title',[], false)->text($class->getName());
+                ->addChild('v-list-item-title',[], false)->text($className)
+                ->getParent()->addChild('v-list-item-subtitle', [], false)
+                ->text($infoArr['summary']);
             }
         }
         return $block;
