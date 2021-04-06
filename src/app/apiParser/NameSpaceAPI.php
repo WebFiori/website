@@ -16,31 +16,32 @@ use webfiori\apiParser\ClassAPI;
 class NameSpaceAPI{
     private $name;
     private $classes;
+    private $interfaces;
+    private $traits;
     private $subNamespaces;
     public function __construct($ns = '', $classes = [], $subNsArr = []) {
-        $this->name = '\\';
-        $this->classes = array();
+        $this->name = '\\'. trim($ns, '\\');
+        $this->classes = [];
         $this->subNamespaces = [];
-    }
-    public function getSubNamespacesNode() {
-        
-    }
-    public function getInterfacesNode() {
-        
-    }
-    public function getClassesNode() {
-        
-    }
-    private function _get($cType){
-        $arr = array();
-        $count = count($this->getAll());
-        for($x = 0 ; $x < $count ; $x++){
-            $classApi = $this->getAll()[$x];
-            if(trim($classApi->getAccessModifier()) == $cType){
-                $arr[] = $classApi;
-            }
+        $this->interfaces = [];
+        $this->traits = [];
+        foreach ($classes as $name => $infoArr) {
+            $this->add($name, $infoArr);
         }
-        return $arr;
+        foreach ($subNsArr as $subNs) {
+            $this->addSubNamespace($subNs);
+        }
+    }
+    public function add($name, $info) {
+        $trimmedName = trim($name);
+        $accessMod = $info['access-modifier'];
+        if ($accessMod == 'class' || $accessMod == 'abstract class') {
+            $this->classes[$trimmedName] = $info;
+        } else if ($accessMod == 'interface') {
+            $this->interfaces[$trimmedName] = $info;
+        } else if ($accessMod == 'trait') {
+            $this->traits[$trimmedName] = $info;
+        }
     }
     /**
      * Returns an array that contains an objects of type ClassAPI.
@@ -49,7 +50,7 @@ class NameSpaceAPI{
      * @return array
      */
     public function getInterfaces() {
-        return $this->_get('interface');
+        return $this->interfaces;
     }
     /**
      * Returns an array which contains all names of sub-namespaces.
@@ -76,9 +77,7 @@ class NameSpaceAPI{
      * @return array
      */
     public function getClasses() {
-        $arr1 = $this->_get('class');
-        $arr2 = $this->_get('abstract class');
-        return array_merge($arr1, $arr2);
+        return $this->classes;
     }
     /**
      * Sets the name of the namespace.
@@ -94,20 +93,14 @@ class NameSpaceAPI{
     public function getName() {
         return $this->name;
     }
-    /**
-     * Adds a class that belongs to the namespace.
-     * @param ClassAPI $classApi An object of type ClassAPI
-     */
-    public function addClass($classApi) {
-        if($classApi instanceof ClassAPI){
-            $this->classes[] = $classApi;
-        }
+    public function getTraits() {
+        return $this->traits;
     }
     /**
      * Returns an array that contains an objects of type APIClass.
      * @return array An array that contains an objects of type APIClass.
      */
     public function getAll() {
-        return $this->classes;
+        return array_merge($this->getClasses(), $this->getInterfaces(), $this->getTraits());
     }
 }
