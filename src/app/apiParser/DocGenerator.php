@@ -100,6 +100,8 @@ class DocGenerator {
                             $options['site-name'] : 'Docs';
                     $this->logMessage('Generating routes class...');
                     $this->_createRoutesFile();
+                    $this->logMessage('Creating base view...');
+                    $this->writeBasePage($this->getOutputPath(), $this->getThemeName(), $this->getBaseURL(), $this->getLinks(), $this->getSiteName());
                     $this->logMessage('Creating web pages for classes...');
                     $this->_generateClassesAPIPages();
                     $this->logMessage('Creating web pages for namespaces...');
@@ -355,6 +357,139 @@ class DocGenerator {
             }
         }
     }
+    private function writeBasePage($path, $theme, $base, $linksArr, $wName) {
+        $file = new File($path.DS.'DocsWebPage.php');
+        $file->remove();
+        $rawData = "<?php\r\n"
+                . "\r\n"
+                . "namespace webfiori\\docs\\apiParser;\r\n\r\n"
+                . "use webfiori\\framework\\ui\\WebPage;\r\n"
+                . 'use webfiori\\ui\\Anchor;'."\r\n"
+                . "use webfiori\\apiParser\\NameSpaceAPI;\r\n"
+                . "use webfiori\\apiParser\\FunctionDef;\r\n"
+                . "use webfiori\\apiParser\\AttributeDef;\r\n"
+                . ""
+                . "\r\n"
+                . "class DocsWebPage extends WebPage {\r\n"
+                . "    /**\r\n"
+                . "     * An array that holds all detected class attributes.\r\n"
+                . "     */\r\n"
+                . "    private \$attrsArr;\r\n"
+                . "    /**\r\n"
+                . "     * An array that holds all detected class methods.\r\n"
+                . "     */\r\n"
+                . "    private \$methodsArr;\r\n"
+                . "    /**\r\n"
+                . "     * An array that holds links to classes and methods.\r\n"
+                . "     */\r\n"
+                . "    private \$linksArr;\r\n"
+                . "    /**\r\n"
+                . "     * An objects that holds namespace information.\r\n"
+                . "     */\r\n"
+                . "    private \$nsObj;\r\n"
+                . "    /**\r\n"
+                . "     * Creates new instance of the class.\r\n"
+                . "     */\r\n"
+                . "    public function __construct() {\r\n"
+                . "        parent::__construct();\r\n"
+                . "        \$this->setTheme('$theme');\r\n"
+                . "        \$this->getTheme()->setBaseURL('$base');\r\n"
+                . "        \$this->setWebsiteName('$wName');\r\n"
+                . "        \$this->addBeforeRender(function(DocsWebPage \$page) {\r\n"
+                . "            if (\$page->getNSObj() !== null) {\r\n"
+                . "                \$page->insert(\$page->getTheme()->createNamespaceContentBlock(\$page->getNSObj()));\r\n"
+                . "            } else {\r\n"
+                . "                \$page->insert(\$page->getTheme()->createAttrsSummaryBlock(\$page->getAttributes()));\r\n"
+                . "                \$page->insert(\$page->getTheme()->createMethodsSummaryBlock(\$page->getMethods()));\r\n"
+                . "                \$page->insert(\$page->getTheme()->createAttrsDetailsBlock(\$page->getAttributes()));\r\n"
+                . "                \$page->insert(\$page->getTheme()->createMethodsDetailsBlock(\$page->getMethods()));\r\n"
+                . "            }\r\n"
+                . "            \$aside = \$page->getChildByID('side-content-area');\r\n"
+                . "            \$page->getChildByID('page-body')->addChild(\$page->getTheme()->createNSAside([]));\r\n"
+                . "        });\r\n" 
+                . "        \$this->attrsArr = [];\r\n"
+                . "        \$this->methodsArr = [];\r\n"
+                . "        \$this->linksArr = [\r\n";
+        foreach ($linksArr as $index => $anchor) {
+            $anchor instanceof Anchor;
+            $href = $anchor->getAttribute('href');
+            $text = $anchor->getChild(0)->getText();
+            $rawData .= "        '$index' => new Anchor('$href', '$text'),\r\n";
+        }
+        $rawData .= "        ];\r\n"
+                . "    }\r\n"
+                . "    /**\r\n"
+                . "     * Returns an object that holds namespace information\r\n"
+                . "     * \r\n"
+                . "     * @return NameSpaceAPI|null\r\n"
+                . "     */\r\n"
+                . "    public function getNSObj() {\r\n"
+                . "        return \$this->nsObj;\r\n"
+                . "    }\r\n"
+                . "    /**\r\n"
+                . "     * Sets the object which is used to display namespace information.\r\n"
+                . "     * \r\n"
+                . "     * @param NameSpaceAPI \$c An object that holds namespace information.\r\n"
+                . "     * \r\n"
+                . "     */\r\n"
+                . "    public function setNSObj(NameSpaceAPI \$c) {\r\n"
+                . "        \$this->nsObj = \$c;\r\n"
+                . "    }\r\n"
+                . "    /**\r\n"
+                . "     * Returns an object that holds link information of a class or\r\r"
+                . "     * a class method.\r\n"
+                . "     * \r\n"
+                . "     * @param string \$c Class name with or without method name or attribute.\r\n"
+                . "     * \r\n"
+                . "     * @return Anchor|null If a link exist, it is returned as an object of\r\n"
+                . "     * type 'Anchor'. Other than that, null is returned.\r\n"
+                . "     */\r\n"
+                . "    public function getLink(\$c) {\r\n"
+                . "        if (isset(\$this->linksArr[\$c])) {\r\n"
+                . "            return \$this->linksArr[\$c];\r\n"
+                . "        }\r\n"
+                . "    }\r\n"
+                . "    /**\r\n"
+                . "     * Returns an array that holds all added methods definitions\r\r"
+                . "     * of the class.\r\n"
+                . "     * \r\n"
+                . "     * @return array An array that holds objects which holds methods\r\n"
+                . "     * Definitions.\r\n"
+                . "     */\r\n"
+                . "    public function getMethods() {\r\n"
+                . "        return \$this->methodsArr;\r\n"
+                . "    }\r\n"
+                . "    /**\r\n"
+                . "     * Returns an array that holds all added attributes definitions\r\r"
+                . "     * of the class.\r\n"
+                . "     * \r\n"
+                . "     * @return array An array that holds objects which holds attributes\r\n"
+                . "     * Definitions.\r\n"
+                . "     */\r\n"
+                . "    public function getAttributes() {\r\n"
+                . "        return \$this->attrsArr;\r\n"
+                . "    }\r\n"
+                . "    /**\r\n"
+                . "     * Adds a method definition to the set of methods of the class\r\r"
+                . "     * \r\n"
+                . "     * @param FunctionDef \$meth An object that holds method definition.\r\n"
+                . "     */\r\n"
+                . "    public function addMethod(FunctionDef \$meth) {\r\n"
+                . "        \$this->methodsArr[] = \$meth;\r\n"
+                . "    }\r\n"
+                . "    /**\r\n"
+                . "     * Adds attributte definition to the set of attributes of the class\r\r"
+                . "     * \r\n"
+                . "     * @param AttributeDef \$meth An object that holds attribute definition.\r\n"
+                . "     */\r\n"
+                . "    public function addAttribute(AttributeDef \$attr) {\r\n"
+                . "        \$this->attrsArr[] = \$attr;\r\n"
+                . "    }\r\n"
+                . "";
+        $rawData .= '}';
+        $file->setRawData($rawData);
+        $file->write(false, true);
+    }
     /**
      * Initialize the array which contains links to all 
      * detected classes.
@@ -381,22 +516,22 @@ class DocGenerator {
         $this->linksArr['Countable'] = new Anchor('https://www.php.net/manual/en/class.countable.php', 'Countable', '_blank');
         $this->linksArr['Exception'] = new Anchor('https://www.php.net/manual/en/class.exception.php', 'Exception', '_blank');
         
-        $base = $this->getBaseURL();
         foreach ($this->apiReadersArr as $apiReader){
             $namespaceLink = $apiReader->getNamespace();
             $packageLink2 = str_replace('.', '/', $namespaceLink);
             $cName = $apiReader->getClassName();
             $nsName = $apiReader->getNamespace();
             if($packageLink2 === ''){
-                $classLink = trim($base,'/').'/'.$cName;
+                $classLink = $cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.'NSIndex';
             }
             else{
-                $classLink = trim($base,'/').$packageLink2.'/'.$cName;
+                $classLink = $packageLink2.'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/NSIndex';
             }
+            $classLink = str_replace('\\', '/', $classLink);
             $this->linksArr[$cName] = new Anchor($classLink, $cName);
             $this->classesLinksByNS[$nsName][] = [
                 'label'=>$cName,
@@ -410,7 +545,6 @@ class DocGenerator {
                 $this->linksArr[$cName.'::'.$name.'()'] = new Anchor($classLink.'#'.$name, $cName.'::'.$name.'()');
             }
         }
-        var_dump($this->linksArr);
         $namespacesNames = array_keys($nsClasses);
         foreach ($nsClasses as $nsName => $classes){
             $ns = new NameSpaceAPI();
@@ -504,16 +638,13 @@ class DocGenerator {
                 $file->remove();
                 $rawData = '<?php'."\r\n"
                         . 'namespace docGenerator'.$nsObj->getName().";\r\n"
-                        . 'use webfiori\framework\ui\WebPage as P;'."\r\n"
+                        . 'use webfiori\docs\apiParser\DocsWebPage as P;'."\r\n"
                         . 'use webfiori\apiParser\NameSpaceAPI;'."\r\n"
                         . "\r\n"
                         . 'class NSIndexView extends P {'."\r\n"
                         . '    public function __construct(){'."\r\n"
                         . '        parent::__construct();'."\r\n"
-                        . '        $this->setTheme(\''.$options['theme'].'\');'."\r\n"
-                        . '        $this->getTheme()->setBaseURL(\''.$options['base-url'].'\');'."\r\n"
                         . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $p->getDescription())).'\');'."\r\n"
-                        . '        $this->setWebsiteName(\''.$p->getWebsiteName().'\');'."\r\n"
                         . '        $this->setTitle(\''. str_replace('\\', '\\\\', $p->getTitle()).'\');'."\r\n";
                 $rawData .= '        $nsObj = new NameSpaceAPI(\''.$nsObj->getName().'\',['."\r\n";
                 foreach ($nsObj->getAll() as $name => $info) {
@@ -527,7 +658,7 @@ class DocGenerator {
                     $rawData .= "            '$subNs',\r\n";
                 }
                 $rawData .= '        ]);'."\r\n";
-                $rawData .= '        $this->insert($this->getTheme()->createNamespaceContentBlock($nsObj));'."\r\n";
+                $rawData .= '        $this->setNSObj($nsObj);'."\r\n";
                 $rawData .=  '    }'."\r\n"
                         . '}'."\r\n"
                         . 'return __NAMESPACE__;';
