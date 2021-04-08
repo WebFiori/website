@@ -45,7 +45,7 @@ class ClosureRoutes {
             'closure-params' => $arrayOfParams,
             'route-to' => function($params)
             {
-                Response::write('This is a closure route.<br>/');
+                
             }
         ]);
     }

@@ -8,6 +8,7 @@
 
 namespace webfiori\apiParser;
 use webfiori\ui\HTMLNode;
+use webfiori\docs\apiParser\DocsWebPage;
 
 /**
  * A class that represents method attribute.
@@ -19,6 +20,7 @@ class MethodParameter {
     private $attrType;
     private $attrDescription;
     private $isOptional;
+    private $attrTypeStr;
     /**
      * Creates new  instance of the class.
      * 
@@ -31,12 +33,28 @@ class MethodParameter {
      */
     public function __construct($name = '', ParameterType $type = null, $desc = '', $isOptional = false) {
         $this->setName($name);
-        $this->setType($type);
+        $type !== null ? $this->setType($type) : '';
         $this->setDescription($desc);
         $this->setIsOptional($isOptional);
     }
     public function setName($name) {
         $this->attrName = $name;
+    }
+    public function getParameterNode(DocsWebPage $p) {
+        $expl = explode('|', $this->getTypeStr());
+        $span = new HTMLNode('span');
+        foreach ($expl as $type) {
+            if ($span->childrenCount() != 0) {
+                $span->text('|');
+            }
+            $anchor = $p->getLink($type);
+            if ($anchor !== null) {
+                $span->addChild($anchor);
+            } else {
+                $span->text($type);
+            }
+        }
+        return $span;
     }
     /**
      * 
@@ -44,6 +62,16 @@ class MethodParameter {
      */
     public function setType(ParameterType $type) {
         $this->attrType = $type;
+    }
+    /**
+     * 
+     * @param HTMLNode $type
+     */
+    public function setTypeStr($type) {
+        $this->attrTypeStr = $type;
+    }
+    public function getTypeStr() {
+        return $this->attrTypeStr;
     }
     public function setDescription($desc) {
         

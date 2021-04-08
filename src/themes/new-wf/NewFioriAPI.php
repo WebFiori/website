@@ -313,7 +313,7 @@ class NewFioriAPI extends APITheme {
                 'font-family' => 'monospace',
                 'font-weight' => 'bold'
             ]
-        ], false)->addChild($func->getDetailsSignatorNode());
+        ], false)->addChild($func->getDetailsSignatorNode($this->getPage()));
         $vCardTxt = $block->addChild('v-card-text', [], false);
         $row = $vCardTxt->addChild('v-row');
         $row->addChild('v-col', [

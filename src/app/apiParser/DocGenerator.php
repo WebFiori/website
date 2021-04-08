@@ -787,23 +787,21 @@ class DocGenerator {
         $arr = '['."\r\n";
         foreach ($def->getParameters() as $p) {
             $p instanceof MethodParameter;
-            $arr .= '                    '."\r\n";
-            $arr .= "                    new MethodParameter(\r\n"
-                    . "                        '".$p->getName()."',\r\n"
-                    . "                        new ParameterType([\r\n";
+            $arr .= "                    '".$p->getName()."' => [\r\n";
+            $typeStr = '';
             foreach ($p->getType()->children() as $node) {
                 $node instanceof \webfiori\ui\HTMLNode;
                 if ($node->getNodeName() != HTMLNode::TEXT_NODE) {
-                    $arr .= "                            new Anchor('".$node->getAttribute('href')."','".$node->getChild(0)->getText()."'),"."\r\n";
+                    $typeStr .= $node->getChild(0)->getText();
                 } else {
-                    $arr .= '                            HTMLNode::createTextNode(\''.$node->getText().'\'),'."\r\n";
+                    $typeStr .= $node->getText();
                 }
             }
             
-            $arr .= "                        ]),\r\n";
-            $arr        .= "                        '". str_replace("'", "\'", $p->getDescription())."',\r\n"
-                    . "                        ".($p->isOptional() === true ? 'true' : 'false').",\r\n";
-            $arr .= '                    ),'."\r\n";
+            $arr .= "                        'type' => '$typeStr',\r\n";
+            $arr        .= "                        'description' => '". str_replace("'", "\'", $p->getDescription())."',\r\n"
+                    . "                        'optional' => ".($p->isOptional() === true ? 'true' : 'false').",\r\n";
+            $arr .= '                    ],'."\r\n";
         }
         return $arr .= '                ],';
     }

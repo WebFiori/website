@@ -40,8 +40,16 @@ class FunctionDef {
         $this->funcParams = [];
         if (isset($options['@params']) && gettype($options['@params']) == 'array') {
             
-            foreach ($options['@params'] as $param) {
-                $this->addFuncParam($param);
+            foreach ($options['@params'] as $name => $param) {
+                if (gettype($param) == 'array') {
+                    $p = new MethodParameter();
+                    $p->setName($name);
+                    $p->setDescription($param['description']);
+                    $p->setTypeStr($param['type']);
+                    $this->addFuncParam($p);
+                } else {
+                    $this->addFuncParam($param);
+                }
             }
         }
         $this->funcReturns = array(
