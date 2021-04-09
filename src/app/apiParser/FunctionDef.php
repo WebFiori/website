@@ -72,7 +72,7 @@ class FunctionDef {
             $this->setDescription($options['description']);
         }
     }
-    public function getSummarySignatorNode() {
+    public function getSummarySignatorNode($p) {
         $node = new HTMLNode('span');
         $node->text($this->getAccessModofier().' ');
         $node->addChild('a', [
@@ -85,16 +85,15 @@ class FunctionDef {
                 $node->text($comma);
             }
             $paramObj instanceof MethodParameter;
-            $node->addChild($paramObj->getType());
-            $node->text(' '.$paramObj->getName());
-            
+            $node->addChild($paramObj->getParametersNode($p));
+            $node->text($paramObj->getName());
             
             $comma = ', ';
         }
         $node->text(')');
         return $node;
     }
-    public function getDetailsSignatorNode() {
+    public function getDetailsSignatorNode($p) {
         $node = new HTMLNode('span');
         $node->text($this->getAccessModofier().' '. str_replace('&', '&amp;', $this->getName()).'(');
         $comma = '';
@@ -103,8 +102,8 @@ class FunctionDef {
                 $node->text($comma);
             }
             $paramObj instanceof MethodParameter;
-            $node->addChild($paramObj->getType());
-            $node->text(' '.$paramObj->getName());
+            $node->addChild($paramObj->getParametersNode($p));
+            $node->text($paramObj->getName());
             
             
             $comma = ', ';

@@ -384,7 +384,7 @@ class NewFioriAPI extends APITheme {
                 'font-family' => 'monospace',
                 'font-weight' => 'bold'
             ]
-        ], false)->addChild($func->getSummarySignatorNode());
+        ], false)->addChild($func->getSummarySignatorNode($this->getPage()));
         $vCardTxt = $block->addChild('v-card-text', [], false);
         $row = $vCardTxt->addChild('v-row');
         $row->addChild('v-col', [
@@ -406,25 +406,31 @@ class NewFioriAPI extends APITheme {
                  ->addChild('v-icon', [], false)
                  ->text('mdi-send-circle')
                  ->getParent()->getParent()
-        ->addChild('v-list-item-title', [], false)->text('Page Content')
+        ->addChild('v-list-item-title', [], false)->text('All Classes')
         ->getParent()->addChild('v-btn', [
             'icon', '@click.stop' => 'mini = !mini'
         ], false)->addChild('v-icon', [], false)->text('mdi-chevron-left');
         $drawer->addChild('v-divider');
-        $list = $drawer->addChild('v-list', ['dense'], false);
-//        foreach ($headingsArr as $id => $txt) {
-//            $list->addChild('v-list-item', [], false)
-//                 ->addChild('v-list-item-icon', [], false)
-//                 ->addChild('v-icon', [], false)
-//                 ->text('mdi-menu-right')
-//                 ->getParent()->getParent()
-//                 ->addChild('v-list-item-content', [], false)
-//                 ->addChild('v-list-item-title', [], false)
-//                 ->addChild('a', [
-//                     'href' => '#'.$id
-//                 ], false)
-//                 ->text($txt);
-//        }
+        $list = $drawer->addChild('v-expansion-panels', ['dense'], false);
+        $classes = $this->getPage()->getClasses();
+        foreach ($classes as $ns => $classesInNs) {
+            $panel = $list->addChild('v-expansion-panel', [], false);
+            
+            $panel->addChild('v-expansion-panel-header', [], false)
+                 ->addChild('a', [
+                     'href' => $this->getBaseURL(). str_replace('\\', '/', $ns)
+                 ], false)
+                 ->text($ns);
+            $classesList = $panel->addChild('v-expansion-panel-content', [], false)
+                    ->addChild('v-list');
+            foreach ($classesInNs as $className) {
+                $classesList->addChild('v-list-item', [
+                    'href' => $this->getBaseURL().$this->getPage()->getLink($className)->getAttribute('href')
+                ], false)
+                        ->addChild('v-list-item-title', [], false)
+                        ->text($className);
+            }
+        }
         return $drawer;
     }
 

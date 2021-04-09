@@ -40,7 +40,7 @@ class MethodParameter {
     public function setName($name) {
         $this->attrName = $name;
     }
-    public function getParameterNode(DocsWebPage $p) {
+    public function getParametersNode(DocsWebPage $p) {
         $expl = explode('|', $this->getTypeStr());
         $span = new HTMLNode('span');
         foreach ($expl as $type) {
@@ -54,6 +54,7 @@ class MethodParameter {
                 $span->text($type);
             }
         }
+
         return $span;
     }
     /**

@@ -101,7 +101,7 @@ class DocGenerator {
                     $this->logMessage('Generating routes class...');
                     $this->_createRoutesFile();
                     $this->logMessage('Creating base view...');
-                    $this->writeBasePage($this->getOutputPath(), $this->getThemeName(), $this->getBaseURL(), $this->getLinks(), $this->getSiteName());
+                    $this->writeBasePage($this->getOutputPath(), $this->getThemeName(), $this->getBaseURL(), $this->getLinks(), $this->getSiteName(), $this->getLinksByNameSpace());
                     $this->logMessage('Creating web pages for classes...');
                     $this->_generateClassesAPIPages();
                     $this->logMessage('Creating web pages for namespaces...');
@@ -275,7 +275,7 @@ class DocGenerator {
             $rawData = 
                     '<?php'."\r\n"
                     . 'namespace docGenerator'.$ns.";\r\n"
-                    . 'use webfiori\framework\ui\WebPage as P;'."\r\n"
+                    . 'use webfiori\docs\apiParser\DocsWebPage as P;'."\r\n"
                     . 'use webfiori\ui\HTMLNode;'."\r\n"
                     . 'use webfiori\apiParser\FunctionDef;'."\r\n"
                     . 'use webfiori\apiParser\AttributeDef;'."\r\n"
@@ -357,7 +357,7 @@ class DocGenerator {
             }
         }
     }
-    private function writeBasePage($path, $theme, $base, $linksArr, $wName) {
+    private function writeBasePage($path, $theme, $base, $linksArr, $wName, $classesLinks) {
         $file = new File($path.DS.'DocsWebPage.php');
         $file->remove();
         $rawData = "<?php\r\n"
@@ -384,6 +384,10 @@ class DocGenerator {
                 . "     */\r\n"
                 . "    private \$linksArr;\r\n"
                 . "    /**\r\n"
+                . "     * An array that holds all parsed classes acording to namespaces.\r\n"
+                . "     */\r\n"
+                . "    private \$classesArr;\r\n"
+                . "    /**\r\n"
                 . "     * An objects that holds namespace information.\r\n"
                 . "     */\r\n"
                 . "    private \$nsObj;\r\n"
@@ -409,7 +413,17 @@ class DocGenerator {
                 . "        });\r\n" 
                 . "        \$this->attrsArr = [];\r\n"
                 . "        \$this->methodsArr = [];\r\n"
-                . "        \$this->linksArr = [\r\n";
+                . "        \$this->classesArr = [\r\n";
+        foreach ($classesLinks as $ns => $classesArr) {
+            $rawData .= "            '$ns' => [\r\n";
+            foreach ($classesArr as $subArr) {
+                $cName = $subArr['label'];
+                $rawData .= "                '$cName',\r\n";
+            }
+            $rawData .= "           ],\r\n";
+        }
+        $rawData .= "        ];\r\n";
+        $rawData .= "        \$this->linksArr = [\r\n";
         foreach ($linksArr as $index => $anchor) {
             $anchor instanceof Anchor;
             $href = $anchor->getAttribute('href');
@@ -485,7 +499,17 @@ class DocGenerator {
                 . "    public function addAttribute(AttributeDef \$attr) {\r\n"
                 . "        \$this->attrsArr[] = \$attr;\r\n"
                 . "    }\r\n"
-                . "";
+                . "    /**\r\n"
+                . "     * Returns an array that holds all classes which are included in\r\n"
+                . "     * the generated docs.\r\n"
+                . "     * \r\n"
+                . "     * @return array The indices of the array will be the namespaces and in\r\n"
+                . "     * each index is a sub array that holds the names of the classes at which they\r\n"
+                . "     * belongs to the namespace.\r\n"
+                . "     */\r\n"
+                . "    public function getClasses() {\r\n"
+                . "        return \$this->classesArr;\r\n"
+                . "    }\r\n";
         $rawData .= '}';
         $file->setRawData($rawData);
         $file->write(false, true);
