@@ -31,6 +31,7 @@ class DocGenerator {
     private $siteName;
     private $outputPath;
     private $options;
+    private $jsonIndexData;
     /**
      *
      * @var HTMLNode 
@@ -63,6 +64,7 @@ class DocGenerator {
      */
     public function __construct($options=array()) {
         $this->options = $options;
+        $this->jsonIndexData = [];
         if(isset($options['path'])){
             $options['path'] = str_replace('/', '\\', $options['path']);
             
@@ -106,6 +108,8 @@ class DocGenerator {
                     $this->_generateClassesAPIPages();
                     $this->logMessage('Creating web pages for namespaces...');
                     $this->_generateNamespacesPages();
+                    $this->logMessage('Creating index json file...');
+                    $this->createJsonIndex();
                     $this->logMessage('Process completed.');
                 }
                 else{
@@ -166,7 +170,7 @@ class DocGenerator {
                 $page->setCanonical($canonical);
                 $page->setDescription('All classes and sub-namespaces in the namespace \''.$nsObj->getName().'\'.');
                 $page->setTitle('Namespace '.$nsObj->getName());
-                $this->_createAsideNav($page);
+                //$this->_createAsideNav($page);
                 $this->createNSIndexFile($outputPath,$nsObj, $options, $page);
                 $page->reset();
             }
@@ -207,7 +211,7 @@ class DocGenerator {
                 $canonical = $base. str_replace('\\', '/', $classAPI->getNameSpace()).'/'.$classAPI->getName();
                 $page->setCanonical($canonical);
                 $page->setDescription($classAPI->getSummary());
-                $this->_createAsideNav($page);
+                //$this->_createAsideNav($page);
                 $this->_createAPIPage($classAPI, $options, $page);
                 self::logMessage($count.' Page Created.');
                 $count++;
@@ -260,6 +264,7 @@ class DocGenerator {
         $savePath = $path.$classAPI->getNameSpace();
         if(Util::isDirectory($savePath, true)){
             $file = new File();
+            
             $file->setName($classAPI->getName().'View.php');
             $file->setPath($savePath);
             $file->remove();
@@ -267,11 +272,13 @@ class DocGenerator {
             if(strlen($ns) != 0){
                 $ns = '\\'.$ns;
             }
-            $html = '';
-            $body = $page->getChildByID('main-content-area');
-            foreach ($body->children() as $node) {
-                $html.=$node;
-            }
+            $this->jsonIndexData[] = new \webfiori\json\Json([
+                'class_name' => $classAPI->getName(),
+                'summary' => $classAPI->getSummary(),
+                'link' => $this->getBaseURL(). str_replace('\\', '/', $ns).'/'.$classAPI->getName(),
+                'namespace' => $ns,
+                'objectID' => hash('sha256',$ns.$classAPI->getName())
+            ]);
             $rawData = 
                     '<?php'."\r\n"
                     . 'namespace docGenerator'.$ns.";\r\n"
@@ -559,7 +566,8 @@ class DocGenerator {
             $this->linksArr[$cName] = new Anchor($classLink, $cName);
             $this->classesLinksByNS[$nsName][] = [
                 'label'=>$cName,
-                'link'=>$classLink
+                'link'=>$classLink,
+                'description' => $apiReader->getClassSummary()
             ];
             $nsClasses[$nsName][] = new ClassAPI($apiReader);
             foreach ($apiReader->getConstantsNames() as $name){
@@ -777,6 +785,7 @@ class DocGenerator {
     }
     private function createAttrsArrStr(ClassAPI $classAPi) {
         $arr = '        $classAttrsArr = ['."\r\n";
+        $attrsJsonArr = [];
         foreach ($classAPi->getClassAttributes() as $attr) {
             $attr instanceof AttributeDef;
             $arr .= "            new AttributeDef(\r\n"
@@ -786,7 +795,12 @@ class DocGenerator {
                     . "            '". str_replace("'", "\'", $attr->getSummary())."',\r\n"
                     . "            '". str_replace("'", "\'", $attr->getDescription())."',\r\n"
                     . "            ),\r\n";
+            $attrsJsonArr[] = new \webfiori\json\Json([
+                'name' => $attr->getName(),
+                'summary' => $attr->getSummary()
+            ]);
         }
+        $this->jsonIndexData[count($this->jsonIndexData) - 1]->addArray('attributes', $attrsJsonArr);
         return $arr.'        ];'."\r\n";
     }
     /**
@@ -795,6 +809,7 @@ class DocGenerator {
      */
     private function createMethodsArrStr($classAPi) {
         $arr = '        $classMethodsArr = ['."\r\n";
+        $methodsJsonArr = [];
         foreach ($classAPi->getClassMethods() as $meth) {
             $meth instanceof FunctionDef;
             $arr .= '            new FunctionDef(['."\r\n"
@@ -804,7 +819,12 @@ class DocGenerator {
                     . "                'description' => '".str_replace("'", "\'",$meth->getDescription())."',"."\r\n"
                     . "                '@params' => ".$this->createParamsArr($meth).""."\r\n"
                     . "            ]),\r\n";
+            $methodsJsonArr[] = new \webfiori\json\Json([
+                'name' => $meth->getName(),
+                'summary' => $meth->getSummary()
+            ]);
         }
+        $this->jsonIndexData[count($this->jsonIndexData) - 1]->addArray('methods', $methodsJsonArr);
         return $arr.'        ];'."\r\n";
     }
     private function createParamsArr(FunctionDef $def) {
@@ -828,6 +848,17 @@ class DocGenerator {
             $arr .= '                    ],'."\r\n";
         }
         return $arr .= '                ],';
+    }
+    private function createJsonIndex() {
+        $file = new File($this->getOutputPath().DS.'index.json');
+        $file->append('[');
+        $comma = '';
+        foreach ($this->jsonIndexData as $jObj) {
+            $file->append($comma.$jObj);
+            $comma = ',';
+        }
+        $file->append(']');
+        $file->write(false, true);
     }
     /**
      * 
