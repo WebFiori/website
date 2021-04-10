@@ -54,7 +54,7 @@ class NewFioriAPI extends APITheme {
             $page->addBeforeRender(function (WebPage $page) {
                 $page->getDocument()->getBody()->addChild('script', [
                     'type' => 'text/javascript',
-                    'src' => 'assets/new-wf/default.js',
+                    'src' => 'assets/new-wf/api-page.js',
                     'id' => 'default-vue-init'
                 ]);
                 $page->getDocument()->getBody()->addChild('script', [
@@ -396,7 +396,7 @@ class NewFioriAPI extends APITheme {
 
     public function createNSAside($links) {
         $drawer = new HTMLNode('v-navigation-drawer', [
-            'v-model' => "drawer_md",
+            //'v-model' => "drawer_md",
             'fixed', 'app', 'width' => '300px',
             ':mini-variant.sync'=>"mini"
         ]);
