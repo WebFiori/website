@@ -118,6 +118,18 @@ class AttributeDef {
     public function getDescription() {
         return $this->longDescription;
     }
+    public function getDescriptionAsHTMLNode() {
+        $node = HTMLNode::fromHTMLText($this->getDescription());
+        if (gettype($node) == 'array') {
+            $toAdd = new HTMLNode('span');
+            foreach ($node as $ch) {
+                $toAdd->addChild($ch);
+            }
+        } else {
+            $toAdd = $node;
+        }
+        return $toAdd;
+    }
     /**
      * Sets the description of the attribute.
      * @param string $desc The description of the attribute.
@@ -143,6 +155,17 @@ class AttributeDef {
      */
     public function getSummary() {
         return $this->shortDescription;
+    }
+    public function getSummaryAsHTMLNode() {
+        $node = HTMLNode::fromHTMLText($this->getSummary());
+        if (gettype($node) == 'array') {
+            $toAdd = new HTMLNode('span');
+            foreach ($node as $ch) {
+                $toAdd->addChild($ch);
+            }
+        } else {
+            $toAdd = $node;
+        }
     }
     /**
      * Sets the datatype of the attribute.

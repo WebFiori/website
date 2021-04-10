@@ -81,8 +81,8 @@ class NewFioriAPI extends APITheme {
                 $this->createDrawerMenuItem(
                 $this->createButton([
                     'text', 'block', 
-                    'href' => $this->getBaseURL().'/about-me'
-                    ], $page->get('main-menu/about-me'), 'mdi-information-variant')));
+                    'href' => $this->getBaseURL().'/docs/webfiori'
+                    ], 'API Reference', 'mdi-information-variant')));
         return $sideDrawer;
     }
 
@@ -259,8 +259,7 @@ class NewFioriAPI extends APITheme {
         $row = $vCardTxt->addChild('v-row');
         $row->addChild('v-col', [
             'cols' => 12,
-            'v-html' => "'". str_replace("'", "\'", $attr->getDescription())."'"
-        ]);
+        ], false)->addChild($attr->getDescriptionAsHTMLNode());
         return $block;
     }
 
@@ -279,8 +278,7 @@ class NewFioriAPI extends APITheme {
         $row = $vCardTxt->addChild('v-row');
         $row->addChild('v-col', [
             'cols' => 12,
-            'v-html' => "'". str_replace("'", "\'", $attr->getSummary())."'"
-        ]);
+        ], false)->addChild($attr->getSummaryAsHTMLNode());
         return $block;
     }
 
@@ -298,8 +296,9 @@ class NewFioriAPI extends APITheme {
             'cols' => 12
         ], false)->addChild('h1', [], false)->text($accessMod.' '.$className);
         $block->addChild('v-col', [
-            'cols' => 12
-        ], false)->text($description);
+            'cols' => 12,
+            'v-html' => "'". str_replace("'", "\'", $description)."'"
+        ]);
         return $block;
     }
 
@@ -318,8 +317,7 @@ class NewFioriAPI extends APITheme {
         $row = $vCardTxt->addChild('v-row');
         $row->addChild('v-col', [
             'cols' => 12,
-            'v-html' => "'". str_replace("'", "\'", $func->getDescription())."'"
-        ]);
+        ], false)->addChild($func->getDescriptionAsHTMLNode());
         
         if (count($func->getParameters()) != 0) {
             $paramsCol = $row->addChild('v-col', [
@@ -344,15 +342,16 @@ class NewFioriAPI extends APITheme {
                         'font-family' => 'monospace'
                     ]
                 ]);
-                $li->addChild($param->getType())
+                $param instanceof \webfiori\apiParser\MethodParameter;
+                $li->addChild($param->getParametersNode($this->getPage()))
                         ->text(' '.$param->getName())
                         ->text($optionalTxt)
-                        ->addChild('span', [
+                        ->addChild($param->getDescriptionAsHTMLNode(), [
                             'style' => [
                                 'font-family' => 'roboto'
-                            ]
-                        ], false)
-                        ->text(' '.$param->getDescription());
+                            ],
+                            
+                        ]);
             }
         }
         $return = $func->getMethodReturnTypesStr();
@@ -389,8 +388,7 @@ class NewFioriAPI extends APITheme {
         $row = $vCardTxt->addChild('v-row');
         $row->addChild('v-col', [
             'cols' => 12,
-            'v-html' => "'". str_replace("'", "\'", $func->getSummary())."'"
-        ]);
+        ], false)->addChild($func->getSummaryAsHTMLNode());
         return $block;
     }
 
@@ -400,8 +398,9 @@ class NewFioriAPI extends APITheme {
             'fixed', 'app', 'width' => '300px',
             ':mini-variant.sync'=>"mini"
         ]);
-
-        $drawer->addChild('v-list-item', [], false)
+        $list = $drawer->addChild('v-list', [], false);
+        
+        $list->addChild('v-list-item', [], false)
         ->addChild('v-list-item-icon', [], false)
                  ->addChild('v-icon', [], false)
                  ->text('mdi-send-circle')
@@ -411,24 +410,34 @@ class NewFioriAPI extends APITheme {
             'icon', '@click.stop' => 'mini = !mini'
         ], false)->addChild('v-icon', [], false)->text('mdi-chevron-left');
         $drawer->addChild('v-divider');
-        $list = $drawer->addChild('v-expansion-panels', ['dense'], false);
+        
+        
         $classes = $this->getPage()->getClasses();
         foreach ($classes as $ns => $classesInNs) {
-            $panel = $list->addChild('v-expansion-panel', [], false);
-            
-            $panel->addChild('v-expansion-panel-header', [], false)
-                 ->addChild('a', [
+            $subList = $list->addChild('v-list-group', [
+                'dense',
+                ':value' => 'true',
+                'sub-group',
+                'no-action'
+            ], false);
+            $subList->addChild('template', [
+                'v-slot:activator',
+                
+                ], false)
+            ->addChild('v-list-item-content', [], false)
+            ->addChild('v-list-item-title', [], false)
+            ->addChild('a', [
                      'href' => $this->getBaseURL(). str_replace('\\', '/', $ns)
                  ], false)
                  ->text($ns);
-            $classesList = $panel->addChild('v-expansion-panel-content', [], false)
-                    ->addChild('v-list');
+            
             foreach ($classesInNs as $className) {
-                $classesList->addChild('v-list-item', [
+                $subList->addChild('v-list-item', [
+                    'dense',
                     'href' => $this->getBaseURL().$this->getPage()->getLink($className)->getAttribute('href')
                 ], false)
-                        ->addChild('v-list-item-title', [], false)
-                        ->text($className);
+                ->addChild('v-list-item-title', [], false)
+                ->text($className);
             }
         }
         return $drawer;

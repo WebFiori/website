@@ -45,7 +45,8 @@ class ClosureRoutes {
             'closure-params' => $arrayOfParams,
             'route-to' => function($params)
             {
-                
+                $node = \webfiori\ui\HTMLNode::fromHTMLText('Returns the value of the base URI which is appended to the path. This method is similar to calling the method <b>Router::<a href="#base">base()</a></b>.');
+                Util::print_r($node, false);
             }
         ]);
     }

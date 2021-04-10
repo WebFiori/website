@@ -217,6 +217,18 @@ class FunctionDef {
     public function getDescription() {
         return $this->longDescription;
     }
+    public function getDescriptionAsHTMLNode() {
+        $xNode = HTMLNode::fromHTMLText($this->getDescription());
+        if (gettype($xNode) == 'array') {
+            $toXAdd = new HTMLNode();
+            foreach ($xNode as $ch) {
+                $toXAdd->addChild($ch);
+            }
+        } else {
+            $toXAdd = $xNode;
+        }
+        return $toXAdd;
+    }
     /**
      * Sets the summary of the function.
      * @param string $desc The summary of the function.
@@ -230,6 +242,18 @@ class FunctionDef {
      */
     public function getSummary() {
         return $this->shortDescription;
+    }
+    public function getSummaryAsHTMLNode() {
+        $node = HTMLNode::fromHTMLText($this->getSummary());
+        if (gettype($node) == 'array') {
+            $toAdd = new HTMLNode('span');
+            foreach ($node as $ch) {
+                $toAdd->addChild($ch);
+            }
+        } else {
+            $toAdd = $node;
+        }
+        return $toAdd;
     }
     /**
      * Sets the name of the function.

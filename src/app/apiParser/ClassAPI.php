@@ -370,6 +370,18 @@ class ClassAPI {
     public function setSummary($desc) {
         $this->shortDesc = $desc;
     }
+    public function getSummaryAsHTMLNode() {
+        $node = HTMLNode::fromHTMLText($this->getSummary());
+        if (gettype($node) == 'array') {
+            $toAdd = new HTMLNode('span');
+            foreach ($node as $ch) {
+                $toAdd->addChild($ch);
+            }
+        } else {
+            $toAdd = $node;
+        }
+        return $toAdd;
+    }
     /**
      * Returns the description of the class.
      * @return string The description of the class.

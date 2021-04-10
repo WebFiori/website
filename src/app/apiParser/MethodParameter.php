@@ -94,6 +94,18 @@ class MethodParameter {
     public function getDescription() {
         return $this->attrDescription;
     }
+    public function getDescriptionAsHTMLNode() {
+        $node = HTMLNode::fromHTMLText($this->getDescription());
+        if (gettype($node) == 'array') {
+            $toAdd = new HTMLNode('span');
+            foreach ($node as $ch) {
+                $toAdd->addChild($ch);
+            }
+        } else {
+            $toAdd = $node;
+        }
+        return $toAdd;
+    }
     public function isOptional() {
         return $this->isOptional;
     }
