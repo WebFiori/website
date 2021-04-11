@@ -171,10 +171,11 @@ class NewFioriAPI extends APITheme {
                 ])->addChild('v-toolbar-title', [
                     'style' => [
                         'min-width' => '250px'
-                    ]
+                    ],
+                    'class' => 'd-none d-md-flex'
                 ], false)
                 ->addChild('v-row',[
-                    'class' => 'd-none d-md-flex'
+                    
                 ],false)
                 ->addChild('v-col', [
                     'cols' => 12,
@@ -212,7 +213,7 @@ class NewFioriAPI extends APITheme {
                 self::createButton(['text', 'href' => $this->getBaseURL().'/learn'], 'Learn'))
                 ->getParent()->addChild('v-spacer');
         $searchContainer = new HTMLNode('v-container', [
-            'class' => 'd-flex align-center d-none d-md-flex'
+            'class' => 'd-flex align-center'
         ]);
         $vAppBar->addChild($searchContainer);
         $searchContainer->addChild('v-text-field', [
