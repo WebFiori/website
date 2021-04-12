@@ -132,6 +132,7 @@ class NewFiori extends Theme {
         $head->addJs('https://cdn.jsdelivr.net/gh/usernane/AJAXRequestJs@1.x.x/AJAXRequest.js',[
             'revision' => true
         ]);
+        $head->addJs("https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js");
         
         $head->addJs("https://www.googletagmanager.com/gtag/js?id=UA-91825602-2", ['async'=>''], false);
         $jsCode = new JsCode();
