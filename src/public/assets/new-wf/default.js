@@ -25,10 +25,20 @@ window.app = new Vue({
     data:{
         loading:false,
         drawer:false,
-        snackbar:window.data.snackbar
+        snackbar:window.data.snackbar,
+        search_results:[],
+        search_val:'',
+        showMenu:false
     },
     methods:{
-        
+        search:function() {
+            if (this.search_val.trim().length !== 0) {
+                search(this.search_val);
+                this.showMenu = true;
+            } else {
+                this.showMenu = false;
+            }
+        }
     }
 });
 function showSnackbar(message, color = '') {

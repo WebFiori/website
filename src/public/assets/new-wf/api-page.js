@@ -27,7 +27,9 @@ window.app = new Vue({
         drawer:false,
         snackbar:window.data.snackbar,
         drawer_md:false,
-        mini:false
+        mini:false,
+        
+        search_results:[]
     },
     methods:{
         

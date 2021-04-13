@@ -3,5 +3,7 @@ window.index = algolia.initIndex('test_wf');
 function search(str) {
     window.index.search(str).then(({ hits }) => {
         console.log(hits);
+        window.app.search_results = hits;
     });
 }
+

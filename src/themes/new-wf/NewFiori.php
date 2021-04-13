@@ -54,6 +54,10 @@ class NewFiori extends Theme {
                     'src' => 'assets/js/prism.js',
                     'type' => 'text/javascript'
                 ], false);
+                $page->getDocument()->getBody()->addChild('script', [
+                    'src' => 'assets/js/algolia.js',
+                    'type' => 'text/javascript'
+                ], false);
             });
         });
     }
@@ -124,6 +128,10 @@ class NewFiori extends Theme {
         $head->addCSS('assets/css/prism.css');
         $head->addCSS('assets/css/code-theme.css');
         
+        //$head->addCSS('https://cdn.jsdelivr.net/npm/instantsearch.css@7/themes/algolia-min.css');
+        $head->addJs("https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js");
+        //$head->addJs('https://cdn.jsdelivr.net/npm/instantsearch.js@4');
+        
         $head->addJs('https://unpkg.com/vue@2.x.x');
         $head->addCSS('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
         $head->addCSS('https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css');
@@ -132,7 +140,7 @@ class NewFiori extends Theme {
         $head->addJs('https://cdn.jsdelivr.net/gh/usernane/AJAXRequestJs@1.x.x/AJAXRequest.js',[
             'revision' => true
         ]);
-        $head->addJs("https://cdn.jsdelivr.net/npm/algoliasearch@4.5.1/dist/algoliasearch-lite.umd.js");
+        
         
         $head->addJs("https://www.googletagmanager.com/gtag/js?id=UA-91825602-2", ['async'=>''], false);
         $jsCode = new JsCode();
@@ -209,10 +217,44 @@ class NewFiori extends Theme {
             'class' => 'd-flex align-center d-none d-md-flex'
         ]);
         $vAppBar->addChild($searchContainer);
-        $searchContainer->addChild('v-text-field', [
+        $row = $searchContainer->addChild('v-row', [
+            'no-gutters'
+        ], false);
+
+        $vCard = $row->addChild('v-col', [
+            'cols' => 12,
+            'no-gutters'
+            ], false)->addChild('v-menu', [
+            'relative',
+            'v-model'=>"showMenu",
+                'offset-y',
+                'bottom'
+        ], false)->addChild('template', [
+            'v-slot:activator'=>"{ on, attrs }",
+            
+        ], false)->addChild('v-text-field', [
             'outlined', 'prepend-inner-icon' => 'mdi-magnify',
             'dense', 'rounded', 'hide-details',
+            'id' => 'search-box',
+            'v-model' => 'search_val','@input' => 'search',
+            'v-bind'=>"attrs",
+            'v-on'=>"on"
+        ])->getParent()
+        ->addChild('v-list', [], false)
+        ->addChild('v-list-item', [
+            'v-for' => 'result in search_results'
+        ], false)->addChild('v-list-item-title', [], false)
+        ->addChild('a', [
+            ':href' => 'result.link'
+        ], false)->text('{{result.class_name}}')
+        ->getParent()
+                ->addChild('v-list-item-subtitle',[], false)
+                ->text('{{result.summary}}')
+        ->getParent()->getParent()->getParent()
+        ->img([
+            'src' => 'https://res.cloudinary.com/hilnmyskv/image/upload/q_auto/v1614950376/Algolia_com_Website_assets/images/shared/algolia_logo/search-by-algolia-light-background.svg'
         ]);
+        
         return $vAppBar;
     }
     public static function createButton($props = [], $text = null, $icon = null, $iconProps = []) {
