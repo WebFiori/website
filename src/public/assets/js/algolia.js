@@ -3,7 +3,12 @@ window.index = algolia.initIndex('test_wf');
 function search(str) {
     window.index.search(str).then(({ hits }) => {
         console.log(hits);
-        window.app.search_results = hits;
+        window.app.search_results = [];
+        var len = hits.length > 10 ? 10 : hits.length;
+        for (var x = 0 ; x < len ; x++) {
+            window.app.search_results.push(hits[x]);
+        }
     });
 }
+search('A');
 

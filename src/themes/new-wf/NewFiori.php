@@ -223,16 +223,18 @@ class NewFiori extends Theme {
 
         $vCard = $row->addChild('v-col', [
             'cols' => 12,
-            'no-gutters'
+            'no-gutters',
+            
             ], false)->addChild('v-menu', [
-            'relative',
+            'relative','overflow',
             'v-model'=>"showMenu",
                 'offset-y',
                 'bottom'
         ], false)->addChild('template', [
             'v-slot:activator'=>"{ on, attrs }",
             
-        ], false)->addChild('v-text-field', [
+        ], false)
+        ->addChild('v-text-field', [
             'outlined', 'prepend-inner-icon' => 'mdi-magnify',
             'dense', 'rounded', 'hide-details',
             'id' => 'search-box',
@@ -241,18 +243,38 @@ class NewFiori extends Theme {
             'v-on'=>"on"
         ])->getParent()
         ->addChild('v-list', [], false)
+        ->addChild('v-subheader', [
+            'style' => 'font-weight: bold;'
+        ], false)
+        ->text('Classes')
+        ->getParent()
         ->addChild('v-list-item', [
             'v-for' => 'result in search_results'
         ], false)->addChild('v-list-item-title', [], false)
         ->addChild('a', [
-            ':href' => 'result.link'
+            ':href' => 'result.link',
+            'style' => [
+                'font-size' => '9pt',
+                'font-weight' => 'bold'
+            ]
         ], false)->text('{{result.class_name}}')
         ->getParent()
-                ->addChild('v-list-item-subtitle',[], false)
+                ->addChild('v-list-item-subtitle',[
+                    'style' => [
+                        'font-size' => '9pt'
+                    ]
+                ], false)
                 ->text('{{result.summary}}')
         ->getParent()->getParent()->getParent()
+        ->addChild('a', [
+            'href' => 'https://www.algolia.com/',
+            'target' => '_blank',
+            'class' => 'd-flex',
+            'style' => 'border-top: 1px solid;'
+        ], false)
         ->img([
-            'src' => 'https://res.cloudinary.com/hilnmyskv/image/upload/q_auto/v1614950376/Algolia_com_Website_assets/images/shared/algolia_logo/search-by-algolia-light-background.svg'
+            'src' => 'assets/images/search-by-algolia-light-background.webp',
+            'style'=> ['width' => '130px']
         ]);
         
         return $vAppBar;
