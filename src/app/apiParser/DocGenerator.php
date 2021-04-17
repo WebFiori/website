@@ -31,7 +31,8 @@ class DocGenerator {
     private $siteName;
     private $outputPath;
     private $options;
-    private $jsonIndexData;
+    private $classesJsonIndexData;
+    private $methodsJsonIndexData;
     /**
      *
      * @var HTMLNode 
@@ -64,7 +65,8 @@ class DocGenerator {
      */
     public function __construct($options=array()) {
         $this->options = $options;
-        $this->jsonIndexData = [];
+        $this->classesJsonIndexData = [];
+        $this->methodsJsonIndexData = [];
         if(isset($options['path'])){
             $options['path'] = str_replace('/', '\\', $options['path']);
             
@@ -272,7 +274,7 @@ class DocGenerator {
             if(strlen($ns) != 0){
                 $ns = '\\'.$ns;
             }
-            $this->jsonIndexData[] = new \webfiori\json\Json([
+            $this->classesJsonIndexData[] = new \webfiori\json\Json([
                 'class_name' => $classAPI->getName(),
                 'summary' => $classAPI->getSummary(),
                 'link' => $this->getBaseURL(). str_replace('\\', '/', $ns).'/'.$classAPI->getName(),
@@ -800,7 +802,7 @@ class DocGenerator {
                 'summary' => $attr->getSummary()
             ]);
         }
-        $this->jsonIndexData[count($this->jsonIndexData) - 1]->addArray('attributes', $attrsJsonArr);
+        $this->classesJsonIndexData[count($this->classesJsonIndexData) - 1]->addArray('attributes', $attrsJsonArr);
         return $arr.'        ];'."\r\n";
     }
     /**
@@ -824,7 +826,7 @@ class DocGenerator {
                 'summary' => $meth->getSummary()
             ]);
         }
-        $this->jsonIndexData[count($this->jsonIndexData) - 1]->addArray('methods', $methodsJsonArr);
+        $this->methodsJsonIndexData[] =  $methodsJsonArr;
         return $arr.'        ];'."\r\n";
     }
     private function createParamsArr(FunctionDef $def) {
@@ -853,12 +855,22 @@ class DocGenerator {
         $file = new File($this->getOutputPath().DS.'index.json');
         $file->append('[');
         $comma = '';
-        foreach ($this->jsonIndexData as $jObj) {
+        foreach ($this->classesJsonIndexData as $jObj) {
             $file->append($comma.$jObj);
             $comma = ',';
         }
         $file->append(']');
         $file->write(false, true);
+        
+        $methFiles = new File($this->getOutputPath().DS.'methods-index.json');
+        $methFiles->append('[');
+        $comma = '';
+        foreach ($this->methodsJsonIndexData as $jObj) {
+            $methFiles->append($comma.$jObj);
+            $comma = ',';
+        }
+        $methFiles->append(']');
+        $methFiles->write(false, true);
     }
     /**
      * 
