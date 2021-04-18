@@ -221,7 +221,7 @@ class NewFiori extends Theme {
             'no-gutters'
         ], false);
 
-        $vCard = $row->addChild('v-col', [
+        $vList = $row->addChild('v-col', [
             'cols' => 12,
             'no-gutters',
             
@@ -242,8 +242,8 @@ class NewFiori extends Theme {
             'v-bind'=>"attrs",
             'v-on'=>"on"
         ])->getParent()
-        ->addChild('v-list', [], false)
-        ->addChild('v-subheader', [
+        ->addChild('v-list', [], false);
+        $vList->addChild('v-subheader', [
             'style' => 'font-weight: bold;'
         ], false)
         ->text('Classes')
@@ -258,6 +258,28 @@ class NewFiori extends Theme {
                 'font-weight' => 'bold'
             ]
         ], false)->text('{{result.class_name}}')
+        ->getParent()
+                ->addChild('v-list-item-subtitle',[
+                    'style' => [
+                        'font-size' => '9pt'
+                    ]
+                ], false)
+                ->text('{{result.summary}}');
+        $vList->addChild('v-subheader', [
+            'style' => 'font-weight: bold;'
+        ], false)
+        ->text('Methods')
+        ->getParent()
+        ->addChild('v-list-item', [
+            'v-for' => 'result in methods_search_results'
+        ], false)->addChild('v-list-item-title', [], false)
+        ->addChild('a', [
+            ':href' => 'result.link',
+            'style' => [
+                'font-size' => '9pt',
+                'font-weight' => 'bold'
+            ]
+        ], false)->text('{{result.name}}')
         ->getParent()
                 ->addChild('v-list-item-subtitle',[
                     'style' => [
