@@ -29,7 +29,8 @@ window.app = new Vue({
         mini:false,
         drawer_md:true,
         name:'',
-        search_results:[]
+        search_results:[],
+        methods_search_results:[]
     },
     methods:{
         
