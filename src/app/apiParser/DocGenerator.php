@@ -802,7 +802,7 @@ class DocGenerator {
                 'summary' => $attr->getSummary()
             ]);
         }
-        $this->classesJsonIndexData[count($this->classesJsonIndexData) - 1]->addArray('attributes', $attrsJsonArr);
+        
         return $arr.'        ];'."\r\n";
     }
     /**
@@ -811,7 +811,6 @@ class DocGenerator {
      */
     private function createMethodsArrStr($classAPi) {
         $arr = '        $classMethodsArr = ['."\r\n";
-        $methodsJsonArr = [];
         foreach ($classAPi->getClassMethods() as $meth) {
             $meth instanceof FunctionDef;
             $arr .= '            new FunctionDef(['."\r\n"
@@ -821,12 +820,13 @@ class DocGenerator {
                     . "                'description' => '".str_replace("'", "\'",$meth->getDescription())."',"."\r\n"
                     . "                '@params' => ".$this->createParamsArr($meth).""."\r\n"
                     . "            ]),\r\n";
-            $methodsJsonArr[] = new \webfiori\json\Json([
-                'name' => $meth->getName(),
-                'summary' => $meth->getSummary()
+            $this->methodsJsonIndexData[] = new \webfiori\json\Json([
+                'name' => $classAPi->getName().'::'.$meth->getName().'()',
+                'summary' => $meth->getSummary(),
+                'link' => $this->getBaseURL(). str_replace('\\', '/', $classAPi->getNameSpace()).'/'.$classAPi->getName().'#'.$meth->getName(),
+                'objectID' => hash('sha256',$classAPi->getNameSpace().$classAPi->getName().$meth->getName())
             ]);
         }
-        $this->methodsJsonIndexData[] =  $methodsJsonArr;
         return $arr.'        ];'."\r\n";
     }
     private function createParamsArr(FunctionDef $def) {
@@ -852,16 +852,11 @@ class DocGenerator {
         return $arr .= '                ],';
     }
     private function createJsonIndex() {
-        $file = new File($this->getOutputPath().DS.'index.json');
-        $file->append('[');
-        $comma = '';
-        foreach ($this->classesJsonIndexData as $jObj) {
-            $file->append($comma.$jObj);
-            $comma = ',';
-        }
-        $file->append(']');
-        $file->write(false, true);
-        
+        $this->createMethodsIndexFile();
+        $this->createClassesIndexFile();
+        //$this->createAttrsIndexFile();
+    }
+    public function createMethodsIndexFile() {
         $methFiles = new File($this->getOutputPath().DS.'methods-index.json');
         $methFiles->append('[');
         $comma = '';
@@ -871,6 +866,28 @@ class DocGenerator {
         }
         $methFiles->append(']');
         $methFiles->write(false, true);
+    }
+//    private function createAttrsIndexFile() {
+//        $methFiles = new File($this->getOutputPath().DS.'attributes-index.json');
+//        $methFiles->append('[');
+//        $comma = '';
+//        foreach ($this->methodsJsonIndexData as $jObj) {
+//            $methFiles->append($comma.$jObj);
+//            $comma = ',';
+//        }
+//        $methFiles->append(']');
+//        $methFiles->write(false, true);
+//    }
+    private function createClassesIndexFile() {
+        $file = new File($this->getOutputPath().DS.'classes-index.json');
+        $file->append('[');
+        $comma = '';
+        foreach ($this->classesJsonIndexData as $jObj) {
+            $file->append($comma.$jObj);
+            $comma = ',';
+        }
+        $file->append(']');
+        $file->write(false, true);
     }
     /**
      * 
