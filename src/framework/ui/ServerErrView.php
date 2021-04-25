@@ -147,6 +147,18 @@ class ServerErrView {
                 .'</p>'
                 .'<pre>'.$throwableOrErr->getTraceAsString().'</pre>';
             } else {
+                $trace = $throwableOrErr->getTrace();
+                $traceStr = '';
+                $index = 0;
+                foreach ($trace as $arr) {
+                    $traceStr .= '<span class="mono">#'.$index.' At class '.Util::extractClassName($arr['file']).'. Line '.$arr['line'].'</span><br/>';
+                    $index++;
+                }
+                $retVal .= '<b class="nice-red mono">Class:</b> <span class="mono">'.Util::extractClassName($throwableOrErr->getFile())."</span><br/>"
+                .'<b class="nice-red mono">Line:</b> <span class="mono">'.$throwableOrErr->getLine()."</span><br>"
+                .'<b class="nice-red mono">Stack Trace:</b> '."<br/>"
+                .'</p>'
+                .$traceStr;
                 $retVal .= $this->_showTip();
             }
             $retVal .= '</body></html>';
@@ -164,8 +176,27 @@ class ServerErrView {
 
             if (defined('WF_VERBOSE') && WF_VERBOSE) {
                 $retVal .= '<b class="nice-red mono">File:</b> <span class="mono">'.$throwableOrErr["file"]."</span><br/>"
-                .'<b class="nice-red mono">Line:</b> <span class="mono">'.$throwableOrErr["line"]."</span><br/>";
+                .'<b class="nice-red mono">Line:</b> <span class="mono">'.$throwableOrErr["line"]."</span><br/>"
+                .'<b class="nice-red mono">Stack Trace:</b> '."<br/>";
+                $trace = debug_backtrace();
+                $index = 0;
+                foreach ($trace as $arr) {
+                    $traceStr .= '<span class="mono">#'.$index.' At file '.$arr['file'].'. Line '.$arr['line'].'</span><br/>';
+                    $index++;
+                }
             } else {
+                $trace = debug_backtrace();
+                $traceStr = '';
+                $index = 0;
+                foreach ($trace as $arr) {
+                    $traceStr .= '<span class="mono">#'.$index.' At class '.Util::extractClassName($arr['file']).'. Line '.$arr['line'].'</span><br/>';
+                    $index++;
+                }
+                $retVal .= '<b class="nice-red mono">Class:</b> <span class="mono">'.Util::extractClassName($throwableOrErr->getFile())."</span><br/>"
+                .'<b class="nice-red mono">Line:</b> <span class="mono">'.$throwableOrErr->getLine()."</span><br>"
+                .'<b class="nice-red mono">Stack Trace:</b> '."<br/>"
+                .'</p>'
+                .$traceStr;
                 $retVal .= $this->_showTip();
             }
         }
@@ -180,7 +211,7 @@ class ServerErrView {
         Page::separator(WebFioriApp::getAppConfig()->getTitleSep());
         Page::document()->getHeadNode()->addCSS(Util::getBaseURL().'/assets/css/server-err.css',[],false);
         $hNode = new HTMLNode('h1');
-
+        //var_dump($throwableOrErr);
         if ($throwableOrErr instanceof Throwable) {
             $hNode->addTextNode('500 - Server Error: Uncaught Exception.');
 
@@ -188,15 +219,53 @@ class ServerErrView {
             Page::insert($this->_createMessageLine('Exception Class:', get_class($throwableOrErr)));
             Page::insert($this->_createMessageLine('Exception Message:', $throwableOrErr->getMessage()));
             Page::insert($this->_createMessageLine('Exception Code:', $throwableOrErr->getCode()));
-
+            Page::insert($this->_createMessageLine('Class:', Util::extractClassName($throwableOrErr->getFile())));
+            Page::insert($this->_createMessageLine('At Line:', $throwableOrErr->getLine()));
+            
             if (defined('WF_VERBOSE') && WF_VERBOSE) {
                 Page::insert($this->_createMessageLine('File:', $throwableOrErr->getFile()));
-                Page::insert($this->_createMessageLine('Line:', $throwableOrErr->getLine()));
                 Page::insert($this->_createMessageLine('Stack Trace:', ''));
-                $stackTrace = new HTMLNode('pre');
-                $stackTrace->addTextNode($throwableOrErr->getTraceAsString());
+                $stackTrace = new HTMLNode('div', [
+                    'class' => 'mono'
+                ]);
+                $traceArr = $throwableOrErr->getTrace();
+                $index = 0;
+                
+                foreach ($traceArr as $arr) {
+                    $line = isset($arr['line']) ? $arr['line'] : 'X';
+                    $file = isset($arr['file']) ? $arr['file'] : $arr['function'];
+                    
+                    if ($line == 'X') {
+                        $stackTrace->text('#'.$index.' At file '.$file);
+                    } else {
+                        $stackTrace->text('#'.$index.' At file '.$file.'. Line '.$line);
+                    }
+                    $stackTrace->br();
+                    $index++;
+                }
+                
                 Page::insert($stackTrace);
             } else {
+                Page::insert($this->_createMessageLine('Stack Trace:', ''));
+                $stackTrace = new HTMLNode('div', [
+                    'class' => 'mono'
+                ]);
+                $traceArr = $throwableOrErr->getTrace();
+                $index = 0;
+                foreach ($traceArr as $arr) {
+                    $line = isset($arr['line']) ? $arr['line'] : 'X';
+                    $file = isset($arr['file']) ? $arr['file'] : $arr['function'];
+                    
+                    if ($line == 'X') {
+                        $stackTrace->text('#'.$index.' At class '.Util::extractClassName($file));
+                    } else {
+                        $stackTrace->text('#'.$index.' At class '.Util::extractClassName($file).'. Line '.$line);
+                    }
+                    $stackTrace->br();
+                    $index++;
+                }
+                
+                Page::insert($stackTrace);
                 $this->_showTip();
             }
         } else {
@@ -209,7 +278,39 @@ class ServerErrView {
             if (defined('WF_VERBOSE') && WF_VERBOSE) {
                 Page::insert($this->_createMessageLine('File: ', $throwableOrErr["file"]));
                 Page::insert($this->_createMessageLine('Line: ', $throwableOrErr["line"]));
+                Page::insert($this->_createMessageLine('Stack Trace:', ''));
+                $stackTrace = new HTMLNode('div', [
+                    'class' => 'mono'
+                ]);
+                $traceArr = debug_backtrace();
+                $index = 0;
+                
+                foreach ($traceArr as $arr) {
+                    $line = isset($arr['line']) ? $arr['line'] : 'X';
+                    $file = isset($arr['file']) ? $arr['file'] : $arr['function'];
+                    
+                    $stackTrace->text('#'.$index.' At file '.$file.'. Line '.$line);
+                    $stackTrace->br();
+                    $index++;
+                }
+                
+                Page::insert($stackTrace);
             } else {
+                Page::insert($this->_createMessageLine('Stack Trace:', ''));
+                $stackTrace = new HTMLNode('div', [
+                    'class' => 'mono'
+                ]);
+                $traceArr = debug_backtrace();
+                $index = 0;
+                foreach ($traceArr as $arr) {
+                    $line = isset($arr['line']) ? $arr['line'] : 'X';
+                    $file = isset($arr['file']) ? $arr['file'] : $arr['function'];
+                    $stackTrace->text('#'.$index.' At class '.Util::extractClassName($file).'. Line '.$line);
+                    $stackTrace->br();
+                    $index++;
+                }
+                
+                Page::insert($stackTrace);
                 $this->_showTip();
             }
         }
