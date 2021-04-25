@@ -91,35 +91,35 @@ class NewFiori extends Theme {
         $card = new HTMLNode('v-card', [
             'flat', 'tile', 'class' => 'flex text-center', 'dark']);
         $footer->addChild($card);
-        $card->addChild('v-card-text', [], false)
+        $card->addChild('v-card-text')
                 ->addChild($this->createButton([
                     'text', 
                     'fab', 
                     'x-small',
                     'target' => '_blank',
-                    'href' => 'https://www.linkedin.com/in/ibrahim-binalshikh/'], null, 'mdi-linkedin'))
+                    'href' => 'https://www.linkedin.com/in/ibrahim-binalshikh/'], null, 'mdi-linkedin'), true)
                 ->addChild($this->createButton([
                     'text', 
                     'fab', 
                     'x-small',
                     'target' => '_blank',
-                    'href' => 'https://t.me/WarriorVx'], null, 'mdi-telegram'))
+                    'href' => 'https://t.me/WarriorVx'], null, 'mdi-telegram'), true)
                 ->addChild($this->createButton([
                     'text', 
                     'fab', 
                     'x-small',
                     'target' => '_blank',
-                    'href' => 'https://github.com/usernane'], null, 'mdi-github'));
+                    'href' => 'https://github.com/usernane'], null, 'mdi-github'), true);
         
         //
-        $card->addChild('v-card-text', [], false)
-        ->addChild('small', [], false)
+        $card->addChild('v-card-text')
+        ->addChild('small')
         ->text($page->get('footer/built-with'))
          ->addChild(new Anchor('https://webfiori.com', $page->get('general/framework-name')));
         
         $card->addChild('v-divider')
-        ->addChild('v-card-text', ['flat'], false)
-        ->addChild('small', [], false)->text($page->get('footer/all-rights').' '.date('Y'));
+        ->addChild('v-card-text', ['flat'])
+        ->addChild('small')->text($page->get('footer/all-rights').' '.date('Y'));
         return $footer;
     }
 
@@ -170,28 +170,28 @@ class NewFiori extends Theme {
         $vAppBar->addChild('v-app-bar-nav-icon', [
                     'class' => 'd-sm-flex d-md-none',
                     '@click' => "drawer = !drawer",
-                ])->addChild('v-toolbar-title', [
+                ], true)->addChild('v-toolbar-title', [
                     'style' => [
                         'min-width' => '250px'
                     ]
-                ], false)
+                ])
                 ->addChild('v-row',[
                     'class' => 'd-none d-md-flex'
-                ],false)
+                ])
                 ->addChild('v-col', [
                     'cols' => 12,
                     'md' => 4
-                ], false)->addChild('img', [
+                ])->addChild('img', [
                     'src' => 'assets/images/WFLogo512.png',
                     'style' => [
                         'width' => '80px'
                     ]
-                ])->getParent()
+                ], true)->getParent()
                 ->addChild('v-col', [
                     'cols' => 12,
                     'md' => 8,
                     'class' => 'align-center d-flex'
-                ], false)
+                ])
                 ->addChild(new Anchor($this->getBaseURL(), 
                         $page->getWebsiteName()
                         ), [
@@ -209,9 +209,9 @@ class NewFiori extends Theme {
         $vAppBar->addChild($navLinksContainer);
         $navLinksContainer->addChild(
                 self::createButton(['text', 
-                    'href' => $this->getBaseURL().'/docs/webfiori'], 'API Reference'))
+                    'href' => $this->getBaseURL().'/docs/webfiori'], 'API Reference'), true)
                 ->addChild(
-                self::createButton(['text', 'href' => $this->getBaseURL().'/learn'], 'Learn'))
+                self::createButton(['text', 'href' => $this->getBaseURL().'/learn'], 'Learn'), true)
                 ->getParent()->addChild('v-spacer');
         $searchContainer = new HTMLNode('v-container', [
             'class' => 'd-flex align-center d-none d-md-flex'
@@ -219,21 +219,21 @@ class NewFiori extends Theme {
         $vAppBar->addChild($searchContainer);
         $row = $searchContainer->addChild('v-row', [
             'no-gutters'
-        ], false);
+        ]);
 
         $vList = $row->addChild('v-col', [
             'cols' => 12,
             'no-gutters',
             
-            ], false)->addChild('v-menu', [
+            ])->addChild('v-menu', [
             'relative','overflow',
             'v-model'=>"showMenu",
                 'offset-y',
                 'bottom'
-        ], false)->addChild('template', [
+        ])->addChild('template', [
             'v-slot:activator'=>"{ on, attrs }",
             
-        ], false)
+        ])
         ->addChild('v-text-field', [
             'outlined', 'prepend-inner-icon' => 'mdi-magnify',
             'dense', 'rounded', 'hide-details',
@@ -241,51 +241,51 @@ class NewFiori extends Theme {
             'v-model' => 'search_val','@input' => 'search',
             'v-bind'=>"attrs",
             'v-on'=>"on"
-        ])->getParent()
-        ->addChild('v-list', [], false);
+        ], true)->getParent()
+        ->addChild('v-list');
         $vList->addChild('v-subheader', [
             'style' => 'font-weight: bold;'
-        ], false)
+        ])
         ->text('Classes')
         ->getParent()
         ->addChild('v-list-item', [
             'v-for' => 'result in search_results'
-        ], false)->addChild('v-list-item-title', [], false)
+        ])->addChild('v-list-item-title', [], false)
         ->addChild('a', [
             ':href' => 'result.link',
             'style' => [
                 'font-size' => '9pt',
                 'font-weight' => 'bold'
             ]
-        ], false)->text('{{result.class_name}}')
+        ])->text('{{result.class_name}}')
         ->getParent()
                 ->addChild('v-list-item-subtitle',[
                     'style' => [
                         'font-size' => '9pt'
                     ]
-                ], false)
+                ])
                 ->text('{{result.summary}}');
         $vList->addChild('v-subheader', [
             'style' => 'font-weight: bold;'
-        ], false)
+        ])
         ->text('Methods')
         ->getParent()
         ->addChild('v-list-item', [
             'v-for' => 'result in methods_search_results'
-        ], false)->addChild('v-list-item-title', [], false)
+        ])->addChild('v-list-item-title')
         ->addChild('a', [
             ':href' => 'result.link',
             'style' => [
                 'font-size' => '9pt',
                 'font-weight' => 'bold'
             ]
-        ], false)->text('{{result.name}}')
+        ])->text('{{result.name}}')
         ->getParent()
                 ->addChild('v-list-item-subtitle',[
                     'style' => [
                         'font-size' => '9pt'
                     ]
-                ], false)
+                ])
                 ->text('{{result.summary}}')
         ->getParent()->getParent()->getParent()
         ->addChild('a', [
@@ -293,7 +293,7 @@ class NewFiori extends Theme {
             'target' => '_blank',
             'class' => 'd-flex',
             'style' => 'border-top: 1px solid;'
-        ], false)
+        ])
         ->img([
             'src' => 'assets/images/search-by-algolia-light-background.webp',
             'style'=> ['width' => '130px']
@@ -312,10 +312,10 @@ class NewFiori extends Theme {
         }
         return $btn;
     }
-    private function createDrawerMenuItem($listTitle) {
+    public function createDrawerMenuItem($listTitle) {
         $item = new HTMLNode('v-list-item');
-        $last = $item->addChild('v-list-item-content', [], false)
-             ->addChild('v-list-item-title', [], false);
+        $last = $item->addChild('v-list-item-content')
+             ->addChild('v-list-item-title');
         if ($listTitle instanceof HTMLNode) {
             $last->addChild($listTitle);
         } else {
