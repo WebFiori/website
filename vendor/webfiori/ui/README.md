@@ -2,8 +2,8 @@
 A set of classes that provide basic web pages creation utilities in addition to creating the DOM of web pages.
 
 <p align="center">
-  <a href="https://travis-ci.com/github/WebFiori/ui">
-    <img src="https://travis-ci.com/WebFiori/ui.svg?branch=master">
+  <a href="https://github.com/WebFiori/ui/actions">
+    <img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207,8/badge.svg?branch=master">
   </a>
   <a href="https://codecov.io/gh/WebFiori/ui">
     <img src="https://codecov.io/gh/WebFiori/ui/branch/master/graph/badge.svg" />
@@ -28,7 +28,7 @@ This library is a part of <a href="https://github.com/usernane/webfiori">WebFior
 - Provides a basic templating engine.
 
 ## Supported PHP Versions
-The library support all versions starting from version 5.6 up to version 7.4.
+The library support all versions starting from version 5.6 up to version 8.
   
 ## Usage
 For more information on how to use the library, [check here](https://webfiori.com/learn/ui-package)
@@ -58,7 +58,7 @@ The output of this code is HTML 5 document. The structure of the document will b
 </html>
 ```
 ## Building More Complex DOM
-To add more elements to the body of the document, the class <a href="https://webfiori.com/docs/phpStructs/html/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already some pre-made components which are used in the next code sample. A list of the components can be found <a href="https://webfiori.com/docs/phpStructs/html">here</a>. The following code shows a code which is used to create a basic login form.
+To add more elements to the body of the document, the class <a href="https://webfiori.com/docs/webfiori/ui/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already some pre-made components which are used in the next code sample. A list of the components can be found <a href="https://webfiori.com/docs/webfiori/ui">here</a>. The following code shows a code which is used to create a basic login form.
 
 ``` php
 use webfiori\ui\HTMLDoc;

@@ -33,7 +33,7 @@ use webfiori\database\mysql\MySQLQuery;
  *
  * @author Ibrahim
  * 
- * @version 1.0.1
+ * @version 1.0.2
  */
 class Database {
     /**
@@ -184,12 +184,12 @@ class Database {
      */
     public function createTables() {
         $generatedQuery = '';
-        
+
         foreach ($this->getTables() as $tableObj) {
             $generatedQuery .= $tableObj->toSQL()."\n";
         }
         $this->getQueryGenerator()->setQuery($generatedQuery, true);
-        
+
         return $this->getQueryGenerator();
     }
     /**
@@ -229,6 +229,10 @@ class Database {
      * <li>An error has occurred while executing the query.</li>
      * </ul>
      * 
+     * @return ResultSet|null If the last executed query was a select, show or 
+     * describe query, the method will return an object of type 'ResultSet' that 
+     * holds fetched records. Other than that, the method will return null.
+     * 
      * @since 1.0
      */
     public function execute() {
@@ -239,16 +243,23 @@ class Database {
         }
 
         if (!$conn->runQuery($this->getQueryGenerator())) {
-            throw new DatabaseException($conn->getLastErrCode().' - '.$conn->getLastErrMessage());
+            throw new DatabaseException($conn->getLastErrCode().' - '.$conn->getLastErrMessage(), $conn->getLastErrCode());
         }
         $this->clear();
+        $resultSet = null;
+
+        if (in_array($this->getQueryGenerator()->getLastQueryType(), ['select', 'show', 'describe'])) {
+            $resultSet = $this->getLastResultSet();
+        }
         $this->getQueryGenerator()->setQuery(null);
+
+        return $resultSet;
     }
     /**
      * Returns the connection at which the instance will use to run SQL queries.
      * 
      * This method will try to connect to the database if no connection is active. 
-     * If the connection was not established, the method will throw an exption. 
+     * If the connection was not established, the method will throw an exception. 
      * If the connection is already active, the method will return it.
      * 
      * @return Connection The connection at which the instance will use to run SQL queries.
@@ -268,7 +279,7 @@ class Database {
                     $conn = new MySQLConnection($connInfo);
                     $this->setConnection($conn);
                 } catch (DatabaseException $ex) {
-                    throw new DatabaseException($ex->getMessage());
+                    throw new DatabaseException($ex->getMessage(), $ex->getCode());
                 }
             }
         }
@@ -541,6 +552,16 @@ class Database {
             throw new DatabaseException('Driver not supported: "'.$driver.'".');
         }
         $this->connectionInfo = $info;
+    }
+    /**
+     * Sets the database query to a raw SQL query.
+     * 
+     * @param string $query A string that represents the query.
+     * 
+     * @since 1.0.2
+     */
+    public function setQuery($query) {
+        $this->getQueryGenerator()->setQuery($query);
     }
     /**
      * Select one of the tables which exist on the schema and use it to build

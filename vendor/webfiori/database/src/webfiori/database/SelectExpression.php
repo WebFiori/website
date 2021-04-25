@@ -24,12 +24,14 @@
  */
 namespace webfiori\database;
 
+use InvalidArgumentException;
+
 /**
  * A class which is used to build the select expression of a select query.
  *
  * @author Ibrahim
  * 
- * @version 1.0
+ * @version 1.0.2
  */
 class SelectExpression extends Expression {
     /**
@@ -88,14 +90,14 @@ class SelectExpression extends Expression {
      * @param string $colKey The key of the column as specified when the column 
      * was added to associated table.
      * 
-     * @param string|null $alias An optional alias for the column.
+     * @param string|null $options An optional alias for the column.
      * 
      * @throws DatabaseException If column does not exist in the table that the 
      * select is based on.
      * 
      * @since 1.0
      */
-    public function addColumn($colKey, $alias = null) {
+    public function addColumn($colKey, $options = null) {
         if ($colKey != '*') {
             $colObj = $this->getTable()->getColByKey($colKey);
 
@@ -103,12 +105,96 @@ class SelectExpression extends Expression {
                 $tblName = $this->getTable()->getName();
                 throw new DatabaseException("The table $tblName has no column with key '$colKey'.");
             }
-            $colObj->setAlias($alias);
-            $this->selectCols[$colKey] = $colObj;
+            $opArr = [
+                'obj' => $colObj,
+            ];
+            $this->_setAlias($colObj, $options, $opArr);
+
+            if (isset($options['aggregate'])) {
+                $opArr['aggregate'] = $options['aggregate'];
+            }
+            $this->selectCols[$colKey] = $opArr;
         }
     }
     public function addExpression(Expression $expr) {
-        $this->selectCols[hash('sha256', $expr->getValue())] = $expr;
+        $this->selectCols[hash('sha256', $expr->getValue())] = ['obj' => $expr];
+    }
+    /**
+     * Adds a 'left()' condition to the 'where' part of the select.
+     * 
+     * @param string $colName The name of the column that the condition will be 
+     * based on as it appears in the database.
+     * 
+     * @param int $charsCount The number of characters that will be taken from 
+     * the left of the column value.
+     * 
+     * @param string $cond A condition at which the comparison will be based on. 
+     * can only have 4 values, '=', '!=', 'in' and 'not in'.
+     * 
+     * @param string|array $val The value at which the condition will be compared with. 
+     * This also can be an array of values if the condition is 'in' or 'not in'.
+     * 
+     * @param string $join An optional string which could be used to join 
+     * more than one condition ('and' or 'or'). If not given, 'and' is used as 
+     * default value.
+     * 
+     * @since 1.0.2
+     */
+    public function addLeft($colName, $charsCount, $cond, $val, $join = 'and') {
+        $this->addLeftOrRight($colName, $charsCount, $cond, $val, $join, true);
+    }
+    /**
+     * Adds a 'like' condition to the 'where' part of the select.
+     * 
+     * @param string $colName The name of the column that the condition will be 
+     * based on as it appears in the database.
+     * 
+     * @param string $val The value of the 'like' condition.
+     * 
+     * @param string $join An optional string which could be used to join 
+     * more than one condition ('and' or 'or'). If not given, 'and' is used as 
+     * default value.
+     * 
+     * @param boolean $not If set to true, the 'like' condition will be set 
+     * to 'not like'.
+     * 
+     * @since 1.0.1
+     */
+    public function addLike($colName, $val, $join = 'and', $not = false) {
+        if ($not === true) {
+            $expr = new Expression($colName." not like $val");
+        } else {
+            $expr = new Expression($colName." like $val");
+        }
+
+        if ($this->whereExp === null) {
+            $this->whereExp = new WhereExpression('');
+        }
+        $this->getWhereExpr()->addCondition($expr, $join);
+    }
+    /**
+     * Adds a 'right()' condition to the 'where' part of the select.
+     * 
+     * @param string $colName The name of the column that the condition will be 
+     * based on as it appears in the database.
+     * 
+     * @param int $charsCount The number of characters that will be taken from 
+     * the right of the column value.
+     * 
+     * @param string $cond A condition at which the comparison will be based on. 
+     * can only have 4 values, '=', '!=', 'in' and 'not in'.
+     * 
+     * @param string|array $val The value at which the condition will be compared with. 
+     * This also can be an array of values if the condition is 'in' or 'not in'.
+     * 
+     * @param string $join An optional string which could be used to join 
+     * more than one condition ('and' or 'or'). If not given, 'and' is used as 
+     * default value.
+     * 
+     * @since 1.0.2
+     */
+    public function addRight($colName, $charsCount, $cond, $val, $join = 'and') {
+        $this->addLeftOrRight($colName, $charsCount, $cond, $val, $join, false);
     }
     /**
      * Adds a condition to the 'where' part of the select.
@@ -143,6 +229,40 @@ class SelectExpression extends Expression {
         }
     }
     /**
+     * Adds a 'where between ' condition.
+     * 
+     * @param string $colName The name of the column that the condition will be 
+     * based on as it appears in the database.
+     * 
+     * @param mixed $firstVal The left hand side operand of the between condition.
+     * 
+     * @param mixed $secVal The right hand side operand of the between condition.
+     * 
+     * @param string $join An optional string which could be used to join 
+     * more than one condition ('and' or 'or'). If not given, 'and' is used as 
+     * default value.
+     * 
+     * @param boolean $not If set to true, the 'between' condition will be set 
+     * to 'not between'.
+     * 
+     * 
+     * @since 1.0.1
+     */
+    public function addWhereBetween($colName, $firstVal, $secVal, $join = 'and', $not = false) {
+        $cond = new Condition($firstVal, $secVal, 'and');
+
+        if ($not === true) {
+            $expr = new Expression('('.$colName.' not between '.$cond.')');
+        } else {
+            $expr = new Expression('('.$colName.' between '.$cond.')');
+        }
+
+        if ($this->whereExp === null) {
+            $this->whereExp = new WhereExpression('');
+        }
+        $this->getWhereExpr()->addCondition($expr, $join);
+    }
+    /**
      * 
      * @param Condition $cond
      * @param type $join
@@ -152,6 +272,64 @@ class SelectExpression extends Expression {
             $this->whereExp = new WhereExpression();
         }
         $this->whereExp->addCondition($cond, $join);
+    }
+    /**
+     * Adds a 'where in()' condition.
+     * 
+     * @param string $colName The name of the column that the condition will be 
+     * based on as it appears in the database.
+     * 
+     * @param array $vals An array that holds the values that will be checked.
+     * 
+     * @param string $join An optional string which could be used to join 
+     * more than one condition ('and' or 'or'). If not given, 'and' is used as 
+     * default value.
+     * 
+     * @param boolean $not If set to true, the 'in' condition will be set 
+     * to 'not in'.
+     * 
+     * @since 1.0.1
+     */
+    public function addWhereIn($colName, array $vals, $join = 'and', $not = false) {
+        $valsStr = implode(', ', $vals);
+
+        if ($not === true) {
+            $expr = new Expression($colName." not in($valsStr)");
+        } else {
+            $expr = new Expression($colName." in($valsStr)");
+        }
+
+        if ($this->whereExp === null) {
+            $this->whereExp = new WhereExpression('');
+        }
+        $this->getWhereExpr()->addCondition($expr, $join);
+    }
+    /**
+     * Adds 'where is null' condition.
+     * 
+     * @param string $colName The name of the column that the condition will be 
+     * based on as it appears in the database.
+     * 
+     * @param string $join An optional string which could be used to join 
+     * more than one condition ('and' or 'or'). If not given, 'and' is used as 
+     * default value.
+     * 
+     * @param boolean $not If set to true, the 'in' condition will be set 
+     * to 'is not null'.
+     * 
+     * @since 1.0.2
+     */
+    public function addWhereNull($colName, $join = 'and', $not = false) {
+        if ($not === true) {
+            $expr = new Expression($colName." is not null");
+        } else {
+            $expr = new Expression($colName." is null");
+        }
+
+        if ($this->whereExp === null) {
+            $this->whereExp = new WhereExpression('');
+        }
+        $this->getWhereExpr()->addCondition($expr, $join);
     }
     /**
      * Removes all columns and expressions in the select.
@@ -202,9 +380,11 @@ class SelectExpression extends Expression {
             $thisTable = $this->getTable();
             $isJoinTable = $thisTable instanceof JoinTable ? true : false;
 
-            foreach ($cols as $colKey => $colObjOrExpr) {
-                if ($colObjOrExpr instanceof Column) {
-                    $colObjOrExpr->setWithTablePrefix(true);
+            foreach ($cols as $colKey => $optArr) {
+                $obj = $optArr['obj'];
+
+                if ($obj instanceof Column) {
+                    $obj->setWithTablePrefix(true);
                     $addCol = true;
                     $resetOwner = false;
 
@@ -216,39 +396,34 @@ class SelectExpression extends Expression {
                             $addCol = !$existInLeft && !$existInRight;
 
                             if (!$existInLeft && !$existInRight) {
-                                $ownerName = $colObjOrExpr->getOwner()->getName();
+                                $ownerName = $obj->getOwner()->getName();
                                 $leftName = $thisTable->getLeft()->getName();
                                 $rightName = $thisTable->getRight()->getName();
                                 $tableName = $thisTable->getName();
 
                                 if ($ownerName != $leftName && $ownerName != $rightName && $tableName != $ownerName) {
-                                    $colObjOrExpr->setOwner($this->getTable());
+                                    $obj->setOwner($this->getTable());
                                 }
                             }
                         } else {
-                            $colObjOrExpr->setOwner($this->getTable());
+                            $obj->setOwner($this->getTable());
                         }
-                    } else if ($colObjOrExpr->getPrevOwner() !== null) {
-                        $colObjOrExpr->setOwner($colObjOrExpr->getPrevOwner());
-                        $resetOwner = true;
+                    } else {
+                        if ($obj->getPrevOwner() !== null) {
+                            $obj->setOwner($obj->getPrevOwner());
+                            $resetOwner = true;
+                        }
                     }
 
                     if ($addCol) {
-                        $alias = $colObjOrExpr->getAlias();
-                        $colName = $colObjOrExpr->getName();
-
-                        if ($alias !== null) {
-                            $selectArr[] = $colName.' as '.$alias;
-                        } else {
-                            $selectArr[] = $colName;
-                        }
+                        $this->_addColToSelectArr($selectArr, $obj, $optArr);
                     }
 
                     if ($resetOwner) {
-                        $colObjOrExpr->setOwner($colObjOrExpr->getPrevOwner());
+                        $obj->setOwner($obj->getPrevOwner());
                     }
                 } else {
-                    $selectArr[] = $colObjOrExpr->getValue();
+                    $selectArr[] = $obj->getValue();
                 }
             }
             $colsStr = implode(', ', $selectArr);
@@ -387,16 +562,22 @@ class SelectExpression extends Expression {
                     $leftWhere->addCondition($this->whereExp->getCondition(), 'and');
                 }
                 $retVal = $leftWhere->getValue();
-            } else if ($rightWhere !== null) {
-                if ($this->whereExp !== null) {
-                    $rightWhere->addCondition($this->whereExp->getCondition(), 'and');
+            } else {
+                if ($rightWhere !== null) {
+                    if ($this->whereExp !== null) {
+                        $rightWhere->addCondition($this->whereExp->getCondition(), 'and');
+                    }
+                    $retVal = $rightWhere->getValue();
+                } else {
+                    if ($this->whereExp !== null) {
+                        $retVal = $this->whereExp->getValue();
+                    }
                 }
-                $retVal = $rightWhere->getValue();
-            } else if ($this->whereExp !== null) {
+            }
+        } else {
+            if ($this->whereExp !== null) {
                 $retVal = $this->whereExp->getValue();
             }
-        } else if ($this->whereExp !== null) {
-            $retVal = $this->whereExp->getValue();
         }
 
         if ($withGroupBy) {
@@ -477,8 +658,10 @@ class SelectExpression extends Expression {
 
             if ($orderType == 'd') {
                 $colArr['order'] = 'desc';
-            } else if ($orderType == 'a') {
-                $colArr['order'] = 'asc';
+            } else {
+                if ($orderType == 'a') {
+                    $colArr['order'] = 'asc';
+                }
             }
         }
         $this->orderByCols[$colKey] = $colArr;
@@ -496,7 +679,16 @@ class SelectExpression extends Expression {
     /**
      * Adds a set of columns or expressions to the select.
      * 
-     * @param array $colsOrExprs An array that contains columns and expressions.
+     * @param array $colsOrExprs An array that contains columns and expressions. 
+     * The array can be associative. If so, the indices must be columns names 
+     * and the values must me sub arrays that holds column options. Each sub 
+     * array can have the following indices: 
+     * <ul>
+     * <li>'obj': An object of type column or an expression.</li>
+     * <li>'alias': An optional string which can act as an alias.</li>
+     * <li>'aggregate': Aggregate function to use in the column such as 
+     * 'avg' or 'max'.</li>
+     * </ul>
      * 
      * @throws DatabaseException If column does not exist in the table that the 
      * select is based on.
@@ -505,17 +697,69 @@ class SelectExpression extends Expression {
      */
     public function select(array $colsOrExprs) {
         try {
-            foreach ($colsOrExprs as $index => $colOrExprOrAlias) {
-                if ($colOrExprOrAlias instanceof Expression) {
-                    $this->addExpression($colOrExprOrAlias);
-                } else if (gettype($index) == 'string') {
-                    $this->addColumn($index, $colOrExprOrAlias);
+            foreach ($colsOrExprs as $index => $colArrOrExpr) {
+                if ($colArrOrExpr instanceof Expression) {
+                    $this->addExpression($colArrOrExpr);
                 } else {
-                    $this->addColumn($colOrExprOrAlias);
+                    if (gettype($index) == 'integer') {
+                        $this->addColumn($colArrOrExpr);
+                    } else {
+                        $this->addColumn($index, $colArrOrExpr);
+                    }
                 }
             }
         } catch (DatabaseException $ex) {
             throw new DatabaseException($ex->getMessage());
         }
+    }
+    private function _addColToSelectArr(&$arr, $colObj, $selectArr) {
+        $alias = $colObj->getAlias();
+        $colName = $colObj->getName();
+
+        if (isset($selectArr['aggregate'])) {
+            $selectColStr = $selectArr['aggregate']."($colName)";
+        } else {
+            $selectColStr = $colName;
+        }
+
+
+        if ($alias !== null) {
+            $selectColStr .= ' as '.$alias;
+        }
+        $arr[] = $selectColStr;
+    }
+    private function _setAlias($colObj, $options, &$opArr) {
+        if (isset($options['alias'])) {
+            $alias = trim($options['alias']);
+            $colObj->setAlias($alias);
+            $opArr['alias'] = $alias;
+        } else if (isset($options['as'])) {
+            $alias = trim($options['as']);
+            $colObj->setAlias($alias);
+            $opArr['as'] = $alias;
+        }
+    }
+    private function addLeftOrRight($colName, $charsCount, $cond, $val, $join = 'and', $left = true) {
+        $xCond = in_array($cond, ['=', '!=', 'in', 'not in']) ? $cond : '=';
+        $func = $left === true ? 'left' : 'right';
+
+        if (gettype($val) == 'array' && ($xCond == '=' || $xCond == '!=')) {
+            throw new InvalidArgumentException('The value must be of type string since the condition is \''.$xCond.'\'.');
+        }
+
+        if (($xCond == 'in' || $xCond == 'not in')) {
+            if (gettype($val) == 'array') {
+                $expr = new Expression($func.'('.$colName.', '.$charsCount.') '.$xCond."(".implode(", ", $val).")");
+            } else {
+                $expr = new Expression($func.'('.$colName.', '.$charsCount.') '.$xCond."(".$val.")");
+            }
+        } else {
+            $expr = new Expression($func.'('.$colName.', '.$charsCount.') '.$xCond.' '.$val);
+        }
+
+        if ($this->whereExp === null) {
+            $this->whereExp = new WhereExpression('');
+        }
+        $this->getWhereExpr()->addCondition($expr, $join);
     }
 }

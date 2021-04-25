@@ -110,7 +110,7 @@ class HTMLDoc {
         $this->body->setAttribute('itemtype', 'http://schema.org/WebPage');
         $this->headNode = new HeadNode();
         $this->htmlNode = new HTMLNode('html');
-        $this->getDocumentRoot()->addChild($this->headNode)->addChild($this->body);
+        $this->getDocumentRoot()->addChild($this->headNode, true)->addChild($this->body);
     }
     /**
      * Returns a string of HTML code that represents the document.
@@ -133,7 +133,7 @@ class HTMLDoc {
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
-     * to the body of the parent or child. Default value is true. It means the 
+     * to the body of the parent or child. Default value is false. It means the 
      * chaining will happen at parent level.
      * 
      * @return HTMLNode If the parameter <code>$chainOnParent</code> is set to true, 
@@ -145,7 +145,7 @@ class HTMLDoc {
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attributes = [], $chainOnParent = true) {
+    public function addChild($node, array $attributes = [], $chainOnParent = false) {
         $name = $node instanceof HTMLNode ? $node->getNodeName() : trim($node);
 
         if ($name != 'body' && $name != 'head' && $name != 'html') {

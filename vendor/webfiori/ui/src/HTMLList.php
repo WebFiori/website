@@ -65,15 +65,15 @@ class HTMLList extends HTMLNode {
      * class 'HTMLNode' or a string that represents the 
      * content of the list item that will be added.
      * 
-     * @param array $attrs An optional array of attributes which will be set in 
+     * @param array|boolean $attrs An optional array of attributes which will be set in 
      * the newly added list item.
      * 
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
      * set to false, the method will return the child which have been added. 
      * This can be useful if the developer would like to add a chain of elements 
-     * to the body of the parent or child. Default value is true. It means the 
-     * chaining will happen at parent level.
+     * to the body of the parent or child. Default value is false. It means the 
+     * chaining will happen at child level.
      * 
      * @return ListItem|HTMLList If the parameter <code>$chainOnParent</code> is set to true, 
      * the method will return the '$this' instance. If set to false, it will 
@@ -84,7 +84,7 @@ class HTMLList extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrs = [], $chainOnParent = false) {
         if ($node instanceof ListItem) {
             return parent::addChild($node, $attrs, $chainOnParent);
         } else {

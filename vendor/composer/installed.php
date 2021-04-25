@@ -1,78 +1,69 @@
 <?php return array (
   'root' => 
   array (
-    'pretty_version' => 'dev-master',
-    'version' => 'dev-master',
+    'pretty_version' => '1.0.0+no-version-set',
+    'version' => '1.0.0.0',
     'aliases' => 
     array (
     ),
-    'reference' => '5cea225dc37a773944d54380f1574a6043797bd8',
+    'reference' => NULL,
     'name' => 'webfiori/framework',
   ),
   'versions' => 
   array (
-    'erusev/parsedown' => 
-    array (
-      'pretty_version' => '1.7.4',
-      'version' => '1.7.4.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => 'cb17b6477dfff935958ba01325f2e8a2bfa6dab3',
-    ),
     'webfiori/collections' => 
     array (
-      'pretty_version' => 'v1.0.1',
-      'version' => '1.0.1.0',
+      'pretty_version' => 'v1.0.2',
+      'version' => '1.0.2.0',
       'aliases' => 
       array (
       ),
-      'reference' => '0feee62dd229e67e03d63d9bc2856b6d09b2c89c',
+      'reference' => '96ba23773961b6aa07b7d85f0db1ff8f46f88a75',
     ),
     'webfiori/database' => 
     array (
-      'pretty_version' => 'v0.2.2',
-      'version' => '0.2.2.0',
+      'pretty_version' => 'v0.2.7',
+      'version' => '0.2.7.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'a2e45a38bfa6505faeac9d052777781a2d8bb3f3',
+      'reference' => 'befcd70d31d5a14a27529d144948ff2646557e96',
     ),
     'webfiori/framework' => 
     array (
-      'pretty_version' => 'dev-master',
-      'version' => 'dev-master',
+      'pretty_version' => '1.0.0+no-version-set',
+      'version' => '1.0.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '5cea225dc37a773944d54380f1574a6043797bd8',
+      'reference' => NULL,
     ),
     'webfiori/http' => 
     array (
-      'pretty_version' => 'v3.0.1',
-      'version' => '3.0.1.0',
+      'pretty_version' => 'v3.0.5',
+      'version' => '3.0.5.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'dd05d004cb05482232c4c57a3bfd290e090c8e0d',
+      'reference' => 'de260148ec74f193651bf73f8c8af5e02355aa51',
     ),
     'webfiori/jsonx' => 
     array (
-      'pretty_version' => 'v2.0.1',
-      'version' => '2.0.1.0',
+      'pretty_version' => 'v2.0.2',
+      'version' => '2.0.2.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'a835045c78c466cac67e554859d0c049bfecd6bb',
+      'reference' => '1692f71e904b7cac667ae1d0a380d682739754b4',
     ),
     'webfiori/ui' => 
     array (
-      'pretty_version' => 'v2.0.3',
-      'version' => '2.0.3.0',
+      'pretty_version' => 'v2.2.0',
+      'version' => '2.2.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'df1be0f858861583dee59a79cd27c6baab4297a1',
+      'reference' => '79d047a83315e5d2844f1ea866df0e8a666cb70c',
     ),
   ),
 );

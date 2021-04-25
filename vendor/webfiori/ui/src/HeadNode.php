@@ -187,7 +187,8 @@ class HeadNode extends HTMLNode {
      * </ul>
      * Other than that, the node will be not added.
      * 
-     * @param array $attrs Not used.
+     * @param array|boolean $attrs Not used if array is given. If boolean is 
+     * given, it will be treated as last method argument.
      * 
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
@@ -203,57 +204,28 @@ class HeadNode extends HTMLNode {
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrs = [], $chainOnParent = true) {
         $retVal = null;
+        
         if ($node instanceof HTMLNode) {
             $nodeName = $node->getNodeName();
 
             if (in_array($nodeName, self::ALLOWED_CHILDREN)) {
-                $retVal = $this->_addChildHelper($node, $attrs);
+                $retVal = $this->_addChildHelper($node);
             }
         } else if (gettype($node) == 'string') {
             $temp = new HTMLNode($node);
             if (in_array($temp->getNodeName(), self::ALLOWED_CHILDREN)) {
-                $retVal = $this->_addChildHelper($temp, $attrs);
+                $retVal = $this->_addChildHelper($temp);
             }
         }
-
-        if (!$chainOnParent) {
+        $cOnParent = gettype($attrs) == 'boolean' && $attrs === true ? true : $chainOnParent === true;
+        
+        if (!$cOnParent) {
             return $retVal;
         }
-        return $this;
-    }
-    private function _addChildHelper(HTMLNode $node, $attr) {
-        $nodeName = $node->getNodeName();
-        $retVal = null;
         
-        if ($nodeName == 'meta') {
-            $nodeAttrs = $node->getAttributes();
-
-            foreach ($nodeAttrs as $attr => $val) {
-                if (strtolower($attr) == 'charset') {
-                    return $this;
-                }
-            }
-
-            if (!$this->hasMeta($node->getAttributeValue('name'))) {
-                parent::addChild($node);
-        $retVal = $node;
-            }
-        } else if ($nodeName == 'base' || $nodeName == 'title') {
-            return $this;
-        } else if ($nodeName == 'link') {
-            $relVal = $node->getAttribute('rel');
-
-            if ($relVal != 'canonical') {
-                parent::addChild($node);
-        $relVal = $node;
-            }
-        } else {
-            parent::addChild($node);
-        }
-
-        return $node;
+        return $this;
     }
     /**
      * Adds new CSS source file.
@@ -997,6 +969,42 @@ class HeadNode extends HTMLNode {
                 }
             }
         }
+    }
+    private function _addChildHelper(HTMLNode $node) {
+        $nodeName = $node->getNodeName();
+        $retVal = null;
+
+        if ($nodeName == 'meta') {
+            $nodeAttrs = $node->getAttributes();
+
+            foreach ($nodeAttrs as $attr => $val) {
+                if (strtolower($attr) == 'charset') {
+                    return $this;
+                }
+            }
+
+            if (!$this->hasMeta($node->getAttributeValue('name'))) {
+                parent::addChild($node);
+                $retVal = $node;
+            }
+        } else {
+            if ($nodeName == 'base' || $nodeName == 'title') {
+                return $this;
+            } else {
+                if ($nodeName == 'link') {
+                    $relVal = $node->getAttribute('rel');
+
+                    if ($relVal != 'canonical') {
+                        parent::addChild($node);
+                        $relVal = $node;
+                    }
+                } else {
+                    parent::addChild($node);
+                }
+            }
+        }
+
+        return $node;
     }
     /**
      * 

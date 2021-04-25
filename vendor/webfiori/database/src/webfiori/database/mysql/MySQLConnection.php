@@ -25,9 +25,9 @@
 namespace webfiori\database\mysql;
 
 use mysqli;
+use mysqli_stmt;
 use webfiori\database\AbstractQuery;
 use webfiori\database\Connection;
-use webfiori\database\ConnectionInfo;
 use webfiori\database\ResultSet;
 /**
  * A class that represents a connection to MySQL server.
@@ -37,7 +37,7 @@ use webfiori\database\ResultSet;
  *
  * @author Ibrahim
  * 
- * @version 1.0.1
+ * @version 1.0.2
  */
 class MySQLConnection extends Connection {
     /**
@@ -48,18 +48,42 @@ class MySQLConnection extends Connection {
      */
     private $link;
     /**
-     * Returns the instance at which the connection uses to execute 
-     * database queries.
+     *
+     * @var mysqli_stmt|null
      * 
-     * @return mysqli|null The object which is used to connect to the database.
-     * 
-     * @since 1.0.1
+     * @since 1.0.2 
      */
-    public function getMysqli() {
-        return $this->link;
-    }
+    private $sqlStm;
     public function __destruct() {
         mysqli_close($this->link);
+    }
+    /**
+     * Bind parameters to MySQL query.
+     * 
+     * @param array $params An array that holds sub associative arrays that holds 
+     * values. Each sub array must have two indices:
+     * <ul>
+     * <li><b>value</b>: The value to bind.</li>
+     * <li><b>type</b>: The type of the value as a character. can be one of 4 values: 
+     * <ul>
+     * <li>i: corresponding variable has type integer</li>
+     * <li>d: corresponding variable has type double</li>
+     * <li>s: corresponding variable has type string</li>
+     * <li>b: corresponding variable is a blob and will be sent in packets</li>
+     * </ul>
+     * </li>
+     * <ul>
+     * 
+     * @since 1.0.2
+     */
+    public function bind(array $params) {
+        if (gettype($this->sqlStm) == 'object') {
+            foreach ($params as $subArr) {
+                $value = isset($subArr['value']) ? $subArr['value'] : null;
+                $type = isset($subArr['type']) ? $subArr['type'] : 's';
+                $this->sqlStm->bind_param("$type", $value);
+            }
+        }
     }
     /**
      * Connect to MySQL database.
@@ -72,13 +96,13 @@ class MySQLConnection extends Connection {
     public function connect() {
         $test = false;
         $connInfo = $this->getConnectionInfo();
-        
+
         $host = $connInfo->getHost();
         $port = $connInfo->getPort();
         $user = $connInfo->getUsername();
         $pass = $connInfo->getPassword();
         $dbName = $connInfo->getDBName();
-        
+
         set_error_handler(function()
         {
         });
@@ -87,7 +111,7 @@ class MySQLConnection extends Connection {
 
         if ($this->link instanceof mysqli) {
             $test = mysqli_select_db($this->link, $dbName);
-            
+
             if ($test) {
                 $this->link->set_charset("utf8");
                 mysqli_query($this->link, "set character_set_client='utf8'");
@@ -97,10 +121,43 @@ class MySQLConnection extends Connection {
             $this->setErrCode(mysqli_connect_errno());
             $this->setErrMessage(mysqli_connect_error());
         }
-        
+
         return $test;
     }
-    
+    /**
+     * Returns the instance at which the connection uses to execute 
+     * database queries.
+     * 
+     * @return mysqli|null The object which is used to connect to the database.
+     * 
+     * @since 1.0.1
+     */
+    public function getMysqli() {
+        return $this->link;
+    }
+    /**
+     * Prepare SQL statement.
+     * 
+     * @return boolean If the statement was successfully prepared, the method 
+     * will return true. If an error happens, the method will return false.
+     * 
+     * @since 1.0.2
+     */
+    public function prepare() {
+        $queryObj = $this->getLastQuery();
+
+        if ($queryObj !== null) {
+            $queryStr = $queryObj->getQuery();
+            $this->sqlStm = mysqli_prepare($this->link, $queryStr);
+
+            if (gettype($this->sqlStm) == 'object') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Execute MySQL query.
      * 
@@ -112,12 +169,20 @@ class MySQLConnection extends Connection {
      * 
      * @since 1.0
      */
-    public function runQuery(AbstractQuery $query) {
+    public function runQuery(AbstractQuery $query = null) {
         $this->setLastQuery($query);
 
         if ($query instanceof MySQLQuery && !$query->isBlobInsertOrUpdate()) {
-            $collation = filter_var($query->getTable()->getCollation());
-            mysqli_query($this->link, 'set collation_connection =\''.$collation.'\'');
+            $table = $query->getTable();
+
+            if ($table !== null) {
+                $collation = $query->getTable()->getCollation();
+            } else {
+                $collation = 'utf8mb4_unicode_520_ci';
+            }
+            $stm = mysqli_prepare($this->link, 'set collation_connection = ?');
+            $stm->bind_param('s', $collation);
+            $stm->execute();
         }
         $qType = $query->getLastQueryType();
 
@@ -129,11 +194,21 @@ class MySQLConnection extends Connection {
             return $this->_otherQuery();
         }
     }
+    private function _bindAndExc() {
+        $this->prepare();
+        $this->bind($this->getLastQuery()->getParams());
 
+        return $this->sqlStm->execute();
+    }
     private function _insertQuery() {
         $query = $this->getLastQuery();
+
+        if ($query->isPrepareBeforeExec()) {
+            $r = $this->_bindAndExc();
+        } else {
+            $r = mysqli_query($this->link, $query->getQuery());
+        }
         $retVal = false;
-        $r = mysqli_query($this->link, $query->getQuery());
 
         if (!$r) {
             $this->setErrMessage($this->link->error);
@@ -157,12 +232,17 @@ class MySQLConnection extends Connection {
     private function _otherQuery() {
         $query = $this->getLastQuery()->getQuery();
         $retVal = false;
-        
-        if (!$this->getLastQuery()->isMultiQuery()) {
-            $r = mysqli_query($this->link, $query);
+
+        if ($this->getLastQuery()->isPrepareBeforeExec()) {
+            $r = $this->_bindAndExc();
         } else {
-            $r = mysqli_multi_query($this->link, $query);
+            if (!$this->getLastQuery()->isMultiQuery()) {
+                $r = mysqli_query($this->link, $query);
+            } else {
+                $r = mysqli_multi_query($this->link, $query);
+            }
         }
+
         if (!$r) {
             $this->setErrMessage($this->link->error);
             $this->setErrCode($this->link->errno);
@@ -173,25 +253,35 @@ class MySQLConnection extends Connection {
             $retVal = true;
         }
         $r = mysqli_query($this->link, $query);
-        
+
+        if ($r === true || gettype($r) == 'object') {
+            $retVal = true;
+        }
 
         return $retVal;
     }
     private function _selectQuery() {
-        $r = mysqli_query($this->link, $this->getLastQuery()->getQuery());
+        if ($this->getLastQuery()->isPrepareBeforeExec()) {
+            $r = $this->_bindAndExc();
+        } else {
+            $r = mysqli_query($this->link, $this->getLastQuery()->getQuery());
+        }
 
         if ($r) {
             $this->setErrCode(0);
-            
+            $rows = [];
+
+            if ($this->getLastQuery()->isPrepareBeforeExec()) {
+                $this->sqlStm->store_result();
+                $r = $this->sqlStm->get_result();
+            }
+
             if (function_exists('mysqli_fetch_all')) {
                 $rows = mysqli_fetch_all($r, MYSQLI_ASSOC);
             } else {
-                $rows = [];
-
                 while ($row = $r->fetch_assoc()) {
                     $rows[] = $row;
                 }
-                
             }
             $this->setResultSet(new ResultSet($rows));
 

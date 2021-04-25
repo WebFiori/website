@@ -29,9 +29,12 @@ namespace webfiori\ui;
  *
  * @author Ibrahim
  * 
- * @version 1.0.2
+ * @version 1.0.3
  */
 class TableRow extends HTMLNode {
+    /**
+     * Creates new instance of the row.
+     */
     public function __construct() {
         parent::__construct('tr');
     }
@@ -83,10 +86,12 @@ class TableRow extends HTMLNode {
      * The node will be added only if its an instance of the class 
      * 'TableCell'.
      * 
-     * @param TableCell $node New table cell.
+     * @param TableCell|string $node New table cell. This also can be a string 
+     * such as 'td' or 'th'.
      * 
-     * @param array $attrs An optional array of attributes which will be set in 
-     * the newly added child.
+     * @param array|boolean $attrs An optional array of attributes which will be set in 
+     * the newly added child. This also can act as last method parameter if it 
+     * is given as boolean.
      * 
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
@@ -97,13 +102,16 @@ class TableRow extends HTMLNode {
      * @return TableCell|TableRow|null If the parameter <code>$useChaining</code> is set to true, 
      * the method will return the '$this' instance. If set to false, it will 
      * return the newly added child. If the given parameter is not 
-     * an instance of 'TableCell', the method will return null.
+     * an instance of 'TableCell' or a string that does not represents a 
+     * table cell, the method will return null.
      * 
      * @since 1.0
      */
-    public function addChild($node, array $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrs = [], $chainOnParent = false) {
         if ($node instanceof TableCell) {
             return parent::addChild($node, $attrs, $chainOnParent);
+        } else if ($node == 'td' || $node == 'th') {
+            return parent::addChild(new TableCell($node), $attrs, $chainOnParent);
         }
     }
     /**
@@ -119,5 +127,51 @@ class TableRow extends HTMLNode {
      */
     public function getCell($index) {
         return $this->children()->get($index);
+    }
+    /**
+     * Adds a data to the row.
+     * 
+     * This method works as follows, if the parent element of the row is of 
+     * type 'HTMLTable', the method will remove all data which is currently 
+     * set. After that, it checks the number of columns of the 
+     * parent and add elements based on that. If the elements are less, the 
+     * remaining cells will be filled with the string '-'. If the array 
+     * elements are more, the extra ones are stripped. If the parent is not 
+     * of type 'HTMLTable', the data will be added without size check.
+     * 
+     * @param array $data An array that holds the data as strings or objects 
+     * of type 'HTMLNode'.
+     * 
+     * @param boolean $headerData If set to true, the method will add the 
+     * data in a 'th' cell instead of 'td' cell. Default is false.
+     * 
+     * @since 1.0.3
+     */
+    public function setData(array $data, $headerData = false) {
+        $parent = $this->getParent();
+        $this->removeAllChildNodes();
+        $cellType = $headerData === true ? 'th' : 'td';
+
+        if ($parent instanceof HTMLTable) {
+            $index = 0;
+            $elsCount = count($data);
+
+            while ($this->childrenCount() < $parent->cols()) {
+                if ($index < $elsCount) {
+                    $this->addCell($data[$index], $cellType);
+                    $index++;
+                } else {
+                    $this->addCell('-', $cellType, true, [
+                        'style' => [
+                            'text-align' => 'center'
+                        ]
+                    ]);
+                }
+            }
+        } else {
+            foreach ($data as $el) {
+                $this->addCell($el, $cellType);
+            }
+        }
     }
 }

@@ -121,8 +121,9 @@ class Input extends HTMLNode {
      * body of the text area. If input type is &lt;select&gt;, then new option 
      * will be added with the same label of the given text.
      * 
-     * @param array $attrs An optional array of attributes which will be set in 
-     * the newly added child.
+     * @param array|boolean $attrs An optional array of attributes which will be set in 
+     * the newly added child. Also, this argument can work as last method argument 
+     * if a boolean is given.
      * 
      * @param boolean $chainOnParent If this parameter is set to true, the method 
      * will return the same instance at which the child node is added to. If 
@@ -136,7 +137,7 @@ class Input extends HTMLNode {
      * 
      * @since 1.0.1
      */
-    public function addChild($node, array $attrs = [], $chainOnParent = true) {
+    public function addChild($node, $attrs = [], $chainOnParent = true) {
         if (gettype($node) == 'string') {
             $temp = $node;
 
@@ -276,27 +277,6 @@ class Input extends HTMLNode {
         }
 
         return $this;
-    }
-    private function _addOptionsToGroup($optionsGroupArr, $optGroup) {
-        foreach ($optionsGroupArr['options'] as $value => $labelOrOptions) {
-            if (gettype($labelOrOptions) == 'array' && isset($labelOrOptions['label'])) {
-                $o = new HTMLNode('option');
-                $o->setAttribute('value', $value);
-                $o->addTextNode($labelOrOptions['label'],false);
-
-                if (isset($labelOrOptions['attributes'])) {
-                    foreach ($labelOrOptions['attributes'] as $attr => $v) {
-                        $o->setAttribute($attr, $v);
-                    }
-                }
-                $optGroup->addChild($o);
-            } else {
-                $o = new HTMLNode('option');
-                $o->setAttribute('value', $value);
-                $o->addTextNode($labelOrOptions,false);
-                $optGroup->addChild($o);
-            }
-        }
     }
     /**
      * Returns the value of the attribute 'type'.
@@ -515,5 +495,26 @@ class Input extends HTMLNode {
      */
     public function setValue($text) {
         return $this->setAttribute('value', $text);
+    }
+    private function _addOptionsToGroup($optionsGroupArr, $optGroup) {
+        foreach ($optionsGroupArr['options'] as $value => $labelOrOptions) {
+            if (gettype($labelOrOptions) == 'array' && isset($labelOrOptions['label'])) {
+                $o = new HTMLNode('option');
+                $o->setAttribute('value', $value);
+                $o->addTextNode($labelOrOptions['label'],false);
+
+                if (isset($labelOrOptions['attributes'])) {
+                    foreach ($labelOrOptions['attributes'] as $attr => $v) {
+                        $o->setAttribute($attr, $v);
+                    }
+                }
+                $optGroup->addChild($o);
+            } else {
+                $o = new HTMLNode('option');
+                $o->setAttribute('value', $value);
+                $o->addTextNode($labelOrOptions,false);
+                $optGroup->addChild($o);
+            }
+        }
     }
 }
