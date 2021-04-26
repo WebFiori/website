@@ -10,16 +10,7 @@ use webfiori\apiParser\ClassAPI;
  * 
  * @author Ibrahim
  */
-abstract class APITheme extends Theme{
-    /**
-     * The class that the theme will use to create APIs description page.
-     * 
-     * @var ClassAPI 
-     */
-    private $class;
-    public function __construct() {
-        parent::__construct();
-    }
+interface APITheme {
     /**
      * Sets the class that the theme will use to create APIs description page.
      * 
@@ -28,12 +19,7 @@ abstract class APITheme extends Theme{
      * 
      * @param ClassAPI $class
      */
-    public function setClass($class) {
-        if($class instanceof ClassAPI){
-            $this->class = $class;
-            $this->getPage()->setTitle($class->getAccessModifier().' '.$class->getName());
-        }
-    }
+    public function setClass(ClassAPI $class);
     /**
      * Creates HTML div node that contains the body of the page.
      * 
@@ -65,9 +51,7 @@ abstract class APITheme extends Theme{
      * if no class is set, the function will return NULL.
      * 
      */
-    public function getClass() {
-        return $this->class;
-    }
+    public function getClass();
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the summary of class functions.
@@ -80,7 +64,7 @@ abstract class APITheme extends Theme{
      * If the class has no functions, the function will return NULL.
      * 
      */
-    public abstract function createMethodsSummaryBlock($classMethodsArr);
+    public function createMethodsSummaryBlock($classMethodsArr);
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the details of class functions.
@@ -91,7 +75,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode that contains all functions details. 
      * If the class has no functions, the function will return NULL.
      */
-    public abstract function createMethodsDetailsBlock($classMethodsArr);
+    public function createMethodsDetailsBlock($classMethodsArr);
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the summary of class attributes.
@@ -104,7 +88,7 @@ abstract class APITheme extends Theme{
      * If the class has no attributes, the function will return NULL.
      * 
      */
-    public abstract function createAttrsSummaryBlock($classAttrsArr);
+    public function createAttrsSummaryBlock($classAttrsArr);
     /**
      * Creates an object of type HTMLNode that represents the part of the page 
      * that will contain the details of class attributes.
@@ -117,7 +101,7 @@ abstract class APITheme extends Theme{
      * no attributes, the function will return NULL.
      * 
      */
-    public abstract function createAttrsDetailsBlock($classAttrsArr);
+    public function createAttrsDetailsBlock($classAttrsArr);
     /**
      * Creates HTMLNode object that contains class function summary.
      * 
@@ -127,7 +111,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode which represents summary block of the 
      * function.
      */
-    abstract public function createMethodSummaryBlock(FunctionDef $func);
+    public function createMethodSummaryBlock(FunctionDef $func);
     /**
      * Creates HTMLNode object that contains class function details.
      * 
@@ -137,7 +121,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode which represents details block of the 
      * function.
      */
-    abstract public function createMethodDetailsBlock(FunctionDef $func);
+    public function createMethodDetailsBlock(FunctionDef $func);
     /**
      * Creates HTMLNode object that contains class attribute summary.
      * 
@@ -147,7 +131,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode which represents summary block of the 
      * attribute.
      */
-    abstract public function createAttributeSummaryBlock(AttributeDef $attr);
+    public function createAttributeSummaryBlock(AttributeDef $attr);
     /**
      * Creates HTMLNode object that contains class attribute details.
      * 
@@ -157,7 +141,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode which represents details block of the 
      * attribute.
      */
-    abstract public function createAttributeDetailsBlock(AttributeDef $attr);
+    public function createAttributeDetailsBlock(AttributeDef $attr);
     /**
      * Creates HTMLNode object that contains class description.
      * 
@@ -165,7 +149,7 @@ abstract class APITheme extends Theme{
      * an object of type HTMLNode which represents class description block.
      * 
      */
-    abstract public function createClassDescriptionNode($accessMod = '', $className = '', $ns = '', $description = '');
+    public function createClassDescriptionNode($accessMod = '', $className = '', $ns = '', $description = '');
     /**
      * Creates HTMLNode object that contains namespace index file content.
      * 
@@ -173,6 +157,6 @@ abstract class APITheme extends Theme{
      * @return HTMLNode The function must be implemented in a way that it returns 
      * an object of type HTMLNode which represents namespace index file content.
      */
-    abstract public function createNamespaceContentBlock(NameSpaceAPI $nsObj);
-    abstract public function createNSAside($links);
+    public function createNamespaceContentBlock(NameSpaceAPI $nsObj);
+    public function createNSAside($links);
 }
