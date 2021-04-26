@@ -31,16 +31,25 @@ class FunctionDef {
     private $ownerClass;
     /**
      * 
-     * @param array $options
+     * @param array $options An array that holds method definition. The array 
+     * can have the following indices:
+     * <ul>
+     * <li><b>name</b>: The name of the method or function.</li>
+     * <li><b>params</b>: An array that holds methods parameters.</li>
+     * <li><b>returns</b>: An array that holds method return types information.</li>
+     * <li><b>access-modifier</b>: </li>
+     * <li><b>summary</b>: </li>
+     * <li><b>description</b>: </li>
+     * </ul>
      */
     public function __construct(array $options = []) {
         if (isset($options['name'])) {
             $this->setName($options['name']);
         }
         $this->funcParams = [];
-        if (isset($options['@params']) && gettype($options['@params']) == 'array') {
+        if (isset($options['params']) && gettype($options['params']) == 'array') {
             
-            foreach ($options['@params'] as $name => $param) {
+            foreach ($options['params'] as $name => $param) {
                 if (gettype($param) == 'array') {
                     $p = new MethodParameter();
                     $p->setName($name);
