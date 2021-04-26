@@ -199,7 +199,7 @@ class DocGenerator {
             $page->setTheme($themeName);
             $theme = $page->getTheme();
             
-            if($theme instanceof APITheme){
+            if(is_subclass_of($theme, APITheme::class)){
                 
                 $theme->setBaseURL($this->getBaseURL());
                 $page->setWebsiteName($siteName);
@@ -220,7 +220,7 @@ class DocGenerator {
                 $page->reset();
             }
             else{
-                throw new Exception('The selected theme is not a sub-class of \'APITheme\'.');
+                throw new Exception('The selected themedoes not implement \'APITheme\'.');
             }
 
         }
@@ -818,8 +818,10 @@ class DocGenerator {
                     . "                'access-modifier' => '".$meth->getAccessModofier()."',"."\r\n"
                     . "                'summary' => '". str_replace("'", "\'", $meth->getSummary())."',"."\r\n"
                     . "                'description' => '".str_replace("'", "\'",$meth->getDescription())."',"."\r\n"
-                    . "                '@params' => ".$this->createParamsArr($meth).""."\r\n"
+                    . "                'params' => ".$this->createParamsArr($meth).","."\r\n"
+                    . "                'returns' => ".$this->createMethodReturnArr($meth).""."\r\n"
                     . "            ]),\r\n";
+            
             $this->methodsJsonIndexData[] = new \webfiori\json\Json([
                 'name' => $classAPi->getName().'::'.$meth->getName().'()',
                 'summary' => $meth->getSummary(),
@@ -828,6 +830,27 @@ class DocGenerator {
             ]);
         }
         return $arr.'        ];'."\r\n";
+    }
+    public function createMethodReturnArr(FunctionDef $meth) {
+        $retArr = $meth->getReturnTypes();
+        $retVal = "[\r\n"
+                . "                    'description' => '". str_replace("'", "\'", $retArr['description'])."',\r\n"
+                . "                    'return-types' => [\r\n";
+        foreach ($retArr['return-types'] as $retType) {
+            if ($retType instanceof Anchor) {
+                $link = $retType->getAttribute('href');
+                $label = $retType->getChild(0)->getText();
+                $retVal .= "                        new Anchor('$link', '$label'),\r\n";
+            } else {
+                if (strlen(trim($retType)) > 0) {
+                    $retVal .= "                        '$retType',\r\n";
+                }
+            }
+        }
+        
+        $retVal .= "                    ]\r\n";       
+        $retVal .= "                ]\r\n";
+        return $retVal;
     }
     private function createParamsArr(FunctionDef $def) {
         $arr = '['."\r\n";
