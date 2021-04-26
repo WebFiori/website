@@ -13,6 +13,7 @@ use webfiori\ui\UnorderedList;
 use webfiori\ui\Paragraph;
 use webfiori\apiParser\NameSpaceAPI;
 use webfiori\ui\JsCode;
+use webfiori\theme\NewFiori;
 
 
 /**
@@ -20,7 +21,37 @@ use webfiori\ui\JsCode;
  *
  * @author Ibrahim
  */
-class NewFioriAPI extends webfiori\theme\NewFiori {
+class NewFioriAPI extends NewFiori implements APITheme {
+    /**
+     * The class that the theme will use to create APIs description page.
+     * 
+     * @var ClassAPI 
+     */
+    private $class;
+    /**
+     * Sets the class that the theme will use to create APIs description page.
+     * 
+     * This function will also set the title of the page to the name of the 
+     * given class.
+     * 
+     * @param ClassAPI $class
+     */
+    public function setClass($class) {
+        if($class instanceof ClassAPI){
+            $this->class = $class;
+            $this->getPage()->setTitle($class->getAccessModifier().' '.$class->getName());
+        }
+    }
+    /**
+     * Returns the class that the theme will use to create APIs description page.
+     * 
+     * @return ClassAPI|NULL The class that the theme will use to create APIs description page. 
+     * if no class is set, the function will return NULL.
+     * 
+     */
+    public function getClass() {
+        return $this->class;
+    }
     public function __construct() {
         parent::__construct();
         $this->setVersion('1.0');
@@ -162,6 +193,7 @@ class NewFioriAPI extends webfiori\theme\NewFiori {
             }
         }
         $return = $func->getMethodReturnTypesStr();
+        \webfiori\framework\Util::print_r($return);
         if($return !== null){
             $retCol = $row->addChild('v-col', [
                 'cols' => 12
@@ -172,6 +204,7 @@ class NewFioriAPI extends webfiori\theme\NewFiori {
                 ]
             ])
             ->text('Returns: ', false)
+            ->getParent()
             ->addChild('span', [
                 'class' => 'mono'
             ])->text($return);
