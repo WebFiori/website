@@ -163,7 +163,7 @@ class DocGenerator {
             $nsObj instanceof NameSpaceAPI;
             $page->setTheme($themeName);
             $theme = $page->getTheme();
-            if($theme instanceof APITheme){
+            if(is_subclass_of($theme, APITheme::class)){
                 $theme->setBaseURL($this->getBaseURL());
                 $page->setWebsiteName($siteName);
                 $page->insert($theme->createNamespaceContentBlock($nsObj));
@@ -212,6 +212,7 @@ class DocGenerator {
                 //$page = new APIPage($classAPI);
                 $canonical = $base. str_replace('\\', '/', $classAPI->getNameSpace()).'/'.$classAPI->getName();
                 $page->setCanonical($canonical);
+                $page->setTitle($classAPI->getAccessModifier().' '.$classAPI->getName());
                 $page->setDescription($classAPI->getSummary());
                 //$this->_createAsideNav($page);
                 $this->_createAPIPage($classAPI, $options, $page);
@@ -262,6 +263,13 @@ class DocGenerator {
     private function isDynamicPage() {
         return $this->isDynamic;
     }
+    public function escStr($str) {
+        $retVal = str_replace('\\', '\\\\', $str);
+        $retVal2 = str_replace("'", "\'", $retVal);
+        
+        
+        return $retVal2;
+    }
     public function createPHPFile(ClassAPI $classAPI, $path,$options, WebPage $page) {
         $savePath = $path.$classAPI->getNameSpace();
         if(Util::isDirectory($savePath, true)){
@@ -297,10 +305,10 @@ class DocGenerator {
                     . '        parent::__construct();'."\r\n"
                     . '        $this->setTheme(\''.$options['theme'].'\');'."\r\n"
                     . '        $this->getTheme()->setBaseURL(\''.$options['base-url'].'\');'."\r\n"
-                    . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $page->getDescription())).'\');'."\r\n"
+                    . '        $this->setDescription(\''.$this->escStr($page->getDescription()).'\');'."\r\n"
                     . '        $this->setWebsiteName(\''.$page->getWebsiteName().'\');'."\r\n"
                     . '        $this->setTitle(\''.$page->getTitle().'\');'."\r\n"
-                    . '        $this->insert($this->getTheme()->createClassDescriptionNode(\''.$classAPI->getAccessModifier().'\', \''.$classAPI->getName().'\', \''.$classAPI->getNameSpace().'\', \''. str_replace("'", "\'", $classAPI->getDescription()).'\'));'."\r\n"
+                    . '        $this->insert($this->getTheme()->createClassDescriptionNode(\''.$classAPI->getAccessModifier().'\', \''.$classAPI->getName().'\', \''.$classAPI->getNameSpace().'\', \''. $this->escStr($classAPI->getDescription()).'\'));'."\r\n"
                     . $this->createAttrsArrStr($classAPI)
                     . $this->createMethodsArrStr($classAPI)
                     . '        $this->insert($this->getTheme()->createAttrsSummaryBlock($classAttrsArr));'."\r\n"
@@ -678,8 +686,8 @@ class DocGenerator {
                         . 'class NSIndexView extends P {'."\r\n"
                         . '    public function __construct(){'."\r\n"
                         . '        parent::__construct();'."\r\n"
-                        . '        $this->setDescription(\''.str_replace('\'', '\\\'', str_replace('\\', '\\\\', $p->getDescription())).'\');'."\r\n"
-                        . '        $this->setTitle(\''. str_replace('\\', '\\\\', $p->getTitle()).'\');'."\r\n";
+                        . '        $this->setDescription(\''.$this->escStr($p->getDescription()).'\');'."\r\n"
+                        . '        $this->setTitle(\''. $this->escStr($p->getTitle()).'\');'."\r\n";
                 $rawData .= '        $nsObj = new NameSpaceAPI(\''.$nsObj->getName().'\',['."\r\n";
                 foreach ($nsObj->getAll() as $name => $info) {
                     $rawData .= '        "'.$name.'" => ['."\r\n"
@@ -711,7 +719,7 @@ class DocGenerator {
         
         if ($parentSuffex !== null) {
             if ($node->isTextNode()) {
-                $code = "        \$el".$parentSuffex."->text('". htmlspecialchars(str_replace("'", "\'", $node->getText()))."');\r\n";
+                $code = "        \$el".$parentSuffex."->text('". htmlspecialchars($this->escStr($node->getText()))."');\r\n";
             } else {
                 if ($node->childrenCount() != 0) {
                     $code = "        \$el".$parentSuffex."Ch = \$el".$parentSuffex."->addChild('".$node->getNodeName()."'".$this->getAttrsStr($node).", false);\r\n";
@@ -794,8 +802,8 @@ class DocGenerator {
                     . "            '".$attr->getAccessModofier()."',\r\n"
                     . "            '".$attr->getType()."',\r\n"
                     . "            '".$attr->getName()."',\r\n"
-                    . "            '". str_replace("'", "\'", $attr->getSummary())."',\r\n"
-                    . "            '". str_replace("'", "\'", $attr->getDescription())."',\r\n"
+                    . "            '". $this->escStr($attr->getSummary())."',\r\n"
+                    . "            '". $this->escStr($attr->getDescription())."',\r\n"
                     . "            ),\r\n";
             $attrsJsonArr[] = new \webfiori\json\Json([
                 'name' => $attr->getName(),
@@ -816,8 +824,8 @@ class DocGenerator {
             $arr .= '            new FunctionDef(['."\r\n"
                     . "                'name' => '".$meth->getName()."',"."\r\n"
                     . "                'access-modifier' => '".$meth->getAccessModofier()."',"."\r\n"
-                    . "                'summary' => '". str_replace("'", "\'", $meth->getSummary())."',"."\r\n"
-                    . "                'description' => '".str_replace("'", "\'",$meth->getDescription())."',"."\r\n"
+                    . "                'summary' => '". $this->escStr($meth->getSummary())."',"."\r\n"
+                    . "                'description' => '".$this->escStr($meth->getDescription())."',"."\r\n"
                     . "                'params' => ".$this->createParamsArr($meth).","."\r\n"
                     . "                'returns' => ".$this->createMethodReturnArr($meth).""."\r\n"
                     . "            ]),\r\n";
@@ -834,7 +842,7 @@ class DocGenerator {
     public function createMethodReturnArr(FunctionDef $meth) {
         $retArr = $meth->getReturnTypes();
         $retVal = "[\r\n"
-                . "                    'description' => '". str_replace("'", "\'", $retArr['description'])."',\r\n"
+                . "                    'description' => '".$this->escStr($retArr['description'])."',\r\n"
                 . "                    'return-types' => [\r\n";
         foreach ($retArr['return-types'] as $retType) {
             if ($retType instanceof Anchor) {
@@ -842,7 +850,7 @@ class DocGenerator {
                 $label = $retType->getChild(0)->getText();
                 $retVal .= "                        new Anchor('$link', '$label'),\r\n";
             } else {
-                if (strlen(trim($retType)) > 0) {
+                if (strlen($retType) > 0) {
                     $retVal .= "                        '$retType',\r\n";
                 }
             }
@@ -868,11 +876,11 @@ class DocGenerator {
             }
             
             $arr .= "                        'type' => '$typeStr',\r\n";
-            $arr        .= "                        'description' => '". str_replace("'", "\'", $p->getDescription())."',\r\n"
+            $arr        .= "                        'description' => '". $this->escStr($p->getDescription())."',\r\n"
                     . "                        'optional' => ".($p->isOptional() === true ? 'true' : 'false').",\r\n";
             $arr .= '                    ],'."\r\n";
         }
-        return $arr .= '                ],';
+        return $arr .= '                ]';
     }
     private function createJsonIndex() {
         $this->createMethodsIndexFile();

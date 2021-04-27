@@ -197,6 +197,7 @@ class ClassAPI {
                         if(isset($param['type'])){
                             $paramTypes = explode('|', $param['type']);
                             foreach ($paramTypes as $t){
+                                $t = trim($t);
                                 if(isset($linksArr[$t])){
                                     $typesNode->add($linksArr[$t]);
                                 }

@@ -173,8 +173,30 @@ class FunctionDef {
         }
     }
     /**
+     * Returns a string that contains the names of return types of the method.
+     * @return string|NULL If the method has return types, a string in the 
+     * format 'Type_1|Type_2|Type_3' is returned. If the method has no return types, 
+     * the method will return NULL.
+     */
+    public function getMethodReturnTypesAsHTMLNode() {
+        $return = $this->getReturnTypes();
+        $retCount = count($return['return-types']);
+        if($retCount != 0){
+            $retVal = new HTMLNode('span');
+            for($x = 0 ; $x < $retCount ; $x++){
+                $type = $return['return-types'][$x];
+                $type instanceof HTMLNode ? $retVal->addChild($type) : $retVal->text($type);
+                if($x + 1 < $retCount){
+                    $retVal->text('|');
+                }
+            }
+            return $retVal;
+        }
+    }
+    /**
      * Returns astring that represents the description of what does the method 
      * returns.
+     * 
      * @return string|NULL If the method hasa return type(s), the method 
      * will return a string. If the method has no return type(s), the method 
      * will return NULL.
@@ -186,7 +208,37 @@ class FunctionDef {
             return $return['description'];
         }
         else{
-            return NULL;
+            return null;
+        }
+    }
+    /**
+     * Returns an object that holds the description of method return type(s).
+     * 
+     * This method is used by the method which is used to create the description 
+     * of return type of the method on the theme.
+     * 
+     * @return HTmlNode|NULL If the method has a return type(s), the method 
+     * will return an object. If the method has no return type(s), the method 
+     * will return null.
+     */
+    public function getMethodReturnDescriptionAsHTMLNode() {
+        $return = $this->getReturnTypes();
+        $retCount = count($return['return-types']);
+        if($retCount != 0){
+            $retVal = new HTMLNode('span');
+            $nodes = HTMLNode::fromHTMLText($return['description']);
+            
+            if (gettype($nodes) == 'array') {
+                foreach ($nodes as $child) {
+                    $retVal->addChild($child);
+                }
+            } else {
+                $retVal->addChild($nodes);
+            }
+            return $retVal;
+        }
+        else{
+            return null;
         }
     }
     public function setPageURL($url){

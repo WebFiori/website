@@ -21,6 +21,20 @@ class AttributeDef {
     private $pageUrl;
     private $ns;
     private $ownerClass;
+    /**
+     * Creates new instance of the class.
+     * 
+     * @param string $accsessMod Access modifier of the attribute such as 'public'.
+     * 
+     * @param string $type A string that represents the type of the attribute.
+     * 
+     * @param string $name The name of the attribute as it appears inside the class 
+     * such as '$myAttr'.
+     * 
+     * @param string $summary A summary of the attribute.
+     * 
+     * @param string $desc A detailed description of the attribute.
+     */
     public function __construct($accsessMod = '', $type = '', $name = '', $summary = '', $desc = '') {
         $this->setAccessModifier($accsessMod);
         $this->setName($name);
@@ -138,8 +152,10 @@ class AttributeDef {
         $this->shortDescription = $desc;
     }
     /**
+     * Returns HTMLNode which contains a link to the detailed description of 
+     * the attribute on the same page.
      * 
-     * @return HTMLNode
+     * @return HTMLNode The node is used in summary block of the docs web page.
      */
     public function getSummaryNode() {
         $node = new HTMLNode('span');
@@ -147,6 +163,7 @@ class AttributeDef {
         $node->addChild('a', [
             'href' => '#'.$this->getName()
         ], false)->text($this->getName());
+        
         return $node;
     }
     /**
@@ -156,6 +173,11 @@ class AttributeDef {
     public function getSummary() {
         return $this->shortDescription;
     }
+    /**
+     * Creates HTMLNode that holds the summary of the attribute.
+     * 
+     * @return HTMLNode The node name will be 'span'.
+     */
     public function getSummaryAsHTMLNode() {
         $node = HTMLNode::fromHTMLText($this->getSummary());
         if (gettype($node) == 'array') {
@@ -166,6 +188,8 @@ class AttributeDef {
         } else {
             $toAdd = $node;
         }
+        
+        return $toAdd;
     }
     /**
      * Sets the datatype of the attribute.

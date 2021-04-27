@@ -1,0 +1,1508 @@
+[
+{
+    "title":"Introduction", 
+    "link":"learn\/introduction\/introduction", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"What is WebFiori Framework", 
+    "link":"learn\/introduction#what-is-webfiori-framework", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Features", 
+    "link":"learn\/introduction#features", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Simple Routing Engine", 
+    "link":"learn\/introduction#simple-routing-engine", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Sessions Management", 
+    "link":"learn\/introduction#sessions-management", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Theming", 
+    "link":"learn\/introduction#theming", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Basic Templating Engine", 
+    "link":"learn\/introduction#basic-templating-engine", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Middleware", 
+    "link":"learn\/introduction#middleware", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Background Tasks", 
+    "link":"learn\/introduction#background-tasks", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Sending HTML Emails", 
+    "link":"learn\/introduction#sending-html-emails", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Command Line Interface", 
+    "link":"learn\/introduction#command-line-interface", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Database Schema and Query Building", 
+    "link":"learn\/introduction#database-schema-and-query-building", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Web Services", 
+    "link":"learn\/introduction#web-services", 
+    "keywords":[
+    ], 
+    "parent_page":"Introduction"
+},{
+    "title":"Installation", 
+    "link":"learn\/installation\/installation", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Requirements", 
+    "link":"learn\/installation#requirements", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"General Requirements", 
+    "link":"learn\/installation#general-requirements", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Setup Local Development Environment In Windows", 
+    "link":"learn\/installation#setup-local-development-environment-in-windows", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Downloading WAMP Stack", 
+    "link":"learn\/installation#downloading-wamp-stack", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Downloading Composer", 
+    "link":"learn\/installation#downloading-composer", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Installing The Framework", 
+    "link":"learn\/installation#installing-the-framework", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Create Project Using Composer", 
+    "link":"learn\/installation#create-project-using-composer", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Manual Installation", 
+    "link":"learn\/installation#manual-installation", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Running The Project", 
+    "link":"learn\/installation#running-the-project", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Using Apache Web Server", 
+    "link":"learn\/installation#using-apache-web-server", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Using PHP's Built-in Web Server", 
+    "link":"learn\/installation#using-php's-built-in-web-server", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Deployment", 
+    "link":"learn\/installation#deployment", 
+    "keywords":[
+    ], 
+    "parent_page":"Installation"
+},{
+    "title":"Folder Structure", 
+    "link":"learn\/folder-structure\/folder-structure", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"The <code>app<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>app<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>app\/apis<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>app\/apis<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>app\/commands<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>app\/commands<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>app\/jobs<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>app\/jobs<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>app\/langs<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>app\/langs<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>app\/pages<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>app\/pages<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>app\/routes<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>app\/routes<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>app\/ini<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>app\/ini<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>app\/middleware<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>app\/middleware<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>conf<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>conf<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>framework<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>framework<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>public<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>public<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"The <code>themes<\/code> Folder", 
+    "link":"learn\/folder-structure#the-<code>themes<\/code>-folder", 
+    "keywords":[
+    ], 
+    "parent_page":"Folder Structure"
+},{
+    "title":"Basic Usage", 
+    "link":"learn\/basic-usage\/basic-usage", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/basic-usage#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Basic Usage"
+},{
+    "title":"Serving Static Pages", 
+    "link":"learn\/basic-usage#serving-static-pages", 
+    "keywords":[
+    ], 
+    "parent_page":"Basic Usage"
+},{
+    "title":"Serving Dynamic Pages", 
+    "link":"learn\/basic-usage#serving-dynamic-pages", 
+    "keywords":[
+    ], 
+    "parent_page":"Basic Usage"
+},{
+    "title":"Routing to PHP Files", 
+    "link":"learn\/basic-usage#routing-to-php-files", 
+    "keywords":[
+    ], 
+    "parent_page":"Basic Usage"
+},{
+    "title":"Routing to PHP Classes", 
+    "link":"learn\/basic-usage#routing-to-php-classes", 
+    "keywords":[
+    ], 
+    "parent_page":"Basic Usage"
+},{
+    "title":"Routing", 
+    "link":"learn\/routing\/routing", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/routing#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"The Definition of Routing", 
+    "link":"learn\/routing#the-definition-of-routing", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Life Cycle of a Request", 
+    "link":"learn\/routing#life-cycle-of-a-request", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"The Class <code>Router", 
+    "link":"learn\/routing#the-class-<code>router", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Types of Routes", 
+    "link":"learn\/routing#types-of-routes", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"View Route", 
+    "link":"learn\/routing#view-route", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"API Route", 
+    "link":"learn\/routing#api-route", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Closure Route", 
+    "link":"learn\/routing#closure-route", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Custom Route", 
+    "link":"learn\/routing#custom-route", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Class Route", 
+    "link":"learn\/routing#class-route", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Generic Routes", 
+    "link":"learn\/routing#generic-routes", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"URI Variable", 
+    "link":"learn\/routing#uri-variable", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Using URI Variable", 
+    "link":"learn\/routing#using-uri-variable", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Customizing Routes", 
+    "link":"learn\/routing#customizing-routes", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Sitemap", 
+    "link":"learn\/routing#sitemap", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Case Sensitivity", 
+    "link":"learn\/routing#case-sensitivity", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Languages", 
+    "link":"learn\/routing#languages", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Variables Values", 
+    "link":"learn\/routing#variables-values", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"Middleware", 
+    "link":"learn\/routing#middleware", 
+    "keywords":[
+    ], 
+    "parent_page":"Routing"
+},{
+    "title":"The Class Response", 
+    "link":"learn\/class-response\/the-class-response", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/class-response#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"The Class Response"
+},{
+    "title":"Collecting Server Output", 
+    "link":"learn\/class-response#collecting-server-output", 
+    "keywords":[
+    ], 
+    "parent_page":"The Class Response"
+},{
+    "title":"Sending The Output", 
+    "link":"learn\/class-response#sending-the-output", 
+    "keywords":[
+    ], 
+    "parent_page":"The Class Response"
+},{
+    "title":"Sending Custom Headers", 
+    "link":"learn\/class-response#sending-custom-headers", 
+    "keywords":[
+    ], 
+    "parent_page":"The Class Response"
+},{
+    "title":"Custom Response Code", 
+    "link":"learn\/class-response#custom-response-code", 
+    "keywords":[
+    ], 
+    "parent_page":"The Class Response"
+},{
+    "title":"Clearing Output", 
+    "link":"learn\/class-response#clearing-output", 
+    "keywords":[
+    ], 
+    "parent_page":"The Class Response"
+},{
+    "title":"Web Pages", 
+    "link":"learn\/web-pages\/web-pages", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/web-pages#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Pages"
+},{
+    "title":"Simple Use Case", 
+    "link":"learn\/web-pages#simple-use-case", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Pages"
+},{
+    "title":"Adding Meta Tags", 
+    "link":"learn\/web-pages#adding-meta-tags", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Pages"
+},{
+    "title":"Adding CSS or JS Resource Files", 
+    "link":"learn\/web-pages#adding-css-or-js-resource-files", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Pages"
+},{
+    "title":"Applying a Theme", 
+    "link":"learn\/web-pages#applying-a-theme", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Pages"
+},{
+    "title":"Before Render Action", 
+    "link":"learn\/web-pages#before-render-action", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Pages"
+},{
+    "title":"WebFiori UI Package", 
+    "link":"learn\/ui-package\/webfiori-ui-package", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/ui-package#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Main Classes", 
+    "link":"learn\/ui-package#main-classes", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"The Class <code>HTMLNode", 
+    "link":"learn\/ui-package#the-class-<code>htmlnode", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"The class <code>HTMLDoc", 
+    "link":"learn\/ui-package#the-class-<code>htmldoc", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Using The Library", 
+    "link":"learn\/ui-package#using-the-library", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Basic Usage", 
+    "link":"learn\/ui-package#basic-usage", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Building More Complex DOM", 
+    "link":"learn\/ui-package#building-more-complex-dom", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Adding Children", 
+    "link":"learn\/ui-package#adding-children", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Attributes", 
+    "link":"learn\/ui-package#attributes", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"No Value Attributes", 
+    "link":"learn\/ui-package#no-value-attributes", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Setting Multiple Attributes", 
+    "link":"learn\/ui-package#setting-multiple-attributes", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Specific Attributes Methods", 
+    "link":"learn\/ui-package#specific-attributes-methods", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Working With HTML Template Files", 
+    "link":"learn\/ui-package#working-with-html-template-files", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Loading Template File", 
+    "link":"learn\/ui-package#loading-template-file", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Slots", 
+    "link":"learn\/ui-package#slots", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Components", 
+    "link":"learn\/ui-package#components", 
+    "keywords":[
+    ], 
+    "parent_page":"WebFiori UI Package"
+},{
+    "title":"Themes", 
+    "link":"learn\/themes\/themes", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/themes#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Themes"
+},{
+    "title":"Using Themes", 
+    "link":"learn\/themes#using-themes", 
+    "keywords":[
+    ], 
+    "parent_page":"Themes"
+},{
+    "title":"Creating Custom Theme", 
+    "link":"learn\/themes#creating-custom-theme", 
+    "keywords":[
+    ], 
+    "parent_page":"Themes"
+},{
+    "title":"Creating Theme Directory and Resources Folders", 
+    "link":"learn\/themes#creating-theme-directory-and-resources-folders", 
+    "keywords":[
+    ], 
+    "parent_page":"Themes"
+},{
+    "title":"Adding Theme Resources", 
+    "link":"learn\/themes#adding-theme-resources", 
+    "keywords":[
+    ], 
+    "parent_page":"Themes"
+},{
+    "title":"Implementing The Theme", 
+    "link":"learn\/themes#implementing-the-theme", 
+    "keywords":[
+    ], 
+    "parent_page":"Themes"
+},{
+    "title":"Uploading Files", 
+    "link":"learn\/uploading-files\/uploading-files", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/uploading-files#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Uploading Files"
+},{
+    "title":"The Class <code>Uploader", 
+    "link":"learn\/uploading-files#the-class-<code>uploader", 
+    "keywords":[
+    ], 
+    "parent_page":"Uploading Files"
+},{
+    "title":"Using the Class <code>Uploader", 
+    "link":"learn\/uploading-files#using-the-class-<code>uploader", 
+    "keywords":[
+    ], 
+    "parent_page":"Uploading Files"
+},{
+    "title":"Uploading One File", 
+    "link":"learn\/uploading-files#uploading-one-file", 
+    "keywords":[
+    ], 
+    "parent_page":"Uploading Files"
+},{
+    "title":"Uploading Multiple Files", 
+    "link":"learn\/uploading-files#uploading-multiple-files", 
+    "keywords":[
+    ], 
+    "parent_page":"Uploading Files"
+},{
+    "title":"Getting Uploaded File(s) Information", 
+    "link":"learn\/uploading-files#getting-uploaded-file(s)-information", 
+    "keywords":[
+    ], 
+    "parent_page":"Uploading Files"
+},{
+    "title":"Sending HTML Emails", 
+    "link":"learn\/sending-emails\/sending-html-emails", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/sending-emails#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Sending HTML Emails"
+},{
+    "title":"Required Classes for Sending an Email", 
+    "link":"learn\/sending-emails#required-classes-for-sending-an-email", 
+    "keywords":[
+    ], 
+    "parent_page":"Sending HTML Emails"
+},{
+    "title":"The Class <code>SMTPAccount", 
+    "link":"learn\/sending-emails#the-class-<code>smtpaccount", 
+    "keywords":[
+    ], 
+    "parent_page":"Sending HTML Emails"
+},{
+    "title":"The Class <code>MailConfig", 
+    "link":"learn\/sending-emails#the-class-<code>mailconfig", 
+    "keywords":[
+    ], 
+    "parent_page":"Sending HTML Emails"
+},{
+    "title":"The Class <code>EmailMessage", 
+    "link":"learn\/sending-emails#the-class-<code>emailmessage", 
+    "keywords":[
+    ], 
+    "parent_page":"Sending HTML Emails"
+},{
+    "title":"The Class <code>ConfigController", 
+    "link":"learn\/sending-emails#the-class-<code>configcontroller", 
+    "keywords":[
+    ], 
+    "parent_page":"Sending HTML Emails"
+},{
+    "title":"Sending an Email", 
+    "link":"learn\/sending-emails#sending-an-email", 
+    "keywords":[
+    ], 
+    "parent_page":"Sending HTML Emails"
+},{
+    "title":"Storing SMTP Connection", 
+    "link":"learn\/sending-emails#storing-smtp-connection", 
+    "keywords":[
+    ], 
+    "parent_page":"Sending HTML Emails"
+},{
+    "title":"Creating and Sending The Message", 
+    "link":"learn\/sending-emails#creating-and-sending-the-message", 
+    "keywords":[
+    ], 
+    "parent_page":"Sending HTML Emails"
+},{
+    "title":"Attaching Files", 
+    "link":"learn\/sending-emails#attaching-files", 
+    "keywords":[
+    ], 
+    "parent_page":"Sending HTML Emails"
+},{
+    "title":"Command Line Interface", 
+    "link":"learn\/command-line-interface\/command-line-interface", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/command-line-interface#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Setup", 
+    "link":"learn\/command-line-interface#setup", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Running Commands", 
+    "link":"learn\/command-line-interface#running-commands", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Implementing CLI Commands", 
+    "link":"learn\/command-line-interface#implementing-cli-commands", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Extending The Class &quot;CLICommand&quot;", 
+    "link":"learn\/command-line-interface#extending-the-class-&quot;clicommand&quot;", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Registering the command", 
+    "link":"learn\/command-line-interface#registering-the-command", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Running The Command", 
+    "link":"learn\/command-line-interface#running-the-command", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Using Command Line Arguments", 
+    "link":"learn\/command-line-interface#using-command-line-arguments", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Reading User Input", 
+    "link":"learn\/command-line-interface#reading-user-input", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Prompt", 
+    "link":"learn\/command-line-interface#prompt", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Confirm", 
+    "link":"learn\/command-line-interface#confirm", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Multiple Choice", 
+    "link":"learn\/command-line-interface#multiple-choice", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Coloring Output", 
+    "link":"learn\/command-line-interface#coloring-output", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Pre-made Methods For Output Formatting", 
+    "link":"learn\/command-line-interface#pre-made-methods-for-output-formatting", 
+    "keywords":[
+    ], 
+    "parent_page":"Command Line Interface"
+},{
+    "title":"Sessions Management", 
+    "link":"learn\/sessions-management\/sessions-management", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/sessions-management#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"Starting New Session", 
+    "link":"learn\/sessions-management#starting-new-session", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"Customizing The Session", 
+    "link":"learn\/sessions-management#customizing-the-session", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"Resuming a Session", 
+    "link":"learn\/sessions-management#resuming-a-session", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"Destroying a Session", 
+    "link":"learn\/sessions-management#destroying-a-session", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"Adding Data to a Session", 
+    "link":"learn\/sessions-management#adding-data-to-a-session", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"Retrieving Stored Data", 
+    "link":"learn\/sessions-management#retrieving-stored-data", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"Generating New ID", 
+    "link":"learn\/sessions-management#generating-new-id", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"Creating Custom Sessions Storage", 
+    "link":"learn\/sessions-management#creating-custom-sessions-storage", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"Creating Database Table", 
+    "link":"learn\/sessions-management#creating-database-table", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"Implementing Database Access Methods", 
+    "link":"learn\/sessions-management#implementing-database-access-methods", 
+    "keywords":[
+    ], 
+    "parent_page":"Sessions Management"
+},{
+    "title":"The Library WebFiori Json", 
+    "link":"learn\/webfiori-json\/the-library-webfiori-json", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/webfiori-json#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Library Structure", 
+    "link":"learn\/webfiori-json#library-structure", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Usage Examples", 
+    "link":"learn\/webfiori-json#usage-examples", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Adding Extra Properties", 
+    "link":"learn\/webfiori-json#adding-extra-properties", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Working With Arrays", 
+    "link":"learn\/webfiori-json#working-with-arrays", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Adding Arrays as Objects", 
+    "link":"learn\/webfiori-json#adding-arrays-as-objects", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Example 1: Indexed Array as Object", 
+    "link":"learn\/webfiori-json#example-1:-indexed-array-as-object", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Example 2: Associative Array as Object", 
+    "link":"learn\/webfiori-json#example-2:-associative-array-as-object", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Example 3: Indexed and Associative Array as Object", 
+    "link":"learn\/webfiori-json#example-3:-indexed-and-associative-array-as-object", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Working With Objects", 
+    "link":"learn\/webfiori-json#working-with-objects", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Object Does not Implement <code>JsonI", 
+    "link":"learn\/webfiori-json#object-does-not-implement-<code>jsoni", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Object Implement <code>JsonI", 
+    "link":"learn\/webfiori-json#object-implement-<code>jsoni", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Converting JSON String to Json Object", 
+    "link":"learn\/webfiori-json#converting-json-string-to-json-object", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Properties Style", 
+    "link":"learn\/webfiori-json#properties-style", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Snake Style Example", 
+    "link":"learn\/webfiori-json#snake-style-example", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Kebab Style Example", 
+    "link":"learn\/webfiori-json#kebab-style-example", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Camel Style Example", 
+    "link":"learn\/webfiori-json#camel-style-example", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Reading JSON File", 
+    "link":"learn\/webfiori-json#reading-json-file", 
+    "keywords":[
+    ], 
+    "parent_page":"The Library WebFiori Json"
+},{
+    "title":"Database", 
+    "link":"learn\/database\/database", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/database#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"The Idea", 
+    "link":"learn\/database#the-idea", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Initializing your Database", 
+    "link":"learn\/database#initializing-your-database", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Adding Connection Information", 
+    "link":"learn\/database#adding-connection-information", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Creating Database Tables", 
+    "link":"learn\/database#creating-database-tables", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Creating Database Class", 
+    "link":"learn\/database#creating-database-class", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Database Queries", 
+    "link":"learn\/database#database-queries", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Insert Record", 
+    "link":"learn\/database#insert-record", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Update Record", 
+    "link":"learn\/database#update-record", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Delete Record", 
+    "link":"learn\/database#delete-record", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Select", 
+    "link":"learn\/database#select", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Joins", 
+    "link":"learn\/database#joins", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Unions", 
+    "link":"learn\/database#unions", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Working With Result Set", 
+    "link":"learn\/database#working-with-result-set", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Retrieving Records", 
+    "link":"learn\/database#retrieving-records", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Mapping Records to Objects", 
+    "link":"learn\/database#mapping-records-to-objects", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Command Line Utilities", 
+    "link":"learn\/database#command-line-utilities", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Adding Connection Using Command Line Interface", 
+    "link":"learn\/database#adding-connection-using-command-line-interface", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Creating Database Table", 
+    "link":"learn\/database#creating-database-table", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Initializing Database Table", 
+    "link":"learn\/database#initializing-database-table", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Modifying Database Table", 
+    "link":"learn\/database#modifying-database-table", 
+    "keywords":[
+    ], 
+    "parent_page":"Database"
+},{
+    "title":"Web Services", 
+    "link":"learn\/web-services\/web-services", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/web-services#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Main Classes", 
+    "link":"learn\/web-services#main-classes", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"The Class <code>RequestParameter", 
+    "link":"learn\/web-services#the-class-<code>requestparameter", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"The Class <code>AbstractWebService", 
+    "link":"learn\/web-services#the-class-<code>abstractwebservice", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"The Class <code>WebServicesManager", 
+    "link":"learn\/web-services#the-class-<code>webservicesmanager", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Creating a Simple Web Service", 
+    "link":"learn\/web-services#creating-a-simple-web-service", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Extending The Class <code>AbstractWebService", 
+    "link":"learn\/web-services#extending-the-class-<code>abstractwebservice", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Specify Request Method of The Service", 
+    "link":"learn\/web-services#specify-request-method-of-the-service", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Adding Request Parameters", 
+    "link":"learn\/web-services#adding-request-parameters", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Implementing The Abstract Methods of the Class <code>AbstractWebService", 
+    "link":"learn\/web-services#implementing-the-abstract-methods-of-the-class-<code>abstractwebservice", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Adding The Service to The Class <code>WebServicesManager", 
+    "link":"learn\/web-services#adding-the-service-to-the-class-<code>webservicesmanager", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Processing The Request", 
+    "link":"learn\/web-services#processing-the-request", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Calling The Service", 
+    "link":"learn\/web-services#calling-the-service", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Calling The Service using WebFiori Framework", 
+    "link":"learn\/web-services#calling-the-service-using-webfiori-framework", 
+    "keywords":[
+    ], 
+    "parent_page":"Web Services"
+},{
+    "title":"Middleware", 
+    "link":"learn\/middleware\/middleware", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/middleware#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Middleware"
+},{
+    "title":"The Class <a href=\"https:\/\/webfiori.com\/docs\/webfiori\/framework\/middleware\/AbstractMiddleware\"><code>AbstractMiddleware", 
+    "link":"learn\/middleware#the-class-<a-href=\"https:\/\/webfiori.com\/docs\/webfiori\/framework\/middleware\/abstractmiddleware\"><code>abstractmiddleware", 
+    "keywords":[
+    ], 
+    "parent_page":"Middleware"
+},{
+    "title":"Implementing Custom Middleware", 
+    "link":"learn\/middleware#implementing-custom-middleware", 
+    "keywords":[
+    ], 
+    "parent_page":"Middleware"
+},{
+    "title":"Assigning Middleware to Routes", 
+    "link":"learn\/middleware#assigning-middleware-to-routes", 
+    "keywords":[
+    ], 
+    "parent_page":"Middleware"
+},{
+    "title":"Middleware Groups", 
+    "link":"learn\/middleware#middleware-groups", 
+    "keywords":[
+    ], 
+    "parent_page":"Middleware"
+},{
+    "title":"Priority", 
+    "link":"learn\/middleware#priority", 
+    "keywords":[
+    ], 
+    "parent_page":"Middleware"
+},{
+    "title":"Command Line Utility", 
+    "link":"learn\/middleware#command-line-utility", 
+    "keywords":[
+    ], 
+    "parent_page":"Middleware"
+},{
+    "title":"Background Tasks", 
+    "link":"learn\/background-tasks\/background-tasks", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/background-tasks#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Main Classes", 
+    "link":"learn\/background-tasks#main-classes", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"The Class <code>AbstractJob", 
+    "link":"learn\/background-tasks#the-class-<code>abstractjob", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"The Class <code>CronJob", 
+    "link":"learn\/background-tasks#the-class-<code>cronjob", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"The Class <code>Cron", 
+    "link":"learn\/background-tasks#the-class-<code>cron", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"The Class <code>InitCron", 
+    "link":"learn\/background-tasks#the-class-<code>initcron", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Scheduling Jobs", 
+    "link":"learn\/background-tasks#scheduling-jobs", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Scheduling Job as a Closure", 
+    "link":"learn\/background-tasks#scheduling-job-as-a-closure", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Using the Class <code>AbstractJob", 
+    "link":"learn\/background-tasks#using-the-class-<code>abstractjob", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"A Sample Job", 
+    "link":"learn\/background-tasks#a-sample-job", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Jobs Execution", 
+    "link":"learn\/background-tasks#jobs-execution", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Using <code>crontab<\/code> Entry to Trigger Execution", 
+    "link":"learn\/background-tasks#using-<code>crontab<\/code>-entry-to-trigger-execution", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Using Command Line Interface to Trigger Execution", 
+    "link":"learn\/background-tasks#using-command-line-interface-to-trigger-execution", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Forcing a Job to Execute", 
+    "link":"learn\/background-tasks#forcing-a-job-to-execute", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Force a Job to Execute Using Cron Web Interface", 
+    "link":"learn\/background-tasks#force-a-job-to-execute-using-cron-web-interface", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Force a Job to Execute Using Command Line Interface", 
+    "link":"learn\/background-tasks#force-a-job-to-execute-using-command-line-interface", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Using Arguments With Forced Jobs", 
+    "link":"learn\/background-tasks#using-arguments-with-forced-jobs", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Adding Arguments", 
+    "link":"learn\/background-tasks#adding-arguments", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Sending Arguments Throgh CRON Web Interface", 
+    "link":"learn\/background-tasks#sending-arguments-throgh-cron-web-interface", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Sending Arguments Throgh Terminal", 
+    "link":"learn\/background-tasks#sending-arguments-throgh-terminal", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Sending CRON Notifications", 
+    "link":"learn\/background-tasks#sending-cron-notifications", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"The Class <code>CronEmail", 
+    "link":"learn\/background-tasks#the-class-<code>cronemail", 
+    "keywords":[
+    ], 
+    "parent_page":"Background Tasks"
+},{
+    "title":"Internationalization", 
+    "link":"learn\/i18n\/internationalization", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/i18n#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Internationalization"
+},{
+    "title":"Language Classes", 
+    "link":"learn\/i18n#language-classes", 
+    "keywords":[
+    ], 
+    "parent_page":"Internationalization"
+},{
+    "title":"Creating New Language Class", 
+    "link":"learn\/i18n#creating-new-language-class", 
+    "keywords":[
+    ], 
+    "parent_page":"Internationalization"
+},{
+    "title":"Adding Language Variables", 
+    "link":"learn\/i18n#adding-language-variables", 
+    "keywords":[
+    ], 
+    "parent_page":"Internationalization"
+},{
+    "title":"Using Language Classes", 
+    "link":"learn\/i18n#using-language-classes", 
+    "keywords":[
+    ], 
+    "parent_page":"Internationalization"
+},{
+    "title":"Using Language in Web Pages", 
+    "link":"learn\/i18n#using-language-in-web-pages", 
+    "keywords":[
+    ], 
+    "parent_page":"Internationalization"
+},{
+    "title":"Using Language in Web Services", 
+    "link":"learn\/i18n#using-language-in-web-services", 
+    "keywords":[
+    ], 
+    "parent_page":"Internationalization"
+},{
+    "title":"Global Constants", 
+    "link":"learn\/global-constants\/global-constants", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Introduction", 
+    "link":"learn\/global-constants#introduction", 
+    "keywords":[
+    ], 
+    "parent_page":"Global Constants"
+},{
+    "title":"Constants", 
+    "link":"learn\/global-constants#constants", 
+    "keywords":[
+    ], 
+    "parent_page":"Global Constants"
+},{
+    "title":"Coding Standards of WebFiori Framework", 
+    "link":"learn\/coding-standards\/coding-standards-of-webfiori-framework", 
+    "keywords":[
+    ], 
+    "parent_page":null
+},{
+    "title":"Autoloading", 
+    "link":"learn\/coding-standards#autoloading", 
+    "keywords":[
+    ], 
+    "parent_page":"Coding Standards of WebFiori Framework"
+},{
+    "title":"Coding Style", 
+    "link":"learn\/coding-standards#coding-style", 
+    "keywords":[
+    ], 
+    "parent_page":"Coding Standards of WebFiori Framework"
+},{
+    "title":"Documentation Style", 
+    "link":"learn\/coding-standards#documentation-style", 
+    "keywords":[
+    ], 
+    "parent_page":"Coding Standards of WebFiori Framework"
+}]

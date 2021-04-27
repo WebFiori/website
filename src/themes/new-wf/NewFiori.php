@@ -243,6 +243,29 @@ class NewFiori extends Theme {
             'v-on'=>"on"
         ], true)->getParent()
         ->addChild('v-list');
+        
+        $vList->addChild('v-subheader', [
+            'style' => 'font-weight: bold;'
+        ])
+        ->text('Learn')
+        ->getParent()
+        ->addChild('v-list-item', [
+            'v-for' => 'result in docs_search_results'
+        ])->addChild('v-list-item-title', [], false)
+        ->addChild('a', [
+            ':href' => 'result.link',
+            'style' => [
+                'font-size' => '9pt',
+                'font-weight' => 'bold'
+            ]
+        ])->addChild('span', [
+            'v-if' => 'result.parent_page !== null'
+        ])->text('{{result.parent_page}} > {{result.title}}')
+        ->getParent()
+        ->addChild('span', [
+            'v-else' => 'result.parent_page'
+        ])->text('{{result.title}}');
+        
         $vList->addChild('v-subheader', [
             'style' => 'font-weight: bold;'
         ])

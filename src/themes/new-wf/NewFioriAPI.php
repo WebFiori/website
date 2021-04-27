@@ -175,14 +175,10 @@ class NewFioriAPI extends NewFiori implements APITheme {
                     $optionalTxt = '[Optional] ';
                 }
                 $li = new \webfiori\ui\ListItem();
-                $ul->addChild($li, [
-                    'style' => [
-                        'font-family' => 'monospace'
-                    ]
-                ]);
+                $ul->addChild($li);
                 $param instanceof \webfiori\apiParser\MethodParameter;
                 $li->addChild($param->getParametersNode($this->getPage()))
-                        ->text(' '.$param->getName())
+                        ->text(' '.$param->getName().' ')
                         ->text($optionalTxt)
                         ->addChild($param->getDescriptionAsHTMLNode(), [
                             'style' => [
@@ -192,23 +188,18 @@ class NewFioriAPI extends NewFiori implements APITheme {
                         ]);
             }
         }
-        $return = $func->getMethodReturnTypesStr();
-        \webfiori\framework\Util::print_r($return);
+        $return = $func->getMethodReturnTypesAsHTMLNode();
+        
         if($return !== null){
             $retCol = $row->addChild('v-col', [
                 'cols' => 12
             ]);
-            $retCol->addChild('p', [
-                'style' => [
-                    'font-weight' => 'bold'
-                ]
-            ])
-            ->text('Returns: ', false)
+            $retCol->addChild('b')->text('Returns: ')
             ->getParent()
-            ->addChild('span', [
+            ->addChild($return, [
                 'class' => 'mono'
-            ])->text($return);
-            $retCol->addChild('p')->text($func->getMethodReturnDescription());
+            ]);
+            $retCol->addChild($func->getMethodReturnDescriptionAsHTMLNode());
         }
         return $block;
     }

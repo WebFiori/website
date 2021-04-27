@@ -278,7 +278,7 @@ class ServerErrView {
             if (defined('WF_VERBOSE') && WF_VERBOSE) {
                 Page::insert($this->_createMessageLine('File: ', $throwableOrErr["file"]));
                 Page::insert($this->_createMessageLine('Line: ', $throwableOrErr["line"]));
-                Page::insert($this->_createMessageLine('Stack Trace:', ''));
+                //Page::insert($this->_createMessageLine('Stack Trace:', ''));
                 $stackTrace = new HTMLNode('div', [
                     'class' => 'mono'
                 ]);
@@ -294,9 +294,9 @@ class ServerErrView {
                     $index++;
                 }
                 
-                Page::insert($stackTrace);
+                //Page::insert($stackTrace);
             } else {
-                Page::insert($this->_createMessageLine('Stack Trace:', ''));
+                //Page::insert($this->_createMessageLine('Stack Trace:', ''));
                 $stackTrace = new HTMLNode('div', [
                     'class' => 'mono'
                 ]);
@@ -310,7 +310,7 @@ class ServerErrView {
                     $index++;
                 }
                 
-                Page::insert($stackTrace);
+                //Page::insert($stackTrace);
                 $this->_showTip();
             }
         }
