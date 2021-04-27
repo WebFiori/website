@@ -16,14 +16,14 @@ function search(str) {
             indexName: methodsIndex,
             query: str,
             params: {
-                hitsPerPage: 5
+                hitsPerPage: 3
             }
         },
         {
             indexName: docsIndex,
             query: str,
             params: {
-                hitsPerPage: 5
+                hitsPerPage: 3
             }
         },
     ]).then(({ results  }) => {

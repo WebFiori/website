@@ -29,10 +29,21 @@ window.app = new Vue({
         drawer_md:false,
         mini:false,
         
-        search_results:[]
+        search_results:[],
+        methods_search_results:[],
+        docs_search_results:[],
+        search_val:'',
+        show_search_menu:false
     },
     methods:{
-        
+        search:function() {
+            if (this.search_val.trim().length !== 0) {
+                search(this.search_val);
+                this.showMenu = true;
+            } else {
+                this.showMenu = false;
+            }
+        }
     }
 });
 function showSnackbar(message, color = '') {

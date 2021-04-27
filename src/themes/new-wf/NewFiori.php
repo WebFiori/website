@@ -74,12 +74,18 @@ class NewFiori extends Theme {
         $itemsPanel = new HTMLNode('template');
         $sideDrawer->addChild($itemsPanel);
         $itemsPanel->addChild('v-expansion-panels', [], false)
-        ->addChild(
-                $this->createDrawerMenuItem(
+        ->addChild($this->createDrawerMenuItem(
                 $this->createButton([
                     'text', 'block', 
-                    'href' => $this->getBaseURL().'/about-me'
-                    ], $page->get('main-menu/about-me'), 'mdi-information-variant')));
+                    'href' => $this->getBaseURL().'/learn'
+                    ], 'Learn', 'mdi-information-variant')), true)
+        ->addChild($this->createDrawerMenuItem(
+                $this->createButton([
+                    'text', 'block', 
+                    'href' => $this->getBaseURL().'/docs/webfiori'
+                    ], 'API Reference', 'mdi-information-variant')))
+        
+        ;
         return $sideDrawer;
     }
 
@@ -171,6 +177,7 @@ class NewFiori extends Theme {
                     'class' => 'd-sm-flex d-md-none',
                     '@click' => "drawer = !drawer",
                 ], true)->addChild('v-toolbar-title', [
+                    'class' => 'd-none d-md-flex',
                     'style' => [
                         'min-width' => '250px'
                     ]
@@ -227,7 +234,7 @@ class NewFiori extends Theme {
             
             ])->addChild('v-menu', [
             'relative','overflow',
-            'v-model'=>"showMenu",
+            'v-model'=>"show_search_menu",
                 'offset-y',
                 'bottom'
         ])->addChild('template', [
@@ -321,7 +328,18 @@ class NewFiori extends Theme {
             'src' => 'assets/images/search-by-algolia-light-background.webp',
             'style'=> ['width' => '130px']
         ]);
-        
+        $vAppBar->addChild('v-spacer');
+        $homeImgContainer = $vAppBar->addChild('div', [
+            'class' => 'd-sm-flex d-md-none align-center',
+        ]);
+        $homeImgContainer->addChild('a', [
+            'href' => \webfiori\framework\WebFioriApp::getAppConfig()->getHomePage()
+        ])->img([
+            'src' => 'assets/images/WFLogo512.png',
+            'style' => [
+                'width' => '80px'
+            ]
+        ]);
         return $vAppBar;
     }
     public static function createButton($props = [], $text = null, $icon = null, $iconProps = []) {

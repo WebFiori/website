@@ -27,13 +27,34 @@ window.app = new Vue({
         drawer:false,
         snackbar:window.data.snackbar,
         mini:false,
-        drawer_md:true,
         name:'',
         search_results:[],
-        methods_search_results:[]
+        methods_search_results:[],
+        docs_search_results:[],
+        search_val:'',
+        show_search_menu:false
     },
     methods:{
-        
+        search:function() {
+            if (this.search_val.trim().length !== 0) {
+                search(this.search_val);
+                this.showMenu = true;
+            } else {
+                this.showMenu = false;
+            }
+        }
+    },
+    computed:{
+        drawer_md:function() {
+            switch(this.$vuetify.breakpoint.name) {
+                case 'sm':{
+                        return false;
+                }
+                default: {
+                        return true;
+                }
+            }
+        }
     }
 });
 function showSnackbar(message, color = '') {
