@@ -83,8 +83,17 @@ class NewFiori extends Theme {
                 $this->createButton([
                     'text', 'block', 
                     'href' => $this->getBaseURL().'/docs/webfiori'
-                    ], 'API Reference', 'mdi-information-variant')))
-        
+                    ], 'API Reference', 'mdi-information-variant')), true)
+        ->addChild($this->createDrawerMenuItem(
+                $this->createButton([
+                    'text', 'block', 
+                    'href' => $this->getBaseURL().'/download'
+                    ], 'Download', 'mdi-information-variant')), true)
+        ->addChild($this->createDrawerMenuItem(
+                $this->createButton([
+                    'text', 'block', 
+                    'href' => $this->getBaseURL().'/contribute'
+                    ], 'Contribute', 'mdi-information-variant')), true)
         ;
         return $sideDrawer;
     }
@@ -97,35 +106,39 @@ class NewFiori extends Theme {
         $card = new HTMLNode('v-card', [
             'flat', 'tile', 'class' => 'flex text-center', 'dark']);
         $footer->addChild($card);
-        $card->addChild('v-card-text')
-                ->addChild($this->createButton([
-                    'text', 
-                    'fab', 
-                    'x-small',
-                    'target' => '_blank',
-                    'href' => 'https://www.linkedin.com/in/ibrahim-binalshikh/'], null, 'mdi-linkedin'), true)
-                ->addChild($this->createButton([
-                    'text', 
-                    'fab', 
-                    'x-small',
-                    'target' => '_blank',
-                    'href' => 'https://t.me/WarriorVx'], null, 'mdi-telegram'), true)
-                ->addChild($this->createButton([
-                    'text', 
-                    'fab', 
-                    'x-small',
-                    'target' => '_blank',
-                    'href' => 'https://github.com/usernane'], null, 'mdi-github'), true);
-        
+//        $card->addChild('v-card-text')
+//                ->addChild($this->createButton([
+//                    'text', 
+//                    'fab', 
+//                    'x-small',
+//                    'target' => '_blank',
+//                    'href' => 'https://www.linkedin.com/in/ibrahim-binalshikh/'], null, 'mdi-linkedin'), true)
+//                ->addChild($this->createButton([
+//                    'text', 
+//                    'fab', 
+//                    'x-small',
+//                    'target' => '_blank',
+//                    'href' => 'https://t.me/WarriorVx'], null, 'mdi-telegram'), true)
+//                ->addChild($this->createButton([
+//                    'text', 
+//                    'fab', 
+//                    'x-small',
+//                    'target' => '_blank',
+//                    'href' => 'https://github.com/usernane'], null, 'mdi-github'), true);
+//        
         //
         $card->addChild('v-card-text')
         ->addChild('small')
         ->text($page->get('footer/built-with'))
-         ->addChild(new Anchor('https://webfiori.com', $page->get('general/framework-name')));
+        ->addChild(new Anchor('https://webfiori.com', $page->get('general/framework-name')), true)
+        ->text(', ')
+        ->addChild(new Anchor('https://vuejs.org', 'Vue'), true)
+        ->text(' and ')
+        ->addChild(new Anchor('https://vuetifyjs.com', 'Vuetify'), true);
         
-        $card->addChild('v-divider')
+        $card->addChild('v-divider', true)
         ->addChild('v-card-text', ['flat'])
-        ->addChild('small')->text($page->get('footer/all-rights').' '.date('Y'));
+        ->addChild('small')->text('All Rights Reserved'.'  © 2018 - '.date('Y'));
         return $footer;
     }
 
@@ -222,6 +235,7 @@ class NewFiori extends Theme {
                     'href' => $this->getBaseURL().'/docs/webfiori'], 'API Reference'), true)
                 ->addChild(self::createButton(['text', 'href' => $this->getBaseURL().'/learn'], 'Learn'), true)
                 ->addChild(self::createButton(['text', 'href' => $this->getBaseURL().'/download'], 'Download'), true)
+                ->addChild(self::createButton(['text', 'href' => $this->getBaseURL().'/contribute'], 'Contribute'), true)
                 ->getParent()->addChild('v-spacer');
         
         $vAppBar->addChild($this->createTopSearchBar());
