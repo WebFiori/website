@@ -45,8 +45,32 @@ class ClosureRoutes {
             'closure-params' => $arrayOfParams,
             'route-to' => function($params)
             {
-                $node = \webfiori\ui\HTMLNode::fromHTMLText('Returns the value of the base URI which is appended to the path. This method is similar to calling the method <b>Router::<a href="#base">base()</a></b>.');
-                Util::print_r($node, false);
+                $b = new \MDIndexBuilder('webfiori', 'docs', [
+                    'introduction',
+                    
+                    'installation',
+                    'folder-structure',
+                    'basic-usage',
+                    'routing',
+                    'class-response',
+                    'web-pages',
+                    'ui-package',
+                    'themes',
+                    'uploading-files',
+                    'sending-emails',
+                    'command-line-interface',
+                    'sessions-management',
+                    'webfiori-json',
+                    'database',
+                    'web-services',
+                    'middleware',
+                    'background-tasks',
+                    'i18n',
+                    'global-constants',
+                    'coding-standards'
+                ]);
+                $b->createJson();
+                Util::print_r($b->getInfoArray(), false);
             }
         ]);
     }
