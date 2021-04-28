@@ -3,6 +3,7 @@ namespace webfiori\views;
 use webfiori\framework\Page;
 use webfiori\views\WebFioriPage;
 use webfiori\ui\UnorderedList;
+use webfiori\ui\HTMLNode;
 /**
  * Description of DownloadView
  *
@@ -10,11 +11,9 @@ use webfiori\ui\UnorderedList;
  */
 class DownloadView extends WebFioriPage{
     public function __construct() {
-        parent::__construct(array(
-            'title'=>'Download',
-            'description'=>'Download options of WebFiori Framework.'
-        ));
-        Page::document()->getBody()->addChild($this->getWFBG());
+        parent::__construct('Download',
+           'Download options of WebFiori Framework.'
+        );
         $this->_stableDownloads();
         $this->_betaDownloads();
         $this->_nextSteps();
@@ -25,10 +24,16 @@ class DownloadView extends WebFioriPage{
         $sec->addChild($this->createParagraph('The latest release of the framework is version '
                 . '1.0.9. You can click <a href="downloads/webfiori-v1.0.9-stable">here</a> in order to start the '
                 . 'download process.'));
-        Page::insert($sec);
+        $row = $this->insert('v-row');
+        $row->addChild('v-col', [
+            'cols' => 12
+        ])->addChild($sec);
     }
     private function _betaDownloads(){
+        $row = $this->insert('v-row');
+        
         $sec = $this->createSection('Previous Releases and Beta Releases',3);
+        $row->addChild('v-col', ['cols' => 12])->addChild($sec);
         $sec->addChild($this->createParagraph('Here you will find all beta and historical releases. The given ones are '
                 . 'not good option for production and might have bugs.'));
         $ul = new UnorderedList();
@@ -53,10 +58,12 @@ class DownloadView extends WebFioriPage{
             '<a href="downloads/webfiori-v1.0.0-beta-1">WebFiori v1.0.0 Beta 1</a>'
         ), FALSE);
         $sec->addChild($ul);
-        Page::insert($sec);
     }
     private function _nextSteps(){
+        $row = $this->insert('v-row');
+        
         $sec = $this->createSection('What is Next?',3);
+        $row->addChild('v-col', ['cols' => 12])->addChild($sec);
         $sec->addChild($this->createParagraph('Once you finsh downloading the framework, you can visit '
                 . '<a href="learn" >Learning Center</a> in order to start your development process.'));
         Page::insert($sec);

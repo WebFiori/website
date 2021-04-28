@@ -58,27 +58,6 @@ class NewFioriAPI extends NewFiori implements APITheme {
         $this->setLicenseName('MIT');
         $this->setDescription('The new WebFiori framework website theme.');
     }
-    public function getAsideNode() {
-        $page = $this->getPage();
-        $right = $page->getWritingDir() == 'rtl' ? 'right' : '';
-        $sideDrawer = new HTMLNode('v-navigation-drawer', [
-            'v-model' => "drawer",
-            'app', $right,
-            'width' => '250px',
-            'app', 'temporary',
-        ]);
-        $sideDrawer->addChild('v-divider');
-        $itemsPanel = new HTMLNode('template');
-        $sideDrawer->addChild($itemsPanel);
-        $itemsPanel->addChild('v-expansion-panels')
-        ->addChild(
-                $this->createDrawerMenuItem(
-                $this->createButton([
-                    'text', 'block', 
-                    'href' => $this->getBaseURL().'/docs/webfiori'
-                    ], 'API Reference', 'mdi-information-variant')));
-        return $sideDrawer;
-    }
 
     public function createAttributeDetailsBlock(AttributeDef $attr): HTMLNode {
         $block = new HTMLNode('v-card', [
@@ -227,14 +206,15 @@ class NewFioriAPI extends NewFiori implements APITheme {
         $drawer = new HTMLNode('v-navigation-drawer', [
             //'v-model' => "drawer_md",
             'fixed', 'app', 'width' => '300px',
-            ':mini-variant.sync'=>"mini"
+            ':mini-variant.sync'=>"mini",
+            'class' => 'd-none d-md-flex'
         ]);
         $list = $drawer->addChild('v-list');
         
         $list->addChild('v-list-item')
         ->addChild('v-list-item-icon')
                  ->addChild('v-icon')
-                 ->text('mdi-send-circle')
+                 ->text('mdi-menu')
                  ->getParent()->getParent()
         ->addChild('v-list-item-title')->text('All Classes')
         ->getParent()->addChild('v-btn', [
@@ -279,12 +259,17 @@ class NewFioriAPI extends NewFiori implements APITheme {
         ])->addChild('h1')->text('Namespace '.$nsObj->getName());
         $nsArr = $nsObj->getSubNamespaces();
         if(count($nsArr) !=0 ){
-            $nsNode = $block->addChild('v-card', [
+            $nsNode = $block->addChild('v-col', [
+                'cols' => 12,
+                'md' => 4,
+                'sm' => 12
+            ])->addChild('v-card', [
                 'hover', 'outlined', 
             ]);
             $nsNode->addChild('v-card-title')->text('All Sub-namespaces:');
             $list = $nsNode->addChild('v-card-text')
                     ->addChild('v-list', ['dense']);
+            
             foreach ($nsArr as $nsName){
                 $list->addChild('v-list-item', [
                     'href' => $this->getBaseURL().'/'.str_replace('\\', '/', $nsName)
@@ -294,8 +279,13 @@ class NewFioriAPI extends NewFiori implements APITheme {
             }
         }
         $interfaces = $nsObj->getInterfaces();
+        
         if(count($interfaces) != 0){
-            $nsNode = $block->addChild('v-card', [
+            $nsNode = $block->addChild('v-col', [
+                'cols' => 12,
+                'md' => 4,
+                'sm' => 12
+            ])->addChild('v-card', [
                 'hover', 'outlined', 
             ]);
             $nsNode->addChild('v-card-title')->text('All Interfaces:');
@@ -314,7 +304,11 @@ class NewFioriAPI extends NewFiori implements APITheme {
         }
         $classes = $nsObj->getClasses();
         if(count($classes) != 0){
-            $nsNode = $block->addChild('v-card', [
+            $nsNode = $block->addChild('v-col', [
+                'cols' => 12,
+                'md' => 4,
+                'sm' => 12
+            ])->addChild('v-card', [
                 'hover', 'outlined', 
             ]);
             $nsNode->addChild('v-card-title')->text('All Classes:');

@@ -169,14 +169,17 @@ class NewFiori extends Theme {
             //'hide-on-scroll',
             //'elevate-on-scroll',
             'fixed',
-            'height' => '80px',
-            'flat'
+            'height' => '50px',
+            'flat',
+            'dense'
         ]);
         
         $vAppBar->addChild('v-app-bar-nav-icon', [
                     'class' => 'd-sm-flex d-md-none',
                     '@click' => "drawer = !drawer",
-                ], true)->addChild('v-toolbar-title', [
+                ], true);
+        //Add Title with logo
+        $vAppBar->addChild('v-toolbar-title', [
                     'class' => 'd-none d-md-flex',
                     'style' => [
                         'min-width' => '250px'
@@ -191,7 +194,7 @@ class NewFiori extends Theme {
                 ])->addChild('img', [
                     'src' => 'assets/images/WFLogo512.png',
                     'style' => [
-                        'width' => '80px'
+                        'width' => '45px'
                     ]
                 ], true)->getParent()
                 ->addChild('v-col', [
@@ -217,13 +220,30 @@ class NewFiori extends Theme {
         $navLinksContainer->addChild(
                 self::createButton(['text', 
                     'href' => $this->getBaseURL().'/docs/webfiori'], 'API Reference'), true)
-                ->addChild(
-                self::createButton(['text', 'href' => $this->getBaseURL().'/learn'], 'Learn'), true)
+                ->addChild(self::createButton(['text', 'href' => $this->getBaseURL().'/learn'], 'Learn'), true)
+                ->addChild(self::createButton(['text', 'href' => $this->getBaseURL().'/download'], 'Download'), true)
                 ->getParent()->addChild('v-spacer');
+        
+        $vAppBar->addChild($this->createTopSearchBar());
+        $vAppBar->addChild('v-spacer');
+        $homeImgContainer = $vAppBar->addChild('div', [
+            'class' => 'd-sm-flex d-md-none align-center',
+        ]);
+        $homeImgContainer->addChild('a', [
+            'href' => \webfiori\framework\WebFioriApp::getAppConfig()->getHomePage()
+        ])->img([
+            'src' => 'assets/images/WFLogo512.png',
+            'style' => [
+                'width' => '45px'
+            ]
+        ]);
+        return $vAppBar;
+    }
+    private function createTopSearchBar() {
         $searchContainer = new HTMLNode('v-container', [
             'class' => 'd-flex align-center d-none d-md-flex'
         ]);
-        $vAppBar->addChild($searchContainer);
+        
         $row = $searchContainer->addChild('v-row', [
             'no-gutters'
         ]);
@@ -328,19 +348,7 @@ class NewFiori extends Theme {
             'src' => 'assets/images/search-by-algolia-light-background.webp',
             'style'=> ['width' => '130px']
         ]);
-        $vAppBar->addChild('v-spacer');
-        $homeImgContainer = $vAppBar->addChild('div', [
-            'class' => 'd-sm-flex d-md-none align-center',
-        ]);
-        $homeImgContainer->addChild('a', [
-            'href' => \webfiori\framework\WebFioriApp::getAppConfig()->getHomePage()
-        ])->img([
-            'src' => 'assets/images/WFLogo512.png',
-            'style' => [
-                'width' => '80px'
-            ]
-        ]);
-        return $vAppBar;
+        return $searchContainer;
     }
     public static function createButton($props = [], $text = null, $icon = null, $iconProps = []) {
         $btn = new HTMLNode('v-btn', $props);
