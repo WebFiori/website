@@ -11,9 +11,10 @@ use webfiori\ui\HTMLNode;
  */
 class DownloadView extends WebFioriPage{
     public function __construct() {
-        parent::__construct('Download',
-           'Download options of WebFiori Framework.'
-        );
+        parent::__construct([
+            'title' => 'Download',
+            'description' => 'Download options of WebFiori Framework.'
+        ]);
         $this->_stableDownloads();
         $this->_betaDownloads();
         $this->_nextSteps();
