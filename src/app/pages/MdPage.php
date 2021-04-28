@@ -62,9 +62,14 @@ class MdPage extends WebFioriPage{
                     $super->addChild($xNode);
                 } else if ($xNode->getNodeName() == 'pre') {
                     if ($xNode->getChild(0)->getNodeName() == 'code') {
-                        $codeSnippit = new CodeSnippet('Code', $xNode->getChild(0)->getChild(0)->getTextUnescaped());
-                        $codeSnippit->getCodeElement()->setClassName($xNode->getChild(0)->getClassName());
-                        $super->addChild($codeSnippit);
+                        
+                        //if ($filePath != 'webfiori-json') {
+                            $codeSnippit = new CodeSnippet('Code', $xNode->getChild(0)->getChild(0)->getTextUnescaped());
+                            $codeSnippit->getCodeElement()->setClassName($xNode->getChild(0)->getClassName());
+                            $super->addChild($codeSnippit);
+//                        } else {
+//                            $super->addChild($xNode);
+//                        }
                     }
                 } else if ($xNode->getNodeName() == 'img') {
                     $src = $xNode->getAttribute('src');
@@ -105,15 +110,16 @@ class MdPage extends WebFioriPage{
     private function createSideDrawer($headingsArr) {
         if (count($headingsArr) != 0) {
             $drawer = new HTMLNode('v-navigation-drawer', [
-                'v-model' => "drawer_md",
+                //'v-model' => "drawer_md",
                 'fixed', 'app', 'width' => '300px',
-                ':mini-variant.sync'=>"mini"
+                ':mini-variant.sync'=>"mini",
+                'class' => 'd-none d-md-flex'
             ]);
             
             $drawer->addChild('v-list-item', [], false)
             ->addChild('v-list-item-icon', [], false)
                      ->addChild('v-icon', [], false)
-                     ->text('mdi-send-circle')
+                     ->text('mdi-menu')
                      ->getParent()->getParent()
             ->addChild('v-list-item-title', [], false)->text('Page Content')
             ->getParent()->addChild('v-btn', [
@@ -130,7 +136,7 @@ class MdPage extends WebFioriPage{
                      ->addChild('v-list-item-content', [], false)
                      ->addChild('v-list-item-title', [], false)
                      ->addChild('a', [
-                         'href' => '#'.$id
+                         'href' => $this->getCanonical().'#'.$id
                      ], false)
                      ->text($txt);
             }
