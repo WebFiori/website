@@ -8,21 +8,25 @@ use webfiori\ui\Anchor;
  *
  * @author Eng.Ibrahim
  */
-class ContributeView extends WebFioriPage{
+class ContributeView extends WebFioriPage {
     public function __construct() {
         parent::__construct(array(
             'title'=>'Contribute',
             'description'=>'Ways to help in the development process of the '
             . 'framework.'
         ));
-        Page::document()->getBody()->addChild($this->getWFBG());
-        Page::insert($this->createParagraph('The framework is open source and '
+        $row = $this->insert('v-row');
+        $row->addChild('v-col', [
+            'cols' => '12'
+        ])->addChild($this->createParagraph('The framework is open source and '
                 . 'licensed under MIT license. Any one is free to use it '
                 . 'the way they like. There are many ways at which any '
                 . 'one can contribute to the project. '
                 . 'Here we list some of the ways.'));
         $sec1 = $this->createSection('Using It');
-        //Page::insert($sec1);
+        $row->addChild('v-col', [
+            'cols' => 12
+        ])->addChild($sec1);
         $sec1->addChild($this->createParagraph('The easiest way is to use the '
                 . 'framework as your web development framework. Since the '
                 . 'framework is licensed under MIT license, it is '
@@ -31,7 +35,10 @@ class ContributeView extends WebFioriPage{
                 . 'long as you follow the terms of the license.'));
         
         $sec2 = $this->createSection('Documentation');
-        Page::insert($sec2);
+         $row->addChild('v-col', [
+            'cols' => 12
+        ])->addChild($sec2);
+
         $sec2->addChild($this->createParagraph(''
                 . 'Another way to contribute is to create or improve project documentation. '
                 . 'Simply, you can go to <a href="https://github.com/webfiori/docs" target="_blank">documentation repo</a> in GitHub and start '
@@ -39,7 +46,10 @@ class ContributeView extends WebFioriPage{
                 . 'aspects of the project.'
                 . ''));
         $sec3 = $this->createSection('Review Code, Add Features, Fix Bugs');
-        Page::insert($sec3);
+        $row->addChild('v-col', [
+            'cols' => 12
+        ])->addChild($sec3);
+        
         $sec3->addChild($this->createParagraph('You are free to modify code base of the '
                 . 'framework as you like as long as you follow MIT license rules. '
                 . 'You can grab the source code of the framework from '
@@ -53,9 +63,13 @@ class ContributeView extends WebFioriPage{
         $sec->addChild($this->createParagraph('Telling people about the existence of '
                 . 'the framework is another way. Simply, all what you have to do is to '
                 . 'share information about the framework with anyone you like.'));
-        Page::insert($sec);
+        $row->addChild('v-col', [
+            'cols' => 12
+        ])->addChild($sec);
         $sec4 = $this->createSection('Donate');
-        Page::insert($sec4);
+        $row->addChild('v-col', [
+            'cols' => 12
+        ])->addChild($sec4);
         $sec4->addChild($this->createParagraph(''
                 . 'Another way to contribute is to support the development of '
                 . 'the framework through donations. You can do a one-time donation '
@@ -66,7 +80,9 @@ class ContributeView extends WebFioriPage{
         $link->addChild($payPalImg);
         $sec4->addChild($link);
         $sec5 = $this->createSection('Contributers and Sponsers');
-        Page::insert($sec5);
+        $row->addChild('v-col', [
+            'cols' => 12
+        ])->addChild($sec5);
         $sec5->addChild($this->createParagraph('Here you will find a list of all '
                 . 'people who have contributed to the project in any way in addition to '
                 . 'sponsers. Your name '
@@ -89,7 +105,6 @@ class ContributeView extends WebFioriPage{
         $ul2->addListItems(array(
             '&lt;YOUR NAME HERE &gt;'
         ),false);
-        $this->displayView();
     }
 }
 return __NAMESPACE__;
