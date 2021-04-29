@@ -7,12 +7,18 @@
  */
 namespace webfiori\apiParser;
 use webfiori\ui\HTMLNode;
+use webfiori\docs\apiParser\DocsWebPage;
 /**
  * Definition of class attribute
  *
  * @author Ibrahim
  */
 class AttributeDef {
+    /**
+     * 
+     * @var DocsWebPage
+     */
+    private $ownerPage;
     private $name;
     private $type;
     private $shortDescription;
@@ -161,10 +167,20 @@ class AttributeDef {
         $node = new HTMLNode('span');
         $node->text($this->getAccessModofier().' ');
         $node->addChild('a', [
-            'href' => '#'.$this->getName()
+            'href' => $this->getOwnerPage()->getCanonical().'#'.$this->getName()
         ], false)->text($this->getName());
         
         return $node;
+    }
+    public function setOwnerPage(DocsWebPage $p) {
+        $this->ownerPage = $p;
+    }
+    /**
+     * 
+     * @return DocsWebPage|null
+     */
+    public function getOwnerPage() {
+        return $this->ownerPage;
     }
     /**
      * Returns the summary of the attribute.
