@@ -10,12 +10,18 @@ use webfiori\ui\HTMLNode;
 use webfiori\ui\Paragraph;
 use webfiori\ui\UnorderedList;
 use webfiori\apiParser\MethodParameter;
+use webfiori\docs\apiParser\DocsWebPage;
 /**
  * A class that is used to build a GUI blocks for function definition. 
  *
  * @author Ibrahim
  */
 class FunctionDef {
+    /**
+     * 
+     * @var DocsWebPage
+     */
+    private $ownerPage;
     /**
      * The name of the function (e.g. 'getNumber')
      * @var type 
@@ -81,11 +87,21 @@ class FunctionDef {
             $this->setDescription($options['description']);
         }
     }
+    public function setOwnerPage(DocsWebPage $p) {
+        $this->ownerPage = $p;
+    }
+    /**
+     * 
+     * @return DocsWebPage|null
+     */
+    public function getOwnerPage() {
+        return $this->ownerPage;
+    }
     public function getSummarySignatorNode($p) {
         $node = new HTMLNode('span');
         $node->text($this->getAccessModofier().' ');
         $node->addChild('a', [
-            'href' => '#'.$this->getName()
+            'href' => $this->getOwnerPage()->getCanonical(). '#'.$this->getName()
         ], false)->text(str_replace('&', '&amp;', $this->getName()));
         $node->text('(');
         $comma = '';
