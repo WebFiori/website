@@ -80,6 +80,7 @@ class NewFioriAPI extends NewFiori implements APITheme {
     }
 
     public function createAttributeSummaryBlock(AttributeDef $attr): HTMLNode {
+        
         $block = new HTMLNode('v-card', [
             'height' => '85',
             'hover', 'outlined', 
@@ -243,7 +244,7 @@ class NewFioriAPI extends NewFiori implements APITheme {
             foreach ($classesInNs as $className) {
                 $subList->addChild('v-list-item', [
                     'dense',
-                    'href' => $this->getBaseURL().$this->getPage()->getLink($className)->getAttribute('href')
+                    'href' => $this->getPage()->getLink($className)->getAttribute('href')
                 ])
                 ->addChild('v-list-item-title')
                 ->text($className);
@@ -350,6 +351,7 @@ class NewFioriAPI extends NewFiori implements APITheme {
             ])->addChild('h3')->text('Class Attributes Summary');
             $col = $node->addChild('v-col');
             foreach ($classAttrsArr as $attrObj) {
+                $attrObj->setOwnerPage($this->getPage());
                 $col->addChild($this->createAttributeSummaryBlock($attrObj));
             }
             return $node;
@@ -378,6 +380,7 @@ class NewFioriAPI extends NewFiori implements APITheme {
             ])->addChild('h3')->text('Class Methods Summary');
             $col = $node->addChild('v-col');
             foreach ($classMethodsArr as $methObj) {
+                $methObj->setOwnerPage($this->getPage());
                 $col->addChild($this->createMethodSummaryBlock($methObj));
             }
             return $node;
