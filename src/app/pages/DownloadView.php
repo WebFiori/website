@@ -23,7 +23,7 @@ class DownloadView extends WebFioriPage{
     private function _stableDownloads() {
         $sec = $this->createSection('Latest Stable Release',3);
         $sec->addChild($this->createParagraph('The latest release of the framework is version '
-                . '1.0.9. You can click <a href="downloads/webfiori-v1.0.9-stable">here</a> in order to start the '
+                . '2.1.0. You can click <a href="https://github.com/WebFiori/framework/releases/download/v2.1.0/webfiori-v2.1.0.zip">here</a> in order to start the '
                 . 'download process.'));
         $row = $this->insert('v-row');
         $row->addChild('v-col', [
@@ -39,6 +39,7 @@ class DownloadView extends WebFioriPage{
                 . 'not good option for production and might have bugs.'));
         $ul = new UnorderedList();
         $ul->addListItems(array(
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.0.0/webfiori-v2.0.0.zip">WebFiori v2.0.0 Stable</a>',
             '<a href="https://github.com/WebFiori/framework/releases/download/v2.0.0-beta.3/webfiori-v2.0.0-beta.3.zip">WebFiori v2.0.0 beta.3</a>',
             '<a href="https://github.com/WebFiori/framework/releases/download/v2.0.0-beta.2/webfiori-v2.0.0-beta.2.zip">WebFiori v2.0.0 beta.2</a>',
             '<a href="https://github.com/WebFiori/framework/releases/download/v2.0.0-beta.1/webfiori-v2.0.0-beta.1.zip">WebFiori v2.0.0 beta.1</a>',
