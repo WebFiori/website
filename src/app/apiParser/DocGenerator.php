@@ -1,5 +1,6 @@
 <?php
 namespace webfiori\apiParser;
+
 use webfiori\apiParser\APITheme;
 use webfiori\apiParser\ClassAPI;
 use webfiori\framework\Util;
@@ -572,11 +573,11 @@ class DocGenerator {
                 $this->routerLinks[str_replace('\\', '/', $nsName).'/'.$cName] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/'.$cName;
                 $this->routerLinks[str_replace('\\', '/', $nsName)] = '/'.$this->routRootFolder.str_replace('\\', '/', $packageLink2).'/NSIndex';
             }
-            $classLink = str_replace('\\', '/', $classLink);
+            $classLink = trim($this->getBaseURL(),'/').'/'.trim(str_replace('\\', '/', $classLink), '/');
             $this->linksArr[$cName] = new Anchor($classLink, $cName);
             $this->classesLinksByNS[$nsName][] = [
                 'label'=>$cName,
-                'link'=>$classLink,
+                'link'=> $classLink,
                 'description' => $apiReader->getClassSummary()
             ];
             $nsClasses[$nsName][] = new ClassAPI($apiReader);
