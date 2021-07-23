@@ -1,5 +1,5 @@
 {
-    "name": "webfiori/framework",
+    "name": "webfiori/website",
     "description": "WebFiori framework website source code.",
     "authors": [
         {
@@ -8,12 +8,7 @@
         }
     ],
     "require": {
-        "php": ">=5.6",
-        "webfiori/collections":"1.0.1",
-        "webfiori/ui":"2.0.3",
-        "webfiori/jsonx":"2.0.1",
-        "webfiori/http":"3.0.1",
-        "webfiori/database":"0.2.2",
+        "webfiori/framework":"dev-master",
         "erusev/parsedown":"*"
     },
     "keywords": [
