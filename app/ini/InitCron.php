@@ -22,9 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace webfiori\ini;
 
-use webfiori\framework\cron\Cron;
+namespace app\ini;
 
 /**
  * A class that has one method to initialize cron jobs.
