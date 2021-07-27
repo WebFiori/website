@@ -22,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace webfiori\framework\router;
 
 use webfiori\http\Response;
 use webfiori\framework\Util;
@@ -33,6 +32,9 @@ use webfiori\framework\Util;
  * @author Ibrahim
  * @version 1.0
  */
+namespace app\ini\routes;
+
+use webfiori\framework\router\Router;
 class ClosureRoutes {
     /**
      * Create all closure routes. Include your own here.
