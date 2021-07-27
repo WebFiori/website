@@ -22,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace webfiori\ini;
 
 use webfiori\framework\AutoLoader;
 /**
@@ -31,6 +30,8 @@ use webfiori\framework\AutoLoader;
  * @author Ibrahim
  * @version 1.0
  */
+namespace app\ini;
+
 class InitAutoLoad {
     /**
      * Add user-defined directories to the set of directories at which the framework 
