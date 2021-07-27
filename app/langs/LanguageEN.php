@@ -22,8 +22,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace webfiori\framework\i18n;
-
+namespace app\langs;
+use webfiori\framework\i18n\Language;
 /**
  * A class that contain some of the common language labels in Arabic.
  * So far, the class has the following variables:
