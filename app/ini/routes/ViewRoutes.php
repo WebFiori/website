@@ -22,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace webfiori\framework\router;
 use webfiori\examples\views\MdPage;
 /**
  * A class that only has one method to initiate some of system routes.
@@ -31,6 +30,9 @@ use webfiori\examples\views\MdPage;
  * @author Ibrahim
  * @version 1.0
  */
+namespace app\ini\routes;
+
+use webfiori\framework\router\Router;
 class ViewRoutes {
     /**
      * Create all views routes. Include your own here.
