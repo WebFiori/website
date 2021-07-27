@@ -22,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace webfiori\framework\router;
 
 /**
  * A class that only has one method to initiate some of system routes.
@@ -31,6 +30,10 @@ namespace webfiori\framework\router;
  * @author Ibrahim
  * @version 1.0
  */
+namespace app\ini\routes;
+
+use webfiori\framework\router\Router;
+
 class APIRoutes {
     /**
      * Create all API routes. Include your own here.
