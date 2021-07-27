@@ -22,6 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+namespace app\ini\routes;
+
+use webfiori\framework\router\Router;
 use webfiori\examples\views\MdPage;
 /**
  * A class that only has one method to initiate some of system routes.
@@ -30,9 +33,7 @@ use webfiori\examples\views\MdPage;
  * @author Ibrahim
  * @version 1.0
  */
-namespace app\ini\routes;
 
-use webfiori\framework\router\Router;
 class ViewRoutes {
     /**
      * Create all views routes. Include your own here.
@@ -40,20 +41,16 @@ class ViewRoutes {
      */
     public static function create(){
         Router::view([
-            'path'=>'/learn/video',
-            'route-to'=>'/video-tutorials/IndexView.php'
+            'path'=> '/', 
+            'route-to' => \webfiori\views\WebFioriHome::class
         ]);
         Router::view([
-            'path'=>'/', 
-            'route-to'=>'/WebFioriHome.php'
+            'path' => '/download', 
+            'route-to' => \webfiori\views\DownloadView::class
         ]);
         Router::view([
-            'path'=>'/download', 
-            'route-to'=>'/DownloadView.php'
-        ]);
-        Router::view([
-            'path'=>'/webfiori', 
-            'route-to'=>'/WebFioriHome.php'
+            'path' => '/webfiori', 
+            'route-to' => \webfiori\views\WebFioriHome::class
         ]);
         Router::closure([
             'path'=>'/learn', 
@@ -70,8 +67,8 @@ class ViewRoutes {
             }
         ]);
         Router::view([
-            'path'=>'/contribute', 
-            'route-to'=>'/ContributeView.php'
+            'path' => '/contribute', 
+            'route-to' => \webfiori\views\ContributeView::class
         ]);
 
         if(class_exists('\docGenerator\DocGeneratorRoutes')){
