@@ -22,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace webfiori\ini;
 
 use webfiori\framework\Access;
 /**
@@ -31,6 +30,8 @@ use webfiori\framework\Access;
  * @author Ibrahim
  * @version 1.0
  */
+namespace app\ini;
+
 class InitPrivileges {
     /**
      * Initialize user groups and privileges.
