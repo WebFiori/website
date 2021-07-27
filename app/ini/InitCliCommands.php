@@ -22,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-namespace webfiori\ini;
 
 use webfiori\framework\cli\CLI;
 /**
@@ -31,6 +30,8 @@ use webfiori\framework\cli\CLI;
  *
  * @author Ibrahim
  */
+namespace app\ini;
+
 class InitCliCommands {
     /**
      * Register user defined CLI commands.
