@@ -98,6 +98,9 @@ class ClassAPI {
         'inc-protected-funcs'=>true,
         'base-url'=>''
     )) {
+        if ($classAPIReader->getClassName() == 'CLASS_NAME') {
+            throw new \Exception('File '.$classAPIReader->getFilePath().' has no class.');
+        }
         $this->classMethods = [];
         $this->implements = [];
         $this->classAttributes = [];
