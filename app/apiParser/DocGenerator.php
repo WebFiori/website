@@ -205,7 +205,12 @@ class DocGenerator {
                 $theme->setBaseURL($this->getBaseURL());
                 $page->setWebsiteName($siteName);
                 
-                $classAPI = new ClassAPI($reader,$this->getLinks(),$options);
+                try {
+                    $classAPI = new ClassAPI($reader,$this->getLinks(),$options);
+                } catch (\Exception $ex) {
+                    DocGenerator::logMessage($ex->getMessage(),'e');
+                    continue;
+                }
                 
                 $classAPI->setBaseURL($base);
                 $theme->setClass($classAPI);
@@ -233,7 +238,7 @@ class DocGenerator {
     private function _readAndrocessFiles() {
         foreach ($this->getFiles() as $classPath){
             $reader = new APIReader($classPath);
-            if (count($reader->getParsedInfo()['class-def'])) {
+            if ($reader->getClassName() != 'CLASS_NAME') {
                 $this->apiReadersArr[] = $reader;
             } else {
                 self::logMessage('The file "'.$classPath.'" is not a PHP class.');
@@ -364,6 +369,14 @@ class DocGenerator {
     public function getRouterLinks() {
         return $this->routerLinks;
     }
+    /**
+     * Logs and shows a message to the user.
+     * 
+     * @param string $message The message to show and log.
+     * 
+     * @param string $type Message type. Can be 'i' for info or 'e' for 
+     * error.
+     */
     public static function logMessage($message,$type='i') {
         Logger::log($message);
         if(CLI::isCLI()){
@@ -580,12 +593,16 @@ class DocGenerator {
                 'link'=> $classLink,
                 'description' => $apiReader->getClassSummary()
             ];
-            $nsClasses[$nsName][] = new ClassAPI($apiReader);
-            foreach ($apiReader->getConstantsNames() as $name){
-                $this->linksArr[$cName.'::'.$name] = new Anchor($classLink.'#'.$name, $cName.'::'.$name);
-            }
-            foreach ($apiReader->getMethodsNames() as $name){
-                $this->linksArr[$cName.'::'.$name.'()'] = new Anchor($classLink.'#'.$name, $cName.'::'.$name.'()');
+            try {
+                $nsClasses[$nsName][] = new ClassAPI($apiReader);
+                foreach ($apiReader->getConstantsNames() as $name){
+                    $this->linksArr[$cName.'::'.$name] = new Anchor($classLink.'#'.$name, $cName.'::'.$name);
+                }
+                foreach ($apiReader->getMethodsNames() as $name){
+                    $this->linksArr[$cName.'::'.$name.'()'] = new Anchor($classLink.'#'.$name, $cName.'::'.$name.'()');
+                }
+            } catch (\Exception $ex) {
+                DocGenerator::logMessage($ex->getMessage(), 'e');
             }
         }
         $namespacesNames = array_keys($nsClasses);
