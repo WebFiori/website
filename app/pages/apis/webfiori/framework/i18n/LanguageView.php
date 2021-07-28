@@ -16,7 +16,7 @@ class LanguageView extends P {
         $this->setDescription('A class that is can be used to make the application ready for   Internationalization (i18n).');
         $this->setWebsiteName('WebFiori API Docs');
         $this->setTitle('class Language');
-        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'Language', '\webfiori\framework\i18n', 'A class that is can be used to make the application ready for   Internationalization (i18n). In order to create a language file, the developer must extend this class.   The language class must be added to the namespace \'webfiori/framework/i18n\' and the name   of language file must be \'LanguageXX.php\' where \'XX\' are two characters that   represents language code. The directory at which the language file must exist in   is not important but it is recommended to add them to the folder \'app/langs\'   of the framework.'));
+        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'Language', '\webfiori\framework\i18n', 'A class that is can be used to make the application ready for   Internationalization (i18n). In order to create a language file, the developer must extend this class.   The language class must be added to the namespace \'app/langs\' and the name   of language file must be \'LanguageXX.php\' where \'XX\' are two characters that   represents language code. The directory at which the language file must exist in   is not important but it is recommended to add them to the folder \'app/langs\'   of the framework.'));
         $classAttrsArr = [
             new AttributeDef(
             'const',
@@ -245,7 +245,7 @@ class LanguageView extends P {
                 'name' => 'set',
                 'access-modifier' => 'public function',
                 'summary' => 'Sets or updates a language variable.',
-                'description' => 'Sets or updates a language variable. ',
+                'description' => 'Sets or updates a language variable. Note that the variable will be set only if the directory does exist.',
                 'params' => [
                     '$dir' => [
                         'type' => 'string',
@@ -264,9 +264,8 @@ class LanguageView extends P {
                     ],
                 ],
                 'returns' => [
-                    'description' => 'The function will return <b>true</b> if the variable is set.       Other than that, the function will return <b>false</b>.',
+                    'description' => '',
                     'return-types' => [
-                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
                     ]
                 ]
 

@@ -13,14 +13,6 @@ class NSIndexView extends P {
             "access-modifier" => "class",
             "summary" => "A class that is can be used to make the application ready for   Internationalization (i18n)."
         ],
-        "LanguageAR" => [
-            "access-modifier" => "class",
-            "summary" => "A class that contain some of the common language labels in Arabic."
-        ],
-        "LanguageEN" => [
-            "access-modifier" => "class",
-            "summary" => "A class that contain some of the common language labels in Arabic."
-        ],
         ], [
         ]);
         $this->setNSObj($nsObj);

@@ -96,7 +96,7 @@ class RequestView extends P {
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'Request method such as POST, GET, etc.... Default return       value is \'GET\'.',
+                    'description' => 'Request method such as POST, GET, etc.... Default return       value is \'GET\'. The default is usually returned in case the call to       this method was performed in CLI environment. To change request method       in CLI environment to something like \'POST\' for testing, use the       function putenv(\'REQUEST_METHOD=POST\').',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
@@ -107,7 +107,7 @@ class RequestView extends P {
                 'name' => 'getParam',
                 'access-modifier' => 'public static function',
                 'summary' => 'Returns the value of a GET or POST parameter.',
-                'description' => 'Returns the value of a GET or POST parameter. This method will apply basic filtering to the value of the parameter before returning       it.',
+                'description' => 'Returns the value of a GET or POST parameter. This method will apply basic filtering to the value of the parameter before returning       it. The developer may need to apply extra filtering to make sure that the       value of the parameter is safe to use.',
                 'params' => [
                     '$paramName' => [
                         'type' => 'string',
@@ -116,7 +116,7 @@ class RequestView extends P {
                     ],
                 ],
                 'returns' => [
-                    'description' => 'The method will return the value of the parameter if       set. Other than that, the method will return null.',
+                    'description' => 'The method will return the value of the parameter if       set as a string. Other than that, the method will return null.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                         new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),

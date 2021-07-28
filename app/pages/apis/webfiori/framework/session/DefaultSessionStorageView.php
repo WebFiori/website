@@ -49,6 +49,21 @@ class DefaultSessionStorageView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'isStorageDirExist',
+                'access-modifier' => 'public function',
+                'summary' => 'Checks if sessions storage location is exist and writable.',
+                'description' => 'Checks if sessions storage location is exist and writable. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'If sessions storage location exist and is writable,       the method will return true.',
+                    'return-types' => [
+                        'bolean',
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'read',
                 'access-modifier' => 'public function',
                 'summary' => 'Reads a session from session file.',

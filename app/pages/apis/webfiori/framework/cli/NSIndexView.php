@@ -17,6 +17,10 @@ class NSIndexView extends P {
             "access-modifier" => "abstract class",
             "summary" => "An abstract class that can be used to create new CLI command."
         ],
+        "CreateCLIClassHelper" => [
+            "access-modifier" => "class",
+            "summary" => "A helper class which is used to help in creating cron jobs classes using CLI."
+        ],
         "CreateCommand" => [
             "access-modifier" => "class",
             "summary" => "A command which is used to automate some of the common tasks such as   creating table classes or controllers."
@@ -61,6 +65,10 @@ class NSIndexView extends P {
             "access-modifier" => "class",
             "summary" => "A CLI command which is used to list all registered themes."
         ],
+        "RunSQLQueryCommand" => [
+            "access-modifier" => "class",
+            "summary" => "A command which can be used to execute SQL queries on   specific database."
+        ],
         "SettingsCommand" => [
             "access-modifier" => "class",
             "summary" => "A CLI command which is used to show framework configuration."
@@ -96,6 +104,10 @@ class NSIndexView extends P {
         "ServiceHolder" => [
             "access-modifier" => "class",
             "summary" => "A class which is used to hold CLI created services temporary."
+        ],
+        "ThemeClassWriter" => [
+            "access-modifier" => "class",
+            "summary" => "Description of ThemeClassWriter"
         ],
         "WebServiceWriter" => [
             "access-modifier" => "class",

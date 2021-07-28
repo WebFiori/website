@@ -1100,6 +1100,21 @@ class HTMLNodeView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'isQuotedAttribute',
+                'access-modifier' => 'public function',
+                'summary' => 'Checks if the node will rendere all attributes quoted or not.',
+                'description' => 'Checks if the node will rendere all attributes quoted or not. This method is used to make sure that all attributes are quotated when      rendering the node. If false is returned, then the quoted attributes       will be decided based on the value of the attribute.',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'The method will return true if all attributes will be       quoted. False if not.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'isTextNode',
                 'access-modifier' => 'public function',
                 'summary' => 'Checks if the node is a text node or not.',
@@ -1576,6 +1591,25 @@ class HTMLNodeView extends P {
                     '$bool' => [
                         'type' => 'boolean',
                         'description' => 'true to make the document that will be generated       from the node user-readable. false to make it compact.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setIsQuotedAttribute',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the value of the property which is used to tell if all node attributes       will be quoted or not.',
+                'description' => 'Sets the value of the property which is used to tell if all node attributes       will be quoted or not. Note that this method is only applicable if the element that the method       is called on has no parent (root node).',
+                'params' => [
+                    '$bool' => [
+                        'type' => 'boolean',
+                        'description' => 'True to make the node render quoted attributes.       False to not.',
                         'optional' => false,
                     ],
                 ],

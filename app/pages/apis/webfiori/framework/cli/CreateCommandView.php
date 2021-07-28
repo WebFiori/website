@@ -73,11 +73,6 @@ class CreateCommandView extends P {
                         'description' => '',
                         'optional' => true,
                     ],
-                    ' $defaultLoc ' => [
-                        'type' => 'unkown_type',
-                        'description' => '',
-                        'optional' => true,
-                    ],
                 ],
                 'returns' => [
                     'description' => 'The method will return an array that contains 3 indices:       <ul>      <li><b>name</b>: The name of the class.</li>      <li><b>namespace</b>: The namespace of the class. It will be empty string if no       namespace is entered.</li>      <li><b>path</b>: The location at which the class will be created.</li>      </ul>',

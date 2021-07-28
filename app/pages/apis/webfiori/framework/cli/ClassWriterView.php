@@ -64,6 +64,21 @@ class ClassWriterView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getAbsolutePath',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns the absolute path of the class that will be created.',
+                'description' => 'Returns the absolute path of the class that will be created. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'The absolute path of the file that holds class information.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getName',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns the name of the class that will be created.',

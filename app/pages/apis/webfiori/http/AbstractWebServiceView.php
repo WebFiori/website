@@ -159,7 +159,7 @@ class AbstractWebServiceView extends P {
                     ],
                 ],
                 'returns' => [
-                    'description' => 'If the parameter is found and its value is set, the       method will return its value. Other than that, the method will return null.',
+                    'description' => 'If the parameter is found and its value is set, the       method will return its value. Other than that, the method will return null.       For optional parameters, if a default value is set for it, the method will      return that value.',
                     'return-types' => [
                         'mixed',
                         new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),

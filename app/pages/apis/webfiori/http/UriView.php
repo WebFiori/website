@@ -40,6 +40,25 @@ class UriView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'addRequestMethod',
+                'access-modifier' => 'public function',
+                'summary' => 'Adds a request method to the allowed set of methods at which the URI can       be called with.',
+                'description' => 'Adds a request method to the allowed set of methods at which the URI can       be called with. ',
+                'params' => [
+                    '$method' => [
+                        'type' => 'string',
+                        'description' => 'A string such as \'GET\' or \'POST\'. Note that the       value must exist in the array Request::METHODS or it will be not added.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'addVarValue',
                 'access-modifier' => 'public function',
                 'summary' => 'Adds a possible value for a URI variable.',
@@ -258,6 +277,21 @@ class UriView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getRequestMethods',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns an array that holds all allowed request methods at which the       URI can be called with.',
+                'description' => 'Returns an array that holds all allowed request methods at which the       URI can be called with. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'An array that holds strings such as \'GET\' or \'POST\'.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getScheme',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns the scheme part of the URI.',
@@ -419,6 +453,21 @@ class UriView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'isRequestMethodAllowed',
+                'access-modifier' => 'public function',
+                'summary' => 'Checks if URI is fetched using allowed request method or not.',
+                'description' => 'Checks if URI is fetched using allowed request method or not. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'The method will return true in two cases, if the array       that holds allowed request methods is empty or request method is exist       in the allowed request methods. Other than that, the method will return       false.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'setIsCaseSensitive',
                 'access-modifier' => 'public function',
                 'summary' => 'Make the URI case sensitive or not.',
@@ -427,6 +476,25 @@ class UriView extends P {
                     '$caseSensitive' => [
                         'type' => 'boolean',
                         'description' => 'True to make it case sensitive. False to       not.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setRequestMethods',
+                'access-modifier' => 'public function',
+                'summary' => 'Adds a set of request methods to the allowed methods at which the URI      can be called with.',
+                'description' => 'Adds a set of request methods to the allowed methods at which the URI      can be called with. ',
+                'params' => [
+                    '$methods' => [
+                        'type' => 'array',
+                        'description' => 'An array that holds strings such as \'GET\' or \'POST\'.',
                         'optional' => false,
                     ],
                 ],

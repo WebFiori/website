@@ -776,8 +776,9 @@ class AbstractQueryView extends P {
                     ],
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'The method will return the same instance at which       the method is called on.',
                     'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/database/AbstractQuery', 'AbstractQuery'),
                     ]
                 ]
 
@@ -800,8 +801,9 @@ class AbstractQueryView extends P {
                     ],
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'The method will return the same instance at which       the method is called on.',
                     'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/database/AbstractQuery', 'AbstractQuery'),
                     ]
                 ]
 
@@ -824,8 +826,9 @@ class AbstractQueryView extends P {
                     ],
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'The method will return the same instance at which       the method is called on.',
                     'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/database/AbstractQuery', 'AbstractQuery'),
                     ]
                 ]
 
@@ -848,8 +851,9 @@ class AbstractQueryView extends P {
                     ],
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'The method will return the same instance at which       the method is called on.',
                     'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/database/AbstractQuery', 'AbstractQuery'),
                     ]
                 ]
 

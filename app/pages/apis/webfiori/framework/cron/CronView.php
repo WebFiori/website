@@ -223,6 +223,20 @@ class CronView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'initRoutes',
+                'access-modifier' => 'public static function',
+                'summary' => 'Creates routes to cron web interface pages.',
+                'description' => 'Creates routes to cron web interface pages. This method is used to initialize the following routes:      <ul>      <li>/cron</li>      <li>/cron/login</li>      <li>/cron/apis/{action}</li>      <li>/cron/jobs</li>      <li>/cron/jobs/{job-name}</li>      </ul>',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'jobsQueue',
                 'access-modifier' => 'public static function',
                 'summary' => 'Returns a queue of all queued jobs.',

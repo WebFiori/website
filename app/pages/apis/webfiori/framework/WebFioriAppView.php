@@ -20,7 +20,6 @@ class WebFioriAppView extends P {
         $classAttrsArr = [
         ];
         $classMethodsArr = [
-            
             new FunctionDef([
                 'name' => 'autoRegister',
                 'access-modifier' => 'public static function',
@@ -29,7 +28,7 @@ class WebFioriAppView extends P {
                 'params' => [
                     '$folder' => [
                         'type' => 'string',
-                        'description' => 'The name of the folder that contains the jobs or       commands. It must be a folder inside \'app\' folder.',
+                        'description' => 'The name of the folder that contains the jobs or       commands. It must be a folder inside \'app\' folder or the folder which is defined       by the constant \'APP_DIR_NAME\'.',
                         'optional' => false,
                     ],
                     '$regCallback' => [
@@ -55,7 +54,7 @@ class WebFioriAppView extends P {
                 'returns' => [
                     'description' => '',
                     'return-types' => [
-                        'AppConfig
+                        'Config
 ',
                     ]
                 ]
@@ -113,7 +112,7 @@ class WebFioriAppView extends P {
                 'description' => 'Sets the configuration object that will be used to configure some of the       framework settings. ',
                 'params' => [
                     '$conf' => [
-                        'type' => 'AppConfig',
+                        'type' => 'Config',
                         'description' => '',
                         'optional' => false,
                     ],

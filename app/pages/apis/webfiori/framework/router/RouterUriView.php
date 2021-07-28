@@ -93,6 +93,22 @@ class RouterUriView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getAction',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns the name of the action that will be called in the controller.',
+                'description' => 'Returns the name of the action that will be called in the controller. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'The name of the controller method.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
+                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getClassName',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns class name based on the file which the route will point to.',
@@ -266,6 +282,25 @@ class RouterUriView extends P {
                 'summary' => 'Print the details of the generated URI.',
                 'description' => 'Print the details of the generated URI. This method will use the method \'Util::print_r()\' to print the array       that contains URI details.',
                 'params' => [
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setAction',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the name of the action that will be called in the controller.',
+                'description' => 'Sets the name of the action that will be called in the controller. ',
+                'params' => [
+                    '$action' => [
+                        'type' => 'string',
+                        'description' => 'The name of the controller method.',
+                        'optional' => false,
+                    ],
                 ],
                 'returns' => [
                     'description' => '',

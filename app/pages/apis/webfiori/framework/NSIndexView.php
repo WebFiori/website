@@ -77,6 +77,10 @@ class NSIndexView extends P {
             "access-modifier" => "class",
             "summary" => "The instance of this class is used to control basic settings of   the framework."
         ],
+        "Config" => [
+            "access-modifier" => "interface",
+            "summary" => "An interface which holds basic methods that any application configuration   class must have."
+        ],
         ], [
             'webfiori\framework\i18n',
             'webfiori\framework\ui',

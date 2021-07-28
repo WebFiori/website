@@ -49,30 +49,9 @@ class ConfigControllerView extends P {
             new AttributeDef(
             'const',
             '',
-            'MAIL_CONFIG_MISSING',
-            'A constant that indicates the file MailConfig.',
-            'A constant that indicates the file MailConfig. php was not found.',
-            ),
-            new AttributeDef(
-            'const',
-            '',
             'NL',
             '',
             ' ',
-            ),
-            new AttributeDef(
-            'const',
-            '',
-            'SITE_CONFIG_MISSING',
-            'A constant that indicates the file SiteConfig.',
-            'A constant that indicates the file SiteConfig. php was not found.',
-            ),
-            new AttributeDef(
-            'const',
-            '',
-            'SYS_CONFIG_MISSING',
-            'A constant that indicates the file Config.',
-            'A constant that indicates the file Config. php was not found.',
             ),
         ];
         $classMethodsArr = [
@@ -101,6 +80,63 @@ class ConfigControllerView extends P {
                 'summary' => '',
                 'description' => ' ',
                 'params' => [
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'createConstClass',
+                'access-modifier' => 'public function',
+                'summary' => 'Creates the class \'GlobalConstants\'.',
+                'description' => 'Creates the class \'GlobalConstants\'. By default, the class will be created inside the folder \'app/ini\'.',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'createIniClass',
+                'access-modifier' => 'public function',
+                'summary' => 'Creates initialization class.',
+                'description' => 'Creates initialization class. Note that if routes class already exist, this method will override       existing file.',
+                'params' => [
+                    '$className' => [
+                        'type' => 'string',
+                        'description' => 'The name of the class.',
+                        'optional' => false,
+                    ],
+                    '$comment' => [
+                        'type' => 'string',
+                        'description' => 'A PHPDoc comment for class method.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'createRoutesClass',
+                'access-modifier' => 'public function',
+                'summary' => 'Creates a file that holds class information which is used to create       routes.',
+                'description' => 'Creates a file that holds class information which is used to create       routes. Note that if routes class already exist, this method will override       existing file.',
+                'params' => [
+                    '$className' => [
+                        'type' => 'string',
+                        'description' => 'The name of the class.',
+                        'optional' => false,
+                    ],
                 ],
                 'returns' => [
                     'description' => '',

@@ -76,7 +76,7 @@ class JsonView extends P {
                     ],
                     '$isFormatted' => [
                         'type' => 'boolean',
-                        'description' => 'If this attribute is set to true, the generated       JSON will be indented and have new lines (readable). Note that the parameter       will be ignored if the constant \'VERBOSE\' is defined and is set to true.',
+                        'description' => 'If this attribute is set to true, the generated       JSON will be indented and have new lines (readable). Note that the parameter       will be ignored if the constant \'WF_VERBOSE\' is defined and is set to true.',
                         'optional' => false,
                     ],
                 ],

@@ -17,22 +17,6 @@ class NSIndexView extends P {
             "access-modifier" => "class",
             "summary" => "A class that is used to split URIs and get their parameters."
         ],
-        "APIRoutes" => [
-            "access-modifier" => "class",
-            "summary" => "A class that only has one method to initiate some of system routes."
-        ],
-        "ClosureRoutes" => [
-            "access-modifier" => "class",
-            "summary" => "A class that only has one method to initiate some of system routes."
-        ],
-        "OtherRoutes" => [
-            "access-modifier" => "class",
-            "summary" => "A class that only has one method to initiate some of system routes."
-        ],
-        "ViewRoutes" => [
-            "access-modifier" => "class",
-            "summary" => "A class that only has one method to initiate some of system routes."
-        ],
         ], [
         ]);
         $this->setNSObj($nsObj);
