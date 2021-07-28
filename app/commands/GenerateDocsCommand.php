@@ -17,6 +17,8 @@ class GenerateDocsCommand extends CLICommand{
             'exclude-path'=>array(
                 'C:\Server\apache2\htdocs\website\app',
                 'C:\Server\apache2\htdocs\website\themes',
+                'C:\Server\apache2\htdocs\website\vendor\erusev',
+                'C:\Server\apache2\htdocs\website\vendor\composer',
             ),
             'base-url'=> 'https://webfiori.com/docs',
             'theme'=> NewFioriAPI::class,
