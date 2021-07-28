@@ -59,6 +59,9 @@ class APIReader {
             'namespace'
         )
     );
+    public function getFilePath() {
+        return $this->getParsedInfo()['class-def']['file-path'];
+    }
     /**
      * Returns the type of a statement (e.g. function, constant or class declaration).
      * @param string $stm The statement that will be checked.
@@ -107,9 +110,10 @@ class APIReader {
                 'class-attributes'=>array()
             ),
             'functions'=>array(),
-            'class-def'=>array()
+            'class-def'=>array(
+                'file-path' => $pathToClassFile
+            )
         );
-        $insideClass = FALSE;
         if(file_exists($pathToClassFile)){
             $h = fopen($pathToClassFile, 'r');
             if(is_resource($h)){
