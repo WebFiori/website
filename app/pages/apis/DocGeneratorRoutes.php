@@ -3,15 +3,10 @@ namespace docGenerator;
 use webfiori\framework\router\Router;
 class DocGeneratorRoutes{
     public static function createRoutes(){
-        Router::view([
-            'path' => 'docs/webfiori/Index',
-            'route-to' => '/apis/webfiori/IndexView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
+        Router::redirect('docs', 'docs/webfiori');
+        Router::page([
             'path' => 'docs/webfiori',
-            'route-to' => '/apis/webfiori/NSIndexView.php',
-            'in-sitemap' => true
+            'route-to' => webfiori\NSIndexView::class
         ]);
         Router::view([
             'path' => 'docs/webfiori/ui/Anchor',
@@ -194,146 +189,6 @@ class DocGeneratorRoutes{
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/database/AbstractQuery',
-            'route-to' => '/apis/webfiori/database/AbstractQueryView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database',
-            'route-to' => '/apis/webfiori/database/NSIndexView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/Column',
-            'route-to' => '/apis/webfiori/database/ColumnView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/Condition',
-            'route-to' => '/apis/webfiori/database/ConditionView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/Connection',
-            'route-to' => '/apis/webfiori/database/ConnectionView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/ConnectionInfo',
-            'route-to' => '/apis/webfiori/database/ConnectionInfoView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/Database',
-            'route-to' => '/apis/webfiori/database/DatabaseView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/DatabaseException',
-            'route-to' => '/apis/webfiori/database/DatabaseExceptionView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/EntityMapper',
-            'route-to' => '/apis/webfiori/database/EntityMapperView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/Expression',
-            'route-to' => '/apis/webfiori/database/ExpressionView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/ForeignKey',
-            'route-to' => '/apis/webfiori/database/ForeignKeyView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/JoinTable',
-            'route-to' => '/apis/webfiori/database/JoinTableView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/ResultSet',
-            'route-to' => '/apis/webfiori/database/ResultSetView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/SelectExpression',
-            'route-to' => '/apis/webfiori/database/SelectExpressionView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/Table',
-            'route-to' => '/apis/webfiori/database/TableView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/WhereExpression',
-            'route-to' => '/apis/webfiori/database/WhereExpressionView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/mysql/MySQLColumn',
-            'route-to' => '/apis/webfiori/database/mysql/MySQLColumnView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/mysql',
-            'route-to' => '/apis/webfiori/database/mysql/NSIndexView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/mysql/MySQLConnection',
-            'route-to' => '/apis/webfiori/database/mysql/MySQLConnectionView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/mysql/MySQLQuery',
-            'route-to' => '/apis/webfiori/database/mysql/MySQLQueryView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/database/mysql/MySQLTable',
-            'route-to' => '/apis/webfiori/database/mysql/MySQLTableView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/collections/AbstractCollection',
-            'route-to' => '/apis/webfiori/collections/AbstractCollectionView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/collections',
-            'route-to' => '/apis/webfiori/collections/NSIndexView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/collections/Comparable',
-            'route-to' => '/apis/webfiori/collections/ComparableView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/collections/LinkedList',
-            'route-to' => '/apis/webfiori/collections/LinkedListView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/collections/Node',
-            'route-to' => '/apis/webfiori/collections/NodeView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/collections/Queue',
-            'route-to' => '/apis/webfiori/collections/QueueView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
-            'path' => 'docs/webfiori/collections/Stack',
-            'route-to' => '/apis/webfiori/collections/StackView.php',
-            'in-sitemap' => true
-        ]);
-        Router::view([
             'path' => 'docs/webfiori/framework/Access',
             'route-to' => '/apis/webfiori/framework/AccessView.php',
             'in-sitemap' => true
@@ -346,6 +201,11 @@ class DocGeneratorRoutes{
         Router::view([
             'path' => 'docs/webfiori/framework/AutoLoader',
             'route-to' => '/apis/webfiori/framework/AutoLoaderView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/Config',
+            'route-to' => '/apis/webfiori/framework/ConfigView.php',
             'in-sitemap' => true
         ]);
         Router::view([
@@ -444,13 +304,13 @@ class DocGeneratorRoutes{
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/ui/MessageBox',
-            'route-to' => '/apis/webfiori/framework/ui/MessageBoxView.php',
+            'path' => 'docs/webfiori/framework/ui/HTTPCodeView',
+            'route-to' => '/apis/webfiori/framework/ui/HTTPCodeViewView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/ui/NotFoundView',
-            'route-to' => '/apis/webfiori/framework/ui/NotFoundViewView.php',
+            'path' => 'docs/webfiori/framework/ui/MessageBox',
+            'route-to' => '/apis/webfiori/framework/ui/MessageBoxView.php',
             'in-sitemap' => true
         ]);
         Router::view([
@@ -461,6 +321,11 @@ class DocGeneratorRoutes{
         Router::view([
             'path' => 'docs/webfiori/framework/ui/ServiceUnavailableView',
             'route-to' => '/apis/webfiori/framework/ui/ServiceUnavailableViewView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/ui/StarterPage',
+            'route-to' => '/apis/webfiori/framework/ui/StarterPageView.php',
             'in-sitemap' => true
         ]);
         Router::view([
@@ -699,6 +564,11 @@ class DocGeneratorRoutes{
             'in-sitemap' => true
         ]);
         Router::view([
+            'path' => 'docs/webfiori/framework/cli/CreateCLIClassHelper',
+            'route-to' => '/apis/webfiori/framework/cli/CreateCLIClassHelperView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
             'path' => 'docs/webfiori/framework/cli/CreateCommand',
             'route-to' => '/apis/webfiori/framework/cli/CreateCommandView.php',
             'in-sitemap' => true
@@ -754,6 +624,11 @@ class DocGeneratorRoutes{
             'in-sitemap' => true
         ]);
         Router::view([
+            'path' => 'docs/webfiori/framework/cli/RunSQLQueryCommand',
+            'route-to' => '/apis/webfiori/framework/cli/RunSQLQueryCommandView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
             'path' => 'docs/webfiori/framework/cli/SettingsCommand',
             'route-to' => '/apis/webfiori/framework/cli/SettingsCommandView.php',
             'in-sitemap' => true
@@ -799,148 +674,153 @@ class DocGeneratorRoutes{
             'in-sitemap' => true
         ]);
         Router::view([
+            'path' => 'docs/webfiori/framework/cli/ThemeClassWriter',
+            'route-to' => '/apis/webfiori/framework/cli/ThemeClassWriterView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
             'path' => 'docs/webfiori/framework/cli/WebServiceWriter',
             'route-to' => '/apis/webfiori/framework/cli/WebServiceWriterView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/app/AppConfig',
-            'route-to' => '/apis/app/AppConfigView.php',
+            'path' => 'docs/webfiori/database/AbstractQuery',
+            'route-to' => '/apis/webfiori/database/AbstractQueryView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/app',
-            'route-to' => '/apis/app/NSIndexView.php',
+            'path' => 'docs/webfiori/database',
+            'route-to' => '/apis/webfiori/database/NSIndexView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/router/APIRoutes',
-            'route-to' => '/apis/webfiori/framework/router/APIRoutesView.php',
+            'path' => 'docs/webfiori/database/Column',
+            'route-to' => '/apis/webfiori/database/ColumnView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/router/ClosureRoutes',
-            'route-to' => '/apis/webfiori/framework/router/ClosureRoutesView.php',
+            'path' => 'docs/webfiori/database/Condition',
+            'route-to' => '/apis/webfiori/database/ConditionView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/router/OtherRoutes',
-            'route-to' => '/apis/webfiori/framework/router/OtherRoutesView.php',
+            'path' => 'docs/webfiori/database/Connection',
+            'route-to' => '/apis/webfiori/database/ConnectionView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/router/ViewRoutes',
-            'route-to' => '/apis/webfiori/framework/router/ViewRoutesView.php',
+            'path' => 'docs/webfiori/database/ConnectionInfo',
+            'route-to' => '/apis/webfiori/database/ConnectionInfoView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/examples/SampleMiddleware',
-            'route-to' => '/apis/webfiori/examples/SampleMiddlewareView.php',
+            'path' => 'docs/webfiori/database/Database',
+            'route-to' => '/apis/webfiori/database/DatabaseView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/examples',
-            'route-to' => '/apis/webfiori/examples/NSIndexView.php',
+            'path' => 'docs/webfiori/database/DatabaseException',
+            'route-to' => '/apis/webfiori/database/DatabaseExceptionView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/i18n/LanguageAR',
-            'route-to' => '/apis/webfiori/framework/i18n/LanguageARView.php',
+            'path' => 'docs/webfiori/database/EntityMapper',
+            'route-to' => '/apis/webfiori/database/EntityMapperView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/i18n/LanguageEN',
-            'route-to' => '/apis/webfiori/framework/i18n/LanguageENView.php',
+            'path' => 'docs/webfiori/database/Expression',
+            'route-to' => '/apis/webfiori/database/ExpressionView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/jobs/SampleJob',
-            'route-to' => '/apis/webfiori/jobs/SampleJobView.php',
+            'path' => 'docs/webfiori/database/ForeignKey',
+            'route-to' => '/apis/webfiori/database/ForeignKeyView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/jobs',
-            'route-to' => '/apis/webfiori/jobs/NSIndexView.php',
+            'path' => 'docs/webfiori/database/JoinTable',
+            'route-to' => '/apis/webfiori/database/JoinTableView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/ini/GlobalConstants',
-            'route-to' => '/apis/webfiori/ini/GlobalConstantsView.php',
+            'path' => 'docs/webfiori/database/ResultSet',
+            'route-to' => '/apis/webfiori/database/ResultSetView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/ini',
-            'route-to' => '/apis/webfiori/ini/NSIndexView.php',
+            'path' => 'docs/webfiori/database/SelectExpression',
+            'route-to' => '/apis/webfiori/database/SelectExpressionView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/ini/InitAutoLoad',
-            'route-to' => '/apis/webfiori/ini/InitAutoLoadView.php',
+            'path' => 'docs/webfiori/database/Table',
+            'route-to' => '/apis/webfiori/database/TableView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/ini/InitCliCommands',
-            'route-to' => '/apis/webfiori/ini/InitCliCommandsView.php',
+            'path' => 'docs/webfiori/database/WhereExpression',
+            'route-to' => '/apis/webfiori/database/WhereExpressionView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/ini/InitCron',
-            'route-to' => '/apis/webfiori/ini/InitCronView.php',
+            'path' => 'docs/webfiori/database/mysql/MySQLColumn',
+            'route-to' => '/apis/webfiori/database/mysql/MySQLColumnView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/ini/InitMiddleware',
-            'route-to' => '/apis/webfiori/ini/InitMiddlewareView.php',
+            'path' => 'docs/webfiori/database/mysql',
+            'route-to' => '/apis/webfiori/database/mysql/NSIndexView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/ini/InitPrivileges',
-            'route-to' => '/apis/webfiori/ini/InitPrivilegesView.php',
+            'path' => 'docs/webfiori/database/mysql/MySQLConnection',
+            'route-to' => '/apis/webfiori/database/mysql/MySQLConnectionView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/app/database/MainDatabase',
-            'route-to' => '/apis/app/database/MainDatabaseView.php',
+            'path' => 'docs/webfiori/database/mysql/MySQLQuery',
+            'route-to' => '/apis/webfiori/database/mysql/MySQLQueryView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/app/database',
-            'route-to' => '/apis/app/database/NSIndexView.php',
+            'path' => 'docs/webfiori/database/mysql/MySQLTable',
+            'route-to' => '/apis/webfiori/database/mysql/MySQLTableView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/app/database/UsersTable',
-            'route-to' => '/apis/app/database/UsersTableView.php',
+            'path' => 'docs/webfiori/collections/AbstractCollection',
+            'route-to' => '/apis/webfiori/collections/AbstractCollectionView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/examples/webApis/ExampleAPI',
-            'route-to' => '/apis/webfiori/examples/webApis/ExampleAPIView.php',
+            'path' => 'docs/webfiori/collections',
+            'route-to' => '/apis/webfiori/collections/NSIndexView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/examples/webApis',
-            'route-to' => '/apis/webfiori/examples/webApis/NSIndexView.php',
+            'path' => 'docs/webfiori/collections/Comparable',
+            'route-to' => '/apis/webfiori/collections/ComparableView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/examples/webApis/SampleService',
-            'route-to' => '/apis/webfiori/examples/webApis/SampleServiceView.php',
+            'path' => 'docs/webfiori/collections/LinkedList',
+            'route-to' => '/apis/webfiori/collections/LinkedListView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/app/apis/AddUserService',
-            'route-to' => '/apis/app/apis/AddUserServiceView.php',
+            'path' => 'docs/webfiori/collections/Node',
+            'route-to' => '/apis/webfiori/collections/NodeView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/app/apis',
-            'route-to' => '/apis/app/apis/NSIndexView.php',
+            'path' => 'docs/webfiori/collections/Queue',
+            'route-to' => '/apis/webfiori/collections/QueueView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/app/apis/UserServicesManager',
-            'route-to' => '/apis/app/apis/UserServicesManagerView.php',
+            'path' => 'docs/webfiori/collections/Stack',
+            'route-to' => '/apis/webfiori/collections/StackView.php',
             'in-sitemap' => true
         ]);
     }
