@@ -7,7 +7,11 @@ use webfiori\theme\NewFioriAPI;
 
 class GenerateDocsCommand extends CLICommand{
     public function __construct() {
-        parent::__construct('--generate-docs', [], '');
+        parent::__construct('--generate-docs', [
+            'base' => [
+                
+            ]
+        ], '');
     }
     public function exec() {
         //    $r = new APIReader(ROOT_DIR.'/entity/jsonx/JsonI.php');
@@ -20,7 +24,7 @@ class GenerateDocsCommand extends CLICommand{
                 'C:\Server\apache2\htdocs\website\vendor\erusev',
                 'C:\Server\apache2\htdocs\website\vendor\composer',
             ),
-            'base-url'=> 'https://webfiori.com/docs',
+            'base-url'=> $this->getArgValue('base'),
             'theme'=> NewFioriAPI::class,
             'site-name'=>'WebFiori API Docs',
             'output-path'=>'C:\\Server\\apache2\\htdocs\\website\\app\\pages\\apis',
