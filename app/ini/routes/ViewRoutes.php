@@ -40,6 +40,7 @@ class ViewRoutes {
      * @since 1.0
      */
     public static function create(){
+        
         Router::view([
             'path'=> '/', 
             'route-to' => \webfiori\views\WebFioriHome::class
@@ -72,6 +73,11 @@ class ViewRoutes {
         ]);
 
         if(class_exists('\docGenerator\DocGeneratorRoutes')){
+            Router::redirect('docs', 'docs/webfiori');
+            Router::page([
+                'path' => 'docs/webfiori',
+                'route-to' => \docGenerator\webfiori\framework\NSIndexView::class
+            ]);
             \docGenerator\DocGeneratorRoutes::createRoutes();
         }
         Router::incSiteMapRoute();
