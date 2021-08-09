@@ -23,8 +23,8 @@ class MySQLConnectionView extends P {
             new FunctionDef([
                 'name' => '__destruct',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Close database connection.',
+                'description' => 'Close database connection. ',
                 'params' => [
                 ],
                 'returns' => [

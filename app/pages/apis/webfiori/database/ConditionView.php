@@ -68,7 +68,7 @@ class ConditionView extends P {
                 'name' => 'equals',
                 'access-modifier' => 'public function',
                 'summary' => 'Checks if two conditions represent same condition.',
-                'description' => 'Checks if two conditions represent same condition. ',
+                'description' => 'Checks if two conditions represent same condition. Two conditions are equal if they have the same string representation.',
                 'params' => [
                     '$cond' => [
                         'type' => 'Condition',
@@ -129,6 +129,25 @@ class ConditionView extends P {
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                         new Anchor('https://webfiori.com/docs/webfiori/database/Expression', 'Expression'),
                         new Anchor('https://webfiori.com/docs/webfiori/database/Condition', 'Condition'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setCondition',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the value of the condition which is used to join left side operand       and right side operand.',
+                'description' => 'Sets the value of the condition which is used to join left side operand       and right side operand. ',
+                'params' => [
+                    '$cond' => [
+                        'type' => 'string',
+                        'description' => 'A string such as \'=\', \'!=\', \'&&\' or any such value.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
                     ]
                 ]
 

@@ -163,7 +163,7 @@ class EntityMapperView extends P {
                 'name' => 'getSettersMap',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns an associative array that maps possible entity methods names with       table columns names in the database.',
-                'description' => 'Returns an associative array that maps possible entity methods names with       table columns names in the database. Assuming that the table has two columns. The first one has a key = \'user-id\'       and the second one has a key \'password\'. Also, let\'s assume that the first column       has the name \'id\' in the database and the second one has the name \'user_pass\'.       If this is the case, the method will return something like the following array:      <p>      <code>[<br/>      \'setUserId\'=>\'id\',<br/>      \'setPassword\'=>\'user_pass\'<br/>      ]</code>      </p>',
+                'description' => 'Returns an associative array that maps possible entity methods names with       table columns names in the database. Assuming that the table has two columns. The first one has a key = \'user-id\'       and the second one has a key \'password\'. Also, let\'s assume that the first column       has the name \'id\' in the database and the second one has the name \'user_pass\'.       If this is the case, the method will return something like the following array:      <p>      <code>[<br/>      \'setUserId\' =&gt; \'id\',<br/>      \'setPassword\' =&gt; \'user_pass\'<br/>      ]</code>      </p>',
                 'params' => [
                 ],
                 'returns' => [

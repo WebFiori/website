@@ -124,13 +124,15 @@ class MySQLColumnView extends P {
             new FunctionDef([
                 'name' => 'getAlias',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Returns column alias.',
+                'description' => 'Returns column alias. Note that the method will add backticks around the alias.',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'Name alias.',
                     'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
+                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
                     ]
                 ]
 
@@ -183,13 +185,14 @@ class MySQLColumnView extends P {
             new FunctionDef([
                 'name' => 'getName',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Returns the name of the column.',
+                'description' => 'Returns the name of the column. Note that the method will add backticks around the name.',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'The name of the column.',
                     'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
                 ]
 

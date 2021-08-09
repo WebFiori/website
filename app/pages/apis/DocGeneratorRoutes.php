@@ -3,11 +3,6 @@ namespace docGenerator;
 use webfiori\framework\router\Router;
 class DocGeneratorRoutes{
     public static function createRoutes(){
-        Router::redirect('docs', 'docs/webfiori');
-        Router::page([
-            'path' => 'docs/webfiori',
-            'route-to' => webfiori\NSIndexView::class
-        ]);
         Router::view([
             'path' => 'docs/webfiori/ui/Anchor',
             'route-to' => '/apis/webfiori/ui/AnchorView.php',

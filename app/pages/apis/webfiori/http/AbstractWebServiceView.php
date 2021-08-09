@@ -21,6 +21,20 @@ class AbstractWebServiceView extends P {
             new AttributeDef(
             'const',
             '',
+            'E',
+            'A constant which is used to indicate that the message that will be       sent is of type error.',
+            'A constant which is used to indicate that the message that will be       sent is of type error. ',
+            ),
+            new AttributeDef(
+            'const',
+            '',
+            'I',
+            'A constant which is used to indicate that the message that will be       sent is of type info.',
+            'A constant which is used to indicate that the message that will be       sent is of type info. ',
+            ),
+            new AttributeDef(
+            'const',
+            '',
             'METHODS',
             'An array that contains the names of request methods.',
             'An array that contains the names of request methods. This array contains the following strings:      <ul>      <li>GET</li>      <li>HEAD</li>      <li>POST</li>      <li>PUT</li>      <li>DELETE</li>      <li>TRACE</li>      <li>OPTIONS</li>      <li>PATCH</li>      <li>CONNECT</li>      </ul>',

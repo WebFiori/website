@@ -13,10 +13,10 @@ class DatabaseExceptionView extends P {
         parent::__construct();
         $this->setTheme('webfiori\theme\NewFioriAPI');
         $this->getTheme()->setBaseURL('https://webfiori.com/docs');
-        $this->setDescription('An exception which is thrown to indicate that an error which is related to   database was occur.');
+        $this->setDescription('An exception which is thrown to indicate that an error which is related to   database happened.');
         $this->setWebsiteName('WebFiori API Docs');
         $this->setTitle('class DatabaseException');
-        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'DatabaseException', '\webfiori\database', 'An exception which is thrown to indicate that an error which is related to   database was occur. '));
+        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'DatabaseException', '\webfiori\database', 'An exception which is thrown to indicate that an error which is related to   database happened. '));
         $classAttrsArr = [
         ];
         $classMethodsArr = [

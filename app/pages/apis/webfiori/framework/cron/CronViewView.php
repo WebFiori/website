@@ -31,7 +31,7 @@ class CronViewView extends P {
                         'description' => '',
                         'optional' => false,
                     ],
-                    '$description ' => [
+                    ' $description ' => [
                         'type' => 'unkown_type',
                         'description' => '',
                         'optional' => true,

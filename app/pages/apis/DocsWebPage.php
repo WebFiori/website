@@ -2084,6 +2084,7 @@ class DocsWebPage extends WebPage {
         'Condition::getCondition()' => new Anchor('https://webfiori.com/docs/webfiori/database/Condition#getCondition', 'Condition::getCondition()'),
         'Condition::getLeftOperand()' => new Anchor('https://webfiori.com/docs/webfiori/database/Condition#getLeftOperand', 'Condition::getLeftOperand()'),
         'Condition::getRightOperand()' => new Anchor('https://webfiori.com/docs/webfiori/database/Condition#getRightOperand', 'Condition::getRightOperand()'),
+        'Condition::setCondition()' => new Anchor('https://webfiori.com/docs/webfiori/database/Condition#setCondition', 'Condition::setCondition()'),
         'Condition::setLeftOperand()' => new Anchor('https://webfiori.com/docs/webfiori/database/Condition#setLeftOperand', 'Condition::setLeftOperand()'),
         'Condition::setRightOperand()' => new Anchor('https://webfiori.com/docs/webfiori/database/Condition#setRightOperand', 'Condition::setRightOperand()'),
         'Connection' => new Anchor('https://webfiori.com/docs/webfiori/database/Connection', 'Connection'),

@@ -146,13 +146,14 @@ class MySQLTableView extends P {
             new FunctionDef([
                 'name' => 'getName',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Returns the name of the table.',
+                'description' => 'Returns the name of the table. Note that the method will add backticks around the name.',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'The name of the table. Default return value is \'new_table\'.',
                     'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
                 ]
 

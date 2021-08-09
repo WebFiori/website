@@ -23,18 +23,23 @@ class ResultSetView extends P {
             new FunctionDef([
                 'name' => '__construct',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Creates new instance of the class.',
+                'description' => 'Creates new instance of the class. ',
                 'params' => [
-                    'array $resultArr' => [
-                        'type' => 'unkown_type',
-                        'description' => '',
+                    '$resultArr' => [
+                        'type' => 'array',
+                        'description' => 'An array that holds original result set.',
                         'optional' => false,
                     ],
-                    ' $mappingFunction ' => [
-                        'type' => 'unkown_type',
-                        'description' => '',
-                        'optional' => true,
+                    '$mappingFunction' => [
+                        'type' => 'callable',
+                        'description' => 'A PHP function which is used to modify       original result set and shape it as needed. The method can have two       arguments, first one is the original data set and the second is an optional       array of arguments.',
+                        'optional' => false,
+                    ],
+                    '$mapArgs' => [
+                        'type' => 'array',
+                        'description' => 'An optional array of arguments to pass on to the       mapping function.',
+                        'optional' => false,
                     ],
                 ],
                 'returns' => [
@@ -121,8 +126,8 @@ class ResultSetView extends P {
             new FunctionDef([
                 'name' => 'getRows',
                 'access-modifier' => 'public function',
-                'summary' => 'Returns an array which contains all records in the set.',
-                'description' => 'Returns an array which contains all records in the set. ',
+                'summary' => 'Returns an array which contains all original records in the set before       mapping.',
+                'description' => 'Returns an array which contains all original records in the set before       mapping. ',
                 'params' => [
                 ],
                 'returns' => [
@@ -151,15 +156,15 @@ class ResultSetView extends P {
             new FunctionDef([
                 'name' => 'key',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Return the key of the current record.',
+                'description' => 'Return the key of the current record. ',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'Returns an integer on success, or null on failure.',
                     'return-types' => [
-                        'int
-',
+                        new Anchor('http://php.net/manual/en/language.types.integer.php', 'int'),
+                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
                     ]
                 ]
 
@@ -167,8 +172,8 @@ class ResultSetView extends P {
             new FunctionDef([
                 'name' => 'next',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Move forward to next record.',
+                'description' => 'Move forward to next record. ',
                 'params' => [
                 ],
                 'returns' => [
@@ -181,8 +186,8 @@ class ResultSetView extends P {
             new FunctionDef([
                 'name' => 'rewind',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Rewind the Iterator to the first record.',
+                'description' => 'Rewind the Iterator to the first record. ',
                 'params' => [
                 ],
                 'returns' => [
@@ -220,15 +225,14 @@ class ResultSetView extends P {
             new FunctionDef([
                 'name' => 'valid',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Checks if current position is valid in the iterator.',
+                'description' => 'Checks if current position is valid in the iterator. ',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'Returns true on success or false on failure.',
                     'return-types' => [
-                        'boolean
-',
+                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
                     ]
                 ]
 

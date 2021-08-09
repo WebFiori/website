@@ -66,12 +66,12 @@ class SelectExpressionView extends P {
             new FunctionDef([
                 'name' => 'addExpression',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Adds an expression as a part of the select expression.',
+                'description' => 'Adds an expression as a part of the select expression. ',
                 'params' => [
-                    'Expression $expr' => [
-                        'type' => 'unkown_type',
-                        'description' => '',
+                    '$expr' => [
+                        'type' => 'Expression',
+                        'description' => 'An object that represents the expression.',
                         'optional' => false,
                     ],
                 ],

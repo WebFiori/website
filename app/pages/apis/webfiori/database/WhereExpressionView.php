@@ -108,13 +108,14 @@ class WhereExpressionView extends P {
             new FunctionDef([
                 'name' => 'getValue',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Returns the value of the expression.',
+                'description' => 'Returns the value of the expression. ',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'The method will return a string that represents the value       of the expression.',
                     'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
                 ]
 

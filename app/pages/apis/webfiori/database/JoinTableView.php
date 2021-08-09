@@ -123,13 +123,14 @@ class JoinTableView extends P {
             new FunctionDef([
                 'name' => 'getCols',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Returns an indexed array that holds all columns of the joined tables.',
+                'description' => 'Returns an indexed array that holds all columns of the joined tables. ',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'The method will return an array that holds objects of type \'Column\'. The       columns are taken from left ant right table.',
                     'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
                     ]
                 ]
 
@@ -273,18 +274,19 @@ class JoinTableView extends P {
             new FunctionDef([
                 'name' => 'toSQL',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Returns a string which represents the joined tables.',
+                'description' => 'Returns a string which represents the joined tables. ',
                 'params' => [
-                    '$firstCall ' => [
-                        'type' => 'unkown_type',
-                        'description' => '',
-                        'optional' => true,
+                    '$firstCall' => [
+                        'type' => 'boolean',
+                        'description' => 'A boolean to indicate if the join is a nesting of       other joins or not. Default value is false.',
+                        'optional' => false,
                     ],
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'SQL statement that represents the join.',
                     'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
                 ]
 

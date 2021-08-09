@@ -13,10 +13,10 @@ class DatabaseView extends P {
         parent::__construct();
         $this->setTheme('webfiori\theme\NewFioriAPI');
         $this->getTheme()->setBaseURL('https://webfiori.com/docs');
-        $this->setDescription('A class which is used to represents the structure of the database.');
+        $this->setDescription('A class which is used to represents the structure of the database   (database schema).');
         $this->setWebsiteName('WebFiori API Docs');
         $this->setTitle('class Database');
-        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'Database', '\webfiori\database', 'A class which is used to represents the structure of the database. '));
+        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'Database', '\webfiori\database', 'A class which is used to represents the structure of the database   (database schema). In addition to that, the class has methods which is used to build some of   the commonly used SQL queries such as \'create\', \'insert\' or \'update\'.'));
         $classAttrsArr = [
         ];
         $classMethodsArr = [
@@ -42,17 +42,17 @@ class DatabaseView extends P {
             new FunctionDef([
                 'name' => 'addQuery',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Adds a database query to the set of queries at which they where executed.',
+                'description' => 'Adds a database query to the set of queries at which they where executed. This method is called internally by the library to add the query. The       developer does not have to call this method manually.',
                 'params' => [
                     '$query' => [
-                        'type' => 'type',
-                        'description' => '',
+                        'type' => 'string',
+                        'description' => 'SQL query as string.',
                         'optional' => false,
                     ],
                     '$type' => [
-                        'type' => 'type',
-                        'description' => '',
+                        'type' => 'string',
+                        'description' => 'The type of the query such as \'select\', \'update\' or       \'delete\'.',
                         'optional' => false,
                     ],
                 ],
@@ -116,8 +116,8 @@ class DatabaseView extends P {
             new FunctionDef([
                 'name' => 'clear',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Rest all attributes of the class to original values.',
+                'description' => 'Rest all attributes of the class to original values. ',
                 'params' => [
                 ],
                 'returns' => [

@@ -31,11 +31,11 @@ class NSIndexView extends P {
         ],
         "Database" => [
             "access-modifier" => "class",
-            "summary" => "A class which is used to represents the structure of the database."
+            "summary" => "A class which is used to represents the structure of the database   (database schema)."
         ],
         "DatabaseException" => [
             "access-modifier" => "class",
-            "summary" => "An exception which is thrown to indicate that an error which is related to   database was occur."
+            "summary" => "An exception which is thrown to indicate that an error which is related to   database happened."
         ],
         "EntityMapper" => [
             "access-modifier" => "class",

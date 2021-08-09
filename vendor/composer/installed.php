@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '145894ed6410d385a41e9685c0b9ac6656fadff9',
+    'reference' => '7c8e65d42b8b871c31b8c678ecd262b1671b67c9',
     'name' => 'webfiori/website',
   ),
   'versions' => 
@@ -31,12 +31,12 @@
     ),
     'webfiori/database' => 
     array (
-      'pretty_version' => 'v0.2.9',
-      'version' => '0.2.9.0',
+      'pretty_version' => 'v0.2.10',
+      'version' => '0.2.10.0',
       'aliases' => 
       array (
       ),
-      'reference' => '6b552133c72cd61c687db2d61dd6f4046dd92e43',
+      'reference' => '8dbe081ae0efa98afe3c386eaf46eac8aa0e8c51',
     ),
     'webfiori/framework' => 
     array (
@@ -46,7 +46,7 @@
       array (
         0 => '9999999-dev',
       ),
-      'reference' => '8ce93c141eb691eefd8e7106f662cd1d6cb63bb8',
+      'reference' => '3dbd6817ae79b2e7d05a1bcd1493f16dd5cda52e',
     ),
     'webfiori/http' => 
     array (
@@ -82,7 +82,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '145894ed6410d385a41e9685c0b9ac6656fadff9',
+      'reference' => '7c8e65d42b8b871c31b8c678ecd262b1671b67c9',
     ),
   ),
 );
