@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-        "webfiori/framework":"dev-master",
+        "webfiori/framework":"*",
         "erusev/parsedown":"*"
     },
     "keywords": [
