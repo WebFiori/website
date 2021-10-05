@@ -4,17 +4,18 @@ namespace app;
 
 use webfiori\database\ConnectionInfo;
 use webfiori\framework\mail\SMTPAccount;
+use webfiori\framework\Config;
 use webfiori\http\Uri;
 /**
  * Configuration class of the application
  *
  * @author Ibrahim
  *
- * @version 1.0
+ * @version 1.0.1
  *
  * @since 2.1.0
  */
-class AppConfig {
+class AppConfig implements Config {
     /**
      * The name of admin control pages Theme.
      * 
@@ -71,6 +72,14 @@ class AppConfig {
      * @since 1.0
      */
     private $configVision;
+    /**
+     * Password hash of CRON sub-system.
+     * 
+     * @var string
+     * 
+     * @since 1.0
+     */
+    private $cronPass;
     /**
      * An associative array that will contain database connections.
      * 
@@ -133,11 +142,12 @@ class AppConfig {
      * @since 1.0
      */
     public function __construct() {
-        $this->configVision = '1.0.0';
+        $this->configVision = '1.0.1';
         $this->initVersionInfo();
         $this->initSiteInfo();
         $this->initDbConnections();
         $this->initSmtpConnections();
+        $this->cronPass = 'NO_PASSWORD';
     }
     /**
      * Adds an email account.
@@ -243,6 +253,17 @@ class AppConfig {
         return $this->configVision;
     }
     /**
+     * Returns sha256 hash of the password which is used to prevent unauthorized
+     * access to run the jobs or access CRON web interface.
+     * 
+     * @return Password hash or the string 'NO_PASSWORD' if there is no password.
+     * 
+     * @since 1.0.1
+     */
+    public function getCRONPassword() {
+        return $this->cronPass;
+    }
+    /**
      * Returns database connection information given connection name.
      * 
      * @param string $conName The name of the connection.
@@ -287,23 +308,12 @@ class AppConfig {
      * @since 1.0
      */
     public function getDefaultTitle($langCode) {
-        $langs = $this->getDefaultTitles();
+        $langs = $this->getTitles();
         $langCodeF = strtoupper(trim($langCode));
         
         if (isset($langs[$langCodeF])) {
             return $langs[$langCode];
         }
-    }
-    /**
-     * Returns an array that holds the default pages titles for different languages.
-     * 
-     * @return array The indices of the array will be languages codes such as
-     * 'AR' and the value at each index will be page title in that language.
-     * 
-     * @since 1.0
-     */
-    public function getDefaultTitles() {
-        return $this->defaultPageTitles;
     }
     /**
      * Returns the global description of the web site that will be
