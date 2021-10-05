@@ -262,6 +262,26 @@ class MySQLQueryView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'replace',
+                'access-modifier' => 'public function',
+                'summary' => 'Constructs a query which can be used to replace a record (insert or update if       exist).',
+                'description' => 'Constructs a query which can be used to replace a record (insert or update if       exist). ',
+                'params' => [
+                    '$colsAndVals' => [
+                        'type' => 'array',
+                        'description' => 'An associative array. The indices are columns       keys and the value of each index is the value of the column. This also      can be one big indexed array of sub associative arrays. This approach can       be used to build multiple replace queries.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => 'The method will return the same instance at which the       method is called on.',
+                    'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/database/mysql/MySQLQuery', 'MySQLQuery'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'setIsBlobInsertOrUpdate',
                 'access-modifier' => 'public function',
                 'summary' => 'Sets the property that is used to check if the query represents an insert       or an update of a blob datatype.',
