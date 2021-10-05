@@ -499,23 +499,28 @@ class DocGeneratorRoutes{
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cron/CronLoginView',
-            'route-to' => '/apis/webfiori/framework/cron/CronLoginViewView.php',
+            'path' => 'docs/webfiori/framework/cron/JobArgument',
+            'route-to' => '/apis/webfiori/framework/cron/JobArgumentView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cron/CronTaskView',
-            'route-to' => '/apis/webfiori/framework/cron/CronTaskViewView.php',
+            'path' => 'docs/webfiori/framework/cron/webUI/CronLoginView',
+            'route-to' => '/apis/webfiori/framework/cron/webUI/CronLoginViewView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cron/CronTasksView',
-            'route-to' => '/apis/webfiori/framework/cron/CronTasksViewView.php',
+            'path' => 'docs/webfiori/framework/cron/webUI',
+            'route-to' => '/apis/webfiori/framework/cron/webUI/NSIndexView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cron/CronView',
-            'route-to' => '/apis/webfiori/framework/cron/CronViewView.php',
+            'path' => 'docs/webfiori/framework/cron/webUI/CronTasksView',
+            'route-to' => '/apis/webfiori/framework/cron/webUI/CronTasksViewView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/cron/webUI/CronView',
+            'route-to' => '/apis/webfiori/framework/cron/webUI/CronViewView.php',
             'in-sitemap' => true
         ]);
         Router::view([
@@ -544,6 +549,11 @@ class DocGeneratorRoutes{
             'in-sitemap' => true
         ]);
         Router::view([
+            'path' => 'docs/webfiori/framework/cron/webServices/GetJobsService',
+            'route-to' => '/apis/webfiori/framework/cron/webServices/GetJobsServiceView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
             'path' => 'docs/webfiori/framework/cli/CLI',
             'route-to' => '/apis/webfiori/framework/cli/CLIView.php',
             'in-sitemap' => true
@@ -559,123 +569,168 @@ class DocGeneratorRoutes{
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/CreateCLIClassHelper',
-            'route-to' => '/apis/webfiori/framework/cli/CreateCLIClassHelperView.php',
+            'path' => 'docs/webfiori/framework/cli/InputStream',
+            'route-to' => '/apis/webfiori/framework/cli/InputStreamView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/CreateCommand',
-            'route-to' => '/apis/webfiori/framework/cli/CreateCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/OutputStream',
+            'route-to' => '/apis/webfiori/framework/cli/OutputStreamView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/CreateCronJob',
-            'route-to' => '/apis/webfiori/framework/cli/CreateCronJobView.php',
+            'path' => 'docs/webfiori/framework/cli/StdIn',
+            'route-to' => '/apis/webfiori/framework/cli/StdInView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/CreateMiddleware',
-            'route-to' => '/apis/webfiori/framework/cli/CreateMiddlewareView.php',
+            'path' => 'docs/webfiori/framework/cli/StdOut',
+            'route-to' => '/apis/webfiori/framework/cli/StdOutView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/CreateTable',
-            'route-to' => '/apis/webfiori/framework/cli/CreateTableView.php',
+            'path' => 'docs/webfiori/framework/cli/writers/ClassWriter',
+            'route-to' => '/apis/webfiori/framework/cli/writers/ClassWriterView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/CreateTableObj',
-            'route-to' => '/apis/webfiori/framework/cli/CreateTableObjView.php',
+            'path' => 'docs/webfiori/framework/cli/writers',
+            'route-to' => '/apis/webfiori/framework/cli/writers/NSIndexView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/CreateWebService',
-            'route-to' => '/apis/webfiori/framework/cli/CreateWebServiceView.php',
+            'path' => 'docs/webfiori/framework/cli/writers/LangClassWriter',
+            'route-to' => '/apis/webfiori/framework/cli/writers/LangClassWriterView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/CronCommand',
-            'route-to' => '/apis/webfiori/framework/cli/CronCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/writers/QueryClassWriter',
+            'route-to' => '/apis/webfiori/framework/cli/writers/QueryClassWriterView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/HelpCommand',
-            'route-to' => '/apis/webfiori/framework/cli/HelpCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/writers/ServiceHolder',
+            'route-to' => '/apis/webfiori/framework/cli/writers/ServiceHolderView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/ListCronCommand',
-            'route-to' => '/apis/webfiori/framework/cli/ListCronCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/writers/ThemeClassWriter',
+            'route-to' => '/apis/webfiori/framework/cli/writers/ThemeClassWriterView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/ListRoutesCommand',
-            'route-to' => '/apis/webfiori/framework/cli/ListRoutesCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/writers/WebServiceWriter',
+            'route-to' => '/apis/webfiori/framework/cli/writers/WebServiceWriterView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/ListThemesCommand',
-            'route-to' => '/apis/webfiori/framework/cli/ListThemesCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/helpers/CreateCLIClassHelper',
+            'route-to' => '/apis/webfiori/framework/cli/helpers/CreateCLIClassHelperView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/RunSQLQueryCommand',
-            'route-to' => '/apis/webfiori/framework/cli/RunSQLQueryCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/helpers',
+            'route-to' => '/apis/webfiori/framework/cli/helpers/NSIndexView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/SettingsCommand',
-            'route-to' => '/apis/webfiori/framework/cli/SettingsCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/helpers/CreateCronJob',
+            'route-to' => '/apis/webfiori/framework/cli/helpers/CreateCronJobView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/TestRouteCommand',
-            'route-to' => '/apis/webfiori/framework/cli/TestRouteCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/helpers/CreateMiddleware',
+            'route-to' => '/apis/webfiori/framework/cli/helpers/CreateMiddlewareView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/UpdateTableCommand',
-            'route-to' => '/apis/webfiori/framework/cli/UpdateTableCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/helpers/CreateTable',
+            'route-to' => '/apis/webfiori/framework/cli/helpers/CreateTableView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/VersionCommand',
-            'route-to' => '/apis/webfiori/framework/cli/VersionCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/helpers/CreateTableObj',
+            'route-to' => '/apis/webfiori/framework/cli/helpers/CreateTableObjView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/AddCommand',
-            'route-to' => '/apis/webfiori/framework/cli/AddCommandView.php',
+            'path' => 'docs/webfiori/framework/cli/helpers/CreateThemeHelper',
+            'route-to' => '/apis/webfiori/framework/cli/helpers/CreateThemeHelperView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/ClassWriter',
-            'route-to' => '/apis/webfiori/framework/cli/ClassWriterView.php',
+            'path' => 'docs/webfiori/framework/cli/helpers/CreateWebService',
+            'route-to' => '/apis/webfiori/framework/cli/helpers/CreateWebServiceView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/LangClassWriter',
-            'route-to' => '/apis/webfiori/framework/cli/LangClassWriterView.php',
+            'path' => 'docs/webfiori/framework/cli/commands/AddCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/AddCommandView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/QueryClassWriter',
-            'route-to' => '/apis/webfiori/framework/cli/QueryClassWriterView.php',
+            'path' => 'docs/webfiori/framework/cli/commands',
+            'route-to' => '/apis/webfiori/framework/cli/commands/NSIndexView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/ServiceHolder',
-            'route-to' => '/apis/webfiori/framework/cli/ServiceHolderView.php',
+            'path' => 'docs/webfiori/framework/cli/commands/CreateCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/CreateCommandView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/ThemeClassWriter',
-            'route-to' => '/apis/webfiori/framework/cli/ThemeClassWriterView.php',
+            'path' => 'docs/webfiori/framework/cli/commands/CronCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/CronCommandView.php',
             'in-sitemap' => true
         ]);
         Router::view([
-            'path' => 'docs/webfiori/framework/cli/WebServiceWriter',
-            'route-to' => '/apis/webfiori/framework/cli/WebServiceWriterView.php',
+            'path' => 'docs/webfiori/framework/cli/commands/HelpCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/HelpCommandView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/cli/commands/ListCronCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/ListCronCommandView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/cli/commands/ListRoutesCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/ListRoutesCommandView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/cli/commands/ListThemesCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/ListThemesCommandView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/cli/commands/RunSQLQueryCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/RunSQLQueryCommandView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/cli/commands/SettingsCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/SettingsCommandView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/cli/commands/TestRouteCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/TestRouteCommandView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/cli/commands/UpdateSettingsCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/UpdateSettingsCommandView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/cli/commands/UpdateTableCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/UpdateTableCommandView.php',
+            'in-sitemap' => true
+        ]);
+        Router::view([
+            'path' => 'docs/webfiori/framework/cli/commands/VersionCommand',
+            'route-to' => '/apis/webfiori/framework/cli/commands/VersionCommandView.php',
             'in-sitemap' => true
         ]);
         Router::view([
