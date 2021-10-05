@@ -1,9 +1,9 @@
 <?php
 namespace webfiori\views;
-use webfiori\framework\Page;
+
 use webfiori\views\WebFioriPage;
 use webfiori\ui\UnorderedList;
-use webfiori\ui\HTMLNode;
+
 /**
  * Description of DownloadView
  *
@@ -18,12 +18,11 @@ class DownloadView extends WebFioriPage{
         $this->_stableDownloads();
         $this->_betaDownloads();
         $this->_nextSteps();
-        Page::render();
     }
     private function _stableDownloads() {
         $sec = $this->createSection('Latest Stable Release',3);
         $sec->addChild($this->createParagraph('The latest release of the framework is version '
-                . '2.3.0. You can click <a href="https://github.com/WebFiori/app/releases/download/v2.3.0/webfiori-v2.3.0-stable.zip">here</a> in order to start the '
+                . '2.3.4. You can click <a href="https://github.com/WebFiori/framework/releases/download/v2.3.4/webfiori-v2.3.4-stable.zip">here</a> in order to start the '
                 . 'download process.'));
         $row = $this->insert('v-row');
         $row->addChild('v-col', [
@@ -39,7 +38,10 @@ class DownloadView extends WebFioriPage{
                 . 'not good option for production and might have bugs.'));
         $ul = new UnorderedList();
         $ul->addListItems(array(
-            
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.3.3/webfiori-v2.3.3.zip">WebFiori v2.3.3 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.3.2/webfiori-v2.3.2.zip">WebFiori v2.3.2 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.3.1/webfiori-v2.3.1.zip">WebFiori v2.3.1 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.3.0/webfiori-v2.3.0.zip">WebFiori v2.3.0 Stable</a>',
             '<a href="https://github.com/WebFiori/framework/releases/download/v2.2.0/webfiori-v2.2.0.zip">WebFiori v2.2.0 Stable</a>',
             '<a href="https://github.com/WebFiori/framework/releases/download/v2.1.0/webfiori-v2.1.0.zip">WebFiori v2.1.0 Stable</a>',
             '<a href="https://github.com/WebFiori/framework/releases/download/v2.0.0/webfiori-v2.0.0.zip">WebFiori v2.0.0 Stable</a>',
@@ -71,7 +73,7 @@ class DownloadView extends WebFioriPage{
         $row->addChild('v-col', ['cols' => 12])->addChild($sec);
         $sec->addChild($this->createParagraph('Once you finsh downloading the framework, you can visit '
                 . '<a href="learn" >Learning Center</a> in order to start your development process.'));
-        Page::insert($sec);
+        
     }
 }
 return __NAMESPACE__;

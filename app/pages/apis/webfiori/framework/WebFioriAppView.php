@@ -21,30 +21,6 @@ class WebFioriAppView extends P {
         ];
         $classMethodsArr = [
             new FunctionDef([
-                'name' => '',
-                'access-modifier' => 'define',
-                'summary' => 'The time at which the framework was booted in microseconds as a float.',
-                'description' => 'The time at which the framework was booted in microseconds as a float. ',
-                'params' => [
-                    ''MICRO_START'' => [
-                        'type' => 'unkown_type',
-                        'description' => '',
-                        'optional' => false,
-                    ],
-                    ' microtime(true' => [
-                        'type' => 'unkown_type',
-                        'description' => '',
-                        'optional' => false,
-                    ],
-                ],
-                'returns' => [
-                    'description' => '',
-                    'return-types' => [
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
                 'name' => 'autoRegister',
                 'access-modifier' => 'public static function',
                 'summary' => 'Register CLI commands or cron jobs.',
