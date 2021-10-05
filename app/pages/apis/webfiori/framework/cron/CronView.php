@@ -361,6 +361,20 @@ class CronView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'registerJobs',
+                'access-modifier' => 'public static function',
+                'summary' => 'Register any CRON job which exist in the folder \'jobs\' of the application.',
+                'description' => 'Register any CRON job which exist in the folder \'jobs\' of the application. Note that this method will register jobs only if the framework is running      using CLI or the constant \'CRON_THROUGH_HTTP\' is set to true.',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'run',
                 'access-modifier' => 'public static function',
                 'summary' => 'Check each scheduled job and run it if its time to run it.',

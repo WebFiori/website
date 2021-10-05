@@ -97,11 +97,11 @@ class AbstractJobView extends P {
                 'name' => 'addExecutionArg',
                 'access-modifier' => 'public function',
                 'summary' => 'Adds new execution argument.',
-                'description' => 'Adds new execution argument. An execution argument is an argument that can be supplied to the       job in case of force execute. They will appear in cron control panel       as a table. They also can be provided to the job when executing it       throw CLI as \'arg-name="argVal".      The argument name must follow the following rules:      <ul>      <li>Must be non-empty string.</li>      <li>Must not contain \'#\', \'?\', \'&\', \'=\' or space.</li>      </ul>',
+                'description' => 'Adds new execution argument. An execution argument is an argument that can be supplied to the       job in case of force execute. They will appear in cron control panel.      They also can be provided to the job when executing it       throw CLI as \'arg-name="argVal".      The argument name must follow the following rules:      <ul>      <li>Must be non-empty string.</li>      <li>Must not contain \'#\', \'?\', \'&\', \'=\' or space.</li>      </ul>',
                 'params' => [
-                    '$name' => [
-                        'type' => 'string',
-                        'description' => 'The name of the attribute.',
+                    '$nameOrObj' => [
+                        'type' => 'string|JobArgument',
+                        'description' => 'The name of the argument. This also can be an       object.',
                         'optional' => false,
                     ],
                 ],
@@ -287,6 +287,21 @@ class AbstractJobView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getArguments',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns an array that holds execution arguments of the job.',
+                'description' => 'Returns an array that holds execution arguments of the job. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'An array that holds objects of type \'JobArgument\'.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getCommand',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns the command that was used to execute the job.',
@@ -296,8 +311,23 @@ class AbstractJobView extends P {
                 'returns' => [
                     'description' => '',
                     'return-types' => [
-                        new Anchor('https://webfiori.com/docs/webfiori/framework/cli/CronCommand', 'CronCommand'),
+                        new Anchor('https://webfiori.com/docs/webfiori/framework/cli/commands/CronCommand', 'CronCommand'),
                         new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'getDescription',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns job description.',
+                'description' => 'Returns job description. Job description is a string which is used to describe what does the job       do.',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'Job description. Default return value is \'NO DESCRIPTION\'.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
                 ]
 
@@ -306,11 +336,11 @@ class AbstractJobView extends P {
                 'name' => 'getExecArgs',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns an associative array that contains the values of       custom execution parameters.',
-                'description' => 'Returns an associative array that contains the values of       custom execution parameters. Note that the method will filter the values using the filter FILTER_SANITIZE_STRING.',
+                'description' => 'Returns an associative array that contains the values of       custom execution parameters. ',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'An associative array. The keys are attributes values and       the values are the values which are given as input. If a value       is not provided, it will be set to null.',
+                    'description' => 'An associative array. The keys are attributes names and       the values are the values which are given as input. If a value       is not provided, it will be set to null.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
                     ]
@@ -325,7 +355,7 @@ class AbstractJobView extends P {
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'An indexed array that contains all added       custom execution attributes values.',
+                    'description' => 'An indexed array that contains all added       custom execution attributes names.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
                     ]
@@ -373,6 +403,26 @@ class AbstractJobView extends P {
                     'description' => 'The name of the job. If no name is set, the function will return       \'CRON-JOB\'.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'hasArg',
+                'access-modifier' => 'public function',
+                'summary' => 'Checks if an argument with specific name belongs to the job or not.',
+                'description' => 'Checks if an argument with specific name belongs to the job or not. ',
+                'params' => [
+                    '$name' => [
+                        'type' => 'string',
+                        'description' => 'The name of the argument that will be checked.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => 'If an argument with the given name already exist, the       method will return true. False if not.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
                     ]
                 ]
 
@@ -575,6 +625,25 @@ class AbstractJobView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'setDescription',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets job description.',
+                'description' => 'Sets job description. Job description is a string which is used to describe what does the job do.',
+                'params' => [
+                    '$desc' => [
+                        'type' => 'string',
+                        'description' => 'Job description.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'setJobName',
                 'access-modifier' => 'public function',
                 'summary' => 'Sets an optional name for the job.',
@@ -585,6 +654,20 @@ class AbstractJobView extends P {
                         'description' => 'The name of the job.',
                         'optional' => false,
                     ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'toJSON',
+                'access-modifier' => 'public function',
+                'summary' => '',
+                'description' => ' ',
+                'params' => [
                 ],
                 'returns' => [
                     'description' => '',

@@ -90,8 +90,12 @@ class NSIndexView extends P {
             'webfiori\framework\mail',
             'webfiori\framework\exceptions',
             'webfiori\framework\cron',
+            'webfiori\framework\cron\webUI',
             'webfiori\framework\cron\webServices',
             'webfiori\framework\cli',
+            'webfiori\framework\cli\writers',
+            'webfiori\framework\cli\helpers',
+            'webfiori\framework\cli\commands',
         ]);
         $this->setNSObj($nsObj);
     }

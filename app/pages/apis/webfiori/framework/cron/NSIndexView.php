@@ -25,23 +25,12 @@ class NSIndexView extends P {
             "access-modifier" => "class",
             "summary" => "A class that represents a cron job."
         ],
-        "CronLoginView" => [
+        "JobArgument" => [
             "access-modifier" => "class",
-            "summary" => "A page which is used to show login form to enter login information to   access cron web interface."
-        ],
-        "CronTaskView" => [
-            "access-modifier" => "class",
-            "summary" => "A view to show details of a specific CRON task."
-        ],
-        "CronTasksView" => [
-            "access-modifier" => "class",
-            "summary" => "A view to display information about CRON Jobs."
-        ],
-        "CronView" => [
-            "access-modifier" => "class",
-            "summary" => "A generic view for cron related operations."
+            "summary" => "A class that represents execution argument of a job."
         ],
         ], [
+            'webfiori\framework\cron\webUI',
             'webfiori\framework\cron\webServices',
         ]);
         $this->setNSObj($nsObj);

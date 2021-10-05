@@ -178,6 +178,21 @@ class ConfigControllerView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getAppVersionInfo',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns an associative array that holds application version info.',
+                'description' => 'Returns an associative array that holds application version info. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'The array will have the following indices: \'version\',       \'version-type\' and \'release-date\'.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getBase',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns the base URL which is use as a value for the tag &gt;base&lt;.',
@@ -205,6 +220,21 @@ class ConfigControllerView extends P {
                     'return-types' => [
                         'string
 ',
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'getCRONPassword',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns password hash of the password which is used to protect background       jobs from unauthorized execution.',
+                'description' => 'Returns password hash of the password which is used to protect background       jobs from unauthorized execution. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'Password hash or the string \'NO_PASSWORD\' if there is no       password.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
                 ]
 
@@ -406,6 +436,54 @@ class ConfigControllerView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'updateAppVersionInfo',
+                'access-modifier' => 'public function',
+                'summary' => 'Update application version information.',
+                'description' => 'Update application version information. ',
+                'params' => [
+                    '$vNum' => [
+                        'type' => 'string',
+                        'description' => 'Version number such as 1.0.0.',
+                        'optional' => false,
+                    ],
+                    '$vType' => [
+                        'type' => 'string',
+                        'description' => 'Version type such as \'Beta\', \'Alpha\' or \'RC\'.',
+                        'optional' => false,
+                    ],
+                    '$releaseDate' => [
+                        'type' => 'string',
+                        'description' => 'The date at which the version was released on.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'updateCronPassword',
+                'access-modifier' => 'public function',
+                'summary' => 'Updates the password which is used to protect cron jobs from unauthorized       execution.',
+                'description' => 'Updates the password which is used to protect cron jobs from unauthorized       execution. ',
+                'params' => [
+                    '$newPass' => [
+                        'type' => 'string',
+                        'description' => 'The new password. If empty string is given, the password       will be set to the string \'NO_PASSWORD\'.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'updateOrAddEmailAccount',
                 'access-modifier' => 'public function',
                 'summary' => 'Adds new SMTP account or Updates an existing one.',
@@ -434,7 +512,7 @@ class ConfigControllerView extends P {
                 'params' => [
                     '$websiteInfoArr' => [
                         'type' => 'array',
-                        'description' => 'an associative array. The array can       have the following indices:       <ul>      <li><b>primary-language</b>: The main display language of the website.      <li><b>website-names</b>: A sub associative array. The index of the       array should be language code (such as \'EN\') and the value       should be the name of the web site in the given language.</li>      <li><b>title-sep</b>: A character or a string that is used       to separate web site name from web page title. Two common       values are \'-\' and \'|\'.</li>      <li><b>home-page</b>: The URL of the home page of the web site. For example,       If root URL of the web site is \'https://www.example.com\', This page is served       when the user visits this URL.</li>      <li><b>base-theme</b>: The name of the theme that will be used to style       web site UI.</li>      <li><b>admin-theme</b>: If the web site has two UIs (One for normal       users and another for admins), this one       can be used to serve the UI for web site admins.</li>      <li><b>descriptions</b>: A sub associative array. The index of the       array should be language code (such as \'EN\') and the value       should be the general web site description in the given language.</li></li>      </ul>',
+                        'description' => 'an associative array. The array can       have the following indices:       <ul>      <li><b>primary-lang</b>: The main display language of the website.      <li><b>website-names</b>: A sub associative array. The index of the       array should be language code (such as \'EN\') and the value       should be the name of the web site in the given language.</li>      <li><b>title-sep</b>: A character or a string that is used       to separate web site name from web page title. Two common       values are \'-\' and \'|\'.</li>      <li><b>home-page</b>: The URL of the home page of the web site. For example,       If root URL of the web site is \'https://www.example.com\', This page is served       when the user visits this URL.</li>      <li><b>base-theme</b>: The name of the theme that will be used to style       web site UI.</li>      <li><b>admin-theme</b>: If the web site has two UIs (One for normal       users and another for admins), this one       can be used to serve the UI for web site admins.</li>      <li><b>descriptions</b>: A sub associative array. The index of the       array should be language code (such as \'EN\') and the value       should be the general web site description in the given language.</li></li>      </ul>',
                         'optional' => false,
                     ],
                 ],
@@ -453,7 +531,7 @@ class ConfigControllerView extends P {
                 'params' => [
                     '$appConfigArr' => [
                         'type' => 'array',
-                        'description' => 'An array that holds configuration vatiables.       The array can have the following indices:      <ul>      <li><b>db-connections</b>: An array that holds objects of type       \'ConnectionInfo\'.</li>      <li><b>smtp</b>: An array that holds objects of type \'SMTPAccount\' that       holds SMTP connection information.</li>      <li><b>website-names</b>: An associative array that holds website names       in different display languages. The index should be language code such       as \'EN\' and the value of the index is website name in that language.</li>      <li><b>titles</b>: An associative array that holds default page titles       in different display languages. The index should be language code such       as \'EN\' and the value of the index is page title in that language.</li>      <li><b>descriptions</b>: An associative array that holds page descriptions       in different display languages. The index should be language code such       as \'EN\' and the value of the index is page description in that language.</li>      <li><b>home-page</b>: A link that represents home page of the website.</li>      <li><b>primary-lang</b>: The primary display language of the website.</li>      <li><b>base-theme</b>: The name of the theme that will be used in the       pages that will be shown to all users (public and private)</li>      <li><b>admin-theme</b>: The name of the theme that will be shown       in control pages of the system.</li>      </ul>',
+                        'description' => 'An array that holds configuration vatiables.       The array can have the following indices:      <ul>      <li><b>db-connections</b>: An array that holds objects of type       \'ConnectionInfo\'.</li>      <li><b>smtp</b>: An array that holds objects of type \'SMTPAccount\' that       holds SMTP connection information.</li>      <li><b>website-names</b>: An associative array that holds website names       in different display languages. The index should be language code such       as \'EN\' and the value of the index is website name in that language.</li>      <li><b>titles</b>: An associative array that holds default page titles       in different display languages. The index should be language code such       as \'EN\' and the value of the index is page title in that language.</li>      <li><b>descriptions</b>: An associative array that holds page descriptions       in different display languages. The index should be language code such       as \'EN\' and the value of the index is page description in that language.</li>      <li><b>home-page</b>: A link that represents home page of the website.</li>      <li><b>primary-lang</b>: The primary display language of the website.</li>      <li><b>base-theme</b>: The name of the theme that will be used in the       pages that will be shown to all users (public and private)</li>      <li><b>admin-theme</b>: The name of the theme that will be shown       in control pages of the system.</li>      <li><b>cron-pass</b>: The password which is used to protect cron jobs       fron unauthorized access. If empty string is given, the string       \'NO_PASSWORD\' is used.</li>      </ul>',
                         'optional' => false,
                     ],
                 ],

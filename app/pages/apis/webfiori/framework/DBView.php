@@ -42,12 +42,12 @@ class DBView extends P {
             new FunctionDef([
                 'name' => 'register',
                 'access-modifier' => 'public function',
-                'summary' => 'Auto-register database tables which exist on a specific path.',
-                'description' => 'Auto-register database tables which exist on a specific path. Note that the statement \'return __NAMESPACE__\' must be included at the       end of the table class for auto-register to work.',
+                'summary' => 'Auto-register database tables which exist on a specific directory.',
+                'description' => 'Auto-register database tables which exist on a specific directory. Note that the statement \'return __NAMESPACE__\' must be included at the       end of the table class for auto-register to work. If the statement       does not exist, the method will assume that the path is the namespace of       the classes. Also, the classes which represents tables must be suffixed       with the word \'Table\' (e.g. UsersTable).',
                 'params' => [
                     '$pathToScan' => [
                         'type' => 'string',
-                        'description' => 'A path which is relative to application source       code. For example, if tables classes exist in the folder       \'C:\\Server\\apache\\htdocs\\src\\app\\database\', then the value of this       argument must be \'app\\database\\.',
+                        'description' => 'A path which is relative to application source       code. For example, if tables classes exist in the folder       \'C:\\Server\\apache\\htdocs\\app\\database\', then the value of this       argument must be \'app\\database\\.',
                         'optional' => false,
                     ],
                 ],

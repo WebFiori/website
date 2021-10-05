@@ -175,6 +175,27 @@ class EmailMessageView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getChildByID',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns a child node given its ID.',
+                'description' => 'Returns a child node given its ID. ',
+                'params' => [
+                    '$id' => [
+                        'type' => 'string',
+                        'description' => 'The ID of the child.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => 'The method returns an object of type HTMLNode.       if found. If no node has the given ID, the method will return null.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
+                        new Anchor('https://webfiori.com/docs/webfiori/ui/HTMLNode', 'HTMLNode'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getLog',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns an array that contains log messages which are generated       from sending SMTP commands.',
@@ -240,6 +261,32 @@ class EmailMessageView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'insert',
+                'access-modifier' => 'public function',
+                'summary' => 'Adds a child node inside the body of a node given its ID.',
+                'description' => 'Adds a child node inside the body of a node given its ID. ',
+                'params' => [
+                    '$node' => [
+                        'type' => 'HTMLNode|string',
+                        'description' => 'The node that will be inserted. Also,       this can be the tag name of the node such as \'div\'.',
+                        'optional' => false,
+                    ],
+                    '$parentNodeId' => [
+                        'type' => 'string|null',
+                        'description' => 'The ID of the node that the given node       will be inserted to. If null is given, the node will be added directly inside       the element &lt;body&gt;. Default value is null.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => 'The method will return the inserted       node if it was inserted. If it is not, the method will return null.',
+                    'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/ui/HTMLNode', 'HTMLNode'),
+                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'insertNode',
                 'access-modifier' => 'public function',
                 'summary' => 'Adds a child HTML node to the body of the message.',
@@ -264,6 +311,25 @@ class EmailMessageView extends P {
                 'summary' => 'Sends the message and set message instance to null.',
                 'description' => 'Sends the message and set message instance to null. ',
                 'params' => [
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setDocument',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the document at which the message will use.',
+                'description' => 'Sets the document at which the message will use. ',
+                'params' => [
+                    '$doc' => [
+                        'type' => 'HTMLDoc',
+                        'description' => 'An HTML document.',
+                        'optional' => false,
+                    ],
                 ],
                 'returns' => [
                     'description' => '',

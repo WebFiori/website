@@ -84,8 +84,8 @@ class CLICommandView extends P {
             new FunctionDef([
                 'name' => 'addArgs',
                 'access-modifier' => 'public function',
-                'summary' => 'Adds multiple arguments to the command',
-                'description' => 'Adds multiple arguments to the command ',
+                'summary' => 'Adds multiple arguments to the command.',
+                'description' => 'Adds multiple arguments to the command. ',
                 'params' => [
                     '$arr' => [
                         'type' => 'array',
@@ -181,7 +181,7 @@ class CLICommandView extends P {
                 'name' => 'error',
                 'access-modifier' => 'public function',
                 'summary' => 'Display a message that represents an error.',
-                'description' => 'Display a message that represents an error. The message will be prefixed with the string \'Error:\' in       red. The output will be sent to STDOUT.',
+                'description' => 'Display a message that represents an error. The message will be prefixed with the string \'Error:\' in       red.',
                 'params' => [
                     '$message' => [
                         'type' => 'string',
@@ -230,7 +230,7 @@ class CLICommandView extends P {
                 'name' => 'formatOutput',
                 'access-modifier' => 'public static function',
                 'summary' => 'Formats an output string.',
-                'description' => 'Formats an output string. This method is used to add colors to the output string or       make it bold or underlined. The returned value of this       method can be sent to STDOUT using the method \'fprintf()\'.       Note that the support for colors       and formatting will depend on the terminal configuration. In addition,       if the constant NO_COLOR is defined or is set in the environment, the       returned string will be returned as is.',
+                'description' => 'Formats an output string. This method is used to add colors to the output string or       make it bold or underlined. The returned value of this       method can be sent to any output stream using the method \'fprintf()\'.       Note that the support for colors      and formatting will depend on the terminal configuration. In addition,       if the constant NO_COLOR is defined or is set in the environment, the       returned string will be returned as is.',
                 'params' => [
                     '$string' => [
                         'type' => 'string',
@@ -326,7 +326,7 @@ class CLICommandView extends P {
                 'name' => 'getInput',
                 'access-modifier' => 'public function',
                 'summary' => 'Take an input value from the user.',
-                'description' => 'Take an input value from the user. This method will read the input from STDIN.',
+                'description' => 'Take an input value from the user. ',
                 'params' => [
                     '$prompt' => [
                         'type' => 'string',
@@ -353,6 +353,22 @@ class CLICommandView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getInputStream',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns the stream at which the command is sing to read inputs.',
+                'description' => 'Returns the stream at which the command is sing to read inputs. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'If the stream is set, it will be returned as       an object. Other than that, the method will return null.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
+                        new Anchor('https://webfiori.com/docs/webfiori/framework/cli/InputStream', 'InputStream'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getName',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns the name of the command.',
@@ -363,6 +379,22 @@ class CLICommandView extends P {
                     'description' => 'The name of the command (such as \'v\' or \'help\'). Default       return value is \'new-command\'.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'getOutputStream',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns the stream at which the command is using to send output.',
+                'description' => 'Returns the stream at which the command is using to send output. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'If the stream is set, it will be returned as       an object. Other than that, the method will return null.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
+                        new Anchor('https://webfiori.com/docs/webfiori/framework/cli/OutputStream', 'OutputStream'),
                     ]
                 ]
 
@@ -391,7 +423,7 @@ class CLICommandView extends P {
                 'name' => 'info',
                 'access-modifier' => 'public function',
                 'summary' => 'Display a message that represents extra information.',
-                'description' => 'Display a message that represents extra information. The message will be prefixed with the string \'Info:\' in       blue. The output will be sent to STDOUT.',
+                'description' => 'Display a message that represents extra information. The message will be prefixed with the string \'Info:\' in       blue.',
                 'params' => [
                     '$message' => [
                         'type' => 'string',
@@ -549,11 +581,11 @@ class CLICommandView extends P {
                 'name' => 'println',
                 'access-modifier' => 'public function',
                 'summary' => 'Print out a string and terminates the current line by writing the       line separator string.',
-                'description' => 'Print out a string and terminates the current line by writing the       line separator string. This method will work like the function fprintf(). The difference is that       it will print out directly to STDOUT and the text can have formatting       options. Note that support for output formatting depends on terminal support for       ANSI escape codes.',
+                'description' => 'Print out a string and terminates the current line by writing the       line separator string. This method will work like the function fprintf(). The difference is that       it will print out to the stream at which was specified by the method       CLICommand::setOutputStream() and the text can have formatting       options. Note that support for output formatting depends on terminal support for       ANSI escape codes.',
                 'params' => [
                     '$str' => [
                         'type' => 'string',
-                        'description' => 'The string that will be printed to STDOUT.',
+                        'description' => 'The string that will be printed.',
                         'optional' => false,
                     ],
                     '$_' => [
@@ -573,11 +605,11 @@ class CLICommandView extends P {
                 'name' => 'prints',
                 'access-modifier' => 'public function',
                 'summary' => 'Print out a string.',
-                'description' => 'Print out a string. This method works exactly like the function \'fprintf()\'. The only       difference is that the method will print out the output to STDOUT and       the method accepts formatting options as last argument to format the output.       Note that support for output formatting depends on terminal support for       ANSI escape codes.',
+                'description' => 'Print out a string. This method works exactly like the function \'fprintf()\'. The only       difference is that the method will print out the output to the stream       that was specified using the method CLICommand::setOutputStream() and       the method accepts formatting options as last argument to format the output.       Note that support for output formatting depends on terminal support for       ANSI escape codes.',
                 'params' => [
                     '$str' => [
                         'type' => 'string',
-                        'description' => 'The string that will be printed to STDOUT.',
+                        'description' => 'The string that will be printed.',
                         'optional' => false,
                     ],
                     '$_' => [
@@ -596,12 +628,17 @@ class CLICommandView extends P {
             new FunctionDef([
                 'name' => 'read',
                 'access-modifier' => 'public function',
-                'summary' => 'Reads a string from STDIN stream.',
-                'description' => 'Reads a string from STDIN stream. This method is limit to read 1024 bytes at once from STDIN.',
+                'summary' => 'Reads a string of bytes from input stream.',
+                'description' => 'Reads a string of bytes from input stream. This method is used to read specific number of characters from input stream.',
                 'params' => [
+                    '$bytes ' => [
+                        'type' => 'unkown_type',
+                        'description' => '',
+                        'optional' => true,
+                    ],
                 ],
                 'returns' => [
-                    'description' => 'The method will return the string which was given as input       in STDIN.',
+                    'description' => 'The method will return the string which was given as input       in the input stream.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
@@ -611,12 +648,12 @@ class CLICommandView extends P {
             new FunctionDef([
                 'name' => 'readln',
                 'access-modifier' => 'public function',
-                'summary' => 'Reads one line from STDIN.',
-                'description' => 'Reads one line from STDIN. The method will continue to read from STDIN till it finds end of       line character "\\n".',
+                'summary' => 'Reads one line from input stream.',
+                'description' => 'Reads one line from input stream. The method will continue to read from input stream till it finds end of       line character "\\n".',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'The method will return the string which was taken from       STDIN without the end of line character.',
+                    'description' => 'The method will return the string which was taken from       input stream without the end of line character.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
@@ -699,6 +736,25 @@ class CLICommandView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'setInputStream',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the stream at which the command will read input from.',
+                'description' => 'Sets the stream at which the command will read input from. ',
+                'params' => [
+                    '$stream' => [
+                        'type' => 'InputStream',
+                        'description' => 'An instance that implements an input stream.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'setName',
                 'access-modifier' => 'public function',
                 'summary' => 'Sets the name of the command.',
@@ -719,10 +775,29 @@ class CLICommandView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'setOutputStream',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the stream at which the command will send output to.',
+                'description' => 'Sets the stream at which the command will send output to. ',
+                'params' => [
+                    '$stream' => [
+                        'type' => 'OutputStream',
+                        'description' => 'An instance that implements output stream.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'success',
                 'access-modifier' => 'public function',
                 'summary' => 'Display a message that represents a success status.',
-                'description' => 'Display a message that represents a success status. The message will be prefixed with the string "Success:" in green.       The output will be sent to STDOUT.',
+                'description' => 'Display a message that represents a success status. The message will be prefixed with the string "Success:" in green.',
                 'params' => [
                     '$message' => [
                         'type' => 'string',
@@ -741,7 +816,7 @@ class CLICommandView extends P {
                 'name' => 'warning',
                 'access-modifier' => 'public function',
                 'summary' => 'Display a message that represents a warning.',
-                'description' => 'Display a message that represents a warning. The message will be prefixed with the string \'Warning:\' in       red. The output will be sent to STDOUT.',
+                'description' => 'Display a message that represents a warning. The message will be prefixed with the string \'Warning:\' in       red.',
                 'params' => [
                     '$message' => [
                         'type' => 'string',

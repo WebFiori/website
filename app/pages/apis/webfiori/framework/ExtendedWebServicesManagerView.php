@@ -218,6 +218,25 @@ class ExtendedWebServicesManagerView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'registerServices',
+                'access-modifier' => 'public function',
+                'summary' => 'Auto-register services tables which exist on a specific directory.',
+                'description' => 'Auto-register services tables which exist on a specific directory. Note that the statement \'return __NAMESPACE__\' must be included at the       end of service class for auto-register to work. If the statement       does not exist, the method will assume that the path is the namespace of       each class. Also, the classes which represents web services must be suffixed       with the word \'Service\' (e.g. RegisterUserService).',
+                'params' => [
+                    '$pathToScan' => [
+                        'type' => 'string',
+                        'description' => 'A path which is relative to application source       code. For example, if tables classes exist in the folder       \'C:\\Server\\apache\\htdocs\\app\\apis\', then the value of this       argument must be \'app\\apis\\.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'requestMethodNotAllowed',
                 'access-modifier' => 'public function',
                 'summary' => 'Sends a response message to indicate that request method is not supported.',

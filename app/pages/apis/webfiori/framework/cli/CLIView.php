@@ -90,6 +90,36 @@ class CLIView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getInputStream',
+                'access-modifier' => 'public static function',
+                'summary' => 'Returns the stream at which the engine is using to get input.',
+                'description' => 'Returns the stream at which the engine is using to get input. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'Note that if input stream is set to null, the stream       will be set to default which is \'StdIn\'.',
+                    'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/framework/cli/InputStream', 'InputStream'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'getOutputStream',
+                'access-modifier' => 'public static function',
+                'summary' => 'Returns the stream at which the engine is using to send output.',
+                'description' => 'Returns the stream at which the engine is using to send output. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'Note that if output stream is set to null, the stream       will be set to default which is \'StdOut\'.',
+                    'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/framework/cli/OutputStream', 'OutputStream'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getRegisteredCommands',
                 'access-modifier' => 'public static function',
                 'summary' => 'Returns an associative array of registered commands.',
@@ -127,6 +157,21 @@ class CLIView extends P {
                 ],
                 'returns' => [
                     'description' => 'If the framework is running through a command line,       the method will return true. False if not.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'isIntaractive',
+                'access-modifier' => 'public static function',
+                'summary' => 'Checks if CLI is running in interactive mode or not.',
+                'description' => 'Checks if CLI is running in interactive mode or not. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'If CLI is running in interactive mode, the method will       return true. False otherwise.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
                     ]
@@ -177,6 +222,44 @@ class CLIView extends P {
                     'description' => 'If the CLI is completed without any errors, the method will       return 0.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.integer.php', 'int'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setInputStream',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the stream at which the registered commands will use to send       output to.',
+                'description' => 'Sets the stream at which the registered commands will use to send       output to. ',
+                'params' => [
+                    '$stream' => [
+                        'type' => 'OutputStream',
+                        'description' => 'The output stream.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setOutputStream',
+                'access-modifier' => 'public static function',
+                'summary' => 'Sets the stream at which the registered commands will use to send       output to.',
+                'description' => 'Sets the stream at which the registered commands will use to send       output to. ',
+                'params' => [
+                    '$stream' => [
+                        'type' => 'OutputStream',
+                        'description' => 'The output stream.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
                     ]
                 ]
 

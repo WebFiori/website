@@ -25,6 +25,10 @@ class NSIndexView extends P {
             "access-modifier" => "class",
             "summary" => "A web service which is used to force job execution using web interface."
         ],
+        "GetJobsService" => [
+            "access-modifier" => "class",
+            "summary" => "A web service which is used to fetch a list of all scheduled jobs."
+        ],
         ], [
         ]);
         $this->setNSObj($nsObj);
