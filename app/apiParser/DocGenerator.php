@@ -670,7 +670,7 @@ class DocGenerator {
                 . 'class DocGeneratorRoutes{'."\r\n"
                     . '    public static function createRoutes(){'."\r\n";
             foreach ($this->routerLinks as $link => $routeTo){
-                $routesStr .= '        Router::view(['."\n"
+                $routesStr .= '        Router::page(['."\n"
                         . '            \'path\' => \'docs'.$link.'\','."\n"
                         . '            \'route-to\' => \''.$routeTo.'View.'.$ext.'\','."\n"
                         . '            \'in-sitemap\' => true'."\n"
