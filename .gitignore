@@ -23,3 +23,4 @@ composer.lock
 /src/app/pages/apis/
 /src/app/storage/
 /vendor/
+app/sto
