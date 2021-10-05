@@ -566,8 +566,9 @@ class DatabaseView extends P {
                     ],
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'The method will return the same instance at which the       method is called on.',
                     'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/database/Database', 'Database'),
                     ]
                 ]
 
@@ -588,6 +589,7 @@ class DatabaseView extends P {
                     'description' => 'The method will return an instance of the class       \'AbstractQuery\' which can be used to build SQL queries.',
                     'return-types' => [
                         new Anchor('https://webfiori.com/docs/webfiori/database/AbstractQuery', 'AbstractQuery'),
+                        new Anchor('https://webfiori.com/docs/webfiori/database/mysql/MySQLQuery', 'MySQLQuery'),
                     ]
                 ]
 
