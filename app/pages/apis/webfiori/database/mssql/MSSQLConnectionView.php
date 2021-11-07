@@ -1,5 +1,5 @@
 <?php
-namespace docGenerator\webfiori\database\mysql;
+namespace docGenerator\webfiori\database\mssql;
 use webfiori\docs\apiParser\DocsWebPage as P;
 use webfiori\ui\HTMLNode;
 use webfiori\apiParser\FunctionDef;
@@ -8,18 +8,37 @@ use webfiori\apiParser\MethodParameter;
 use webfiori\ui\Anchor;
 use webfiori\apiParser\ParameterType;
 
-class MySQLConnectionView extends P {
+class MSSQLConnectionView extends P {
     public function __construct(){
         parent::__construct();
         $this->setTheme('webfiori\theme\NewFioriAPI');
         $this->getTheme()->setBaseURL('https://webfiori.com/docs');
-        $this->setDescription('A class that represents a connection to MySQL server.');
+        $this->setDescription('A class that represents a connection to MSSQL server.');
         $this->setWebsiteName('WebFiori API Docs');
-        $this->setTitle('class MySQLConnection');
-        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'MySQLConnection', '\webfiori\database\mysql', 'A class that represents a connection to MySQL server. The main aim of this class is to manage the process of connecting to   MySQL server and executing SQL queries.'));
+        $this->setTitle('class MSSQLConnection');
+        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'MSSQLConnection', '\webfiori\database\mssql', 'A class that represents a connection to MSSQL server. The main aim of this class is to manage the process of connecting to   MSSQL server and executing SQL queries.'));
         $classAttrsArr = [
         ];
         $classMethodsArr = [
+            new FunctionDef([
+                'name' => '__construct',
+                'access-modifier' => 'public function',
+                'summary' => 'Creates new instance of the class.',
+                'description' => 'Creates new instance of the class. ',
+                'params' => [
+                    '$connInfo' => [
+                        'type' => 'ConnectionInfo',
+                        'description' => 'An object that contains database connection       information.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
             new FunctionDef([
                 'name' => '__destruct',
                 'access-modifier' => 'public function',
@@ -37,8 +56,8 @@ class MySQLConnectionView extends P {
             new FunctionDef([
                 'name' => 'connect',
                 'access-modifier' => 'public function',
-                'summary' => 'Connect to MySQL database.',
-                'description' => 'Connect to MySQL database. ',
+                'summary' => 'Connect to MSSQL database.',
+                'description' => 'Connect to MSSQL database. ',
                 'params' => [
                 ],
                 'returns' => [
@@ -50,17 +69,18 @@ class MySQLConnectionView extends P {
 
             ]),
             new FunctionDef([
-                'name' => 'getMysqli',
+                'name' => 'getSQLState',
                 'access-modifier' => 'public function',
-                'summary' => 'Returns the instance at which the connection uses to execute       database queries.',
-                'description' => 'Returns the instance at which the connection uses to execute       database queries. ',
+                'summary' => 'Returns SQL state in case of warnings or errors.',
+                'description' => 'Returns SQL state in case of warnings or errors. ',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'The object which is used to connect to the database.',
+                    'description' => '',
                     'return-types' => [
-                        'mysqli',
-                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
+                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
+                        'null
+',
                     ]
                 ]
 
@@ -68,20 +88,20 @@ class MySQLConnectionView extends P {
             new FunctionDef([
                 'name' => 'prepare',
                 'access-modifier' => 'public function',
-                'summary' => 'Prepare and bind SQL statement.',
-                'description' => 'Prepare and bind SQL statement. ',
+                'summary' => 'Prepares SQL statement for execution.',
+                'description' => 'Prepares SQL statement for execution. ',
                 'params' => [
-                    '$queryParams' => [
+                    '$params' => [
                         'type' => 'array',
-                        'description' => 'An array that holds sub associative arrays that holds       values. Each sub array must have two indices:      <ul>      <li><b>value</b>: The value to bind.</li>      <li><b>type</b>: The type of the value as a character. can be one of 4 values:       <ul>      <li>i: corresponding variable has type integer</li>      <li>d: corresponding variable has type double</li>      <li>s: corresponding variable has type string</li>      <li>b: corresponding variable is a blob and will be sent in packets</li>      </ul>      </li>      <ul>',
+                        'description' => 'An array that holds query parameters. The parameters       can have similar structure to the ones which are used by the       function \'sqlsrv_prepare\'.',
                         'optional' => false,
                     ],
                 ],
                 'returns' => [
-                    'description' => 'If the statement was successfully prepared, the method       will return true. If an error happens, the method will return false.',
+                    'description' => 'If the statement is prepared, the method will return       a resource that can be used to run the query. If it fails, the       method will return false.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
-                        'mysqli_stmt',
+                        new Anchor('http://php.net/manual/en/language.types.resource.php', 'resource'),
                     ]
                 ]
 
@@ -89,17 +109,17 @@ class MySQLConnectionView extends P {
             new FunctionDef([
                 'name' => 'runQuery',
                 'access-modifier' => 'public function',
-                'summary' => 'Execute MySQL query.',
-                'description' => 'Execute MySQL query. ',
+                'summary' => 'Execute MSSQL query.',
+                'description' => 'Execute MSSQL query. ',
                 'params' => [
                     '$query' => [
                         'type' => 'AbstractQuery',
-                        'description' => 'A query builder that has the generated MySQL       query.',
+                        'description' => 'A query builder that has the generated MSSQL       query.',
                         'optional' => false,
                     ],
                 ],
                 'returns' => [
-                    'description' => 'If the query successfully executed, the method will return       true. Other than that, the method will return true.',
+                    'description' => 'If the query successfully executed, the method will return       true. Other than that, the method will return false.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
                     ]

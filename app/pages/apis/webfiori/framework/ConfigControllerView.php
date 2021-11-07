@@ -331,27 +331,6 @@ class ConfigControllerView extends P {
 
             ]),
             new FunctionDef([
-                'name' => 'getSocketMailer',
-                'access-modifier' => 'public function',
-                'summary' => 'Returns a new instance of the class SocketMailer.',
-                'description' => 'Returns a new instance of the class SocketMailer. The method will try to establish a connection to SMTP server using       the given SMTP account.',
-                'params' => [
-                    '$emailAcc' => [
-                        'type' => 'SMTPAccount',
-                        'description' => 'An account that is used to initiate       socket mailer.',
-                        'optional' => false,
-                    ],
-                ],
-                'returns' => [
-                    'description' => 'The method will return an instance of SocketMailer      on successful connection. If no connection is established, the method will       return MailFunctions::INV_HOST_OR_PORT. If user authentication fails,       the method will return \'MailFunctions::INV_CREDENTIALS\'.',
-                    'return-types' => [
-                        new Anchor('https://webfiori.com/docs/webfiori/framework/mail/SocketMailer', 'SocketMailer'),
-                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
                 'name' => 'getTitleSep',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns a string that represents the string that will be used to separate       website name from page title.',
@@ -496,10 +475,8 @@ class ConfigControllerView extends P {
                     ],
                 ],
                 'returns' => [
-                    'description' => 'The method will return true if the email       account was updated or added. If the email account contains wrong server       information, the method will return MailFunctions::INV_HOST_OR_PORT.       If the given email account contains wrong login info, the method will       return MailFunctions::INV_CREDENTIALS. Other than that, the method       will return false.',
+                    'description' => '',
                     'return-types' => [
-                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
-                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
                 ]
 

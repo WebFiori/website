@@ -36,6 +36,16 @@ class WebFioriAppView extends P {
                         'description' => 'A callback which is used to register the       classes of the folder.',
                         'optional' => false,
                     ],
+                    '$suffix' => [
+                        'type' => 'string|null',
+                        'description' => 'A string which is appended to class name.      For example, if class name is \'UsersTable\', the suffix in this case would       be \'Table\' If provided, only classes with the specified suffix will       be considered.',
+                        'optional' => false,
+                    ],
+                    '$otherParams' => [
+                        'type' => 'array',
+                        'description' => 'An optional array that can hold extra parameters       which will be passed to the register callback.',
+                        'optional' => false,
+                    ],
                 ],
                 'returns' => [
                     'description' => '',

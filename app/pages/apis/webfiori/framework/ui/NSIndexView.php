@@ -25,10 +25,6 @@ class NSIndexView extends P {
             "access-modifier" => "class",
             "summary" => "A page which is used to display exception information when it is thrown or   any other errors."
         ],
-        "ServiceUnavailableView" => [
-            "access-modifier" => "class",
-            "summary" => "A view which is show to tell the user that the framework isn't configured   yet."
-        ],
         "StarterPage" => [
             "access-modifier" => "class",
             "summary" => "A page which is shown to the framework users when the developer has not   configured any routes."

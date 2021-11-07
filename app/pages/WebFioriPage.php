@@ -62,6 +62,10 @@ class WebFioriPage extends WebPage{
             'is_rtl' => $this->getTranslation()->getWritingDir() == 'rtl'
         ]);
         $this->topInlineJs = new JsCode();
+        $this->addBeforeRender(function (WebFioriPage $p) {
+            $p->addInlineJs('data = '.$p->getJson());
+            $p->getDocument()->getHeadNode()->addChild($p->getTopInlineJs());
+        });
     }
     /**
      * Creates HTML node of type 'img'

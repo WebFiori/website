@@ -49,6 +49,26 @@ class SessionOperationsView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getChunksCount',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns the number of data chunks a session has.',
+                'description' => 'Returns the number of data chunks a session has. ',
+                'params' => [
+                    '$sId' => [
+                        'type' => 'string',
+                        'description' => 'The ID of the session.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => 'If the session does not exist, the method will return 0.      Other than that, it will return data chunks count.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.integer.php', 'int'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getSession',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns a record that holds session data given Its ID.',
@@ -84,6 +104,26 @@ class SessionOperationsView extends P {
                     'description' => 'An array that holds the IDs of sessions which are older than       given date.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'isSessionExist',
+                'access-modifier' => 'public function',
+                'summary' => 'Checks if a session which has the given ID exist or not in the database.',
+                'description' => 'Checks if a session which has the given ID exist or not in the database. ',
+                'params' => [
+                    '$sId' => [
+                        'type' => 'string',
+                        'description' => 'The unique identifier of the session.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => 'If a session which has the given ID exist, the method will       return true. Other than that, the method will return false.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
                     ]
                 ]
 

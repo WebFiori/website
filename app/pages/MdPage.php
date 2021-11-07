@@ -123,7 +123,8 @@ class MdPage extends WebFioriPage {
         foreach ($arr as $id => $title) {
             $data[] = new Json([
                 'name' => $title,
-                'href' => $base.'#'.$id
+                'href' => $base.'#'.$id,
+                'id' => $id
             ]);
         }
         return $data;
@@ -137,15 +138,19 @@ class MdPage extends WebFioriPage {
                 'class' => 'd-none d-md-flex'
             ]);
             
-            $drawer->addChild('v-card')
+            $tree = $drawer->addChild('v-card')
                     ->addChild('v-card-text')
                     ->addChild('v-treeview', [
                         ':items' => 'side_links_tree'
-                    ])->addChild('template', [
+                    ]);
+            $tree->addChild('template', [
                         '#label' => '{ item }'
                     ])->addChild('a', [
                         ':href' => 'item.href'
                     ])->text('{{ item.name }}');
+            $tree->addChild('template', [
+                '#prepend' => '{item, open}'
+            ])->addChild('v-icon')->text('mdi-arrow-right-bold-circle-outline');
             
             return $drawer;
         }

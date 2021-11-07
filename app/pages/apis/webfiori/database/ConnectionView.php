@@ -40,25 +40,6 @@ class ConnectionView extends P {
 
             ]),
             new FunctionDef([
-                'name' => 'bind',
-                'access-modifier' => 'public abstract function',
-                'summary' => 'Bind parameters to SQL query.',
-                'description' => 'Bind parameters to SQL query. The implementation of this method should bind a prepared statement to       a set parameters.',
-                'params' => [
-                    '$params' => [
-                        'type' => 'array',
-                        'description' => 'An array that holds the values. The developer can       decide the structure of the array based on how he will bind the       arguments.',
-                        'optional' => false,
-                    ],
-                ],
-                'returns' => [
-                    'description' => '',
-                    'return-types' => [
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
                 'name' => 'connect',
                 'access-modifier' => 'public abstract function',
                 'summary' => 'Connect to RDBMS.',
@@ -157,6 +138,11 @@ class ConnectionView extends P {
                 'summary' => 'Creates a prepared SQL statement from the query.',
                 'description' => 'Creates a prepared SQL statement from the query. The implementation of this method should execute a prepare statement       on the database engine. An example is MySQL. In this case, the developer       must use the method mysqli::prepare(). After the statement is prepared,       then the developer can bind parameters values using the       method mysqli_stmt::bind_param().',
                 'params' => [
+                    '$queryParams' => [
+                        'type' => 'array',
+                        'description' => 'An optional array of parameters to bind with the       prepared query. The structure of the array will depend on the type of       database engine that will be used.',
+                        'optional' => false,
+                    ],
                 ],
                 'returns' => [
                     'description' => '',

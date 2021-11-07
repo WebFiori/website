@@ -431,6 +431,101 @@ class CronView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'setDayOfMonth',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the number of day in the month at which the scheduler started to       execute jobs.',
+                'description' => 'Sets the number of day in the month at which the scheduler started to       execute jobs. This method is helpful for the developer to test if jobs will run on       the specified time or not.',
+                'params' => [
+                    '$dayOfMonth' => [
+                        'type' => 'int',
+                        'description' => 'The number of day. 1 for the first day of month and       31 for the last day of the month.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setDayOfWeek',
+                'access-modifier' => 'public static function',
+                'summary' => 'Sets the value of the week at which the scheduler started to       run.',
+                'description' => 'Sets the value of the week at which the scheduler started to       run. This method is helpful for the developer to test if jobs will run on       the specified time or not.',
+                'params' => [
+                    '$val' => [
+                        'type' => 'int',
+                        'description' => 'Numeric representation of the day of the week.       0 for Sunday through 6 for Saturday.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setHour',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the hour at which the scheduler started to       execute jobs.',
+                'description' => 'Sets the hour at which the scheduler started to       execute jobs. This method is helpful for the developer to test if jobs will run on       the specified time or not.',
+                'params' => [
+                    '$hour' => [
+                        'type' => 'int',
+                        'description' => 'The number of hour. Can be any value between 1 and       23 inclusive.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setMinute',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the minute at which the scheduler started to       execute jobs.',
+                'description' => 'Sets the minute at which the scheduler started to       execute jobs. This method is helpful for the developer to test if jobs will run on       the specified time or not.',
+                'params' => [
+                    '$minute' => [
+                        'type' => 'int',
+                        'description' => 'The number of the minute. Can be any value from       1 to 59.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'setMonth',
+                'access-modifier' => 'public function',
+                'summary' => 'Sets the month at which the scheduler started to       execute jobs.',
+                'description' => 'Sets the month at which the scheduler started to       execute jobs. This method is helpful for the developer to test if jobs will run on       the specified time or not.',
+                'params' => [
+                    '$month' => [
+                        'type' => 'int',
+                        'description' => 'The number of the month. Can be any value       between 1 and 12 inclusive.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'timestamp',
                 'access-modifier' => 'public static function',
                 'summary' => 'Returns the time at which jobs check was initialized.',

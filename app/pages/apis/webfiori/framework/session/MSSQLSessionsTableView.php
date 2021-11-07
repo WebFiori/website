@@ -8,15 +8,15 @@ use webfiori\apiParser\MethodParameter;
 use webfiori\ui\Anchor;
 use webfiori\apiParser\ParameterType;
 
-class SessionsTableView extends P {
+class MSSQLSessionsTableView extends P {
     public function __construct(){
         parent::__construct();
         $this->setTheme('webfiori\theme\NewFioriAPI');
         $this->getTheme()->setBaseURL('https://webfiori.com/docs');
-        $this->setDescription('A class which represents the database table \'`sessions`\'.');
+        $this->setDescription('A class which represents the database table \'sessions\'.');
         $this->setWebsiteName('WebFiori API Docs');
-        $this->setTitle('class SessionsTable');
-        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'SessionsTable', '\webfiori\framework\session', 'A class which represents the database table \'`sessions`\'. The table which is associated with this class will have the following columns:  <ul>  <li><b>s-id</b>: Name in database: \'`s_id`\'. Data type: \'varchar\'.</li>  <li><b>started-at</b>: Name in database: \'`started_at`\'. Data type: \'timestamp\'.</li>  <li><b>last-used</b>: Name in database: \'`last_used`\'. Data type: \'datetime\'.</li>  <li><b>session-data</b>: Name in database: \'`session_data`\'. Data type: \'mediumtext\'.</li>  </ul>'));
+        $this->setTitle('class MSSQLSessionsTable');
+        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'MSSQLSessionsTable', '\webfiori\framework\session', 'A class which represents the database table \'sessions\'. The table which is associated with this class will have the following columns:  <ul>  <li><b>s-id</b>: Name in database: \'s_id\'. Data type: \'varchar\'.</li>  <li><b>started-at</b>: Name in database: \'started_at\'. Data type: \'timestamp2\'.</li>  <li><b>last-used</b>: Name in database: \'last_used\'. Data type: \'datetime2\'.</li>  <li><b>session-data</b>: Name in database: \'session_data\'. Data type: \'varchar\'.</li>  </ul>'));
         $classAttrsArr = [
         ];
         $classMethodsArr = [

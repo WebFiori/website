@@ -411,7 +411,7 @@ class ColumnView extends P {
                 'name' => 'setDatatype',
                 'access-modifier' => 'public function',
                 'summary' => 'Sets the type of column data.',
-                'description' => 'Sets the type of column data. ',
+                'description' => 'Sets the type of column data. Note that calling this method will set default value to null.',
                 'params' => [
                     '$type' => [
                         'type' => 'string',

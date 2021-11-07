@@ -452,6 +452,21 @@ class TableView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getUniqueCols',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns an array that holds all the columns which are set to be unique.',
+                'description' => 'Returns an array that holds all the columns which are set to be unique. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'An array that holds objects of type \'MSSQLColumn\'.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'hasColumn',
                 'access-modifier' => 'public function',
                 'summary' => '',

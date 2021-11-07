@@ -17,6 +17,22 @@ class NSIndexView extends P {
             "access-modifier" => "class",
             "summary" => "The default sessions storage engine."
         ],
+        "MSSQLSessionDataTable" => [
+            "access-modifier" => "class",
+            "summary" => "A class which represents the database table 'session_data'."
+        ],
+        "MSSQLSessionsTable" => [
+            "access-modifier" => "class",
+            "summary" => "A class which represents the database table 'sessions'."
+        ],
+        "MySQLSessionDataTable" => [
+            "access-modifier" => "class",
+            "summary" => "A class which represents the database table 'session_data'."
+        ],
+        "MySQLSessionsTable" => [
+            "access-modifier" => "class",
+            "summary" => "A class which represents the database table '`sessions`'."
+        ],
         "Session" => [
             "access-modifier" => "class",
             "summary" => "A class that represents a session."
@@ -28,10 +44,6 @@ class NSIndexView extends P {
         "SessionsManager" => [
             "access-modifier" => "class",
             "summary" => "A class which is used to manage user sessions."
-        ],
-        "SessionsTable" => [
-            "access-modifier" => "class",
-            "summary" => "A class which represents the database table '`sessions`'."
         ],
         "SessionStorage" => [
             "access-modifier" => "interface",

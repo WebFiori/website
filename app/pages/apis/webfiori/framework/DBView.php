@@ -40,14 +40,34 @@ class DBView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'addTable',
+                'access-modifier' => 'public function',
+                'summary' => 'Adds a table to the instance.',
+                'description' => 'Adds a table to the instance. ',
+                'params' => [
+                    '$table' => [
+                        'type' => 'Table',
+                        'description' => 'the table that will be added.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => 'If the table is added, the method will return true. False       otherwise.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'register',
                 'access-modifier' => 'public function',
                 'summary' => 'Auto-register database tables which exist on a specific directory.',
-                'description' => 'Auto-register database tables which exist on a specific directory. Note that the statement \'return __NAMESPACE__\' must be included at the       end of the table class for auto-register to work. If the statement       does not exist, the method will assume that the path is the namespace of       the classes. Also, the classes which represents tables must be suffixed       with the word \'Table\' (e.g. UsersTable).',
+                'description' => 'Auto-register database tables which exist on a specific directory. Note that the statement \'return __NAMESPACE__\' should be included at the       end of the table class for auto-register to work. If the statement       does not exist, the method will assume that the path is the namespace of       the classes. Also, the classes which represents tables must be suffixed       with the word \'Table\' (e.g. UsersTable). Also, the registration will depend       on the database that the connection is for. For example, if the connection       is for MySQL database, then only tables of type \'MySQLTable\'.',
                 'params' => [
                     '$pathToScan' => [
                         'type' => 'string',
-                        'description' => 'A path which is relative to application source       code. For example, if tables classes exist in the folder       \'C:\\Server\\apache\\htdocs\\app\\database\', then the value of this       argument must be \'app\\database\\.',
+                        'description' => 'A path which is relative to application source       code. For example, If your application folder name is \'app\'       and if tables classes exist in the folder \'app\\database\', then the value of this       argument must be \'database\'.',
                         'optional' => false,
                     ],
                 ],

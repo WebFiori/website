@@ -167,15 +167,16 @@ class AbstractQueryView extends P {
             ]),
             new FunctionDef([
                 'name' => 'delete',
-                'access-modifier' => 'public abstract function',
-                'summary' => 'Removes a record from the active table.',
-                'description' => 'Removes a record from the active table. ',
+                'access-modifier' => 'public function',
+                'summary' => 'Constructs a query which can be used to remove a record from the associated       table.',
+                'description' => 'Constructs a query which can be used to remove a record from the associated       table. ',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'The method should return the same instance at which       the method is called on.',
+                    'description' => 'The method will return the same instance at which the       method is called on.',
                     'return-types' => [
-                        new Anchor('https://webfiori.com/docs/webfiori/database/AbstractQuery', 'AbstractQuery'),
+                        new Anchor('https://webfiori.com/docs/webfiori/database/mssql/MSSQLQuery', 'MSSQLQuery'),
+                        new Anchor('https://webfiori.com/docs/webfiori/database/mysql/MySQLQuery', 'MySQLQuery'),
                     ]
                 ]
 
@@ -197,20 +198,21 @@ class AbstractQueryView extends P {
             ]),
             new FunctionDef([
                 'name' => 'dropCol',
-                'access-modifier' => 'public abstract function',
-                'summary' => 'Constructs a query that can be used to drop a column.',
-                'description' => 'Constructs a query that can be used to drop a column. ',
+                'access-modifier' => 'public function',
+                'summary' => 'Constructs a query which can be used to drop a column from associated       table.',
+                'description' => 'Constructs a query which can be used to drop a column from associated       table. ',
                 'params' => [
                     '$colKey' => [
                         'type' => 'string',
-                        'description' => 'The name of column key as specified when the column       was added to the table.',
+                        'description' => 'The name of column key taken from the table.',
                         'optional' => false,
                     ],
                 ],
                 'returns' => [
-                    'description' => 'The method should return the same instance at which       the method is called on.',
+                    'description' => 'The method will return the same instance at which the       method is called on.',
                     'return-types' => [
-                        new Anchor('https://webfiori.com/docs/webfiori/database/AbstractQuery', 'AbstractQuery'),
+                        new Anchor('https://webfiori.com/docs/webfiori/database/mssql/MSSQLQuery', 'MSSQLQuery'),
+                        new Anchor('https://webfiori.com/docs/webfiori/database/mysql/MySQLQuery', 'MySQLQuery'),
                     ]
                 ]
 

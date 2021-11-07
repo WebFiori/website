@@ -71,6 +71,7 @@ class NSIndexView extends P {
         ],
         ], [
             'webfiori\database\mysql',
+            'webfiori\database\mssql',
         ]);
         $this->setNSObj($nsObj);
     }

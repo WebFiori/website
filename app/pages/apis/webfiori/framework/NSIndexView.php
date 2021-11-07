@@ -25,6 +25,10 @@ class NSIndexView extends P {
             "access-modifier" => "class",
             "summary" => "A class that can be used to represent system database."
         ],
+        "EAbstractWebService" => [
+            "access-modifier" => "abstract class",
+            "summary" => "A class which represents a web service."
+        ],
         "ExtendedWebServicesManager" => [
             "access-modifier" => "abstract class",
             "summary" => "An extension for the class 'WebServicesManager' that adds support for multi-language   response messages."
@@ -36,10 +40,6 @@ class NSIndexView extends P {
         "Logger" => [
             "access-modifier" => "class",
             "summary" => "A class that is used to log messages to a file."
-        ],
-        "Page" => [
-            "access-modifier" => "class",
-            "summary" => "A class used to initialize view components."
         ],
         "Privilege" => [
             "access-modifier" => "class",

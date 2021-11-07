@@ -23,7 +23,7 @@ class ConnectionInfoView extends P {
             '',
             'SUPPORTED_DATABASES',
             'An array that contains supported database drivers.',
-            'An array that contains supported database drivers. The array has the following values:      <ul>      <li>mysql</li>      <ul>',
+            'An array that contains supported database drivers. The array has the following values:      <ul>      <li>mysql</li>      <li>mssql</li>      <ul>',
             ),
         ];
         $classMethodsArr = [
@@ -35,7 +35,7 @@ class ConnectionInfoView extends P {
                 'params' => [
                     '$databaseType' => [
                         'type' => 'string',
-                        'description' => 'Name of the database at which the connection       is for.',
+                        'description' => 'Name of the database at which the connection       is for. Can be \'mysql\' or \'mssql\'.',
                         'optional' => false,
                     ],
                     '$user' => [
@@ -55,12 +55,12 @@ class ConnectionInfoView extends P {
                     ],
                     '$host' => [
                         'type' => 'string',
-                        'description' => 'The address of database host. Default value is       \'localhost\'.',
+                        'description' => 'The address of database host or server name.',
                         'optional' => false,
                     ],
                     '$port' => [
                         'type' => 'int',
-                        'description' => 'Port number that will be used to access database server.       Default is 3306.',
+                        'description' => 'Port number that will be used to access database server.       In case of \'mysql\', default is 3306. In case of \'mssql\', default is 1433.',
                         'optional' => false,
                     ],
                     '$extras' => [

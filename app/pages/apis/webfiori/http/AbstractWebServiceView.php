@@ -112,6 +112,25 @@ class AbstractWebServiceView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'addParameters',
+                'access-modifier' => 'public function',
+                'summary' => 'Adds multiple parameters to the web service in one batch.',
+                'description' => 'Adds multiple parameters to the web service in one batch. ',
+                'params' => [
+                    '$params' => [
+                        'type' => 'array',
+                        'description' => 'An associative or indexed array. If the array is indexed,       each index should hold an object of type \'RequestParameter\'. If it is associative,      then the key will represent the name of the web service and the value of the       key should be a sub-associative array that holds parameter options.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getAuthHeader',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns an array that contains the value of the header \'authorization\'.',

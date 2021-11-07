@@ -221,11 +221,11 @@ class ExtendedWebServicesManagerView extends P {
                 'name' => 'registerServices',
                 'access-modifier' => 'public function',
                 'summary' => 'Auto-register services tables which exist on a specific directory.',
-                'description' => 'Auto-register services tables which exist on a specific directory. Note that the statement \'return __NAMESPACE__\' must be included at the       end of service class for auto-register to work. If the statement       does not exist, the method will assume that the path is the namespace of       each class. Also, the classes which represents web services must be suffixed       with the word \'Service\' (e.g. RegisterUserService).',
+                'description' => 'Auto-register services tables which exist on a specific directory. Note that the statement \'return __NAMESPACE__\' should be included at the       end of service class for auto-register to work. If the statement       does not exist, the method will assume that the path is the namespace of       each class. Also, the classes which represents web services must be suffixed       with the word \'Service\' in order to register them (e.g. RegisterUserService).',
                 'params' => [
                     '$pathToScan' => [
                         'type' => 'string',
-                        'description' => 'A path which is relative to application source       code. For example, if tables classes exist in the folder       \'C:\\Server\\apache\\htdocs\\app\\apis\', then the value of this       argument must be \'app\\apis\\.',
+                        'description' => 'A path which is relative to application source       code folder. For example, if application folder name is \'my-app\' and       the web services are in the folder \'my-app/apis/user,      then the value of the argument must be \'apis/user\'.',
                         'optional' => false,
                     ],
                 ],

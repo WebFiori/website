@@ -1,5 +1,5 @@
 <?php
-namespace docGenerator\webfiori\framework\ui;
+namespace docGenerator\webfiori\framework\session;
 use webfiori\docs\apiParser\DocsWebPage as P;
 use webfiori\ui\HTMLNode;
 use webfiori\apiParser\FunctionDef;
@@ -8,15 +8,15 @@ use webfiori\apiParser\MethodParameter;
 use webfiori\ui\Anchor;
 use webfiori\apiParser\ParameterType;
 
-class ServiceUnavailableViewView extends P {
+class MSSQLSessionDataTableView extends P {
     public function __construct(){
         parent::__construct();
         $this->setTheme('webfiori\theme\NewFioriAPI');
         $this->getTheme()->setBaseURL('https://webfiori.com/docs');
-        $this->setDescription('A view which is show to tell the user that the framework isn\'t configured   yet.');
+        $this->setDescription('A class which represents the database table \'session_data\'.');
         $this->setWebsiteName('WebFiori API Docs');
-        $this->setTitle('class ServiceUnavailableView');
-        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'ServiceUnavailableView', '\webfiori\framework\ui', 'A view which is show to tell the user that the framework isn\'t configured   yet. '));
+        $this->setTitle('class MSSQLSessionDataTable');
+        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'MSSQLSessionDataTable', '\webfiori\framework\session', 'A class which represents the database table \'session_data\'. The table which is associated with this class will have the following columns:  <ul>  <li><b>s-id</b>: Name in database: \'s_id\'. Data type: \'varchar\'.</li>  <li><b>chunk-number</b>: Name in database: \'chunk_number\'. Data type: \'int\'.</li>  <li><b>data</b>: Name in database: \'data\'. Data type: \'nvarchar\'.</li>  </ul>'));
         $classAttrsArr = [
         ];
         $classMethodsArr = [
@@ -26,25 +26,6 @@ class ServiceUnavailableViewView extends P {
                 'summary' => 'Creates new instance of the class.',
                 'description' => 'Creates new instance of the class. ',
                 'params' => [
-                ],
-                'returns' => [
-                    'description' => '',
-                    'return-types' => [
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
-                'name' => 'show',
-                'access-modifier' => 'public function',
-                'summary' => 'Show the view.',
-                'description' => 'Show the view. ',
-                'params' => [
-                    '$responseCode' => [
-                        'type' => 'int',
-                        'description' => 'A response code to send before showing the view.       default is 200 - Ok.',
-                        'optional' => false,
-                    ],
                 ],
                 'returns' => [
                     'description' => '',

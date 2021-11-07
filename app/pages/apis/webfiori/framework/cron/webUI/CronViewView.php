@@ -45,20 +45,6 @@ class CronViewView extends P {
 
             ]),
             new FunctionDef([
-                'name' => 'createOutputWindow',
-                'access-modifier' => 'public function',
-                'summary' => 'Adds an area which is used to show server output.',
-                'description' => 'Adds an area which is used to show server output. ',
-                'params' => [
-                ],
-                'returns' => [
-                    'description' => '',
-                    'return-types' => [
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
                 'name' => 'createVDialog',
                 'access-modifier' => 'public function',
                 'summary' => 'Adds a very basic v-dialog that can be used to show status messages and so on.',
