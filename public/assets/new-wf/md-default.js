@@ -33,6 +33,7 @@ window.app = new Vue({
         docs_search_results:[],
         search_val:'',
         show_search_menu:false,
+        side_links_tree:data.side_links
     },
     methods:{
         search:function() {
