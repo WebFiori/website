@@ -172,7 +172,7 @@ class NewFiori extends Theme {
         return $head;
     }
 
-    public function getHeadrNode() {
+    public function getHeaderNode() {
         $page = $this->getPage();
         
         $vAppBar = new HTMLNode('v-app-bar', [
@@ -230,9 +230,8 @@ class NewFiori extends Theme {
             'class' => 'd-none d-md-flex'
         ]);
         $vAppBar->addChild($navLinksContainer);
-        $navLinksContainer->addChild(
-                self::createButton(['text', 
-                    'href' => $this->getBaseURL().'/docs/webfiori'], 'API Reference'), true)
+        $navLinksContainer
+                ->addChild(self::createButton(['text','href' => $this->getBaseURL().'/docs/webfiori'], 'API Reference'), true)
                 ->addChild(self::createButton(['text', 'href' => $this->getBaseURL().'/learn'], 'Learn'), true)
                 ->addChild(self::createButton(['text', 'href' => $this->getBaseURL().'/download'], 'Download'), true)
                 ->addChild(self::createButton(['text', 'href' => $this->getBaseURL().'/contribute'], 'Contribute'), true)
