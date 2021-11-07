@@ -216,7 +216,7 @@ class WebFioriPage extends WebPage{
      * @param string $vueScript The location of the JavaScript file. Usually, 
      * a file somewhere in the directory 'assets'.
      */
-    public function setVue($vueScript) {
+    public function setVueScript($vueScript) {
         if (strlen($vueScript) > 0) {
             $this->addBeforeRender(function(WebPage $p, $v){
                 $p->getDocument()->addChild('script', [
