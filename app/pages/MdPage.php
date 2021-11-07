@@ -9,15 +9,16 @@ use webfiori\ui\CodeSnippet;
 use webfiori\ui\Paragraph;
 use webfiori\ui\Anchor;
 use webfiori\views\WebFioriPage;
+use webfiori\json\Json;
 /**
  * Description of MdPage
  *
  * @author Ibrahim
  */
-class MdPage extends WebFioriPage{
+class MdPage extends WebFioriPage {
     public function __construct($username, $repo, $filePath, $branch = 'master') {
         parent::__construct();
-        $this->setVue('assets/new-wf/md-default.js');
+        $this->setVueScript('assets/new-wf/md-default.js');
         $curl = curl_init();
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
@@ -48,15 +49,21 @@ class MdPage extends WebFioriPage{
             $headingsArr = [];
             foreach ($node as $xNode) {
                 if ($xNode->getNodeName() == 'h1') {
+                    //H1 will always hold page title.
                     $title = $xNode->getChild(0) !== null ? $xNode->getChild(0)->getText() : 'Default';
                     $this->setTitle($title);
                 }
                 if (in_array($xNode->getNodeName(), ['h2','h3','h4','h5','h6'])) {
+                    //h2 till h6 will be sub-sections titles in the page.
+                    //Extract and compute heading ID
                     $id = $this->getNodeBodyAsTxt($xNode);
+                    //Add it to list of headings to be used in side navigation menu later.
                     $headingsArr[$id] = $this->getTxt($xNode);
+                    
                     $links = $this->getDocument()->getChildrenByAttributeValue('href', '#'.$id);
-                    if ($links->size() == 1) {
-                        $links->get(0)->setAttribute('href', $base.'#'.$id);
+                    
+                    foreach ($links as $link) {
+                        $link->setAttribute('href', $base.'#'.$id);
                     }
                     $xNode->setID($id);
                     $super->addChild($xNode);
@@ -105,7 +112,21 @@ class MdPage extends WebFioriPage{
                 'md' => 6,
                 'sm' => 12
             ], false)->text('Last modified: '.$lastMod);
+            $this->addToJson([
+                'side_links' => $this->createSideTreeItems($headingsArr)
+            ]);
         }
+    }
+    private function createSideTreeItems($arr) {
+        $data = [];
+        $base = $this->getCanonical();
+        foreach ($arr as $id => $title) {
+            $data[] = new Json([
+                'name' => $title,
+                'href' => $base.'#'.$id
+            ]);
+        }
+        return $data;
     }
     private function createSideDrawer($headingsArr) {
         if (count($headingsArr) != 0) {
@@ -116,30 +137,16 @@ class MdPage extends WebFioriPage{
                 'class' => 'd-none d-md-flex'
             ]);
             
-            $drawer->addChild('v-list-item', [], false)
-            ->addChild('v-list-item-icon', [], false)
-                     ->addChild('v-icon', [], false)
-                     ->text('mdi-menu')
-                     ->getParent()->getParent()
-            ->addChild('v-list-item-title', [], false)->text('Page Content')
-            ->getParent()->addChild('v-btn', [
-                'icon', '@click.stop' => 'mini = !mini'
-            ], false)->addChild('v-icon', [], false)->text('mdi-chevron-left');
-            $drawer->addChild('v-divider');
-            $list = $drawer->addChild('v-list', ['dense'], false);
-            foreach ($headingsArr as $id => $txt) {
-                $list->addChild('v-list-item', [], false)
-                     ->addChild('v-list-item-icon', [], false)
-                     ->addChild('v-icon', [], false)
-                     ->text('mdi-menu-right')
-                     ->getParent()->getParent()
-                     ->addChild('v-list-item-content', [], false)
-                     ->addChild('v-list-item-title', [], false)
-                     ->addChild('a', [
-                         'href' => $this->getCanonical().'#'.$id
-                     ], false)
-                     ->text($txt);
-            }
+            $drawer->addChild('v-card')
+                    ->addChild('v-card-text')
+                    ->addChild('v-treeview', [
+                        ':items' => 'side_links_tree'
+                    ])->addChild('template', [
+                        '#label' => '{ item }'
+                    ])->addChild('a', [
+                        ':href' => 'item.href'
+                    ])->text('{{ item.name }}');
+            
             return $drawer;
         }
     }
