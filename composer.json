@@ -10,7 +10,7 @@
     "require": {
         "webfiori/framework":"*",
         "erusev/parsedown":"*",
-        "webfiori/vuetify-core": "v1.2.2"
+        "webfiori/vuetify-core": "*"
     },
     "keywords": [
         "framework",
