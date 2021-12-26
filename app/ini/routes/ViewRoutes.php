@@ -7,7 +7,7 @@ use webfiori\examples\views\MdPage;
 /**
  * A class that only has one method to initiate some of system routes.
  * The class is meant to only initiate the routes which uses the method 
- * Router::view().
+ * Router::page().
  * @author Ibrahim
  * @version 1.0
  */
@@ -19,15 +19,15 @@ class ViewRoutes {
      */
     public static function create(){
         
-        Router::view([
+        Router::page([
             'path'=> '/', 
             'route-to' => \webfiori\views\WebFioriHome::class
         ]);
-        Router::view([
+        Router::page([
             'path' => '/download', 
             'route-to' => \webfiori\views\DownloadView::class
         ]);
-        Router::view([
+        Router::page([
             'path' => '/webfiori', 
             'route-to' => \webfiori\views\WebFioriHome::class
         ]);
@@ -45,7 +45,7 @@ class ViewRoutes {
                 $mdPage->render();
             }
         ]);
-        Router::view([
+        Router::page([
             'path' => '/contribute', 
             'route-to' => \webfiori\views\ContributeView::class
         ]);
