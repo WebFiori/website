@@ -107,26 +107,6 @@ class MySQLQueryView extends P {
 
             ]),
             new FunctionDef([
-                'name' => 'dropCol',
-                'access-modifier' => 'public function',
-                'summary' => 'Constructs a query which can be used to drop a column from associated       table.',
-                'description' => 'Constructs a query which can be used to drop a column from associated       table. ',
-                'params' => [
-                    '$colKey' => [
-                        'type' => 'string',
-                        'description' => 'The name of column key taken from the table.',
-                        'optional' => false,
-                    ],
-                ],
-                'returns' => [
-                    'description' => 'The method will return the same instance at which the       method is called on.',
-                    'return-types' => [
-                        new Anchor('https://webfiori.com/docs/webfiori/database/mysql/MySQLQuery', 'MySQLQuery'),
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
                 'name' => 'dropForeignKey',
                 'access-modifier' => 'public function',
                 'summary' => 'Constructs a query that can be used to drop foreign key constraint.',

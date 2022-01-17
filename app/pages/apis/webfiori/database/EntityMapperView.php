@@ -55,6 +55,26 @@ class EntityMapperView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'addAttribute',
+                'access-modifier' => 'public function',
+                'summary' => 'Adds extra class attribute to the entity that will be created.',
+                'description' => 'Adds extra class attribute to the entity that will be created. ',
+                'params' => [
+                    '$attrName' => [
+                        'type' => 'string',
+                        'description' => 'The name of the attribute. A valid attribute name      must follow following conditions:      <ul>      <li>Must be non-empty string.</li>      <li>First letter must be non-number.</li>      <li>It must not contain $.</li>      </ul>',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => 'If the attribute is added, the method will return      true. Other than that, the method will return false.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'create',
                 'access-modifier' => 'public function',
                 'summary' => 'Creates the class that the table records will be mapped to.',
@@ -93,6 +113,21 @@ class EntityMapperView extends P {
                 ],
                 'returns' => [
                     'description' => 'An associative array that contains attributes names. The       indices will be columns keys and the values are attributes names.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'getAttributes',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns an array that holds the names of the extra attributes which are       defined by the user.',
+                'description' => 'Returns an array that holds the names of the extra attributes which are       defined by the user. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'an indexed array of attributes names,',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
                     ]

@@ -16,7 +16,7 @@ class UploaderView extends P {
         $this->setDescription('A helper class that is used to upload most types of files to the server\'s file system.');
         $this->setWebsiteName('WebFiori API Docs');
         $this->setTitle('class Uploader');
-        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'Uploader', '\webfiori\framework', 'A helper class that is used to upload most types of files to the server\'s file system. The main aim of this class is to allow the developer to upload files   without having to deal directly with the array $_FILES. It can be used to   perform the following tasks:  <ul>  <li>Upload one or multiple files.</li>  <li>Restrict the types of files which can be uploaded.</li>  <li>Store the uploaded file(s) to a specific location on the server.</li>  <li>View upload status of each file.</li>  <li>The ability to get MIME type of most file types using file extension only.<li>  </ul>  A basic example on how to use this class:  <pre>  $uploader = new Uploader();  //allow png only  $uploader->addExt(\'png\');  $uploader->setUploadDir(\'\\home\\my-site\\uploads\');  //the value of the attribute \'name\' of file input  $uploader->setAssociatedFileName(\'user-files\');  //upload files  $files = $uploader->upload();  //now we can check upload status of each file.  foreach($files as $fileArr){  //...  }  </pre>'));
+        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'Uploader', '\webfiori\framework', 'A helper class that is used to upload most types of files to the server\'s file system. The main aim of this class is to allow developer to upload files   without having to deal directly with the array $_FILES. It can be used to   perform the following tasks:  <ul>  <li>Upload one or multiple files.</li>  <li>Restrict the types of files which can be uploaded.</li>  <li>Store the uploaded file(s) to a specific location on the server.</li>  <li>View upload status of each file.</li>  </ul>  A basic example on how to use this class:  <pre>  $uploader = new Uploader();  //allow png only  $uploader->addExt(\'png\');  $uploader->setUploadDir(\'\\home\\my-site\\uploads\');  //the value of the attribute \'name\' of file input  $uploader->setAssociatedFileName(\'user-files\');  //upload files  $files = $uploader->upload();  //now we can check upload status of each file.  foreach($files as $fileArr){  //...  }  </pre>'));
         $classAttrsArr = [
             new AttributeDef(
             'const',
@@ -63,12 +63,12 @@ class UploaderView extends P {
                 'params' => [
                     '$uploadPath' => [
                         'type' => 'string',
-                        'description' => 'A string that represents the location at       which files will be uploaded to. Default value is \'app/storage/uploads\'.',
+                        'description' => 'A string that represents the location at       which files will be uploaded to. Default value is \'app/sto/uploads\'.',
                         'optional' => false,
                     ],
                     '$allowedTypes' => [
                         'type' => 'array',
-                        'description' => 'An array that contains allowed files types.',
+                        'description' => 'An array that contains allowed files types. The       array can have values such as \'jpg\', \'png\', \'doc\', etc...',
                         'optional' => false,
                     ],
                 ],
@@ -224,7 +224,7 @@ class UploaderView extends P {
                 'name' => 'setAssociatedFileName',
                 'access-modifier' => 'public function',
                 'summary' => 'Sets The name of the index at which the file is stored in the array $_FILES.',
-                'description' => 'Sets The name of the index at which the file is stored in the array $_FILES. This value is the value of the attribute \'name\' in case of HTML file. The       developer can set the value of the propery in the front end by using a       hidden input field with name = \'file-input-name\' and the value of that input       field must be the value of the attribute \'name\' of the original file input.       In case of API call, it can be supplied as a POST parameter with name       \'file-input-name\'.',
+                'description' => 'Sets The name of the index at which the file is stored in the array $_FILES. This value is the value of the attribute \'name\' in case of HTML file input.             It is possible to set the value of the property in the front end by using a       hidden input field with name = \'file\' and the value of that input       field must be the value of the attribute \'name\' of the original file input.       In case of API call, it can be supplied as a POST parameter with name       \'file\'.',
                 'params' => [
                     '$name' => [
                         'type' => 'string',

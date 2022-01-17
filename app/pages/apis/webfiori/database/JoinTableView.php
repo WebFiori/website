@@ -79,127 +79,10 @@ class JoinTableView extends P {
 
             ]),
             new FunctionDef([
-                'name' => 'getColByKey',
-                'access-modifier' => 'public function',
-                'summary' => 'Returns a column given its key name.',
-                'description' => 'Returns a column given its key name. The method will first check for such column in the left table. If       not found in the left, the method will check the right table.',
-                'params' => [
-                    '$key' => [
-                        'type' => 'string',
-                        'description' => 'The name of column key.',
-                        'optional' => false,
-                    ],
-                ],
-                'returns' => [
-                    'description' => 'If a column which has the given key exist on the table,       the method will return it as an object. Other than that, the method will return       null.',
-                    'return-types' => [
-                        new Anchor('https://webfiori.com/docs/webfiori/database/Column', 'Column'),
-                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
-                'name' => 'getColByName',
-                'access-modifier' => 'public function',
-                'summary' => 'Returns a column given its actual name.',
-                'description' => 'Returns a column given its actual name. The method will first check for such column in the left table. If       not found in the left, the method will check the right table.',
-                'params' => [
-                    '$name' => [
-                        'type' => 'string',
-                        'description' => 'The name of column as it appears in the database.',
-                        'optional' => false,
-                    ],
-                ],
-                'returns' => [
-                    'description' => 'If a column which has the given name exist on the table,       the method will return it as an object. Other than that, the method will return       null.',
-                    'return-types' => [
-                        new Anchor('https://webfiori.com/docs/webfiori/database/Column', 'Column'),
-                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
-                'name' => 'getCols',
-                'access-modifier' => 'public function',
-                'summary' => 'Returns an indexed array that holds all columns of the joined tables.',
-                'description' => 'Returns an indexed array that holds all columns of the joined tables. ',
-                'params' => [
-                ],
-                'returns' => [
-                    'description' => 'The method will return an array that holds objects of type \'Column\'. The       columns are taken from left ant right table.',
-                    'return-types' => [
-                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
-                'name' => 'getColsCount',
-                'access-modifier' => 'public function',
-                'summary' => 'Returns the number of columns in the combined table.',
-                'description' => 'Returns the number of columns in the combined table. ',
-                'params' => [
-                ],
-                'returns' => [
-                    'description' => 'Number of columns in the combined table.',
-                    'return-types' => [
-                        new Anchor('http://php.net/manual/en/language.types.integer.php', 'int'),
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
-                'name' => 'getColsDatatypes',
-                'access-modifier' => 'public function',
-                'summary' => 'Returns an array that contains data types of table columns.',
-                'description' => 'Returns an array that contains data types of table columns. ',
-                'params' => [
-                ],
-                'returns' => [
-                    'description' => 'An indexed array that contains columns data types. Each       index will corresponds to the index of the column in the table.',
-                    'return-types' => [
-                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
-                'name' => 'getColsKeys',
-                'access-modifier' => 'public function',
-                'summary' => 'Returns an indexed array that contains the names of columns keys.',
-                'description' => 'Returns an indexed array that contains the names of columns keys. ',
-                'params' => [
-                ],
-                'returns' => [
-                    'description' => 'An indexed array that contains the names of columns keys.',
-                    'return-types' => [
-                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
-                'name' => 'getColsNames',
-                'access-modifier' => 'public function',
-                'summary' => 'Returns an array that contains all columns names as they will appear in       the database.',
-                'description' => 'Returns an array that contains all columns names as they will appear in       the database. ',
-                'params' => [
-                ],
-                'returns' => [
-                    'description' => 'An array that contains all columns names as they will appear in       the database.',
-                    'return-types' => [
-                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
-                    ]
-                ]
-
-            ]),
-            new FunctionDef([
                 'name' => 'getJoin',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns a string which represents the join condition of the two tables.',
-                'description' => 'Returns a string which represents the join condition of the two tables. ',
+                'description' => 'Returns a string which represents the join condition of the two tables. The format of the string will be similar to the following:       "`left_table` join_type `right_table` [on(join_cond)]".      The join condition will be included only if specified.',
                 'params' => [
                 ],
                 'returns' => [
@@ -257,6 +140,20 @@ class JoinTableView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getName',
+                'access-modifier' => 'public function',
+                'summary' => '',
+                'description' => ' ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getRight',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns the right table of the join.',
@@ -274,19 +171,13 @@ class JoinTableView extends P {
             new FunctionDef([
                 'name' => 'toSQL',
                 'access-modifier' => 'public function',
-                'summary' => 'Returns a string which represents the joined tables.',
-                'description' => 'Returns a string which represents the joined tables. ',
+                'summary' => '',
+                'description' => ' ',
                 'params' => [
-                    '$firstCall' => [
-                        'type' => 'boolean',
-                        'description' => 'A boolean to indicate if the join is a nesting of       other joins or not. Default value is false.',
-                        'optional' => false,
-                    ],
                 ],
                 'returns' => [
-                    'description' => 'SQL statement that represents the join.',
+                    'description' => '',
                     'return-types' => [
-                        new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
                 ]
 

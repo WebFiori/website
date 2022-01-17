@@ -469,20 +469,19 @@ class TableView extends P {
             new FunctionDef([
                 'name' => 'hasColumn',
                 'access-modifier' => 'public function',
-                'summary' => '',
-                'description' => ' ',
+                'summary' => 'Checks if the table has a column which has specific name.',
+                'description' => 'Checks if the table has a column which has specific name. ',
                 'params' => [
                     '$colName' => [
                         'type' => 'string',
-                        'description' => '',
+                        'description' => 'The name of the column as it appears in database.',
                         'optional' => false,
                     ],
                 ],
                 'returns' => [
-                    'description' => '',
+                    'description' => 'If the table has such column, the method will return true.       other than that, the method will return false.',
                     'return-types' => [
-                        'boolean
-',
+                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
                     ]
                 ]
 

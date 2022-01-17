@@ -21,13 +21,6 @@ class JsonView extends P {
             new AttributeDef(
             'const',
             '',
-            'PROP_NAME_STYLES',
-            'An array of supported property styles.',
-            'An array of supported property styles. This array holds the following values:      <ul>      <li>camel</li>      <li>kebab</li>      <li>snake</li>      <li>none</li>      </ul>',
-            ),
-            new AttributeDef(
-            'const',
-            '',
             'SPECIAL_CHARS',
             'An array that contains JSON special characters.',
             'An array that contains JSON special characters. The array contains the following characters:      <ul>      <li>\\</li>      <li>/</li>      <li>"</li>      <li>\\t</li>      <li>\\r</li>      <li>\\n</li>      <li>\\f</li>      </ul>',
@@ -119,9 +112,9 @@ class JsonView extends P {
                         'description' => 'The value of the key.',
                         'optional' => false,
                     ],
-                    '$options' => [
+                    '$arrayAsObj' => [
                         'type' => 'array',
-                        'description' => 'An associative array of options. Currently, the       array has the following options:       <ul>      <li><b>string-as-boolean</b>: A boolean value. If set to true and       the given string is one of the following values, it will be added as       a boolean:      <ul>      <li>true</li>      <li>false</li>      <li>t</li>      <li>f</li>      <li>Yes</li>      <li>No</li>      <li>On</li>      <li>Off</li>      <li>Y</li>      <li>N</li>      <li>Ok</li>      </ul> Default is false.</li>      <li><b>array-as-object</b>: A boolean value. If set to true,       the array will be added as an object. Default is false.</li>      </ul>',
+                        'description' => 'This parameter is used only if the given value      is an array. If set to true, the array will be added as an object.       Default is false.',
                         'optional' => false,
                     ],
                 ],
@@ -211,7 +204,7 @@ class JsonView extends P {
                 'name' => 'addNumber',
                 'access-modifier' => 'public function',
                 'summary' => 'Adds a number to the JSON data.',
-                'description' => 'Adds a number to the JSON data. Note that if the given number is the constant <b>INF</b> or the constant       <b>NAN</b>, The method will add them as a string.',
+                'description' => 'Adds a number to the JSON data. Note that if the given number is the constant <b>INF</b> or the constant       <b>NAN</b>, The method will add them as a string. The \'INF\' will be added      as the string "Infinity" and the \'NAN\' will be added as the string "Nan".',
                 'params' => [
                     '$key' => [
                         'type' => 'string',
@@ -270,17 +263,12 @@ class JsonView extends P {
                     ],
                     '$val' => [
                         'type' => 'string',
-                        'description' => 'The value of the string. Note that if the given string       is one of the following and the parameter <b>$toBool</b> is set to true,       it will be converted into boolean (case insensitive).      <ul>      <li>yes => <b>true</b></li>      <li>no => <b>false</b></li>      <li>y => <b>true</b></li>      <li>n => <b>false</b></li>      <li>t => <b>true</b></li>      <li>f => <b>false</b></li>      <li>true => <b>true</b></li>      <li>false => <b>false</b></li>      <li>on => <b>true</b></li>      <li>off => <b>false</b></li>      <li>ok => <b>true</b></li>      </ul>',
-                        'optional' => false,
-                    ],
-                    '$toBool' => [
-                        'type' => 'boolean',
-                        'description' => 'If set to true and the string represents a boolean       value, then the string will be added as a boolean. Default is false.',
+                        'description' => 'The value of the string.',
                         'optional' => false,
                     ],
                 ],
                 'returns' => [
-                    'description' => 'The method will return true in case the string is added.       If the given value is not a string or the given key is invalid or the       parameter <b>$toBool</b> is set to true and given string is not a boolean, the       method will return false.',
+                    'description' => 'The method will return true in case the string is added.       If the given value is not a string or the given key is invalid, the       method will return false.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
                     ]
@@ -329,7 +317,7 @@ class JsonView extends P {
 
             ]),
             new FunctionDef([
-                'name' => 'fromFile',
+                'name' => 'fromJsonFile',
                 'access-modifier' => 'public static function',
                 'summary' => 'Reads JSON data from a file and convert it to an object of type \'Json\'.',
                 'description' => 'Reads JSON data from a file and convert it to an object of type \'Json\'. ',
@@ -366,10 +354,25 @@ class JsonView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getProperties',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns an array that holds all added attributes.',
+                'description' => 'Returns an array that holds all added attributes. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'An array that holds objects of type \'Property\'.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getPropsNames',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns an array that contains the names of all added properties.',
-                'description' => 'Returns an array that contains the names of all added properties. Note that the names will be returned same as when added without changing       the style.',
+                'description' => 'Returns an array that contains the names of all added properties. Note that the names may differ if properties style is changed after      adding them.',
                 'params' => [
                 ],
                 'returns' => [
@@ -401,6 +404,21 @@ class JsonView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'isFormatted',
+                'access-modifier' => 'public function',
+                'summary' => 'Checks if the final JSON output will be formatted or not.',
+                'description' => 'Checks if the final JSON output will be formatted or not. This can be used to make the generated output readable by adding       indentation and new lines.',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'True if will be formatted. False otherwise.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.boolean.php', 'boolean'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'remove',
                 'access-modifier' => 'public function',
                 'summary' => 'Removes a property from the instance.',
@@ -413,9 +431,9 @@ class JsonView extends P {
                     ],
                 ],
                 'returns' => [
-                    'description' => 'The method will return the value of the property if       removed. Other than that, the method will return null.',
+                    'description' => 'The method will return the property as object if      removed. Other than that, the method will return null.',
                     'return-types' => [
-                        'mixed',
+                        new Anchor('https://webfiori.com/docs/webfiori/json/Property', 'Property'),
                         new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
                     ]
                 ]
@@ -475,24 +493,14 @@ class JsonView extends P {
 
             ]),
             new FunctionDef([
-                'name' => 'toStyle',
-                'access-modifier' => 'public static function',
-                'summary' => 'Convert the name of the prop name to the correct case.',
-                'description' => 'Convert the name of the prop name to the correct case. ',
+                'name' => 'toJSONxString',
+                'access-modifier' => 'public function',
+                'summary' => 'Creates and returns a well formatted XML string that will be created using       provided data.',
+                'description' => 'Creates and returns a well formatted XML string that will be created using       provided data. ',
                 'params' => [
-                    '$attr' => [
-                        'type' => 'string',
-                        'description' => 'The name of the attribute.',
-                        'optional' => false,
-                    ],
-                    '$style' => [
-                        'type' => 'string',
-                        'description' => 'The name of the style that the given string will be       converted to. It can be one of 3 values:      <ul>      <li>snake</li>      <li>kebab</li>      <li>camel</li>      </ul>',
-                        'optional' => false,
-                    ],
                 ],
                 'returns' => [
-                    'description' => 'The same string converted to selected style.',
+                    'description' => 'A well formatted JSONx string that will be created using       provided data.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]

@@ -92,6 +92,30 @@ class EmailMessageView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'addBeforeSend',
+                'access-modifier' => 'public function',
+                'summary' => 'Adds a callback to execute before the message is sent.',
+                'description' => 'Adds a callback to execute before the message is sent. ',
+                'params' => [
+                    '$callback' => [
+                        'type' => 'Callable',
+                        'description' => 'A function that will get executed before sending      the message. Note that the first parameter of the callback will be always      the message (e.g. function (EmailMessage $message) {})',
+                        'optional' => false,
+                    ],
+                    '$extraParams' => [
+                        'type' => 'array',
+                        'description' => 'An optional array of extra parameters that will      be passed to the callback.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => '',
+                    'return-types' => [
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'addCC',
                 'access-modifier' => 'public function',
                 'summary' => 'Adds new receiver address to the list of \'cc\' receivers.',
@@ -239,6 +263,21 @@ class EmailMessageView extends P {
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
                         new Anchor('https://webfiori.com/docs/webfiori/ui/HTMLNode', 'HTMLNode'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'getDocument',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns the document that is associated with the page.',
+                'description' => 'Returns the document that is associated with the page. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'An object of type \'HTMLDoc\'.',
+                    'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/ui/HTMLDoc', 'HTMLDoc'),
                     ]
                 ]
 

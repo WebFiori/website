@@ -102,6 +102,31 @@ class FileView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getChunks',
+                'access-modifier' => 'public function',
+                'summary' => 'Split file raw data into chunks of fixed size.',
+                'description' => 'Split file raw data into chunks of fixed size. ',
+                'params' => [
+                    '$chunkSize' => [
+                        'type' => 'int',
+                        'description' => 'The number of bytes in every chunk. If a negative       number is given, default value is used which is 1000.',
+                        'optional' => false,
+                    ],
+                    '$encodeOrDecode' => [
+                        'type' => 'string',
+                        'description' => 'This parameter is used to base-64 decode or       encode file data. The parameter can have one of 3 values:      <ul>      <li>e: Encode the raw data of the file.</li>      <li>d: Decode the raw data of the file.</li>      <li>none: Return the raw data of the file as it is. This is the default value.</li>      </ul>      If any other value is given, the method will use \'e\' since data is mostly       will be moved ss chunks.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => 'The method will return an array that holds file data as       chunks.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getDir',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns the directory at which the file exist on.',
@@ -120,11 +145,11 @@ class FileView extends P {
                 'name' => 'getExtension',
                 'access-modifier' => 'public function',
                 'summary' => 'Extract file extension from file name and return it.',
-                'description' => 'Extract file extension from file name and return it. ',
+                'description' => 'Extract file extension from file name and return it. File extension will depend on one of two things. If MIME of the file is      set, then the extension of the file will depend on it. For example, if      MIME of the file is \'video/mp4\', the method will return the value \'mp4\'.      The other thing that will be checked is file name. If the extension is      included in file name, it will be returned.',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'If file name is not set, the method will return empty string.       If its name is set and the extension is included in the name, the       method will return it.',
+                    'description' => 'A string such as \'mp3\' or \'jpeg\'. Default return value is      \'bin\' which stands for binary file.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]

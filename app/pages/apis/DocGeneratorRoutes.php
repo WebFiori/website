@@ -4,36 +4,6 @@ use webfiori\framework\router\Router;
 class DocGeneratorRoutes{
     public static function createRoutes(){
         Router::page([
-            'path' => 'docs/themes/vuetifyCore/VuetifyThemeCore',
-            'route-to' => '/apis/themes/vuetifyCore/VuetifyThemeCoreView.php',
-            'in-sitemap' => true
-        ]);
-        Router::page([
-            'path' => 'docs/themes/vuetifyCore',
-            'route-to' => '/apis/themes/vuetifyCore/NSIndexView.php',
-            'in-sitemap' => true
-        ]);
-        Router::page([
-            'path' => 'docs/themes/vuetifyCore/VuetifyWebPage',
-            'route-to' => '/apis/themes/vuetifyCore/VuetifyWebPageView.php',
-            'in-sitemap' => true
-        ]);
-        Router::page([
-            'path' => 'docs/themes/vuetifyCore/cli/CreateVuetifyThemeCommand',
-            'route-to' => '/apis/themes/vuetifyCore/cli/CreateVuetifyThemeCommandView.php',
-            'in-sitemap' => true
-        ]);
-        Router::page([
-            'path' => 'docs/themes/vuetifyCore/cli',
-            'route-to' => '/apis/themes/vuetifyCore/cli/NSIndexView.php',
-            'in-sitemap' => true
-        ]);
-        Router::page([
-            'path' => 'docs/themes/vuetifyCore/cli/VuetifyThemeClassWriter',
-            'route-to' => '/apis/themes/vuetifyCore/cli/VuetifyThemeClassWriterView.php',
-            'in-sitemap' => true
-        ]);
-        Router::page([
             'path' => 'docs/webfiori/ui/Anchor',
             'route-to' => '/apis/webfiori/ui/AnchorView.php',
             'in-sitemap' => true
@@ -144,13 +114,23 @@ class DocGeneratorRoutes{
             'in-sitemap' => true
         ]);
         Router::page([
-            'path' => 'docs/webfiori/json/Json',
-            'route-to' => '/apis/webfiori/json/JsonView.php',
+            'path' => 'docs/webfiori/json/CaseConverter',
+            'route-to' => '/apis/webfiori/json/CaseConverterView.php',
             'in-sitemap' => true
         ]);
         Router::page([
             'path' => 'docs/webfiori/json',
             'route-to' => '/apis/webfiori/json/NSIndexView.php',
+            'in-sitemap' => true
+        ]);
+        Router::page([
+            'path' => 'docs/webfiori/json/Json',
+            'route-to' => '/apis/webfiori/json/JsonView.php',
+            'in-sitemap' => true
+        ]);
+        Router::page([
+            'path' => 'docs/webfiori/json/JsonConverter',
+            'route-to' => '/apis/webfiori/json/JsonConverterView.php',
             'in-sitemap' => true
         ]);
         Router::page([
@@ -161,6 +141,11 @@ class DocGeneratorRoutes{
         Router::page([
             'path' => 'docs/webfiori/json/JsonTypes',
             'route-to' => '/apis/webfiori/json/JsonTypesView.php',
+            'in-sitemap' => true
+        ]);
+        Router::page([
+            'path' => 'docs/webfiori/json/Property',
+            'route-to' => '/apis/webfiori/json/PropertyView.php',
             'in-sitemap' => true
         ]);
         Router::page([
@@ -789,6 +774,11 @@ class DocGeneratorRoutes{
             'in-sitemap' => true
         ]);
         Router::page([
+            'path' => 'docs/webfiori/database/ColumnFactory',
+            'route-to' => '/apis/webfiori/database/ColumnFactoryView.php',
+            'in-sitemap' => true
+        ]);
+        Router::page([
             'path' => 'docs/webfiori/database/Condition',
             'route-to' => '/apis/webfiori/database/ConditionView.php',
             'in-sitemap' => true
@@ -811,6 +801,11 @@ class DocGeneratorRoutes{
         Router::page([
             'path' => 'docs/webfiori/database/DatabaseException',
             'route-to' => '/apis/webfiori/database/DatabaseExceptionView.php',
+            'in-sitemap' => true
+        ]);
+        Router::page([
+            'path' => 'docs/webfiori/database/DateTimeValidator',
+            'route-to' => '/apis/webfiori/database/DateTimeValidatorView.php',
             'in-sitemap' => true
         ]);
         Router::page([

@@ -17,6 +17,10 @@ class NSIndexView extends P {
             "access-modifier" => "abstract class",
             "summary" => "A class which represents a column in a database table."
         ],
+        "ColumnFactory" => [
+            "access-modifier" => "class",
+            "summary" => "A factory class for creating column objects."
+        ],
         "Condition" => [
             "access-modifier" => "class",
             "summary" => "A class that represents a binary conditional statement."
@@ -36,6 +40,10 @@ class NSIndexView extends P {
         "DatabaseException" => [
             "access-modifier" => "class",
             "summary" => "An exception which is thrown to indicate that an error which is related to   database happened."
+        ],
+        "DateTimeValidator" => [
+            "access-modifier" => "class",
+            "summary" => "A utility class which is used to validate date and time strings  for insert and update operations."
         ],
         "EntityMapper" => [
             "access-modifier" => "class",

@@ -85,6 +85,11 @@ class AbstractJobView extends P {
                         'description' => 'A cron expression. An exception will be thrown if       the given expression is invalid. Default is \'    \' which means run       the job every minute.',
                         'optional' => false,
                     ],
+                    '$description' => [
+                        'type' => 'string',
+                        'description' => 'A description for the job. Shown in CRON      web interface or CLI.',
+                        'optional' => false,
+                    ],
                 ],
                 'returns' => [
                     'description' => '',
@@ -120,7 +125,7 @@ class AbstractJobView extends P {
                 'params' => [
                     '$argsArr' => [
                         'type' => 'array',
-                        'description' => 'An array that contains the names of the       arguments.',
+                        'description' => 'An array that contains the names of the       arguments. This also can be an associative array. The indices      are arguments names and the values are argument options.',
                         'optional' => false,
                     ],
                 ],
@@ -281,6 +286,27 @@ class AbstractJobView extends P {
                     'description' => 'If the argument does exist on the job and its value       is provided, the method will return its value. If it is not provided or       it does not exist on the job, the method will return null.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
+                        new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
+                'name' => 'getArgument',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns job argument as an object given its name.',
+                'description' => 'Returns job argument as an object given its name. ',
+                'params' => [
+                    '$argName' => [
+                        'type' => 'string',
+                        'description' => 'The name of the argument.',
+                        'optional' => false,
+                    ],
+                ],
+                'returns' => [
+                    'description' => 'If an argument which has the given name was added      to the job, the method will return it as an object. Other than that, the      method will return null.',
+                    'return-types' => [
+                        new Anchor('https://webfiori.com/docs/webfiori/framework/cron/JobArgument', 'JobArgument'),
                         new Anchor('http://php.net/manual/en/language.types.null.php', 'null'),
                     ]
                 ]

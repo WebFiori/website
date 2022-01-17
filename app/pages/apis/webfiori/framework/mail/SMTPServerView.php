@@ -107,6 +107,21 @@ class SMTPServerView extends P {
 
             ]),
             new FunctionDef([
+                'name' => 'getLastLogEntry',
+                'access-modifier' => 'public function',
+                'summary' => 'Returns an array that contains last log entry.',
+                'description' => 'Returns an array that contains last log entry. ',
+                'params' => [
+                ],
+                'returns' => [
+                    'description' => 'The array will have 4 indices, \'command\', \'code\',      \'message\' and \'time\'.',
+                    'return-types' => [
+                        new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
+                    ]
+                ]
+
+            ]),
+            new FunctionDef([
                 'name' => 'getLastResponse',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns the last response message which was sent by the server.',
@@ -159,7 +174,7 @@ class SMTPServerView extends P {
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'The array will hold sub-associative arrays. Each array       will have 3 indices, \'command\', \'response-code\' and \'response-message\'',
+                    'description' => 'The array will hold sub-associative arrays. Each array       will have 4 indices, \'command\', \'code\', \'message\' and \'time\'',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.array.php', 'array'),
                     ]

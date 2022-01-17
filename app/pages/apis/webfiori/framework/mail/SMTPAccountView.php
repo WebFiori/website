@@ -13,10 +13,10 @@ class SMTPAccountView extends P {
         parent::__construct();
         $this->setTheme('webfiori\theme\NewFioriAPI');
         $this->getTheme()->setBaseURL('https://webfiori.com/docs');
-        $this->setDescription('A class that represents an email account which is used to send or receive messages.');
+        $this->setDescription('A class that represents an SMTP account which is used to connect to SMTP server.');
         $this->setWebsiteName('WebFiori API Docs');
         $this->setTitle('class SMTPAccount');
-        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'SMTPAccount', '\webfiori\framework\mail', 'A class that represents an email account which is used to send or receive messages. '));
+        $this->insert($this->getTheme()->createClassDescriptionNode('class', 'SMTPAccount', '\webfiori\framework\mail', 'A class that represents an SMTP account which is used to connect to SMTP server. '));
         $classAttrsArr = [
         ];
         $classMethodsArr = [
@@ -43,7 +43,7 @@ class SMTPAccountView extends P {
                 'name' => 'getAccountName',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns the name of the account.',
-                'description' => 'Returns the name of the account. The name of the account is used by the class \'EmailMessage\' when creating       new instance of the class. Also, the name is used when storing the account       programatically.',
+                'description' => 'Returns the name of the account. The name of the account is used by the class \'EmailMessage\' when creating       new instance of the class. Also, the name is used when storing account       information.',
                 'params' => [
                 ],
                 'returns' => [
@@ -72,8 +72,8 @@ class SMTPAccountView extends P {
             new FunctionDef([
                 'name' => 'getPassword',
                 'access-modifier' => 'public function',
-                'summary' => 'Returns the password of the user account that is used to access email server.',
-                'description' => 'Returns the password of the user account that is used to access email server. ',
+                'summary' => 'Returns the password of the account that will be used to access SMTP server.',
+                'description' => 'Returns the password of the account that will be used to access SMTP server. ',
                 'params' => [
                 ],
                 'returns' => [
@@ -87,12 +87,12 @@ class SMTPAccountView extends P {
             new FunctionDef([
                 'name' => 'getPort',
                 'access-modifier' => 'public function',
-                'summary' => 'Returns the port number of email server.',
-                'description' => 'Returns the port number of email server. ',
+                'summary' => 'Returns SMTP server port number.',
+                'description' => 'Returns SMTP server port number. ',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'The port number of email server. Default is 465.',
+                    'description' => 'Default is 465.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.integer.php', 'int'),
                     ]
@@ -102,12 +102,12 @@ class SMTPAccountView extends P {
             new FunctionDef([
                 'name' => 'getSenderName',
                 'access-modifier' => 'public function',
-                'summary' => 'Returns the name of sender.',
-                'description' => 'Returns the name of sender. ',
+                'summary' => 'Returns the name of sender that will be used in the \'FROM\' header.',
+                'description' => 'Returns the name of sender that will be used in the \'FROM\' header. ',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'The name of the email sender. The name will be used in the header       \'FROM\' when sending an email. Default is empty string.',
+                    'description' => 'The name of the email sender. Usually this is similar to       email address but can also be a name.',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
@@ -117,12 +117,12 @@ class SMTPAccountView extends P {
             new FunctionDef([
                 'name' => 'getServerAddress',
                 'access-modifier' => 'public function',
-                'summary' => 'Returns The address of the email server.',
-                'description' => 'Returns The address of the email server. ',
+                'summary' => 'Returns SMTP server address.',
+                'description' => 'Returns SMTP server address. ',
                 'params' => [
                 ],
                 'returns' => [
-                    'description' => 'The address of the email server (such as \'mail.example.com\').       Default is empty string.',
+                    'description' => 'The address of the SMTP server (such as \'mail.example.com\').',
                     'return-types' => [
                         new Anchor('http://php.net/manual/en/language.types.string.php', 'string'),
                     ]
@@ -132,8 +132,8 @@ class SMTPAccountView extends P {
             new FunctionDef([
                 'name' => 'getUsername',
                 'access-modifier' => 'public function',
-                'summary' => 'Returns the username that is used to access email server.',
-                'description' => 'Returns the username that is used to access email server. ',
+                'summary' => 'Returns the username that is used to access SMTP server.',
+                'description' => 'Returns the username that is used to access SMTP server. ',
                 'params' => [
                 ],
                 'returns' => [
@@ -148,7 +148,7 @@ class SMTPAccountView extends P {
                 'name' => 'setAccountName',
                 'access-modifier' => 'public function',
                 'summary' => 'Sets the name of the account.',
-                'description' => 'Sets the name of the account. The name of the account is used by the class \'EmailMessage\' when creating       new instance of the class. Also, the name is used when storing the account       programatically.',
+                'description' => 'Sets the name of the account. The name of the account is used by the class \'EmailMessage\' when creating       new instance of the class. Also, the name is used when storing the account.',
                 'params' => [
                     '$name' => [
                         'type' => 'string',
@@ -204,12 +204,12 @@ class SMTPAccountView extends P {
             new FunctionDef([
                 'name' => 'setPort',
                 'access-modifier' => 'public function',
-                'summary' => 'Sets the port number of email server.',
-                'description' => 'Sets the port number of email server. ',
+                'summary' => 'Sets port number of SMTP server.',
+                'description' => 'Sets port number of SMTP server. ',
                 'params' => [
                     '$port' => [
                         'type' => 'int',
-                        'description' => 'The port number of email server such as 25. It will       be only set if the given value is an integer and it is greater than 0.',
+                        'description' => 'The port number of email server. Common ports are 25, 465      and 586.',
                         'optional' => false,
                     ],
                 ],
@@ -228,7 +228,7 @@ class SMTPAccountView extends P {
                 'params' => [
                     '$name' => [
                         'type' => 'string',
-                        'description' => 'The name of the account (such as \'Programming Team\').       The name is used when sending an email message using the given SMTP account.       The name will be used in the header       \'FROM\' when sending an email',
+                        'description' => 'The name of the account (such as \'Programming Team\').       The name is used when sending an email message using the given SMTP account.       The name will be used in the header       \'FROM\' when sending an email.',
                         'optional' => false,
                     ],
                 ],

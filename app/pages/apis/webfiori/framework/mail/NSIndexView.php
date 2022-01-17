@@ -15,7 +15,7 @@ class NSIndexView extends P {
         ],
         "SMTPAccount" => [
             "access-modifier" => "class",
-            "summary" => "A class that represents an email account which is used to send or receive messages."
+            "summary" => "A class that represents an SMTP account which is used to connect to SMTP server."
         ],
         "SMTPServer" => [
             "access-modifier" => "class",

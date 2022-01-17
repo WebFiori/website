@@ -594,7 +594,7 @@ class AbstractQueryView extends P {
                     ],
                     '$cond' => [
                         'type' => 'string',
-                        'description' => 'A condition which is used to join a new \'on\' condition       with existing one.',
+                        'description' => 'A condition which is used to join a new \'on\' condition       with existing one. The value of this attribute can be only \'and\' or \'or\'.',
                         'optional' => false,
                     ],
                 ],

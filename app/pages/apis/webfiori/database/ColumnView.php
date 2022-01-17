@@ -185,7 +185,7 @@ class ColumnView extends P {
                 'name' => 'getOldName',
                 'access-modifier' => 'public function',
                 'summary' => 'Returns the old name of the column.',
-                'description' => 'Returns the old name of the column. Note that the old name will be set only if the method       Column::setName() is called more than once in the same instance.',
+                'description' => 'Returns the old name of the column. Note that the old name will be set only if the method       Column::setName() is called more than once in the same instance.      If no old name is set, the method will return current name.',
                 'params' => [
                 ],
                 'returns' => [
