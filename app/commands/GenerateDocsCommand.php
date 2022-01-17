@@ -7,7 +7,7 @@ use webfiori\theme\NewFioriAPI;
 
 class GenerateDocsCommand extends CLICommand{
     public function __construct() {
-        parent::__construct('--generate-docs', [
+        parent::__construct('generate-docs', [
             'base' => [
                 
             ]
@@ -23,6 +23,7 @@ class GenerateDocsCommand extends CLICommand{
                 'C:\Server\apache2\htdocs\website\themes',
                 'C:\Server\apache2\htdocs\website\vendor\erusev',
                 'C:\Server\apache2\htdocs\website\vendor\composer',
+                'C:\Server\apache2\htdocs\website\vendor\webfiori\vuetify-core',
             ),
             'base-url'=> $this->getArgValue('base'),
             'theme'=> NewFioriAPI::class,
