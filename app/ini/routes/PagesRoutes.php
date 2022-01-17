@@ -12,7 +12,7 @@ use webfiori\examples\views\MdPage;
  * @version 1.0
  */
 
-class ViewRoutes {
+class PagesRoutes {
     /**
      * Create all views routes. Include your own here.
      * @since 1.0

@@ -4,7 +4,7 @@ namespace app\ini\routes;
 
 use webfiori\framework\router\Router;
 
-class APIRoutes {
+class APIsRoutes {
     /**
      * Initialize system routes.
      * 
