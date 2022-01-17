@@ -22,7 +22,7 @@ class DownloadView extends WebFioriPage{
     private function _stableDownloads() {
         $sec = $this->createSection('Latest Stable Release',3);
         $sec->addChild($this->createParagraph('The latest release of the framework is version '
-                . '2.3.4. You can click <a href="https://github.com/WebFiori/framework/releases/download/v2.3.4/webfiori-v2.3.4-stable.zip">here</a> in order to start the '
+                . '2.4.6. You can click <a href="https://github.com/WebFiori/framework/releases/download/v2.4.6/webfiori-v2.4.6-stable.zip">here</a> in order to start the '
                 . 'download process.'));
         $row = $this->insert('v-row');
         $row->addChild('v-col', [
@@ -38,6 +38,15 @@ class DownloadView extends WebFioriPage{
                 . 'not good option for production and might have bugs.'));
         $ul = new UnorderedList();
         $ul->addListItems(array(
+            //'<a href="https://github.com/WebFiori/framework/releases/download/v2.4.6/webfiori-v2.4.6.zip">WebFiori v2.4.6 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.4.5/webfiori-v2.4.5.zip">WebFiori v2.4.5 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.4.4/webfiori-v2.4.4.zip">WebFiori v2.4.4 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.4.3/webfiori-v2.4.3.zip">WebFiori v2.4.3 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.4.2/webfiori-v2.4.2.zip">WebFiori v2.4.2 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.4.1/webfiori-v2.4.1.zip">WebFiori v2.4.1 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.4.0/webfiori-v2.4.0.zip">WebFiori v2.4.0 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.3.5/webfiori-v2.3.5.zip">WebFiori v2.3.5 Stable</a>',
+            '<a href="https://github.com/WebFiori/framework/releases/download/v2.3.4/webfiori-v2.3.4.zip">WebFiori v2.3.4 Stable</a>',
             '<a href="https://github.com/WebFiori/framework/releases/download/v2.3.3/webfiori-v2.3.3.zip">WebFiori v2.3.3 Stable</a>',
             '<a href="https://github.com/WebFiori/framework/releases/download/v2.3.2/webfiori-v2.3.2.zip">WebFiori v2.3.2 Stable</a>',
             '<a href="https://github.com/WebFiori/framework/releases/download/v2.3.1/webfiori-v2.3.1.zip">WebFiori v2.3.1 Stable</a>',
