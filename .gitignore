@@ -21,6 +21,7 @@ vendor/erusev/parsedown/LICENSE.txt
 vendor/erusev/parsedown/README.md
 composer.lock
 /src/app/pages/apis/
-/src/app/storage/
+/src/app/sto/
 /vendor/
 app/sto
+vendor/*
