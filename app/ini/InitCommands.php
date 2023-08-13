@@ -2,9 +2,9 @@
 
 namespace app\ini;
 
-class InitMiddleware {
+class InitCommands {
     /**
-     * Register middleware which are created outside the folder 'app/middleware'.
+     * A method that can be used to initialize CLI commands.
      * 
      * @since 1.0
      */

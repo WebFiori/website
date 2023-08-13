@@ -1,19 +1,19 @@
 <?php
-
 namespace webfiori;
+
 /**
  * The name of the directory at which the developer will have his own application 
  * code.
  * 
  * @since 2.3.0
  */
-define('APP_DIR_NAME', 'app');
+define('APP_DIR', 'app');
+
 
 use Exception;
-use webfiori\framework\cli\CLI;
+use webfiori\framework\App;
 use webfiori\framework\router\Router;
 use webfiori\framework\session\SessionsManager;
-use webfiori\framework\WebFioriApp;
 use webfiori\http\Request;
 use webfiori\http\Response;
 /**
@@ -28,15 +28,15 @@ class Index {
         /**
          * The root directory that is used to load all other required system files.
          */
-        if (!defined('ROOT_DIR')) {
+        if (!defined('ROOT_PATH')) {
             $publicFolder = $DS.'public';
 
             if (substr(__DIR__, strlen(__DIR__) - strlen($publicFolder)) == $publicFolder) {
                 //HTTP run
-                define('ROOT_DIR', substr(__DIR__,0, strlen(__DIR__) - strlen($DS.'public')));
+                define('ROOT_PATH', substr(__DIR__,0, strlen(__DIR__) - strlen($DS.'public')));
             } else {
                 //CLI run
-                define('ROOT_DIR', __DIR__);
+                define('ROOT_PATH', __DIR__);
             }
         }
         $this->loadAppClass();
@@ -45,16 +45,23 @@ class Index {
          * 
          * Planting application seed into the ground and make your work bloom.
          */
-        WebFioriApp::start();
+        App::start();
 
-        if (CLI::isCLI() === true) {
-            CLI::registerCommands();
-            CLI::runCLI();
+        if (App::getRunner()->isCLI() === true) {
+            App::getRunner()->start();
         } else {
             //route user request.
             SessionsManager::start('wf-session');
-            Router::route(Request::getRequestedURL());
+            Router::route(Request::getRequestedURI());
             Response::send();
+        }
+    }
+    /**
+     * Creates a single instance of the class.
+     */
+    public static function create() {
+        if (self::$instance === null) {
+            self::$instance = new Index();
         }
     }
     /**
@@ -64,23 +71,15 @@ class Index {
      */
     private function loadAppClass() {
         $DS = DIRECTORY_SEPARATOR;
-        $frameworkPath = ROOT_DIR.$DS.'vendor'.$DS.'webfiori'.$DS.'framework';
+        $frameworkPath = ROOT_PATH.$DS.'vendor'.$DS.'webfiori'.$DS.'framework';
         $corePath = $frameworkPath.$DS.'webfiori'.$DS.'framework';
-        $rootClass = $DS.'WebFioriApp.php';
-        
+        $rootClass = $DS.'App.php';
+
         if (file_exists($corePath.$rootClass)) {
             define('WF_CORE_PATH', $corePath);
             require_once $corePath.$rootClass;
         } else {
-            throw new Exception('Unable to locate the class "WebFioriApp".');
-        }
-    }
-    /**
-     * Creates a single instance of the class.
-     */
-    public static function create() {
-        if (self::$instance === null) {
-            self::$instance = new Index();
+            throw new Exception('Unable to locate the class "App".');
         }
     }
 }

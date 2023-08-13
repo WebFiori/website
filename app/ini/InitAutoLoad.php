@@ -9,6 +9,6 @@ class InitAutoLoad {
      * @since 1.0
      */
     public static function init() {
-        
+            
     }
 }

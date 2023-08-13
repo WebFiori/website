@@ -2,8 +2,8 @@
 A set of classes that provide basic web pages creation utilities in addition to creating the DOM of web pages.
 
 <p align="center">
-  <a href="https://github.com/WebFiori/ui/actions">
-    <img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207,8/badge.svg?branch=master">
+  <a href="https://github.com/WebFiori/database/actions">
+    <img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master">
   </a>
   <a href="https://codecov.io/gh/WebFiori/ui">
     <img src="https://codecov.io/gh/WebFiori/ui/branch/master/graph/badge.svg" />
@@ -19,26 +19,48 @@ A set of classes that provide basic web pages creation utilities in addition to 
   </a>
 </p>
 
-## API Docs
-This library is a part of <a href="https://github.com/usernane/webfiori">WebFiori Framework</a>. To access API docs of the library, you can visit the following link: https://webfiori.com/docs/webfiori/ui .
-
-## Features
-- Ability to create custom HTML UI Elements.
-- Create and modify DOM through PHP.
-- Provides a basic templating engine.
+## Content
+* [Supported PHP Versions](#supported-php-versions)
+* [Features](#features)
+* [Usage](#usage)
+  * [Basic Usage](#basic-usage)
+  * [Building More Complex DOM](#building-more-complex-dom)
+  * [HTML/PHP Template Files](#htmlphp-template-files)
+    * [HTML Templates](#html-templates)
+    * [PHP Templates](#php-templates)
+* [Creating XML Documents](#creating-xml-Documents)
+* [License](#license)
+ 
 
 ## Supported PHP Versions
-The library support all versions starting from version 5.6 up to version 8.
+|                                                                                       Build Status                                                                                       |
+|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php70.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.0/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php71.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.1/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php72.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.2/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php73.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.3/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php74.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%207.4/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php80.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.0/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php81.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.1/badge.svg?branch=master"></a>  |
+| <a target="_blank" href="https://github.com/WebFiori/ui/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/ui/workflows/Build%20PHP%208.2/badge.svg?branch=master"></a>  |
+
+## Features
+* Ability to create custom HTML UI Elements in OOP approach.
+* Virtual DOM through PHP.
+* Building dynamic HTML templates with PHP.
+* Support for rendering XML documents.
   
 ## Usage
-For more information on how to use the library, [check here](https://webfiori.com/learn/ui-package)
 
-The very basic use case is to have HTML document with some text in its body. The class <a href="https://webfiori.com/docs/webfiori/ui/HTMLDoc">HTMLDoc</a> represent HTML document. What we have to do is simply to create an instance of this class, add a text to its body. Assuming that you have an autoloader to load your classes, the class can be used as follows:
+### Basic Usage
+
+The basic use case is to have HTML document with some text in its body. The class `HTMLDoc` represent HTML document. Simply, create an instance of this class and use it to build the whole HTML document. The class can be used as follows:
 ``` php
 use webfiori\ui\HTMLDoc;
 
+//This code will create HTML5 Document, get the <body> node and, add text to it.
 $doc = new HTMLDoc();
-$doc->getBody()->addTextNode('Hello World!');
+$doc->getBody()->text('Hello World!');
 echo $doc;
 ```
 
@@ -57,8 +79,9 @@ The output of this code is HTML 5 document. The structure of the document will b
   </body>
 </html>
 ```
-## Building More Complex DOM
-To add more elements to the body of the document, the class <a href="https://webfiori.com/docs/webfiori/ui/HTMLNode">HMLNode</a> can be used to do that. It simply can be used to create any type of HTML element. The developer even can extend the class to create his own custom UI components. The library has already some pre-made components which are used in the next code sample. A list of the components can be found <a href="https://webfiori.com/docs/webfiori/ui">here</a>. The following code shows a code which is used to create a basic login form.
+### Building More Complex DOM
+
+All HTML elements are represented as an instance of the class `HTMLNode`. Developers can extend this class to create custom UI components as classes. The library has already pre-made components which are used in the next code sample. In addition to that, the class has methods which utilize theses components and fasten the process of adding them as children of any HTML element. The following code shows a code which is used to create a basic login form.
 
 ``` php
 use webfiori\ui\HTMLDoc;
@@ -89,8 +112,12 @@ The output of the code would be similar to the following image.
 
 <img src="tests/images/login-form.png">
 
-## Loading HTML Files
-Another way to have your HTML rendered as object of type HTMLDoc is to create your document fully in HTML and add slots within its body and set the values of the slots in your PHP code. For example, let's assume that we have HTML file with the following markup:
+### HTML/PHP Template Files
+Some developers don't like to have everything in PHP. For example, front-end developers like to work directly with HTML since it has femiliar syntax. For this reason, the library include basic support for using HTML or PHP files as templates. If the templates are pure HTML, then variables are set in the document using slots. If the template has a mix between PHP and HTML, then PHP variables can be passed to the template.
+
+#### HTML Templates
+
+Assume that we have HTML file with the following markup:
 ``` html
 <!DOCTYPE html>
 <html>
@@ -111,9 +138,9 @@ Another way to have your HTML rendered as object of type HTMLDoc is to create yo
     </body>
 </html>
 ```
-If you notice, there are some strings which are between `{{}}`. Simply, any string between `{{}}` is called a slot. To fill the solts with values, we have to load HTML code into PHP. The following code shows how to do it.
+It is noted that there are strings which are enclosed between `{{}}`. Any string enclosed between `{{}}` is called a slot. To fill any slot, its value must be passed when rendered in PHP. The file will be rendered into an instance of the class `HTMLNode`. The file can be rendered using the static method `HTMLNode::fromFile(string $templatePath, array $values)`. First parameter of the method is the path to the template and the second parameter is an associative array that holds values of slots. The keys of the array are slots names and the value of each index is the value of the slot. The following code shows how this document is loaded into an instance of the class `HTMLNode` with slots values.
 ``` php
-$document = HTMLNode::loadComponent('my-html-file.html', [
+$document = HTMLNode::fromFile('my-html-file.html', [
     'page-title' => 'Hello Page',
     'page-desc' => 'A page that shows visits numbers.',
     'mr-name' => 'Ibrahim Ali',
@@ -142,5 +169,72 @@ The output of the above PHP code will be the following HTML code.
     </body>
 </html>
 ```
+#### PHP Templates
+
+One draw back of using raw HTML template files with slots is that it can't have dynamic PHP code. To overcome this, it is possible to have the template written as a mix between HTML and PHP. This feature allow the use of all PHP features in HTML template. Also, this allow developers to pass PHP variables in addition to values for slots.
+
+Assuming that we have the following PHP template that shows a list of posts titles:
+
+``` php
+<div>
+    <?php 
+    if (count($posts) != 0) {?>
+    <ul>
+    <?php
+        foreach ($posts as $postTitle) {?>
+        <li><?= $postTitle;?></li>
+        <?php
+        }
+        ?>
+    </ul>
+    <?php
+    } else {
+        echo "No posts.\n";
+    }
+    ?>
+</div>
+```
+This template uses a variable called `$posts` as seen. The value of this variable must be passed to the template before rendering. In this case, the second parameter of the method  `HTMLNode::fromFile(string $templatePath, array $values)` will have associative array of variables. The keys of the array are variables names and the values are variables values.
+
+The template can be loaded into object of type `HTMLNode` as follows:
+
+``` php
+$posts = [
+  'Post 1',
+  'Post 2',
+  'Post 3'
+];
+
+$node = HTMLNode::fromFile('posts-list.php', [
+  'posts' => $posts
+])
+```
+
+## Creating XML Documents
+In addition to representing HTML elements, the class `HTMLNode` can be used to represent XML document. The difference between HTML and XML is that XML is case-sensitive for attributes names and elements names in addition to not having a pre-defined elements like HTML. To create XML document, the class `HTMLNode` can be used same way as It's used in creating HTML elements. At the end, the element can be converted to XML by using the method `HTMLNode::toXML()`.
+
+``` php
+$xml = new HTMLNode('saml:Assertion', [
+   'xmlns:saml' => "urn:oasis:names:tc:SAML:2.0:assertion",
+   'xmlns:xs' => "http://www.w3.org/2001/XMLSchema",
+   'ID' => "_d71a3a8e9fcc45c9e9d248ef7049393fc8f04e5f75",
+   'Version' => "2.0",
+   'IssueInstant' => "2004-12-05T09:22:05Z",
+]);
+$xml->addChild('saml:Issuer')->text('https://idp.example.org/SAML2');
+
+echo $xml->toXML();
+//Output:
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xs="http://www.w3.org/2001/XMLSchema" ID="_d71a3a8e9fcc45c9e9d248ef7049393fc8f04e5f75" Version="2.0" IssueInstant="2004-12-05T09:22:05Z">
+    <saml:Issuer>
+        https://idp.example.org/SAML2
+    </saml:Issuer>
+</saml:Assertion>
+*/
+```
+
+
 ## License
 The library is licensed under MIT license.
