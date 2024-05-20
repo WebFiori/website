@@ -1,15 +1,14 @@
 <?php
 namespace webfiori\examples\views;
 
-use webfiori\framework\Page;
-use webfiori\ui\HTMLNode;
 use Parsedown;
 use webfiori\http\Response;
-use webfiori\ui\CodeSnippet;
-use webfiori\ui\Paragraph;
-use webfiori\ui\Anchor;
-use webfiori\views\WebFioriPage;
 use webfiori\json\Json;
+use webfiori\ui\CodeSnippet;
+use webfiori\ui\HTMLNode;
+use webfiori\views\WebFioriPage;
+
+
 /**
  * Description of MdPage
  *
@@ -20,22 +19,23 @@ class MdPage extends WebFioriPage {
         parent::__construct();
         $this->setVueScript('assets/new-wf/md-default.js');
         $curl = curl_init();
+        $url = "https://raw.githubusercontent.com/$username/$repo/$branch/$filePath.md";
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => "https://raw.githubusercontent.com/$username/$repo/$branch/$filePath.md"
+            CURLOPT_URL => $url
         ]);
         $exeResult = curl_exec($curl);
         if($exeResult === false){
-            Response::append('False');
+            Response::write('False');
             Response::send();
         } else if ($exeResult == '404: Not Found') {
             Response::setCode(404);
-            Response::append('Not found.');
+            Response::write('Not found: '.$url);
             Response::send();
         } else {
             $parsedown = new Parsedown();
             $asTxt = $parsedown->text($exeResult);
-            $node = HTMLNode::fromHTMLText($asTxt);
+            $node = HTMLNode::fromHTML($asTxt);
             
             
             $parent = new HTMLNode('v-row');
@@ -182,11 +182,11 @@ class MdPage extends WebFioriPage {
         ]);
         $exeResult = curl_exec($curl);
         if($exeResult === false){
-            Response::append('False');
+            Response::write('False');
             Response::send();
         } else if ($exeResult == '404: Not Found') {
             Response::setCode(404);
-            Response::append('Not found.');
+            Response::write('Not found.');
             Response::send();
         } else {
             $decoded = json_decode($exeResult, true);

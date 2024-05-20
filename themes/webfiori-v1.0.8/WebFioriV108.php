@@ -1,15 +1,15 @@
 <?php
 namespace webfiori\theme;
 
+use webfiori\framework\session\SessionsManager;
+use webfiori\framework\Theme;
 use webfiori\ui\Anchor;
 use webfiori\ui\HeadNode;
 use webfiori\ui\HTMLNode;
+use webfiori\ui\JsCode;
 use webfiori\ui\ListItem;
 use webfiori\ui\UnorderedList;
-use webfiori\framework\Page;
-use webfiori\framework\Theme;
-use webfiori\framework\WebFioriApp;
-use webfiori\framework\session\SessionsManager;
+
 /**
  * WebFiori Theme Which is bundled with v1.0.8 of the framework.
  *
@@ -57,14 +57,14 @@ class WebFioriV108 extends Theme {
             ]);
             $page->getDocument()->getBody()->addChild($img);
             $page->addBeforeRender(function ($page) {
-                $js = new \webfiori\ui\JsCode();
+                $js = new JsCode();
                 $js->addCode("window.Prism = window.Prism || {};");
                 $page->getDocument()->getHeadNode()->addChild($js);
             });
         });
     }
 
-    public function createHTMLNode($options = []) {
+    public function createHTMLNode($options = []) : HTMLNode {
         $nodeType = isset($options['type']) ? $options['type'] : '';
         $elementId = isset($options['element-id']) ? $options['element-id'] : null;
 
@@ -238,14 +238,14 @@ class WebFioriV108 extends Theme {
         return $node;
     }
 
-    public function getAsideNode() {
+    public function getAsideNode() : HTMLNode {
         $aside = new HTMLNode();
         $aside->setClassName('col-2');
 
         return $aside;
     }
 
-    public function getFooterNode() {
+    public function getFooterNode() : HTMLNode {
         $footer = new HTMLNode('footer');
         $footer->setClassName('bd-footer text-muted');
         $footer->setClassName('container-fluid p-md-4');
@@ -277,7 +277,7 @@ class WebFioriV108 extends Theme {
 
         return $footer;
     }
-    public function getHeadNode() {
+    public function getHeadNode() : HeadNode {
         $head = new HeadNode();
         $head->addCSS('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css');
         $head->addJs('https://code.jquery.com/jquery-3.4.1.slim.min.js');
@@ -287,7 +287,7 @@ class WebFioriV108 extends Theme {
         return $head;
     }
 
-    public function getHeadrNode() {
+    public function getHeaderNode() : HTMLNode {
         $header = new HTMLNode('header');
         $header->setClassName('container-fluid');
         $mainNav = new HTMLNode('nav');

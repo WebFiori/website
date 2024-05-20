@@ -2,7 +2,9 @@
 
 namespace app\ini\routes;
 
+use webfiori\framework\router\RouteOption;
 use webfiori\framework\router\Router;
+use webfiori\views\WebFioriHome;
 
 class PagesRoutes {
     /**
@@ -11,6 +13,17 @@ class PagesRoutes {
      * @since 1.0
      */
     public static function create() {
-        //TODO: Add your own routes here.
+        Router::page([
+            RouteOption::PATH => '/',
+            RouteOption::TO => WebFioriHome::class
+        ]);
+        Router::page([
+            RouteOption::PATH => '/download',
+            RouteOption::TO => \webfiori\views\DownloadView::class
+        ]);
+        Router::page([
+            RouteOption::PATH => '/contribute',
+            RouteOption::TO => \webfiori\views\ContributeView::class
+        ]);
     }
 }

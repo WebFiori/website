@@ -1,20 +1,20 @@
 <?php
 namespace webfiori\views;
-use webfiori\framework\Page;
-use webfiori\framework\Webfiori;
-use webfiori\ui\ListItem;
+
+use themes\vuetifyCore\VuetifyWebPage;
+use themes\webfioriSite\WebFioriWebsiteTheme;
+use webfiori\json\Json;
 use webfiori\ui\Anchor;
 use webfiori\ui\HTMLNode;
-use webfiori\ui\Paragraph;
-use webfiori\framework\ui\WebPage;
-use webfiori\json\Json;
 use webfiori\ui\JsCode;
+use webfiori\ui\ListItem;
+use webfiori\ui\Paragraph;
 /**
  * Description of WebFioriPage
  *
  * @author Ibrahim
  */
-class WebFioriPage extends WebPage{
+class WebFioriPage extends VuetifyWebPage {
     /**
      *
      * @var JsCode 
@@ -46,7 +46,8 @@ class WebFioriPage extends WebPage{
     public function __construct($options=array()) {
         parent::__construct();
         
-        $this->setTheme();
+        $this->setTheme(WebFioriWebsiteTheme::class);
+        $this->setVueScript('assets/new-wf/default.js');
         if(isset($options['title'])){
             $this->setTitle($options['title']);
         }
@@ -212,23 +213,6 @@ class WebFioriPage extends WebPage{
     public function addToJson($arrOfAttrs) {
         foreach ($arrOfAttrs as $attrKey => $attrVal) {
             $this->getJson()->add($attrKey, $attrVal);
-        }
-    }
-    /**
-     * Specify the script that will be used to initialize vue.
-     * 
-     * @param string $vueScript The location of the JavaScript file. Usually, 
-     * a file somewhere in the directory 'assets'.
-     */
-    public function setVueScript($vueScript) {
-        if (strlen($vueScript) > 0) {
-            $this->addBeforeRender(function(WebPage $p, $v){
-                $p->getDocument()->addChild('script', [
-                    'src' => $v,
-                    'type' => 'text/javascript'
-                ]);
-                $this->removeChild('default-vue-init');
-            }, [$vueScript]);
         }
     }
 }

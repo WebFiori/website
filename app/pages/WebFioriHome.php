@@ -45,7 +45,7 @@ class WebFioriHome extends WebFioriPage{
         ], false);
         $rightColRow->addChild('v-col', [
             'cols' => 12
-        ], false)->text('The Framework That Makes Web Development The Way We Like');
+        ], false)->text('Basic utilities to have a simple web application.');
         $rightColRow->addChild('v-col', [
             'cols' => 12,
             'md' => 4,
@@ -55,17 +55,11 @@ class WebFioriHome extends WebFioriPage{
             'rounded','x-large',
             'color' => '#a6dc20', 'outlined',
             'href' => 'learn/introduction'
-        ], false)->addChild('v-btn', [
-            'fab', 'small','oulined','depressed', 
-            'color' => 'white',
-            'href' => 'learn/introduction',
-            'style' => [
-                'margin-right' => '5px'
-            ]], false)
-            ->addChild('v-icon', [
-            'rounded', 
-        ], false)->text('mdi-flag-checkered')
-        ->getParent()->getParent()->text('Get Started');
+        ], false)->addChild('v-icon', [
+            'start', 
+            'icon' => 'mdi-flag-checkered'
+        ], false)
+        ->getParent()->text('Get Started');
         $rightColRow->addChild('v-col', [
             'cols' => 12,
             'md' => 4,
@@ -75,17 +69,11 @@ class WebFioriHome extends WebFioriPage{
             'rounded','x-large',
             'color' => 'gray', 'outlined',
             'href' => 'https://github.com/webfiori/framework',
-        ], false)->addChild('v-btn', [
-            'fab', 'small','oulined','depressed', 
-            'color' => 'white',
-            'href' => 'https://github.com/webfiori/framework',
-            'style' => [
-                'margin-right' => '5px'
-            ]], false)
-            ->addChild('v-icon', [
-            'rounded', 
-        ], false)->text('mdi-github')
-        ->getParent()->getParent()->text('GitHub');
+        ], false)->addChild('v-icon', [
+            'start', 
+            'icon' => 'mdi-github'
+        ], false)
+        ->getParent()->text('GitHub');
         //$this->createSec3();
     }
     public function createSec4() {

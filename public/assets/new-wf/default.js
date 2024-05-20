@@ -9,29 +9,30 @@ if (!window.data) {
         }
     };
 }
-window.app = new Vue({
-    el: '#app',
-    vuetify: new Vuetify({
-        rtl:window.data.is_rtl,
-        theme: {
-            //dark:window.data.dark,
-            themes: {
-                light: {
-                    
-                }
-            }
-        }
-    }),
-    data:{
-        loading:false,
-        drawer:false,
-        snackbar:window.data.snackbar,
-        search_results:[],
-        methods_search_results:[],
-        docs_search_results:[],
-        search_val:'',
-        show_search_menu:false,
-        mini:false
+
+
+/* global Vue, Vuetify */
+const { createApp } = Vue;
+const { createVuetify } = Vuetify;
+
+
+const vuetify = createVuetify({
+    
+});
+var app = createApp({
+    mixins: [],
+    data() {
+       return {
+            loading:false,
+            drawer:false,
+            snackbar:window.data.snackbar,
+            search_results:[],
+            methods_search_results:[],
+            docs_search_results:[],
+            search_val:'',
+            show_search_menu:false,
+            mini:false,
+       };
     },
     methods:{
         search:function() {
@@ -42,8 +43,16 @@ window.app = new Vue({
                 this.showMenu = false;
             }
         }
+    },
+    computed:{
+        
+    },
+    mounted:function() {
+
     }
 });
+var app = app.use(vuetify).mount('#app');
+
 function showSnackbar(message, color = '') {
     window.app.snackbar.color = color;
     window.app.snackbar.text = message;

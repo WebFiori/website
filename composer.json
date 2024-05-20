@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-        "webfiori/framework":"v3.0.0-RC14",
+        "webfiori/framework":"v3.0.0-Beta.8",
         "erusev/parsedown":"*",
         "webfiori/vuetify-core": "*"
     },

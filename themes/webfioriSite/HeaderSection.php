@@ -69,16 +69,19 @@ class HeaderSection extends HTMLNode {
                 'offset-y',
                 'bottom'
         ])->addChild('template', [
-            'v-slot:activator'=>"{ on, attrs }",
+            'v-slot:activator'=>"{ props }",
             
         ])
         ->addChild('v-text-field', [
-            'outlined', 'prepend-inner-icon' => 'mdi-magnify',
-            'dense', 'rounded', 'hide-details',
+            'outlined', 
+            'append-inner-icon' => 'mdi-magnify',
+            'density' => 'compact',
+            'rounded', 
+            'hide-details',
             'id' => 'search-box',
-            'v-model' => 'search_val','@input' => 'search',
-            'v-bind'=>"attrs",
-            'v-on'=>"on"
+            'v-model' => 'search_val',
+            '@input' => 'search',
+            'v-bind'=>"props",
         ], true)->getParent()
         ->addChild('v-list');
         

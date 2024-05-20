@@ -1,0 +1,39 @@
+{
+    "base-url":"DYNAMIC",
+    "theme":null,
+    "home-page":"BASE_URL",
+    "primary-lang":"EN",
+    "titles":{
+        "AR":"افتراضي",
+        "EN":"Default"
+    },
+    "name-separator":"|",
+    "scheduler-password":"NO_PASSWORD",
+    "app-names":{
+        "AR":"WebFiori",
+        "EN":"Webfiori"
+    },
+    "app-descriptions":{
+        "AR":"",
+        "EN":""
+    },
+    "version-info":{
+        "version":"1.0",
+        "version-type":"Stable",
+        "release-date":"2024-05-19"
+    },
+    "env-vars":{
+        "WF_VERBOSE":{
+            "value":true,
+            "description":"Configure the verbosity of error messsages at run-time. This should be set to true in testing and false in production."
+        },
+        "CLI_HTTP_HOST":{
+            "value":"example.com",
+            "description":"Host name that will be used when runing the application as command line utility."
+        }
+    },
+    "smtp-connections":{
+    },
+    "database-connections":{
+    }
+}

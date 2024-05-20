@@ -4,7 +4,7 @@ Database abstraction layer of WebFiori framework.
 
 <p style="text-align: center">
   <a href="https://github.com/WebFiori/database/actions">
-    <img alt="PHP 8 Build Status" src="https://github.com/WebFiori/database/workflows/Build%20PHP%208.2/badge.svg?branch=main">
+    <img alt="PHP 8 Build Status" src="https://github.com/WebFiori/database/actions/workflows/php83.yml/badge.svg?branch=main">
   </a>
   <a href="https://codecov.io/gh/WebFiori/database">
     <img alt="CodeCov" src="https://codecov.io/gh/WebFiori/database/branch/main/graph/badge.svg?token=cDF6CxGTFi" />
@@ -43,14 +43,15 @@ Database abstraction layer of WebFiori framework.
 ## Supported PHP Versions
 |                                                                                           Build Status                                                                                            |
 |:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php70.yml"><img src="https://github.com/WebFiori/database/workflows/Build%20PHP%207.0/badge.svg?branch=main"></a> |
-| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php71.yml"><img src="https://github.com/WebFiori/database/workflows/Build%20PHP%207.1/badge.svg?branch=main"></a> |
-| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php72.yml"><img src="https://github.com/WebFiori/database/workflows/Build%20PHP%207.2/badge.svg?branch=main"></a> |
-| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php73.yml"><img src="https://github.com/WebFiori/database/workflows/Build%20PHP%207.3/badge.svg?branch=main"></a> |
-| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php74.yml"><img src="https://github.com/WebFiori/database/workflows/Build%20PHP%207.4/badge.svg?branch=main"></a> |
-| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php80.yml"><img src="https://github.com/WebFiori/database/workflows/Build%20PHP%208.0/badge.svg?branch=main"></a> |
-| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php81.yml"><img src="https://github.com/WebFiori/database/workflows/Build%20PHP%208.1/badge.svg?branch=main"></a> |
-| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/database/workflows/Build%20PHP%208.2/badge.svg?branch=main"></a> |
+| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php70.yml"><img src="https://github.com/WebFiori/database/actions/workflows/php70.yml/badge.svg?branch=main"></a> |
+| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php71.yml"><img src="https://github.com/WebFiori/database/actions/workflows/php71.yml/badge.svg?branch=main"></a> |
+| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php72.yml"><img src="https://github.com/WebFiori/database/actions/workflows/php72.yml/badge.svg?branch=main"></a> |
+| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php73.yml"><img src="https://github.com/WebFiori/database/actions/workflows/php73.yml/badge.svg?branch=main"></a> |
+| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php74.yml"><img src="https://github.com/WebFiori/database/actions/workflows/php74.yml/badge.svg?branch=main"></a> |
+| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php80.yml"><img src="https://github.com/WebFiori/database/actions/workflows/php80.yml/badge.svg?branch=main"></a> |
+| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php81.yml"><img src="https://github.com/WebFiori/database/actions/workflows/php81.yml/badge.svg?branch=main"></a> |
+| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php82.yml"><img src="https://github.com/WebFiori/database/actions/workflows/php82.yml/badge.svg?branch=main"></a> |
+| <a target="_blank" href="https://github.com/WebFiori/database/actions/workflows/php83.yml"><img src="https://github.com/WebFiori/database/actions/workflows/php83.yml/badge.svg?branch=main"></a> |
 
 ## Supported Databases
 - MySQL
@@ -62,7 +63,7 @@ Database abstraction layer of WebFiori framework.
 * Database abstraction which makes it easy to migrate your system to different DBMS.
 
 ## Installation
-To install the library using composer, add following dependency to `composer.json`: `"webfiori/database":"0.7.1"
+To install the library using composer, add following dependency to `composer.json`: `"webfiori/database":"*"`
 
 ## Usage
 
@@ -189,22 +190,22 @@ The method `Database::createBlueprint()` is used to create a table based on conn
 ``` php
 $database->createBlueprint('users_information')->addColumns([
     'id' => [
-        'type' => 'int',
-        'size' => 5,
-        'primary' => true,
-        'auto-inc' => true
+        ColOption::TYPE => DataType::INT,
+        ColOption::SIZE => 5,
+        ColOption::PRIMARY => true,
+        ColOption::AUTO_INCREMENT => true
     ],
     'first-name' => [
-        'type' => 'varchar',
-        'size' => 15
+        ColOption::TYPE => DataType::VARCHAR,
+        ColOption::SIZE => 15
     ],
     'last-name' => [
-        'type' => 'varchar',
-        'size' => 15
+        ColOption::TYPE => DataType::VARCHAR,
+        ColOption::SIZE => 15
     ],
     'email' => [
-        'type' => 'varchar',
-        'size' => 128
+        ColOption::TYPE => DataType::VARCHAR,
+        ColOption::SIZE => 128
     ]
 ]);
 

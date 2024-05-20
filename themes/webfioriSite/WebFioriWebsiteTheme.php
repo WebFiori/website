@@ -2,11 +2,12 @@
 namespace themes\webfioriSite;
 
 use themes\vuetifyCore\VuetifyThemeCore;
-use webfiori\ui\HTMLNode;
 use themes\webfioriSite\AsideSection;
 use themes\webfioriSite\FooterSection;
-use themes\webfioriSite\HeadSection;
 use themes\webfioriSite\HeaderSection;
+use themes\webfioriSite\HeadSection;
+use webfiori\ui\HeadNode;
+use webfiori\ui\HTMLNode;
 
 class WebFioriWebsiteTheme extends VuetifyThemeCore {
     /**
@@ -32,7 +33,7 @@ class WebFioriWebsiteTheme extends VuetifyThemeCore {
      * @return HTMLNode|null An object of type 'HTMLNode'. If the theme has no aside
      * section, the method might return null.
      */
-    public function getAsideNode() {
+    public function getAsideNode() : HTMLNode {
         return new AsideSection($this->getPage());
     }
     /**
@@ -41,7 +42,7 @@ class WebFioriWebsiteTheme extends VuetifyThemeCore {
      * @return HTMLNode|null An object of type 'HTMLNode'. If the theme has no footer
      * section, the method might return null.
      */
-    public function getFooterNode() {
+    public function getFooterNode() : HTMLNode {
         return new FooterSection($this->getPage());
     }
     /**
@@ -49,7 +50,7 @@ class WebFioriWebsiteTheme extends VuetifyThemeCore {
      *
      * @return HeadNode
      */
-    public function getHeadNode() {
+    public function getHeadNode() : HeadNode {
         return new HeadSection($this->getPage());
     }
     /**
@@ -58,7 +59,7 @@ class WebFioriWebsiteTheme extends VuetifyThemeCore {
      * @return HTMLNode|null @return HTMLNode|null An object of type 'HTMLNode'. If the theme has no header
      * section, the method might return null.
      */
-    public function getHeaderNode() {
+    public function getHeaderNode() : HTMLNode {
         return new HeaderSection($this->getPage());
     }
 }
