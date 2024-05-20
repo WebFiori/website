@@ -1,11 +1,11 @@
 <?php
 namespace app\langs;
 
-use webfiori\framework\Language;
+use webfiori\framework\Lang;
 /**
  * A class which holds language information for the language which has code 'EN'.
  */
-class LanguageEN extends Language {
+class LangEN extends Lang {
     /**
      * Creates new instance of the class.
      */
