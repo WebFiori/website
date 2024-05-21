@@ -32,6 +32,7 @@ var app = createApp({
             search_val:'',
             show_search_menu:false,
             mini:false,
+            side_links_tree: data.side_links ? data.side_links : []
        };
     },
     methods:{

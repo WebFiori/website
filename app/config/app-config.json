@@ -10,8 +10,8 @@
     "name-separator":"|",
     "scheduler-password":"NO_PASSWORD",
     "app-names":{
-        "AR":"WebFiori",
-        "EN":"Webfiori"
+        "AR":"WebFiori Framework",
+        "EN":"Webfiori Framework"
     },
     "app-descriptions":{
         "AR":"",

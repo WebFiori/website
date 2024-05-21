@@ -2,6 +2,7 @@
 namespace themes\webfioriSite;
 
 use webfiori\framework\ui\WebPage;
+use webfiori\ui\Anchor;
 use webfiori\ui\HTMLNode;
 
 /**
@@ -17,12 +18,21 @@ class HeaderSection extends HTMLNode {
             'color' => 'primary',
             'dense'
         ]);
-        
-        $this->addChild('v-toolbar-title')->text($page->getWebsiteName());
-        
-        $this->addChild('v-spacer');
-        $navLinksContainer = $this->addChild('v-container', [
-            'class' => 'd-none d-md-flex'
+        $prepend = $this->addChild('template', [
+            'v-slot:prepend'
+        ]);
+        $prepend->addChild('v-app-bar-title', [
+            'style' => [
+                'width' => '400px'
+            ]
+        ])->addChild(new Anchor('/', $page->getWebsiteName()), [
+            'style' => [
+                'color' => 'white',
+                'text-decoration' => 'none'
+            ]
+        ]);
+        $navLinksContainer = $this->addChild('template', [
+            'v-slot:append'
         ]);
         
         
@@ -35,7 +45,7 @@ class HeaderSection extends HTMLNode {
                 ->addChild(self::createButton(['text', 'href' => '/contribute'], 'Contribute'), true)
                 ->getParent()->addChild('v-spacer');
         
-        $this->addChild($this->createTopSearchBar());
+        $prepend->addChild($this->createTopSearchBar());
     }
     
     public static function createButton($props = [], $text = null, $icon = null, $iconProps = []) {
@@ -51,11 +61,9 @@ class HeaderSection extends HTMLNode {
     }
     
     private function createTopSearchBar() {
-        $searchContainer = new HTMLNode('v-container', [
-            'class' => 'd-flex align-center d-none d-md-flex'
-        ]);
         
-        $row = $searchContainer->addChild('v-row', [
+        
+        $row = new HTMLNode('v-row', [
             'no-gutters'
         ]);
 
@@ -85,7 +93,7 @@ class HeaderSection extends HTMLNode {
         ], true)->getParent()
         ->addChild('v-list');
         
-        $vList->addChild('v-subheader', [
+        $vList->addChild('v-list-subheader', [
             'style' => 'font-weight: bold;'
         ])
         ->text('Learn')
@@ -107,7 +115,7 @@ class HeaderSection extends HTMLNode {
             'v-else' => 'result.parent_page'
         ])->text('{{result.title}}');
         
-        $vList->addChild('v-subheader', [
+        $vList->addChild('v-list-subheader', [
             'style' => 'font-weight: bold;'
         ])
         ->text('Classes')
@@ -129,7 +137,7 @@ class HeaderSection extends HTMLNode {
                     ]
                 ])
                 ->text('{{result.summary}}');
-        $vList->addChild('v-subheader', [
+        $vList->addChild('v-list-subheader', [
             'style' => 'font-weight: bold;'
         ])
         ->text('Methods')
@@ -162,6 +170,6 @@ class HeaderSection extends HTMLNode {
             'src' => 'assets/images/search-by-algolia-light-background.webp',
             'style'=> ['width' => '130px']
         ]);
-        return $searchContainer;
+        return $row;
     }
 }

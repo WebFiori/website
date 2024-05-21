@@ -48,5 +48,4 @@ function search(str) {
         }
     });
 }
-search('A');
 

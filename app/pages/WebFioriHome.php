@@ -20,60 +20,45 @@ class WebFioriHome extends WebFioriPage{
         $this->insert($row);
         $col = $row->addChild('v-col', [
             'cols' => 12,
-            'md' => 4,
-            'sm' => 12,
-            'xl' => 12,
             'align' => 'center'
-        ], false);
+        ]);
         $col->addChild('v-img', [
             'src' => 'assets/images/WFLogo512.png',
-            'width' => '300px',
-            'height' => '300px'
+            'width' => '200px',
+            'height' => '200px'
         ]);
         $rightCol = $row->addChild('v-col', [
             'cols' => 12,
-            'md' => 8,
-            'sm' => 12,
-            'xl' => 12,
             'align' => 'center',
             'style' => [
                 'font-size' => '3.2rem'
             ]
-        ], false);
+        ]);
         $rightColRow = $rightCol->addChild('v-row', [
             'justify' => 'center'
-        ], false);
+        ]);
         $rightColRow->addChild('v-col', [
             'cols' => 12
-        ], false)->text('Basic utilities to have a simple web application.');
+        ])->text('Basic Utilities to Build Web Applications');
+        
         $rightColRow->addChild('v-col', [
-            'cols' => 12,
-            'md' => 4,
-            'sm' => 6,
-            'xs' => 12
-        ], false)->addChild('v-btn', [
-            'rounded','x-large',
-            'color' => '#a6dc20', 'outlined',
-            'href' => 'learn/introduction'
-        ], false)->addChild('v-icon', [
-            'start', 
-            'icon' => 'mdi-flag-checkered'
-        ], false)
-        ->getParent()->text('Get Started');
+            'cols' => 6,
+        ])->addChild('v-btn', [
+            'rounded',
+            'x-large',
+            'color' => '#a6dc20', 
+            'outlined',
+            'href' => 'learn/introduction',
+            'prepend-icon' => 'mdi-flag-checkered'
+        ])->text('Get Started');
         $rightColRow->addChild('v-col', [
-            'cols' => 12,
-            'md' => 4,
-            'sm' => 6,
-            'xs' => 12
-        ], false)->addChild('v-btn', [
+            'cols' => 6,
+        ])->addChild('v-btn', [
             'rounded','x-large',
             'color' => 'gray', 'outlined',
             'href' => 'https://github.com/webfiori/framework',
-        ], false)->addChild('v-icon', [
-            'start', 
-            'icon' => 'mdi-github'
-        ], false)
-        ->getParent()->text('GitHub');
+            'prepend-icon' => 'mdi-github'
+        ])->text('GitHub');
         //$this->createSec3();
     }
     public function createSec4() {

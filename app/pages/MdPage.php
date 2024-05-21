@@ -131,28 +131,28 @@ class MdPage extends WebFioriPage {
     }
     private function createSideDrawer($headingsArr) {
         if (count($headingsArr) != 0) {
-            $drawer = new HTMLNode('v-navigation-drawer', [
-                //'v-model' => "drawer_md",
-                'fixed', 'app', 'width' => '300px',
-                ':mini-variant.sync'=>"mini",
-                'class' => 'd-none d-md-flex'
-            ]);
-            
-            $tree = $drawer->addChild('v-card')
-                    ->addChild('v-card-text')
-                    ->addChild('v-treeview', [
-                        ':items' => 'side_links_tree'
-                    ]);
-            $tree->addChild('template', [
-                        '#label' => '{ item }'
-                    ])->addChild('a', [
-                        ':href' => 'item.href'
-                    ])->text('{{ item.name }}');
-            $tree->addChild('template', [
-                '#prepend' => '{item, open}'
-            ])->addChild('v-icon')->text('mdi-arrow-right-bold-circle-outline');
-            
-            return $drawer;
+//            $drawer = new HTMLNode('v-navigation-drawer', [
+//                //'v-model' => "drawer_md",
+//                'fixed', 'app', 'width' => '300px',
+//                ':mini-variant.sync'=>"mini",
+//                'class' => 'd-none d-md-flex'
+//            ]);
+//            
+//            $tree = $drawer->addChild('v-card')
+//                    ->addChild('v-card-text')
+//                    ->addChild('v-list', [
+//                        ':items' => 'side_links_tree'
+//                    ]);
+////            $tree->addChild('template', [
+////                        '#label' => '{ item }'
+////                    ])->addChild('a', [
+////                        ':href' => 'item.href'
+////                    ])->text('{{ item.name }}');
+////            $tree->addChild('template', [
+////                '#prepend' => '{item, open}'
+////            ])->addChild('v-icon')->text('mdi-arrow-right-bold-circle-outline');
+//            
+//            return $drawer;
         }
     }
     /**
