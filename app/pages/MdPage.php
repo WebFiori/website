@@ -18,6 +18,9 @@ class MdPage extends WebFioriPage {
     public function __construct($username, $repo, $filePath, $branch = 'master') {
         parent::__construct();
         $this->setVueScript('assets/new-wf/md-default.js');
+        $this->addJS('assets/js/prism.js');
+        $this->addCSS('assets/css/prism.css');
+        $this->addCSS('assets/css/code-theme.css');
         $curl = curl_init();
         $url = "https://raw.githubusercontent.com/$username/$repo/$branch/$filePath.md";
         curl_setopt_array($curl, [
@@ -38,12 +41,32 @@ class MdPage extends WebFioriPage {
             $node = HTMLNode::fromHTML($asTxt);
             
             
-            $parent = new HTMLNode('v-row');
+          
+            
+            
+            $parent = new HTMLNode('v-row', [
+                'class' => 'my-6'
+            ]);
+            $parent->addChild('v-col', [
+                'cols' => 12
+            ]);
             $super = new HTMLNode('v-col', [
-                'cols' => 12,
-                'md' => 12
+                'cols' => 8,
+            ]);
+            $super->addChild('div', [
+                'class' => 'mb-4'
+            ])->addChild('v-chip', [
+                'prepend-icon' => 'mdi-github',
+                'size' => 'x-small',
+                'href' => "https://github.com/$username/$repo/blob/$branch/$filePath.md"
+            ])->text('View on GitHub');
+            $parent->addChild('v-col', [
+                'cols' => 2
             ]);
             $parent->addChild($super);
+            $parent->addChild('v-col', [
+                'cols' => 2
+            ]);
             $this->insert($parent);
             $base = $this->getCanonical();
             $headingsArr = [];
@@ -66,14 +89,14 @@ class MdPage extends WebFioriPage {
                         $link->setAttribute('href', $base.'#'.$id);
                     }
                     $xNode->setID($id);
-                    $super->addChild($xNode);
+                    $super->addChild('v-row')->addChild('v-col', ['cols' => 12])->addChild($xNode);
                 } else if ($xNode->getNodeName() == 'pre') {
                     if ($xNode->getChild(0)->getNodeName() == 'code') {
                         
                         //if ($filePath != 'webfiori-json') {
                             $codeSnippit = new CodeSnippet('Code', $xNode->getChild(0)->getChild(0)->getTextUnescaped());
                             $codeSnippit->getCodeElement()->setClassName($xNode->getChild(0)->getClassName());
-                            $super->addChild($codeSnippit);
+                            $super->addChild('v-row')->addChild('v-col', ['cols' => 12])->addChild($codeSnippit);
 //                        } else {
 //                            $super->addChild($xNode);
 //                        }
@@ -89,32 +112,23 @@ class MdPage extends WebFioriPage {
                     $xNode->setStyle([
                         'border-collapse' => 'collapse'
                     ]);
-                    $super->addChild($xNode);
+                    $super->addChild('v-row')->addChild('v-col', ['cols' => 12])->addChild($xNode);
                 } else {
-                    $super->addChild($xNode);
+                    $super->addChild('v-row')->addChild('v-col', ['cols' => 12])->addChild($xNode);
                 }
                 
             }
             $this->insert($this->createSideDrawer($headingsArr));
-            $row = $this->insert('v-row');
             
-            $row->addChild('v-col', [
-                'cols' => '12',
-                'md' => 6,
-                'sm' => 12
-            ], false)->text('View this page on ')
-            ->addChild('a', [
-                'href' => "https://github.com/$username/$repo/blob/$branch/$filePath.md"
-            ], false)->text('GitHub');
-            $lastMod = $this->getLastModified($username, $repo, $branch, $filePath);
-            $row->addChild('v-col', [
-                'cols' => 12,
-                'md' => 6,
-                'sm' => 12
-            ], false)->text('Last modified: '.$lastMod);
-            $this->addToJson([
-                'side_links' => $this->createSideTreeItems($headingsArr)
-            ]);
+            
+//            $lastMod = $this->getLastModified($username, $repo, $branch, $filePath);
+//            $super->addChild('v-chip', [
+//                'class' => 'mt-4',
+//                'size' => 'x-small'
+//            ])->text(explode(' ', $lastMod)[0]);
+//            $this->addToJson([
+//                'side_links' => $this->createSideTreeItems($headingsArr)
+//            ]);
         }
     }
     private function createSideTreeItems($arr) {
