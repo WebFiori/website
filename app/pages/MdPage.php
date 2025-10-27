@@ -94,8 +94,15 @@ class MdPage extends WebFioriPage {
                     if ($xNode->getChild(0)->getNodeName() == 'code') {
                         
                         //if ($filePath != 'webfiori-json') {
+                            $code = new HTMLNode('code');
+                            
                             $codeSnippit = new CodeSnippet('Code', $xNode->getChild(0)->getChild(0)->getTextUnescaped());
-                            $codeSnippit->getCodeElement()->setClassName($xNode->getChild(0)->getClassName());
+                            $className = 'language-bash';
+                            if ($xNode->getChild(0)->getClassName() !== null) {
+                                $className = $xNode->getChild(0)->getClassName();
+                            }
+                            $code->setClassName($className);
+                            $codeSnippit->getCodeElement()->setClassName($className);
                             $super->addChild('v-row')->addChild('v-col', ['cols' => 12])->addChild($codeSnippit);
 //                        } else {
 //                            $super->addChild($xNode);
